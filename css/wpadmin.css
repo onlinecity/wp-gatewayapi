@@ -1,0 +1,171 @@
+body.post-type-gwapi-sms abbr {
+    border-bottom: 1px dotted black;
+}
+
+body.post-type-gwapi-sms .sms-length-counter {
+    text-align: right;
+    font-style: italic;
+    color: grey;
+}
+
+body.post-type-gwapi-sms .misc-pub-section.misc-pub-visibility {
+    display: none;
+}
+
+.gwapi-field-error-message {
+    color: white;
+    background-color: #f57f7d;
+    border: 1px solid red;
+    border-radius: 3px 3px;
+    margin-bottom: 5px;
+    padding: 5px 8px;
+}
+
+.gwapi-checkbox {
+    display: block;
+    padding: 5px 0px;
+}
+
+.gwapi-checkbox:hover {
+    background-color: #f0f0f0;
+}
+
+.gwapi-checkbox .number {
+    border-radius: 100px 100px;
+    padding: 1px 10px;
+    background-color: #e5e5e5;
+    margin-left: 5px;
+    font-size: 0.8em;
+}
+
+/* primitive grid */
+.gwapi-row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+
+.gwapi-row:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.gwapi-row .col-30 {
+    width: 30%;
+}
+
+.gwapi-row .col-40 {
+    width: 40%;
+}
+
+.gwapi-row .col-50 {
+    width: 50%;
+}
+
+.gwapi-row .col-60 {
+    width: 60%;
+}
+
+.gwapi-row .col-70 {
+    width: 70%;
+}
+
+.gwapi-row .col-30, .gwapi-row .col-40, .gwapi-row .col-50, .gwapi-row .col-60, .gwapi-row .col-70 {
+    padding-left: 15px;
+    padding-right: 15px;
+    box-sizing: border-box;
+    float: left;
+}
+
+@media(max-width: 991px) {
+    .gwapi-row .col-30, .gwapi-row .col-40, .gwapi-row .col-50, .gwapi-row .col-60, .gwapi-row .col-70 {
+        width: 100%;
+    }
+}
+
+@media(min-width: 992px) {
+    .select2-container {
+        min-width: 240px;
+    }
+}
+
+.field-group {
+    margin-bottom: 15px;
+}
+
+.field-group select, .field-group input, .field-group textarea {
+    width: 100%;
+}
+
+.field-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+/* remove parent-feature and slug of recipient groups */
+body.taxonomy-gwapi-recipient-groups .term-parent-wrap,
+body.taxonomy-gwapi-recipient-groups .term-slug-wrap,
+body.taxonomy-gwapi-recipient-groups .column-slug,
+#newgwapi-recipient-groups_parent {
+    display: none;
+}
+
+/* by default, the various ways of selecting recipients are hidden */
+#sms-recipient-groups, #sms-recipient-manual {
+    display: none;
+}
+
+/* sending ui: recipient groups list scroll */
+body.post-type-gwapi-sms .recipient-groups .inner {
+    height: 150px;
+    overflow: auto;
+}
+
+body.post-type-gwapi-sms .clearfix {
+    clear: both;
+}
+
+body.post-type-gwapi-sms .footer {
+    margin-top: 15px;
+    border-top: 1px solid #efefef;
+    padding-top: 10px;
+}
+
+/* inline editor: disable inline edit */
+body.post-type-gwapi-sms .inline-edit-col,
+body.post-type-gwapi-sms .row-actions .inline {
+    display: none;
+}
+
+/* manual recipients scroll*/
+#sms-recipient-manual .inner {
+    height: 230px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#sms-recipient-manual .delete-btn {
+    min-height: 16px;
+    background-image: url('../img/delete.svg');
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    background-position: center center;
+    display: block;
+    margin-top: 2px;
+}
+
+#sms-recipient-manual tbody tr.deleting {
+    background-color: rgba(245, 146, 140, 0.51);
+    opacity: 0.5;
+}
+
+#sms-recipient-manual tbody .delete-btn {
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
+#sms-recipient-manual tbody .delete-btn:hover {
+    opacity: 1;
+}
