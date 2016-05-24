@@ -261,7 +261,7 @@ function _gwapi_sms_status(WP_Post $post) {
             break;
 
         case 'is_sent':
-            echo '<span style="color: green; font-weight: bold">SMS was successfully sent</span><br />IDs: '.implode(', ',$ids);
+            echo '<span style="color: green; font-weight: bold">SMS was successfully sent</span><br />ID: '.$ids;
             break;
 
         default:

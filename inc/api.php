@@ -28,7 +28,7 @@ function gwapi_send_sms($message, $recipients, $alpha='', $destaddr='MOBILE')
     // ======================
 
     // extract tags and recipients and prepare in a consistent format
-    $tags = [];
+    $allTags = [];
     $recipients_formatted = [];
     if (is_string($recipients) || is_int($recipients)) $recipients_formatted[ $recipients ] = [];
     if (is_array($recipients)) {
@@ -36,7 +36,7 @@ function gwapi_send_sms($message, $recipients, $alpha='', $destaddr='MOBILE')
             if (is_array($j)) {
                 $recipients_formatted[$i] = $j;
                 foreach($j as $tag => $value) {
-                    $tags[] = $tag;
+                    $allTags[] = $tag;
                 }
             } else {
                 $recipients_formatted[$j] = [];
@@ -49,7 +49,7 @@ function gwapi_send_sms($message, $recipients, $alpha='', $destaddr='MOBILE')
         'recipients' => [ ],
         'message' => $message,
         'destaddr' => $destaddr,
-        'tags' => $tags
+        'tags' => $allTags
     ];
     $alpha = $alpha ? : get_option('gwapi_default_sender');
     if ($alpha) {
@@ -62,8 +62,8 @@ function gwapi_send_sms($message, $recipients, $alpha='', $destaddr='MOBILE')
             'msisdn' => (int)$msisdn,
             'tagvalues' => []
         ];
-        foreach($tags as $t) {
-            $rec['tagvalues'][$t] = isset($tags[$t]) ? $tags[$t] : '';
+        foreach($allTags as $t) {
+            $rec['tagvalues'][] = isset($tags[$t]) ? $tags[$t] : '';
         }
         $req['recipients'][] = $rec;
     }
