@@ -146,7 +146,7 @@ add_action('gwapi_send_sms', function($ID) {
     // missing secret etc.?
     if (!get_option('gwapi_key') || !get_option('gwapi_secret')) {
         update_post_meta($ID, 'api_status', 'bail');
-        $no_api_error = strtr(__("You have not entered your credentials yet. Go to :link to complete the setup.", 'gwapi'), [ ':link' => '<a href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings', 'gwapi').'</a>' ]);
+        $no_api_error = strtr(__("You have not entered your OAuth key and secret yet. Go to :link to complete the setup.", 'gwapi'), [ ':link' => '<a href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings', 'gwapi').'</a>' ]);
         update_post_meta($ID, 'api_error', $no_api_error);
         return;
     }

@@ -205,7 +205,7 @@ function _gwapi_sms_message(WP_Post $post)
                     <input type="radio" name="gwapi[destaddr]"
                            value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>>
                     <abbr
-                        title="<?php esc_attr_e('Message is displayed immediately and usually not saved in the normal message inbox.', 'gwapi'); ?>"><?php _e('Flash SMS', 'gwapi'); ?></abbr>
+                        title="<?php esc_attr_e('Message is displayed immediately and usually not saved in the normal message inbox. Also knows as a Flash SMS.', 'gwapi'); ?>"><?php _e('Display SMS', 'gwapi'); ?></abbr>
                 </label>
             </td>
         </tr>

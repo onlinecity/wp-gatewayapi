@@ -18,11 +18,11 @@
  *
  * @param string $message A string containing the message to be sent.
  * @param array|string $recipients A single recipient or a list of recipients.
- * @param string $alpha Alpha text (11 chars or 15 digits)
- * @param string $destaddr Type of SMS - Can be MOBILE (regular SMS) or FLASH (shown immediately on phone and usually not stored)
+ * @param string $sender Sender text (11 chars or 15 digits)
+ * @param string $destaddr Type of SMS - Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored - also called a Flash SMS)
  * @return int|WP_Error ID of message in gatewayapi.com on success
  */
-function gwapi_send_sms($message, $recipients, $alpha='', $destaddr='MOBILE')
+function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
 {
     // PREPARE THE RECIPIENTS
     // ======================
@@ -51,9 +51,9 @@ function gwapi_send_sms($message, $recipients, $alpha='', $destaddr='MOBILE')
         'destaddr' => $destaddr,
         'tags' => $allTags
     ];
-    $alpha = $alpha ? : get_option('gwapi_default_sender');
-    if ($alpha) {
-        $req['sender'] = $alpha;
+    $sender = $sender ? : get_option('gwapi_default_sender');
+    if ($sender) {
+        $req['sender'] = $sender;
     }
 
 

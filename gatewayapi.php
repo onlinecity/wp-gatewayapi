@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Send SMS'es through WordPress.
-Version:     1.0
+Version:     1.0.1
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     GPLv2
@@ -19,11 +19,14 @@ add_action('init', function () {
     load_plugin_textdomain( 'gwapi', false, 'gatewayapi/languages' );
 
     // public
-    include GWAPI_DIR . "/inc/cpt_sms.php";
-    include GWAPI_DIR . "/inc/helpers.php";
     include GWAPI_DIR . "/inc/api.php";
+
     if (get_option('gwapi_enable_ui')) {
+        include GWAPI_DIR . "/inc/helpers.php";
+        include GWAPI_DIR . "/inc/cpt_sms.php";
         include GWAPI_DIR . "/inc/cpt_recipient.php";
+        include GWAPI_DIR . "/inc/tax_recipient.php";
+        include GWAPI_DIR . "/inc/validation.php";
     }
 
     // admin: editor required
@@ -36,7 +39,5 @@ add_action('init', function () {
         include GWAPI_DIR . "/inc/cpt_recipient_ui.php";
         include GWAPI_DIR . "/inc/cpt_sms_editor_ui.php";
         include GWAPI_DIR . "/inc/cpt_sms_listing_ui.php";
-        include GWAPI_DIR . "/inc/tax_recipient.php";
-        include GWAPI_DIR . "/inc/ui_validation.php";
     }
 }, 9);

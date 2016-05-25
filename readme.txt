@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.5.2
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -29,6 +29,14 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
 
+= Getting Started =
+
+There's more information in the "Installation"-tab, but you could also just watch this video tutorial, showing you how
+to get set up and sending your first SMS:
+
+https://vimeo.com/168035068
+
+
 
 == Installation ==
 
@@ -36,8 +44,12 @@ This section describes how to install the plugin and get it working.
 
 1. If you haven't already, then go to GatewayAPI.com and create a free account.
 1. Install and activate the plugin.
-1. Go to "Settings » GatewayAPI Settings" and add the OAuth-credentials from your GatewayAPI.com account.
+1. Go to "Settings » GatewayAPI Settings" and add an OAuth key and associated secret from your GatewayAPI.com account.
 1. (Optional) Enable the sending UI and then go to "SMS'es » Create SMS" and try to send an SMS to yourself, verifying that all is setup correctly.
+
+We've also produced this quick video tutorial to help you get started:
+
+https://vimeo.com/168035068
 
 == Frequently Asked Questions ==
 
@@ -46,16 +58,22 @@ This section describes how to install the plugin and get it working.
 Theoretically it works, but it's still in the early days for this plugin and this also much depends on your hosting providers setup. The plugin can usually easily handle 10.000 recipients at a time, but we'd recommend splitting into multiple SMS'es for now.
 
 == Screenshots ==
-
+1. Set up your OAuth key and secret here. This settings page is available for administrators only.
+2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
 
 == Changelog ==
+
+= 1.0.1 =
+* Cosmetical changes: A few inconsistencies has been fixed in the naming and the documentation.
+* Tidied up a bit: If the sending UI is not enabled, even less code is now executed on each request.
 
 = 1.0 =
 * Inital version.
 
 == How to use ==
 
-Either use the UI, which should be pretty self-explainatory, or use the programmers API.
+Either use the UI, which should be pretty self-explainatory, or use the programmers API. See the "Installation"-tab for
+a quick how-to.
 
 = Programmers API: `gwapi_send_sms` =
 
@@ -63,8 +81,8 @@ Send an SMS to one or multiple recipients by calling `gwapi_send_sms` with the f
 
 - $message (string) A string containing the message to be sent.
 - $recipients (array|string) A single recipient or a list of recipients.
-- $alpha (string, *optional*) Alpha text (11 chars or 15 digits)
-- $destaddr (string, *optional*) Type of SMS - Can be MOBILE (regular SMS) or FLASH (shown immediately on phone and usually not stored)
+- $sender (string, *optional*) Sender text (11 chars or 15 digits)
+- $destaddr (string, *optional*) Type of SMS - Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored, also knows as a Flash SMS)
 
 Returns the GatewayAPI.com message-ID on success and a WP_Error on failure.
 
