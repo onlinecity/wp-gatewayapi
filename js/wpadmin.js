@@ -80,8 +80,13 @@ jQuery(function ($) {
 
         function doCount() {
             var chars = textarea.val().length;
-            var smses = Math.ceil(chars / 160);
+            var regex_matches = textarea.val().match(/[\^{}\\~€|\[\]]/gmu) || [];
+            chars += regex_matches.length;
+            var split = chars <= 160 ? 160 : 153;
+
+            var smses = Math.ceil(chars / 153);
             if (smses == 0) smses = 1;
+
             countEl.text(chars + ' characters (' + smses + ' sms)');
         }
 
