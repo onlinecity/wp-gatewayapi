@@ -106,12 +106,12 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
             <div class="gwapi-star-errors"></div>
 
             <div class="field-group">
-                <label for="recipient_cc"><?php _e('Country code', 'gwapi') ?></label>
+                <label for="recipient_cc" class="control-label"><?php _e('Country code', 'gwapi') ?></label>
                 <select name="gwapi[single_recipient][cc]" id="recipient_cc"></select>
             </div>
 
             <div class="field-group">
-                <label for="recipient_number">
+                <label for="recipient_number" class="control-label">
                     <?php _e('Phone number', 'gwapi') ?>
                 </label>
 
@@ -121,7 +121,7 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
             </div>
 
             <div class="field-group">
-                <label for="recipient_name"><?php _e('Name (optional)', 'gwapi'); ?></label>
+                <label for="recipient_name" class="control-label"><?php _e('Name (optional)', 'gwapi'); ?></label>
                 <input type="text" name="gwapi[single_recipient][name]" id="recipient_name">
             </div>
 

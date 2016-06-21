@@ -12,32 +12,48 @@ Domain Path: /languages
 Text Domain: gwapi
 */
 
-const GWAPI_DIR = __DIR__;
+function _gwapi_dir()
+{
+    return __DIR__;
+}
+
+function _gwapi_url()
+{
+    static $dir;
+    if ($dir) return $dir;
+
+    $dir = plugin_dir_url(__FILE__);
+    return $dir;
+}
+
 
 add_action('init', function () {
+    $D = _gwapi_dir();
+
     // load translations
     load_plugin_textdomain( 'gwapi', false, 'gatewayapi/languages' );
 
     // public
-    include GWAPI_DIR . "/inc/api.php";
+    include "$D/inc/api.php";
 
     if (get_option('gwapi_enable_ui')) {
-        include GWAPI_DIR . "/inc/helpers.php";
-        include GWAPI_DIR . "/inc/cpt_sms.php";
-        include GWAPI_DIR . "/inc/cpt_recipient.php";
-        include GWAPI_DIR . "/inc/tax_recipient.php";
-        include GWAPI_DIR . "/inc/validation.php";
+        include "$D/inc/helpers.php";
+        include "$D/inc/cpt_sms.php";
+        include "$D/inc/cpt_recipient.php";
+        include "$D/inc/tax_recipient.php";
+        include "$D/inc/recipient_forms.php";
+        include "$D/inc/validation.php";
     }
 
     // admin: editor required
     if (!current_user_can('edit_others_posts')) return;
 
-    include GWAPI_DIR . "/inc/options.php";
-    include GWAPI_DIR . "/inc/css_js.php";
+    include "$D/inc/options.php";
+    include "$D/inc/css_js.php";
 
     if (get_option('gwapi_enable_ui')) {
-        include GWAPI_DIR . "/inc/cpt_recipient_ui.php";
-        include GWAPI_DIR . "/inc/cpt_sms_editor_ui.php";
-        include GWAPI_DIR . "/inc/cpt_sms_listing_ui.php";
+        include "$D/inc/cpt_recipient_ui.php";
+        include "$D/inc/cpt_sms_editor_ui.php";
+        include "$D/inc/cpt_sms_listing_ui.php";
     }
 }, 9);

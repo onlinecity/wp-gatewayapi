@@ -3,6 +3,7 @@
 // fields on the SMS editor page
 add_action('admin_init', function () {
     add_meta_box('recipient', __('Contact information', 'gwapi'), '_gwapi_recipient', 'gwapi-recipient', 'normal', 'default');
+    add_meta_box('custom_fields', __('Custom fields', 'gwapi'), '_gwapi_recipient_fields', 'gwapi-recipient', 'normal', 'default');
 });
 
 function _gwapi_recipient(WP_Post $post)
@@ -41,6 +42,25 @@ function _gwapi_recipient(WP_Post $post)
 }
 
 
+function _gwapi_recipient_fields(WP_Post $post)
+{
+    $ID = $post->ID;
+    $fields = get_option('gwapi_recipient_fields');
+    ?>
+    <div class="gwapi-star-errors"></div>
+    <table width="100%" class="form-table">
+        <tbody>
+        <?php foreach($fields as $row): ?>
+            <?php if (in_array($row['field_id'], ['CC', 'NUMBER', 'NAME'])) continue; ?>
+            <?php gwapi_render_recipient_field($row, $post); ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <?php
+}
+
+
 // validate recipient
 add_action('wp_ajax_gatewayapi_validate_recipient', function () {
     header("Content-type: application/json");
@@ -68,6 +88,10 @@ add_action('save_post_gwapi-recipient', function ($ID) {
     $data = isset($_POST['gwapi']) ? $_POST['gwapi'] : false;
     if (!$data) return;
 
-    if (isset($data['cc'])) update_post_meta($ID, 'cc', $data['cc']);
-    if (isset($data['number'])) update_post_meta($ID, 'number', $data['number']);
+    // get the possible fields
+    foreach(_gwapi_all_recipient_fields() as $field) {
+        $meta_key = strtolower($field['field_id']);
+        if (isset($data[ $meta_key ])) update_post_meta($ID, $meta_key, $data[$meta_key]);
+        if ($field['type'] == 'checkbox' && !isset($data[ $meta_key ])) update_post_meta($ID, $meta_key, []);
+    }
 });
