@@ -277,3 +277,21 @@ i.info {
     background-color: #e10803;
     border-color: #c60703;
 }
+
+#custom_fields input[type=text], #custom_fields input[type=password], #custom_fields input[type=email], #custom_fields input[type=url], #custom_fields input[type=number], #custom_fields textarea, #custom_fields select {
+    width: 100%;
+}
+
+.shortcode-btn:before {
+    content: '';
+    display: inline-block;
+    width: 25px;
+    height: 22px;
+    margin-right: 10px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    background-image: url(../img/shortcode-white.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+}

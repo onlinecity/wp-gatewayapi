@@ -311,3 +311,28 @@ add_filter('gwapi_recipient_field_hidden_html', function($html, WP_Post $recipie
 
     return '<input type="text" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" />';
 }, 1, 3);
+
+/**
+ * Render a list of mobile country codes field.
+ */
+add_filter('gwapi_recipient_field_mobile_cc_html', function($html, WP_Post $recipient, $field) {
+    if ($field['type'] == 'hidden' && !is_admin()) return $html;
+
+    $field_meta_key = strtolower($field['field_id']);
+    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+
+    $only_ccs = "";
+    if (isset($field['mobile_cc_countries']) && $field['mobile_cc_countries']) {
+        $ccs = explode("\n", $field['mobile_cc_countries']);
+        foreach($ccs as &$cc) { $cc = (int)trim($cc); }
+        $only_ccs = ' data-only-ccs="'.esc_attr(implode(',', $ccs)).'"';
+    }
+    $html = '<select name="gwapi['.strtolower($field['field_id']).']" data-gwapi-mobile-cc'.$only_ccs.'>';
+
+    if ($recipient_value) {
+        $html .= '<option selected value="'.esc_attr($recipient_value).'">'.esc_html($recipient_value).'</option>';
+    }
+
+    $html .= '</select>';
+    return $html;
+}, 1, 3);

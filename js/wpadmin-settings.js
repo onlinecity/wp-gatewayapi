@@ -22,6 +22,8 @@ jQuery(function($) {
 
         handleRecipientFieldsReset();
         handleRecipientFieldAddRow();
+
+        handleShortcodeGenerator();
     }
 
     function handleTooltips()
@@ -55,14 +57,14 @@ jQuery(function($) {
     function handleToggleRecipientFormTab()
     {
         var checkbox = outer.find('input[name="gwapi_enable_ui"]');
-        var tab = outer.find('a[href="#recipients-fields"]');
-        var inner = outer.find('.tab-inner .tab[data-tab="recipients-fields"]');
+        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"]');
+        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"]');
 
         checkbox.change(function() {
             if ($(this).is(':checked')) {
-                tab.removeClass('hidden');
+                tabs.removeClass('hidden');
             } else {
-                tab.addClass('hidden');
+                tabs.addClass('hidden');
             }
         }).change();
     }
@@ -181,6 +183,54 @@ jQuery(function($) {
             row.find('input,textarea,select').prop('disabled', false);
             row.appendTo(fields);
         });
+    }
+
+    function handleShortcodeGenerator()
+    {
+        var outer = $('#buildShortcodeTab');
+
+        var updateShortcode = function() {
+            var action = outer.find('[name="action"]:checked').val();
+
+            // send sms enables more UI
+            if (action == 'send_sms') {
+                $('#shortcodeSendSms').removeClass('hidden');
+            } else {
+                $('#shortcodeSendSms').addClass('hidden');
+            }
+
+            // generate the shortcode
+            var ss = '[gwapi action="'+action+'"';
+
+
+            // groups?
+            var groups = outer.find('[name=groups]').val();
+            if (groups && groups.length) {
+                ss += ' groups="'+groups.join(',')+'"'
+            }
+
+            // editable groups?
+            if (outer.find('[name=editable]').is(':checked')) {
+                ss += ' edit-groups=1';
+            }
+
+            // send sms?
+            if (action == 'send_sms') {
+                if (outer.find('[name=sender]').is(':checked')) ss += ' edit-sender=1';
+                if (outer.find('[name=sendtime]').is(':checked')) ss += ' edit-sendtime=1';
+            }
+
+            // reCAPTCHA?
+            if (outer.find('[name="recaptcha"]').is(':checked')) {
+                ss += ' recaptcha=1'
+            }
+
+
+            ss +=']';
+            outer.find('code').text(ss);
+        };
+
+        outer.on('change', 'input,select,textarea', updateShortcode);
     }
 
     initialize();
