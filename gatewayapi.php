@@ -43,6 +43,7 @@ add_action('init', function () {
         include "$D/inc/tax_recipient.php";
         include "$D/inc/recipient_forms.php";
         include "$D/inc/validation.php";
+        include "$D/inc/css_js.php";
 
         if (!is_admin()) {
             include "$D/inc/shortcode.php";
@@ -53,7 +54,6 @@ add_action('init', function () {
     if (!current_user_can('edit_others_posts')) return;
 
     include "$D/inc/options.php";
-    include "$D/inc/css_js.php";
 
     if (get_option('gwapi_enable_ui')) {
         include "$D/inc/cpt_recipient_ui.php";
