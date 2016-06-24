@@ -116,7 +116,7 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
                 </label>
 
                 <input type="number" name="gwapi[single_recipient][number]"
-                       placeholder="Phone number - digits only"
+                       placeholder="<?= esc_attr(__('Phone number - digits only', 'gwapi')); ?>"
                        id="recipient_number">
             </div>
 

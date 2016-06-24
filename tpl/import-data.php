@@ -20,7 +20,7 @@
     <tr>
         <th>&nbsp;</th>
         <td>
-            <button class="button button-primary button-large" type="submit"><?php _e('Analyze data'); ?></button>
+            <button class="button button-primary button-large" type="submit"><?php _e('Analyze data', 'gwapi'); ?></button>
         </td>
     </tr>
     </tbody>
