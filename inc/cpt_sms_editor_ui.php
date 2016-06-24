@@ -106,12 +106,12 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
             <div class="gwapi-star-errors"></div>
 
             <div class="field-group">
-                <label for="recipient_cc"><?php _e('Country code', 'gwapi') ?></label>
+                <label for="recipient_cc" class="control-label"><?php _e('Country code', 'gwapi') ?></label>
                 <select name="gwapi[single_recipient][cc]" id="recipient_cc"></select>
             </div>
 
             <div class="field-group">
-                <label for="recipient_number">
+                <label for="recipient_number" class="control-label">
                     <?php _e('Phone number', 'gwapi') ?>
                 </label>
 
@@ -121,7 +121,7 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
             </div>
 
             <div class="field-group">
-                <label for="recipient_name"><?php _e('Name (optional)', 'gwapi'); ?></label>
+                <label for="recipient_name" class="control-label"><?php _e('Name (optional)', 'gwapi'); ?></label>
                 <input type="text" name="gwapi[single_recipient][name]" id="recipient_name">
             </div>
 
@@ -219,9 +219,11 @@ function _gwapi_sms_message(WP_Post $post)
                 <div>
                     <p><?php _e('Writing one of the following tags (including both %-signs) will result in each recipient receiving a personalized text:', 'gwapi'); ?></p>
                     <ul>
-                        <li>
-                            <strong>%NAME%</strong> - <?php _e('Name of the recipient', 'gwapi'); ?>
-                        </li>
+                        <?php foreach(gwapi_all_tags() as $tag=>$description): ?>
+                            <li>
+                                <strong><?=esc_html($tag);?></strong> - <?= esc_html($description); ?>
+                            </li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
             </td>
@@ -301,13 +303,12 @@ function _gwapi_sms_edit_save($ID)
     if (isset($call_more_than_once) && $call_more_than_once) return;
     $call_more_than_once = true;
 
-
     if (!isset($_POST['gwapi']) || !$_POST['gwapi']) return;
     $data = $_POST['gwapi'];
 
     // sms meta data
-    if (isset($data['sender'])) update_post_meta($ID, 'sender', $data['sender']);
-    if (isset($data['message'])) update_post_meta($ID, 'message', $data['message']);
+    if (isset($data['sender']))   update_post_meta($ID, 'sender', $data['sender']);
+    if (isset($data['message']))  update_post_meta($ID, 'message', $data['message']);
     if (isset($data['destaddr'])) update_post_meta($ID, 'destaddr', $data['destaddr']);
 
     // sources for recipients

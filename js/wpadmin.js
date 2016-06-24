@@ -21,6 +21,7 @@ jQuery(function ($) {
 
         if (has_recipient_ui) {
             validateSmsRecipientOnPublish();
+            addFormFieldTooltips();
         }
     }
 
@@ -28,45 +29,7 @@ jQuery(function ($) {
      * Render a list of country codes into the CC-fields on the page.
      */
     function loadCountryCodes() {
-        // fetch list of country codes
-        $.get(GWAPI_PLUGINDIR + 'lib/countries/countries.min.json').done(function (countries) {
-
-            var out = $('select[name="gwapi[cc]"], #recipient_cc');
-            var cur_value = out.val();
-            out.empty();
-
-            // create opt-groups
-            var optgroups = {};
-            _.each(countries.continents, function (name, cont_c) {
-                optgroups[cont_c] = $('<optgroup>').attr('label', name);
-            });
-
-            // add countries
-            var countriesOrdered = _.sortBy(countries.countries, 'name');
-            _.each(countriesOrdered, function (country) {
-                var optgroup = optgroups[country.continent];
-
-                if (!country.phone) return;
-                var ccs = country.phone.split(/,/g);
-                _.each(ccs, function (cc) {
-                    var el = $('<option>').val(country.phone).text(country.name + ' (+' + cc + ')');
-                    optgroup.append(el);
-                })
-            });
-
-            _.each(optgroups, function (optgroup) {
-                out.append(optgroup);
-            });
-
-            // try set the same value again - otherwise, default to Denmark
-            if (cur_value) out.val(Number(cur_value));
-            else out.val(45);
-
-            out.select2({
-                width: '50%'
-            });
-
-        });
+        $('select[name="gwapi[cc]"], #recipient_cc').gwapiMobileCc();
     }
 
     /**
@@ -356,6 +319,15 @@ jQuery(function ($) {
 
         var inner = $('#poststuff');
         inner.find('input,button,select,label,a').prop('readonly', true).css('pointer-events', 'none');
+    }
+
+    function addFormFieldTooltips() {
+        $('#custom_fields').find('.info.hidden').each(function() {
+            if (!$.trim($(this).text())) return;
+            var i = $('<i class="info has-tooltip">').attr({'title': $(this).text()});
+            i.insertAfter($(this));
+            i.tooltip({show: false, hide: false});
+        });
     }
 
 

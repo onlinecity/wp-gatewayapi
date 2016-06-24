@@ -38,6 +38,10 @@ body.post-type-gwapi-sms .misc-pub-section.misc-pub-visibility {
     font-size: 0.8em;
 }
 
+.gwapi-checkbox input:disabled + span {
+    opacity: 0.3;
+}
+
 /* primitive grid */
 .gwapi-row {
     margin-left: -15px;
@@ -93,14 +97,81 @@ body.post-type-gwapi-sms .misc-pub-section.misc-pub-visibility {
     margin-bottom: 15px;
 }
 
-.field-group select, .field-group input, .field-group textarea {
+.field-group select, .field-group input[type=text], .field-group input[type=email], .field-group input[type=number], .field-group input[type=url], .field-group textarea {
     width: 100%;
 }
 
-.field-group label {
+.field-group label.control-label {
     display: block;
     font-weight: bold;
     margin-bottom: 2px;
+}
+
+.field-group.label-left:after {
+    clear: both;
+    display: block;
+    height: 1px;
+    margin-top: -1px;
+    pointer-events: none;
+}
+
+.field-group.label-left .form-field .control-label {
+    float: left;
+    width: 200px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 24px;
+}
+
+.field-group.with-drag {
+    padding-left: 45px;
+    position: relative;
+    background-color: #f1f1f1;
+}
+
+.field-group.with-drag .drag-handle {
+    position: absolute;
+    width: 35px;
+    height: 100%;
+    left: 0;
+    cursor: move;
+    border: #BBBBBB solid 1px;
+    background-color: #F9F9F9;
+    background-image: url(../img/dragndrop.svg);
+    background-size: 20px 14px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.field-group.label-left .form-field {
+    clear: both;
+}
+
+.field-group.label-left .form-field .form-control {
+    margin-left: 220px;
+}
+
+.field-group.label-left .form-field .form-control button {
+    margin-top: 5px;
+}
+
+.field-group.with-decoration {
+    border: #BBBBBB solid 1px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.field-group.with-decoration.with-drag {
+    padding-left: 75px;
+}
+
+.field-group.with-decoration.with-drag .drag-handle {
+    height: calc(100% - 30px);
+    left: 15px;
+}
+
+.field-group .form-control label {
+    padding-top: 5px;
+    display: block;
 }
 
 /* remove parent-feature and slug of recipient groups */
@@ -168,4 +239,59 @@ body.post-type-gwapi-sms .row-actions .inline {
 
 #sms-recipient-manual tbody .delete-btn:hover {
     opacity: 1;
+}
+
+/* options: recipients ui */
+body.settings_page_gatewayapi .recipient-fields {
+    margin-top: 20px;
+}
+
+/* jquery ui tooltip trigger */
+i.info {
+    width: 22px;
+    height: 22px;
+    display: inline-block;
+    background-image: url(../img/info.svg);
+    opacity: 0.7;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    vertical-align: top;
+}
+
+.ui-tooltip {
+    max-width: 250px;
+    background-color: white;
+    border: 1px solid #bbbbbb;
+    padding: 8px;
+    text-align: center;
+}
+
+.wp-core-ui .button.button-danger {
+    background-color: #d00703;
+    border-color: #b50603;
+    color: white;
+}
+
+.wp-core-ui .button.button-danger:hover {
+    background-color: #e10803;
+    border-color: #c60703;
+}
+
+#custom_fields input[type=text], #custom_fields input[type=password], #custom_fields input[type=email], #custom_fields input[type=url], #custom_fields input[type=number], #custom_fields textarea, #custom_fields select {
+    width: 100%;
+}
+
+.shortcode-btn:before {
+    content: '';
+    display: inline-block;
+    width: 25px;
+    height: 22px;
+    margin-right: 10px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+    background-image: url(../img/shortcode-white.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
 }
