@@ -60,5 +60,6 @@ add_action('init', function () {
         include "$D/inc/cpt_recipient_listing_ui.php";
         include "$D/inc/cpt_sms_editor_ui.php";
         include "$D/inc/cpt_sms_listing_ui.php";
+        include "$D/inc/recipient_import.php";
     }
 }, 9);
