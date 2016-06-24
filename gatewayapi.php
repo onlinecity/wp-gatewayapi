@@ -42,6 +42,7 @@ add_action('init', function () {
         include "$D/inc/cpt_recipient.php";
         include "$D/inc/tax_recipient.php";
         include "$D/inc/recipient_forms.php";
+        include "$D/inc/cpt_recipient_ui.php";
         include "$D/inc/validation.php";
         include "$D/inc/css_js.php";
 
@@ -56,7 +57,6 @@ add_action('init', function () {
     include "$D/inc/options.php";
 
     if (get_option('gwapi_enable_ui')) {
-        include "$D/inc/cpt_recipient_ui.php";
         include "$D/inc/cpt_recipient_listing_ui.php";
         include "$D/inc/cpt_sms_editor_ui.php";
         include "$D/inc/cpt_sms_listing_ui.php";
