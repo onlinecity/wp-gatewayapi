@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.5.2
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -62,6 +62,9 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
 
 == Changelog ==
+
+= 1.1.2 =
+* Bugfix: Final step of signup failed could fail if anonymous user.
 
 = 1.1.1 =
 * Bugfix: Enqueuing of front-end scripts and CSS didn't work for guests.
