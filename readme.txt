@@ -64,9 +64,13 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 == Changelog ==
 
 = 1.1.0 =
-* Editable custom fields for recipients: Settings page now features a custom fields editor for recipient forms.
+* Editable custom fields for recipients: Settings page now features a custom fields editor for recipient forms with drag and drop re-ordering.
 * Short code generator: Possible to generate shortcodes from the backend for signup, update, unsubscribe and send SMS.
 * Tags-support for all custom fields.
+* Import subscribers, including custom fields, from spreadsheet. Support updating existing subscribers and keeps existing groups for existing subscribers.
+* Bugfix: SMS message in UI counting counted wrong for 153-160 characters long SMS and also counted some special chars wrong.
+* Bugfix: Manually added recipients %NAME%-tag didn't work.
+
 
 = 1.0.1 =
 * Cosmetical changes: A few inconsistencies has been fixed in the naming and the documentation.
