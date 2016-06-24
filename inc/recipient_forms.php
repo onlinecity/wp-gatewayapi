@@ -4,23 +4,23 @@ function _gwapi_all_recipient_fields () {
     $default_fields = [
         [
             'is_builtin' => true,
-            'name' => 'Name',
+            'name' => __('Name', 'gwapi'),
             'field_id' => 'NAME',
-            'description' => 'Full name of recipient',
+            'description' => __('Full name of recipient','gwapi'),
             'required' => true,
             'type' => 'text'
         ], [
             'is_builtin' => true,
-            'name' => 'Mobile country code',
+            'name' => __('Mobile country code', 'gwapi'),
             'field_id' => 'CC',
-            'description' => 'Mobile country code of recipient',
+            'description' => __('Mobile country code of recipient', 'gwapi'),
             'required' => true,
             'type' => 'mobile_cc'
         ], [
             'is_builtin' => true,
-            'name' => 'Mobile number',
+            'name' => __('Mobile number', 'gwapi'),
             'field_id' => 'NUMBER',
-            'description' => 'Mobile number of recipient',
+            'description' => __('Mobile number of recipient', 'gwapi'),
             'required' => true,
             'type' => 'digits'
         ]
