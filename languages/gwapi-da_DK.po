@@ -14,6 +14,826 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "X-Generator: Poedit 1.8.7\n"
 
+# wpml-name: 412b635037952ff964176c0146d880ba
+#: <div> <label> <input type="checkbox" name="sender" value="1"> <?php
+#: _e('Allow the sender name to be changed.', 'gwapi'; ?>
+msgid "Allow the sender name to be changed."
+msgstr "Tilad at afsendernavn ændres."
+
+# wpml-name: 415b4e54dc301267522e9b19752449ca
+#: <h2><?php _e('Send SMS', 'gwapi'; ?></h2> <p> <strong style="color:
+#: red"><?php _e('Warning:', ?></strong> <?php _e('Please consider that
+#: embedding this into a public part of your website enables any visitor to
+#: send SMS\'es the selected groups. This is rarely good idea. Pages utilizing
+#: shortcode should at least be password protected or limited specific user
+#: roles.', ?>
+msgid "Please consider that embedding this into a public part of your website enables any visitor to send SMS'es to the selected groups. This is rarely a good idea. Pages utilizing this shortcode should at least be password protected or be limited to specific user roles."
+msgstr "Overvej venligst at det at benytte denne formular på en reelt offentligt tilgængelig side åbner op for, at enhver besøgende kan sende SMS’er til de valgte grupper. Dette er meget sjældent en god idé. Sider som benytter denne shortcode bør som minimum kodeordsbeskytte eller sikre på andre måder."
+
+# wpml-name: 3f3e336e2f1fa10375efd923fca18b55
+#: <h2><?php _e('Send SMS', 'gwapi'; ?></h2> <p> <strong style="color:
+#: red"><?php _e('Warning:', ?></strong> <?php _e('Please consider that
+#: embedding this into a public part of your website enables any visitor to
+#: send SMS\'es the selected groups. This is rarely good idea. Pages utilizing
+#: shortcode should at least be password protected or limited specific user
+#: roles.', ?>
+msgid "Warning:"
+msgstr "Advarsel:"
+
+# wpml-name: ff739a388830f9608d8c8002b6bb31c2
+#: <div> <label> <input type="checkbox" name="editable" value="1"> <?php
+#: _e('Yes, show the list of selected groups and allow user to edit.', 'gwapi';
+#: ?>
+msgid "Yes, show the list of selected groups and allow user to edit."
+msgstr "Ja, vis listen med de udvalgte grupper og tillad at vælge til og fra."
+
+# wpml-name: 92b6936f2c23040408902cd2e385145c
+#: <p class="description"><?php _e('Select multiple groups by holding down CTRL
+#: (Windows) / CMD (Mac) while clicking.', 'gwapi'; ?></p> <p><?php _e('Would
+#: you also like to show the list of (containing only above selected gorups)
+#: and allow user pick amongst these groups? All will be per default.',
+msgid "Would you also like to show the list of groups (containing only the above selected gorups) and allow the user to pick amongst these groups? All will be selected per default."
+msgstr "Ønsker du også at vise listen af grupper (som kun indeholder de ovenfor valgte grupper) samt tillade at brugeren vælger iblandt disse grupper? Alle vil være valgt som standard."
+
+# wpml-name: 6a42ccdd27a07a5660f004946dd46803
+#: <?php endforeach; ?> </select> <p class="description"><?php _e('Select
+#: multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking.',
+#: 'gwapi'; ?></p>
+msgid "Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking."
+msgstr "Vælg flere grupper ved at holde CTRL nede (Windows) / CMD (Mac) imens du klikker til og fra."
+
+# wpml-name: ac70e4de74b0443332a173803a444b24
+#: <h2><?php _e('Groups', 'gwapi'; ?></h2> <p> <?php _e('Which group(s) should
+#: be affected? If action is signup or update, the user will added to selected
+#: groups. With "Send SMS", this groups who receive SMS.', ?>
+msgid "Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action \"Send SMS\", this is the groups who will receive the SMS."
+msgstr "Hvilke(n) gruppe(r) skal påvirkes? Hvis handlingen er tilmeld eller opdatér, vil brugeren blive tilmeldt til de valgte grupper. Er handlingen “Send SMS” så vil dette være grupperne som modtager SMS’en."
+
+# wpml-name: 30ab2fa5de3f02c55a47e544cdbcfc78
+#: <div> <label> <input type="checkbox" name="recaptcha" value="1"> <?php
+#: _e('Yes, I would like to enable reCAPTCHA on this form.', 'gwapi'; ?>
+msgid "Yes, I would like to enable reCAPTCHA on this form."
+msgstr "Ja, jeg ønsker at aktivere reCAPTCHA på denne formular."
+
+# wpml-name: da9f3919b07d18a1d1080ec6864bac61
+#: <h2><?php _e('Require CAPTCHA', 'gwapi'); ?></h2> <p> <?php _e('Would you
+#: like to use Google\'s free reCAPTCHA-service protect the form against spam
+#: bots and abuse?', ?>
+msgid "Would you like to use Google's free reCAPTCHA-service to protect the form against spam bots and abuse?"
+msgstr "Ønsker du har benytte Google’s gratis reCAPTCHA-service til at beskytte formularen imod spam-bots og andet misbrug?"
+
+# wpml-name: d7472a1eeaca42b561f43047ce9bd080
+#: <div id="captcha"> <h2><?php _e('Require CAPTCHA', 'gwapi'); ?></h2>
+msgid "Require CAPTCHA"
+msgstr "Kræv CAPTCHA"
+
+# wpml-name: 2a08fcfa2fe5add84ab008224c2bccb9
+#: <div> <label> <input type="radio" name="action" value="send_sms"> <?php
+#: _e('Send an SMS', 'gwapi'); ?>
+msgid "Send an SMS"
+msgstr "Send en SMS"
+
+# wpml-name: 5b264cf3285fb91d159b16044c57c47e
+#: <div> <label> <input type="radio" name="action" value="unsubscribe"> <?php
+#: _e('User is unsubscribed (existing recipient deleted)', 'gwapi'); ?>
+msgid "User is unsubscribed (existing recipient is deleted)"
+msgstr "Bruger er afmeldt (eksisterende modtager er slettet)"
+
+# wpml-name: 6a698edd63c590011745729f61ff9806
+#: <div> <label> <input type="radio" name="action" value="update"> <?php
+#: _e('User is updated (existing recipient updated)', 'gwapi'); ?>
+msgid "User is updated (existing recipient is updated)"
+msgstr "Bruger er opdateret (eksisterende modtager er opdateret)"
+
+# wpml-name: be5d6118d9ce05c9c31286665cdc35ae
+#: <div> <label> <input checked type="radio" name="action" value="signup">
+#: <?php _e('User is signed up (recipient created)', 'gwapi'); ?>
+msgid "User is signed up (recipient is created)"
+msgstr "Bruger er tilmeldt (modtager er oprettet)"
+
+# wpml-name: 7c70d33bbf76d42a42bb273e16b5ede9
+#: <div id="shortcodeType"> <h2><?php _e('Action of form', 'gwapi'); ?></h2>
+#: <p><?php _e('What should happen when the form is successfully submitted?',
+#: ?></p>
+msgid "What should happen when the form is successfully submitted?"
+msgstr "Hvad skal der ske når formularen er fuldt og gyldigt udfyldt?"
+
+# wpml-name: 8724f64609f0e92537db4136002ea696
+#: <div id="shortcodeType"> <h2><?php _e('Action of form', 'gwapi'); ?></h2>
+msgid "Action of form"
+msgstr "Handling i formular"
+
+# wpml-name: 0f96cb5192d2c0d8ef47f8455bfa5b29
+#: <div class="form-control"> <button type="button" class="button
+#: button-danger" data-delete="true" data-warning="<?= esc_attr(__('Are you
+#: sure that want to delete this field?', 'gwapi')); ?>"><?php _e('Delete
+#: field', 'gwapi'); ?></button>
+msgid "Delete this field"
+msgstr "Slet dette felt"
+
+# wpml-name: 6ef697f11922be2e4de0971f7d70997f
+#: <div class="form-field hidden" data-visible_on="select,radio,checkbox">
+#: <label class="control-label"> <?php _e('Choices', 'gwapi'; ?>
+msgid "Choices"
+msgstr "Muligheder"
+
+# wpml-name: 152c1bb5c996a3b102fa168966323ca1
+#: title="<?= esc_attr(__('If you wish to limit the countries available, please
+#: enter country calling codes below (one per line, no “+”-prefix).',
+#: 'gwapi')); ?>"></i> <br/> <a href="https://countrycode.org/"
+#: target="_blank"><?php _e('List of codes', 'gwapi'; ?></a>
+msgid "List of country calling codes"
+msgstr "Liste over telefon-landekode"
+
+# wpml-name: 5ef90e510046b2b04f639c94ff93dd98
+#: <div class="form-field hidden" data-visible_on="mobile_cc"> <label
+#: class="control-label"> <?php _e('Country limitation', 'gwapi'; ?>
+msgid "Country limitation"
+msgstr "Landebegrænsning"
+
+# wpml-name: f161bb11fe746ae805ac6ed705231bf9
+#: <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ?
+#: 'class="hidden"': ''; ?>> <h3><?php _e('Captcha for public forms', 'gwapi';
+#: ?></h3>
+msgid "Captcha for public forms"
+msgstr "CAPTCHA i offentlige formularer"
+
+# wpml-name: 18fc7c19e8ec29de336fd0886c78d685
+#: <th>&nbsp;</th> <td> <button class="button button-primary button-large"
+#: type="submit"><?php _e('Analyze data', 'gwapi'); ?></button>
+msgid "Analyze data"
+msgstr "Analyser data"
+
+# wpml-name: bdb434b7213f1169e4ab2adfd2ade0b2
+#: <input type="number" name="gwapi[single_recipient][number]" placeholder="<?=
+#: esc_attr(__('Phone number - digits only', 'gwapi')); ?>"
+msgid "Phone number - digits only"
+msgstr "Telefonnummer - kun tal"
+
+# wpml-name: 5cb543d0f3972752440f182a71d6d5f6
+#: </p> <p> <?php _e('Note: If any fields below are missing or out-of-date,
+#: then please click "Save changes", as this is based on the last saved
+#: version.', 'gwapi'); ?>
+msgid "Note: If any fields below are missing or out-of-date, then please click \"Save changes\", as this is based on the last saved version."
+msgstr "Bemærk: Hvis nogen af felterne mangler eller er forældede, så tryk venligst på “Gem ændringer”, da denne brugerflade baserer sig på senest gemte version."
+
+# wpml-name: a59ae993f67c612de93bafa264f252ef
+#: <div class="tab hidden" data-tab="build-shortcode" id="buildShortcodeTab">
+#: <p> <?php _e('Use the options below to build a shortcode ready for use
+#: anywhere you would like.', 'gwapi'); ?>
+msgid "Use the options below to build a shortcode ready for use anywhere you would like."
+msgstr "Brug mulighederne nedenfor for at bygge en shortcode som kan benyttes i alle indholdsfelter."
+
+# wpml-name: 205f915260f7e8910388b7236aa7ba5a
+#: <button class="button" type="button" data-add-btn>+ <?php _e('Add another
+#: field', 'gwapi'); ?></button> data-reset-btn data-warning="<?=
+#: esc_attr(__('Are you sure that want to reset default? All your field
+#: configurations above will be lost immediately with no way of recovery.',
+#: 'gwapi')); ?>"><?php _e('Reset default',
+msgid "Reset to default"
+msgstr "Nulstil til fabriksopsæt"
+
+# wpml-name: ec34f72ad6ed94ed99871a6c6a5f2843
+#: <button class="button" type="button" data-add-btn>+ <?php _e('Add another
+#: field', 'gwapi'); ?></button>
+msgid "Add another field"
+msgstr "Tilføj endnu et felt"
+
+# wpml-name: a1fa27779242b4902f7ae3bdd5c6d508
+#: <div class="form-field"> <label class="control-label"> <?php _e('Type',
+#: 'gwapi'); ?>
+msgid "Type"
+msgstr "Type"
+
+# wpml-name: f06d8d813b5a2a2fbe9229f4f1c49059
+#: <div class="form-field" data-hidden_on="hidden,radio"> <label
+#: class="control-label"> <?php _e('Required field?', 'gwapi'); ?>
+msgid "Required field?"
+msgstr "Påkrævet felt?"
+
+# wpml-name: b5a7adde1af5c87d7fd797b6245c2a39
+#: <div class="form-field"> <label class="control-label"> <?php
+#: _e('Description', 'gwapi'); ?>
+msgid "Description"
+msgstr "Beskrivelse"
+
+# wpml-name: 42aa94c0e0e2bb38cacca52539a86089
+#: <div class="form-field"> <label class="control-label"> <?php _e('Field ID',
+#: 'gwapi'); ?>
+msgid "Field ID"
+msgstr "Felt-ID"
+
+# wpml-name: 431dd749fd79693f87a78ef8d53bfecc
+#: </p> <p> <?php _e('Use the "Build Shortcode"-tab to get shortcodes required
+#: embed a signup form, update recipient, unsubscribe or simply send an SMS.',
+#: 'gwapi'); ?>
+msgid "Use the \"Build Shortcode\"-tab to get the shortcodes required to embed a signup form, update a recipient, unsubscribe or simply send an SMS."
+msgstr "Brug “Byg Shortcode”-tabben til at få den fornødne shortcode til en tilmeldingsformular, opdaterér tilmelding, afmeld eller til simpel SMS-afsendelse."
+
+# wpml-name: 4a9933543f4c059d5e7f576eb707e6c1
+#: <p> <?php _e('The fields below are available when sending SMS\'es, as well
+#: the users signs up or updates their recipient.', 'gwapi'); ?>
+msgid "The fields below are available when sending SMS'es, as well as when the users signs up or updates their recipient."
+msgstr "Felterne nedenfor er tilgængelige når man sender SMS’er, såvel som når brugeren tilmelder sig eller opdaterer deres modtager."
+
+# wpml-name: 97dd21e60fcdbd9e9d6eb916c7c14785
+#: </tr> <tr valign="top"> <th scope="row"><?php _e('ReCAPTCHA Secret key',
+#: 'gwapi'); ?></th>
+msgid "ReCAPTCHA Secret key"
+msgstr "ReCAPTCHA “Secret key”"
+
+# wpml-name: 4c3b7898e558dea1bb1d5473ae292b41
+#: <table class="form-table"> <tr valign="top"> <th scope="row"><?php
+#: _e('ReCAPTCHA Site Key', 'gwapi'); ?></th>
+msgid "ReCAPTCHA Site Key"
+msgstr "ReCAPTCHA “Site key”"
+
+# wpml-name: 3336d1c3853baa70921a18023cfa95a9
+#: <h3><?php _e('Captcha for public forms', 'gwapi'; ?></h3> <p><?php
+#: _e('reCAPTCHA is a free service from Google, which greatly reduces spam and
+#: abuse your forms.', 'gwapi'); ?></p> _e('If you would like to use reCAPTCHA
+#: on the GatewayAPI forms (signup, unsubscribe etc.), then please enter site
+#: key secret below.',
+msgid "If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, unsubscribe etc.), then please enter your site key and secret key below."
+msgstr "Hvis du ønsker at benytte reCAPTCHA på de offentligt tilgængelige GatewayAPI-formularer (tilmeld, afmeld osv.), så indtast venligst din “site key” og “secret key” nedenfor."
+
+# wpml-name: 977d419ec898a8bfa45e53a4dbda258f
+#: <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ?
+#: 'class="hidden"': ''; ?>> <h3><?php _e('Captcha for public forms', 'gwapi';
+#: ?></h3> <p><?php _e('reCAPTCHA is a free service from Google, which greatly
+#: reduces spam and abuse your forms.', 'gwapi'); ?></p>
+msgid "reCAPTCHA is a free service from Google, which greatly reduces spam and abuse from your public forms."
+msgstr "reCAPTCHA er en gratis tjeneste fra Google, som er bygget til at reducere spam-indtastninger og misbrug af dine offentlige formularer."
+
+# wpml-name: 99ceace0afb41069620552b55995e593
+#: <a href="#base" class="nav-tab"><?php _e('General settings', 'gwapi');
+#: ?></a> href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient
+#: fields', href="#build-shortcode" _e('Build Shortcode',
+msgid "Build Shortcode"
+msgstr "Byg Shortcode"
+
+# wpml-name: 057fa70d6c00597f7e428eed4e8fc978
+#: <h2 class="nav-tab-wrapper"> <a href="#base" class="nav-tab"><?php
+#: _e('General settings', 'gwapi'); ?></a> href="#recipients-fields"
+#: class="nav-tab hidden"><?php _e('Recipient fields',
+msgid "Recipient fields"
+msgstr "Modtagerfelter"
+
+# wpml-name: de62775a71fc2bf7a13d7530ae24a7ed
+#: <h2 class="nav-tab-wrapper"> <a href="#base" class="nav-tab"><?php
+#: _e('General settings', 'gwapi'); ?></a>
+msgid "General settings"
+msgstr "Generelle indstillinger"
+
+# wpml-name: 60fa9eb7fa5dce3445366886e0e02fe7
+#: <button class="button" type="button" data-add-btn>+ <?php _e('Add another
+#: field', 'gwapi'); ?></button> data-reset-btn data-warning="<?=
+#: esc_attr(__('Are you sure that want to reset default? All your field
+#: configurations above will be lost immediately with no way of recovery.',
+#: 'gwapi')); ?>"><?php _e('Reset default',
+msgid "Are you sure that you want to reset to default? All your field configurations above will be lost immediately with no way of recovery."
+msgstr "Er du sikker på at du ønsker at nulstille til fabriksopsæt? Alle dine feltindstillinger ovenfor går tabt med det samme og vil ikke kunne genskabes."
+
+# wpml-name: a4aa96713f1143aeeab3b02625da3669
+#: <div class="form-control"> <button type="button" class="button
+#: button-danger" data-delete="true" data-warning="<?= esc_attr(__('Are you
+#: sure that want to delete this field?', 'gwapi')); ?>"><?php _e('Delete
+#: field', 'gwapi'); ?></button>
+msgid "Are you sure that you want to delete this field?"
+msgstr "Er du sikker på at du ønsker at slette dette felt?"
+
+# wpml-name: d710642f30d9a2aa6303b9141c33cfb0
+#: <?php _e('Choices', 'gwapi'; ?> <i class="info has-tooltip" title="<?=
+#: esc_attr(__('Enter a single choice per line. Prefix the line with two
+#: exclamation marks (!!), to make an option selected by default.', 'gwapi'))
+#: ?>"></i>
+msgid "Enter a single choice per line. Prefix the line with two exclamation marks (!!), to make an option selected by default."
+msgstr "Indtast en enkelt valgmulighed pr. linje. Foranstil to udråbstegn (!!) på en linje, for at forhåndsvælge muligheden."
+
+# wpml-name: 85ccae0e446db53548475a451135ae2f
+#: <?php _e('Country limitation', 'gwapi'; ?> <i class="info has-tooltip"
+#: title="<?= esc_attr(__('If you wish to limit the countries available, please
+#: enter country calling codes below (one per line, no “+”-prefix).',
+#: 'gwapi')); ?>"></i>
+msgid "If you wish to limit the countries available, please enter the country calling codes below (one per line, no “+”-prefix)."
+msgstr "Hvis du ønsker at begrænse de mulige lande, så indtast deres landekoder nedenfor (én landekode pr. linje, ikke foranstillet med +)."
+
+# wpml-name: 61c9d670c9860147ca957b8a523bb751
+#: <?php _e('Required field?', 'gwapi'); ?> <i class="info has-tooltip"
+#: title="<?= esc_attr(__('Required fields must be filled when adding
+#: recipients. For multiple choice field types, at least one value picked.',
+#: 'gwapi')) ?>"></i>
+msgid "Required fields must be filled when adding recipients. For multiple choice field types, at least one value must be picked."
+msgstr "Påkrævede felter skal udfyldes når man tilmelder en modtager. For “Flere valg” felt-typer betyder påkrævet, at minimum én af mulighederne skal vælges."
+
+# wpml-name: 9de103e6bb452e3be59d333257548a01
+#: <?php _e('Description', 'gwapi'); ?> <i class="info has-tooltip" title="<?=
+#: esc_attr(__('A helpful description of what input the user is expected to put
+#: in field.', 'gwapi')) ?>"></i>
+msgid "A helpful description of what input the user is expected to put in the field."
+msgstr "En forklarende beskrivelse af hvad der forventes af brugeren ift. indtastningen."
+
+# wpml-name: 3b19bd1967f12c0c8c001a078f156142
+#: <?php _e('Field ID', 'gwapi'); ?> <i class="info has-tooltip" title="<?=
+#: esc_attr(__('This is used as the tag when sending SMS\'es, in shortcodes and
+#: meta key.', 'gwapi')) ?>"></i>
+msgid "This is used as the tag when sending SMS'es, in shortcodes and is used as the meta key."
+msgstr "Dette er brugt som tag når SMS’er afsendes, i shortcodes samt er brugt som nøgle for metafelt."
+
+# wpml-name: 01dead2f629e563489534bac2fbda11d
+#: <?php _e('Name', 'gwapi'); ?> <i class="info has-tooltip" title="<?=
+#: esc_attr(__('Shown in all pulic forms which uses this field.', 'gwapi'))
+#: ?>"></i>
+msgid "Shown in all pulic forms which uses this field."
+msgstr "Vises i alle offentlige formularer som benytter dette felt."
+
+# wpml-name: 3a5ac71571fce28f624f0401f57685f3
+#: <p><?php _e('reCAPTCHA is a free service from Google, which greatly reduces
+#: spam and abuse your public forms.', 'gwapi'); ?></p> _e('If you would like
+#: to use reCAPTCHA on the GatewayAPI forms (signup, unsubscribe etc.), then
+#: please enter site key secret below.', <p><?= strtr(__('<a href="%url%"
+#: target="_blank"><strong>Click here</strong></a> read more about signup.',
+#: 'gwapi'), ['%url%' => 'https://www.google.com/recaptcha']);
+msgid "<a href=\"%url%\" target=\"_blank\"><strong>Click here</strong></a> to read more about reCAPTCHA and signup."
+msgstr "<a href=\"%url%\" target=\"_blank\"><strong>Klik her</strong></a> for at lære mere om reCAPTCHA og for at tilmelde dig."
+
+# wpml-name: f5719f5e8fd3ac404fddd47a18063148
+#: <p> <?php $link = [':link' => '<a href="https://GatewayAPI.com"
+#: target="_blank"><strong>GatewayAPI.com</strong></a>']; ?> <?=
+#: strtr(__('Please enter your OAuth Key and Secret below. You find this
+#: information by logging into :link then navigate to <strong>Settings » API
+#: Keys</strong>.', 'gwapi'), $link);
+msgid "Please enter your OAuth Key and OAuth Secret below. You find this information by logging into :link and then navigate to <strong>Settings » API Keys</strong>."
+msgstr "Indtast venligst OAuth-nøglen og hemmeligheden nedenfor. Du finder disse oplysninger ved at logge ind i :link og derefter navigerer til <strong>Settings » API Keys</strong>."
+
+# wpml-name: bfc7a206ca05c0aa568aeb571206fc2a
+#: </tr> <tr> <th><?php _e('Updated recipients', 'gwapi'); ?></th>
+msgid "Updated recipients"
+msgstr "Opdaterede modtagere"
+
+# wpml-name: e3a8df26e64d7dd6c359645b0d4ea8cc
+#: </tr> <tr> <th><?php _e('New recipients', 'gwapi'); ?></th>
+msgid "New recipients"
+msgstr "Nye modtagere"
+
+# wpml-name: eb3fa081617be5f01b65ef1faf33fa37
+#: <tr> <th> <?php _e('Invalid rows', 'gwapi'); ?>
+msgid "Invalid rows"
+msgstr "Ugyldig række"
+
+# wpml-name: 530f488f7a9800411efc6926ab189708
+#: <tr> <th> <?php _e('Rows', 'gwapi') ?>
+msgid "Rows"
+msgstr "Rækker"
+
+# wpml-name: fa072aec56f675fa4e267c90bac014a6
+#: </th> <td> <strong style="color: red" class="status_text"><?php
+#: _e('Importing...','gwapi'); ?></strong><br />
+msgid "Importing..."
+msgstr "Importerer..."
+
+# wpml-name: 37666c6323e4f8c1aa7234989e79a87c
+#: <p> <?php _e('Your import is running. It\'s important that you do not leave
+#: this page until it has finished.' ,'gwapi'); ?>
+msgid "Your import is running. It's important that you do not leave this page until it has finished."
+msgstr "Importeringen er igang. Det er vigtigt at du ikke forlader denne side imens importen er i gang."
+
+# wpml-name: 13c6843f563ca14045c384a7b0199b1e
+#: <tr> <th> <?php _e('Your existing data', 'gwapi'); ?>
+msgid "Your existing data"
+msgstr "Din eksisterende data"
+
+# wpml-name: 5fe4434803eaa3732466278712e9d836
+#: </p> <p> <?php _e('First row must contain columns names.','gwapi'); ?>
+msgid "First row must contain columns names."
+msgstr "Første række skal indeholde kolonnenavne."
+
+# wpml-name: 13f48b06b4a58d4bc70693d7731b66be
+#: <p> <?php _e('To import your recipients, please open a spreadsheet
+#: containing at least the country code and mobile numbers of recipients. Copy
+#: all rows simply paste into big textarea below.', 'gwapi'); ?> </p>
+msgid "To import your recipients, please open a spreadsheet containing at least the country code and mobile numbers of your recipients. Copy all rows and simply paste into the big textarea below."
+msgstr "For at importere dine modtagere så åben venligst et regneark hvori du som minimum har landekode og mobilnumre på dine modtagere. Kopiér alle rækker og indsæt resultatet i det store tekstområde nedenfor."
+
+# wpml-name: 376ad62c31b67ad0ffcd4cb8ddc067cc
+#: <?php _e('At import the system compares your new data with existing, based
+#: on mobile country code and number.', 'gwapi'); ?> _e('If a recipient already
+#: exists, is overwritten not-ignored fields above.', _e('Fields which you have
+#: chosen to "Ignore", will remain untouched for existing members.',
+msgid "Fields which you have chosen to \"Ignore\", will remain untouched for existing members."
+msgstr "Felter som du har valgt at ignorere vil forblive uberørte for allerede eksisterende medlemmer."
+
+# wpml-name: 5b419efc36c23a7704dc75400ff719b5
+#: <p class="description"> <?php _e('At import the system compares your new
+#: data with existing, based on mobile country code and number.', 'gwapi'); ?>
+#: _e('If a recipient already exists, is overwritten not-ignored fields
+#: above.',
+msgid "If a recipient already exists, the recipient is overwritten with the not-ignored fields above."
+msgstr "Hvis en modtager allerede eksisterer så overskrives alle ikke-ignorerede felter på modtageren."
+
+# wpml-name: 8aa60a89d24ac9cc80268a1bb04ee97c
+#: <button class="button button-primary button-large" type="submit"><?php
+#: _e('Import', 'gwapi'); ?></button> <p class="description"> <?php _e('At
+#: import the system compares your new data with existing, based on mobile
+#: country code and number.', ?>
+msgid "At import the system compares your new data with your existing, based on the mobile country code and number."
+msgstr "Når importeringen udføres så sammenlignes dine nye modtagere med de eksisterende, ved at kigge på lande kode og mobilnummer."
+
+# wpml-name: 72d6d7a1885885bb55a565fd1070581a
+#: <th></th> <td> <button class="button button-primary button-large"
+#: type="submit"><?php _e('Import', 'gwapi'); ?></button>
+msgid "Import"
+msgstr "Importér"
+
+# wpml-name: fd038fc7f319e48f3115d92bf5bdbef9
+#: <td> <select name="columns[<?= $col; ?>]" style="width: 100%" <?= $required
+#: ? 'required' : ''; ?>> <option value="">- <?php _e('Ignore', 'gwapi'); ?>
+#: -</option>
+msgid "Ignore"
+msgstr "Ignorér"
+
+# wpml-name: 03b85b16c525c7b69568dbe5da5d148b
+#: if (isset($atts['recaptcha']) && $atts['recaptcha']) {
+#: (!get_option('gwapi_recaptcha_site_key') ||
+#: !get_option('gwapi_recaptcha_secret_key')) echo '<div class="alert
+#: alert-warning">'.__('You must enter Site key and Secret from Google
+#: reCAPTCHA on the GatewayAPI Settings-page, or disable CAPTCHA your Form
+#: shortcode.', 'gwapi').'</div>';
+msgid "You must enter Site key and Secret key from Google reCAPTCHA on the GatewayAPI Settings-page, or disable CAPTCHA on your GatewayAPI Form shortcode."
+msgstr "Du skal indtaste “Site key” og “Secret key” fra Google’s reCAPTCHA på GatewayAPI Opsæt-siden, eller slå CAPTCHA fra i den bagvedliggende shortcode."
+
+# wpml-name: a1cc4069a6207c1a3db6f920a890b063
+#: $action = isset($atts['action']) && $atts['action'] ? : null; if
+#: (!in_array($action, $valid_actions)) { echo '<div class="alert
+#: alert-warning">'.strtr(__('Invalid action specified for GatewayAPI
+#: shortcode. Must be one of: %actions%.','gwapi'), ['%actions%' => implode(",
+#: ", $valid_actions)]).'</div>';
+msgid "Invalid action specified for GatewayAPI shortcode. Must be one of: %actions%."
+msgstr "Ugyldig handling valgt for GatewayAPI Shortcode. Det skal være en af: %actions%."
+
+# wpml-name: 6f4d507ec26c3d1785376f5ca7d983bb
+#: switch($status_code) { case 'is_sent': echo '<div class="alert
+#: alert-success">'.__('Your SMS has been queued for delivery and should arrive
+#: shortly.', 'gwapi').'</div>';
+msgid "Your SMS has been queued for delivery and should arrive shortly."
+msgstr "Din SMS er sat i kø til levering og bør ankomme om kort tid."
+
+# wpml-name: a76483d7286ffbd53a010f1904231f80
+#: <div id="shortcodeSendSms" class="hidden"> <h2><?php _e('Send SMS', 'gwapi';
+#: ?></h2>
+msgid "Send SMS"
+msgstr "Send SMS"
+
+# wpml-name: 1a150c03f2ad2053f62d2abd5757663a
+#: 'field_id' => 'MESSAGE', 'required' 1, 'description' __('Please enter your
+#: message here.','gwapi')
+msgid "Please enter your message here."
+msgstr "Indtast venligst din besked her."
+
+# wpml-name: 7796c5baeb80245dc7cc73be6f746804
+#: 'name' => __('Sender', 'gwapi'), 'field_id' 'SENDER', 'description'
+#: __('Sender of the SMS. Either up to 11 characters or 15 digits
+#: only.','gwapi')
+msgid "Sender of the SMS. Either up to 11 characters or up to 15 digits only."
+msgstr "Afsender af SMS. Indtast enten op til 11 tegn eller op til 15 tal."
+
+# wpml-name: a765cf4ae6c6473beec13fbe8bbe933c
+#: delete_transient('gwapi_confirmation_code_'.$msisdn); echo '<div
+#: class="alert alert-success">'.__('You have been unsubscribed.',
+#: 'gwapi').'</div>';
+msgid "You have been unsubscribed."
+msgstr "Du er hermed afmeldt."
+
+# wpml-name: e816c8311eaf6544a18d8c5f2999fc3d
+#: set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4); $status =
+#: gwapi_send_sms( strtr(__('Unsubscribe confirmation code: %code%', 'gwapi'),
+#: ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '',
+#: 'DISPLAY' );
+msgid "Unsubscribe confirmation code: %code%"
+msgstr "Bekræftelseskode for afmeldelse: %code%"
+
+# wpml-name: 4182c8f19d40c7ca236a5f4f83faeb6b
+#: echo '<input type="hidden" name="gwapi_action" value="unsubscribe_login">';
+#: _gwapi_shortcode_render_recipient_login($atts); $action_text =
+#: __('Unsubscribe','gwapi');
+msgid "Unsubscribe"
+msgstr "Afmeld"
+
+# wpml-name: f4186cc8460e8c4c19c4465f22906530
+#: _gwapi_save_recipient_groups($recipient->ID, $_POST['gwapi'], $atts); echo
+#: '<div class="alert alert-success">'.__('Your changes has been saved. Thank
+#: you for keeping your subscription up-to-date.', 'gwapi').'</div>';
+msgid "Your changes has been saved. Thank you for keeping your subscription up-to-date."
+msgstr "Dine ændringer er gemt. Tak for at du holder din tilmelding opdateret."
+
+# wpml-name: daa6b483e9f6ca081ec7e0b4a352f9e9
+#: echo '<input type="hidden" name="gwapi[number]"
+#: value="'.esc_attr($_POST['gwapi']['number']).'">'; $action_text = __('Save
+#: changes', 'gwapi');
+msgid "Save changes"
+msgstr "Gem ændringer"
+
+# wpml-name: 0e47baf01d8d97f3fdc2571b3ee34b47
+#: // verify the SMS code if
+#: (!get_transient('gwapi_confirmation_code_'.$msisdn) ||
+#: get_transient('gwapi_confirmation_code_'.$msisdn) !=
+#: preg_replace('/\D+/','', $_POST['gwapi']['sms_verify'])) { return new
+#: WP_Error('sms_code_wrong', __('The you entered is incorrect. Please try
+#: again.', 'gwapi'));
+msgid "The code you entered is incorrect. Please try again."
+msgstr "Koden du har indtastet er ugyldig. Prøv venligst igen."
+
+# wpml-name: de7241bde4e4d888e078551a6de4b48c
+#: if (isset($atts['recaptcha']) && $atts['recaptcha']) {
+#: (!get_transient('valid_recaptcha_'.$msisdn) ||
+#: get_transient('valid_recaptcha_'.$msisdn) !=
+#: $_POST['gwapi']['security_check']) return new
+#: WP_Error('recaptcha_reconfirm_missing', __('Your request is missing or has
+#: invalid technical security identity information. This may happen you have
+#: waited for more than 4 hours been doing other subscription related actions
+#: in tabs/windows.', 'gwapi'));
+msgid "Your request is missing or has invalid technical security identity information. This may happen if you have waited for more than 4 hours or has been doing other subscription related actions in other tabs/windows."
+msgstr "Din anmodning mangler eller har ugyldig teknisk sikkerhedsinformation. Dette kan skyldes at du har ventet i mere end 4 timer eller har lavet lignende ændringer på din tilmelding i et andet vindue/anden enhed."
+
+# wpml-name: 463ea884a12cc2164065559e1941a634
+#: $action_text = __('Confirm','gwapi'); } else { return new
+#: WP_Error('recipient_not_found', __('We could not find you in our database.
+#: Maybe made a typo or maybe are subscribed with this number?', 'gwapi'));
+msgid "We could not find you in our database. Maybe you made a typo or maybe you are not subscribed with this number?"
+msgstr "Vi kunne ikke slå dig op i databasen. Måske har du lavet en slåfejl eller måske er du ikke tilmeldt med dette nummer?"
+
+# wpml-name: a0bfb8e59e6c13fc8d990781f77694fe
+#: echo '<input type="hidden" name="gwapi_action" value="update_form">';
+#: _gwapi_shortcode_render_recipient_login_confirm($atts, $recipient);
+#: $action_text = __('Continue','gwapi');
+msgid "Continue"
+msgstr "Fortsæt"
+
+# wpml-name: 612f076bf033a69efe0a1d8e933c3c28
+#: _gwapi_shortcode_render_recipient_login($atts); $action_text =
+#: __('Unsubscribe','gwapi'); $action_note __('Note: A code will be sent by SMS
+#: to the mobile number specified, which is used verify your ownership.',
+#: 'gwapi');
+msgid "Note: A code will be sent by SMS to the mobile number specified, which is used to verify your ownership."
+msgstr "Bemærk: En kode vil blive afsendt pr. SMS til mobilnummeret du har indtastet. Denne benyttes til at bekræfte at du besidder telefonnummeret."
+
+# wpml-name: bffe9a3c9a7e00ba00a11749e022d911
+#: echo '<input type="hidden" name="gwapi_action" value="update_login">';
+#: _gwapi_shortcode_render_recipient_login($atts); $action_text = __('Log
+#: in','gwapi');
+msgid "Log in"
+msgstr "Log ind"
+
+# wpml-name: 8174aae8d601638fcc4a87909de9aee4
+#: _gwapi_save_recipient_groups($ID,
+#: get_transient('gwapi_subscriber_'.$msisdn), $atts); echo '<div class="alert
+#: alert-success">'.__('You have been succesfully subscribed. Thank you signing
+#: up.', 'gwapi').'</div>';
+msgid "You have been succesfully subscribed. Thank you signing up."
+msgstr "Du har tilmeldt dig med succes. Tak for din tilmelding."
+
+# wpml-name: eb0c9ec47f7a04a6bf49ea6a20ada6a6
+#: $code = $_POST['gwapi_sms_code']; $confirm
+#: get_transient('gwapi_confirmation_code_'.$msisdn); if (!$confirm || !=
+#: $code) return new WP_Error('invalid_sms_code', __('It seems the SMS code you
+#: are using to authorize this update, has expired. Please start over and try
+#: again.', 'gwapi'));
+msgid "It seems the SMS code you are using to authorize this update, has expired. Please start over and try again."
+msgstr "Det ser ud til at den SMS-kode du benytter, er udløbet. Prøv venligst igen."
+
+# wpml-name: 70d9be9b139893aa6c69b5e77e614311
+#: ], $recipient); $action_text = __('Confirm','gwapi');
+msgid "Confirm"
+msgstr "Bekræft"
+
+# wpml-name: b530f350ded9155e6fda1bb89c409ffd
+#: $status = gwapi_send_sms( strtr(__('Unsubscribe confirmation code: %code%',
+#: 'gwapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn,
+#: '', 'DISPLAY' ); if (is_wp_error($status)) return new WP_Error('sms_fail',
+#: __('Sending of the verification code by SMS failed. Please try again later
+#: or contact website owner.', 'gwapi'));
+msgid "Sending of the verification code by SMS failed. Please try again later or contact the website owner."
+msgstr "Afsendelse af verifikations-SMS fejlede. Prøv venligst igen senere eller tag kontakt til websitets ejer."
+
+# wpml-name: fc492dd2023b11bc31ac43bc788c310d
+#: set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4); $status =
+#: gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gwapi'),
+#: ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '',
+#: 'DISPLAY' );
+msgid "Your confirmation code: %code%"
+msgstr "Din bekræftelseskode: %code%"
+
+# wpml-name: 56bdecf4f430f149d66ad9720fb6b1a6
+#: $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'],
+#: $_POST['gwapi']['number']); $msisdn preg_replace('/\D+/', '',
+#: $_POST['gwapi']['cc'].$_POST['gwapi']['number']); if
+#: (!is_wp_error($recipient)) return new WP_Error('already_exists',__('You are
+#: already subscribed with the phone number specified.','gwapi'));
+msgid "You are already subscribed with the phone number specified."
+msgstr "Du er allerede tilmeldt på det angivne telefonnummer."
+
+# wpml-name: fa92cac6d66b88785db58f715d4a69cb
+#: _gwapi_shortcode_render_recipient_form($atts); $action_text = __('Sign up',
+#: 'gwapi'); $action_note __('Note: A code will be sent by SMS to the mobile
+#: number specified, confirm ownership.',
+msgid "Note: A code will be sent by SMS to the mobile number specified, to confirm the ownership."
+msgstr "Bemærk: En kode afsendes pr. SMS til mobilnummeret du har indtastet, som bekræfter ejerskabet."
+
+# wpml-name: d9776f0775997b2e698c6975420b5c5d
+#: echo '<input type="hidden" name="gwapi_action" value="signup_confirm_sms"
+#: />'; _gwapi_shortcode_render_recipient_form($atts); $action_text = __('Sign
+#: up', 'gwapi');
+msgid "Sign up"
+msgstr "Tilmeld"
+
+# wpml-name: 7f485baff94ded814bfa3394c7842996
+#: 'name' => 'Confirmation code', 'field_id' 'sms_verify', 'description'
+#: __('Please enter the code that you have just received by SMS.', 'gwapi'),
+msgid "Please enter the code that you have just received by SMS."
+msgstr "Indtast venligst koden du netop har modtaget pr. SMS."
+
+# wpml-name: cf4d94e6ff4a6ccafb280e6f5cf4e889
+#: <div class="wrap"> <form method="post"> <h1><?= __('Import recipients',
+#: 'gwapi'); ?></h1>
+msgid "Import recipients"
+msgstr "Importér modtagere"
+
+# wpml-name: 234190f33951d76b66fd0d4a9559e663
+#: add_action('admin_menu', function () {
+#: add_submenu_page('edit.php?post_type=gwapi-sms', __('Import recipients from
+#: spreadsheet', 'gwapi'), recipients', 'edit_posts', 'gwapi_import',
+msgid "Import recipients from spreadsheet"
+msgstr "Importér modtagere fra regneark"
+
+# wpml-name: 73c7fbc3685eb59c3861b7d8aa6f42b8
+#: 'type' => 'checkbox', 'name' __('Groups', 'gwapi'), 'description'
+#: $atts['action'] == 'send_sms' ? __('Select the groups you would like to send
+#: to. If none is selected, SMS will be sent everyone.', 'gwapi') : with has
+#: content that receive.',
+msgid "Select the groups with has the content that you would like to receive."
+msgstr "Vælg de grupper som du ønsker at tilmelde dig."
+
+# wpml-name: c2fd5fb872c659303579fe50e1bb2867
+#: 'type' => 'checkbox', 'name' __('Groups', 'gwapi'), 'description'
+#: $atts['action'] == 'send_sms' ? __('Select the groups you would like to send
+#: to. If none is selected, SMS will be sent everyone.', 'gwapi') : with has
+#: content that receive.',
+msgid "Select the groups you would like to send to. If none is selected, the SMS will be sent to everyone."
+msgstr "Vælg de grupper du ønsker at sende til. Hvis ingen er valgt vil SMS’en blive sendt til samtlige modtagere."
+
+# wpml-name: a8cc57c386f51a0a14059824d35e6cc2
+#: __('Special', 'gwapi') => [ 'mobile_cc' __('Mobile country code','gwapi'),
+#: 'hidden' __('Hidden (only visible in backend)','gwapi')
+msgid "Hidden (only visible in backend)"
+msgstr "Skjult (kun synlig i backend)"
+
+# wpml-name: b4c2b550635fe54fd29f2b64dfaca55d
+#: 'checkbox' => __('Checkbox (multiple)','gwapi') ], __('Special', 'gwapi') [
+msgid "Special"
+msgstr "Specielt"
+
+# wpml-name: 7ada3c7d64be1ee70356eddfdedfa7ed
+#: 'select' => __('Select (single)','gwapi'), 'radio' __('Radio 'checkbox'
+#: __('Checkbox (multiple)','gwapi')
+msgid "Checkbox (multiple)"
+msgstr "Checkboks (flere valg)"
+
+# wpml-name: 320d5b717366b529425d21138ae877fe
+#: __('Multiple choices', 'gwapi') => [ 'select' __('Select (single)','gwapi'),
+#: 'radio' __('Radio
+msgid "Radio (single)"
+msgstr "Radio (enkeltvalg)"
+
+# wpml-name: 9989e24d15572aa4cd7d7c3f7eb22fcb
+#: ], __('Multiple choices', 'gwapi') => [ 'select' __('Select
+#: (single)','gwapi'),
+msgid "Select (single)"
+msgstr "Dropdown (enkeltvalg)"
+
+# wpml-name: 85a0a8ce7422ae05ee2f2fcbf925162c
+#: 'password_plain' => __('Insecure (visible in backend and SMS\'es)',
+#: 'gwapi'), ], __('Multiple choices', 'gwapi') [
+msgid "Multiple choices"
+msgstr "Flere muligheder"
+
+# wpml-name: fbe978908d26aa1f4c97f8af5a5b8fac
+#: 'digits' => __('Digits only', 'gwapi'), 'textarea' __('Textarea',
+#: 'password_plain' __('Insecure (visible in backend and SMS\'es)',
+msgid "Insecure (visible in backend and SMS'es)"
+msgstr "Usikker (synlig i backend og i SMS’er)"
+
+# wpml-name: b5d4d25fe3fa9f8263b5f279a372b709
+#: 'url' => __('URL', 'gwapi'), 'digits' __('Digits only', 'textarea'
+#: __('Textarea',
+msgid "Textarea"
+msgstr "Tekstområde"
+
+# wpml-name: 33c2b7cd50c5ef2d69cc52776d219723
+#: 'email' => __('E-mail', 'gwapi'), 'url' __('URL', 'digits' __('Digits only',
+msgid "Digits only"
+msgstr "Kun tal"
+
+# wpml-name: e6b391a8d2c4d45902a23a8b6585703d
+#: 'text' => __('Plain text', 'gwapi'), 'email' __('E-mail', 'url' __('URL',
+msgid "URL"
+msgstr "URL"
+
+# wpml-name: 1e884e3078d9978e216a027ecd57fb34
+#: __('Text', 'gwapi') => [ 'text' __('Plain text', 'gwapi'), 'email'
+#: __('E-mail',
+msgid "E-mail"
+msgstr "E-mail"
+
+# wpml-name: f39a0720a929097afa9db4505cdf9669
+#: $types = [ __('Text', 'gwapi') => 'text' __('Plain text', 'gwapi'),
+msgid "Plain text"
+msgstr "Simpelt tekstfelt"
+
+# wpml-name: 9dffbf69ffba8bc38bc4e01abf4b1675
+#: { $types = [ __('Text', 'gwapi') =>
+msgid "Text"
+msgstr "Tekst"
+
+# wpml-name: 60bfb9d7cfc2062696b91c0bcf758d9f
+#: 'name' => __('Mobile number', 'gwapi'), 'field_id' 'NUMBER', 'description'
+#: number of recipient',
+msgid "Mobile number of recipient"
+msgstr "Mobilnummer på modtager"
+
+# wpml-name: b1c66f49d3394b735794a0737debb69f
+#: 'name' => __('Mobile country code', 'gwapi'), 'field_id' 'CC', 'description'
+#: code of recipient',
+msgid "Mobile country code of recipient"
+msgstr "Mobil landekode på modtager"
+
+# wpml-name: 9cd471e492a821e43309db48d106cc38
+#: ], __('Special', 'gwapi') => [ 'mobile_cc' __('Mobile country
+#: code','gwapi'),
+msgid "Mobile country code"
+msgstr "Mobil landekode"
+
+# wpml-name: a167de1d83362466c68c91e56af67fbd
+#: 'name' => __('Name', 'gwapi'), 'field_id' 'NAME', 'description' __('Full
+#: name of recipient','gwapi'),
+msgid "Full name of recipient"
+msgstr "Fuldt navn på modtager"
+
+# wpml-name: 58e74304ed3cadc52a8cb6e28a2e263b
+#: ]); if (!$q->have_posts()) { return new WP_Error(__('Not found in
+#: database.', 'gwapi'));
+msgid "Not found in database."
+msgstr "Ikke fundet i databasen."
+
+# wpml-name: 6bd434f93132548bb06d7846a6208f00
+#: $cc = preg_replace('/\D+/','', $cc); if (!$number || !$cc) return new
+#: WP_Error(__('Missing/invalid country code or number.', 'gwapi'));
+msgid "Missing/invalid country code or number."
+msgstr "Manglende/ugyldig landekode eller nummer."
+
+# wpml-name: ef28ba1810594c8fa3e6dc843cf48268
+#: value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>> <abbr
+#: title="<?php esc_attr_e('Message is displayed immediately and usually not
+#: saved in the normal message inbox. Also knows as a Flash SMS.', 'gwapi');
+#: ?>"><?php _e('Display SMS', ?></abbr>
+msgid "Message is displayed immediately and usually not saved in the normal message inbox. Also knows as a Flash SMS."
+msgstr "Beskeden vises med det samme og gemmes typisk ikke i indbakken. Kendes også som en “Flash SMS”."
+
+# wpml-name: 58a72f178fb0e2badf9604233310a481
+#: value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>> <abbr
+#: title="<?php esc_attr_e('Message is displayed immediately and usually not
+#: saved in the normal message inbox. Also knows as a Flash SMS.', 'gwapi');
+#: ?>"><?php _e('Display SMS', ?></abbr>
+msgid "Display SMS"
+msgstr "Display SMS"
+
+# wpml-name: 6adf97f83acf6453d4a6a4b1070f3754
+#: $value = unserialize($value); if (!$value) return __('None', 'gwapi');
+msgid "None"
+msgstr "Ingen"
+
+# wpml-name: 665ce2ce2901266bb38a39b8845d647c
+#: if (!get_option('gwapi_key') || !get_option('gwapi_secret')) {
+#: update_post_meta($ID, 'api_status', 'bail'); $no_api_error = strtr(__("You
+#: have not entered your OAuth key and secret yet. Go to :link complete the
+#: setup.", 'gwapi'), [ ':link' => '<a
+#: href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings',
+#: 'gwapi').'</a>' ]);
+msgid "You have not entered your OAuth key and secret yet. Go to :link to complete the setup."
+msgstr "Du har ikke indtastet din OAuth-nøgle og hemmelighed endnu. Gå til :link for at afslutte opsættet."
+
+# wpml-name: 7b9324fd1b6cc33da6065e0338fd1828
+#: add_action('admin_init', function () { add_meta_box('recipient', __('Contact
+#: information', 'gwapi'), '_gwapi_recipient', 'gwapi-recipient', 'normal',
+#: 'default'); add_meta_box('custom_fields', __('Custom fields',
+#: '_gwapi_recipient_fields',
+msgid "Custom fields"
+msgstr "Selvdefinerede felter"
+
+# wpml-name: d1457170f205323fa446500f864338e7
+#: ], [ 'is_builtin' => true, 'name' __('Mobile number', 'gwapi'),
+msgid "Mobile number"
+msgstr "Mobilnummer"
+
 # wpml-name: 87849e213720ed50cb903cb8fe2c14af
 #: </label> <p class="help-block"> <?php _e('Must consist of either 11
 #: characters or 15 digits.', 'gwapi'); ?>
@@ -34,7 +854,7 @@ msgid "Enabling this adds a new menu for sending SMS'es and listing sent SMS'es,
 msgstr "Når du aktiverer dette, tilføjes en ny menu hvor du kan afsende SMS’er, se afsendte SMS’er, samt opbygge et adressekartotek."
 
 # wpml-name: 4799935bc04e8a30772e15833e4f87c0
-#: <label> <input type="checkbox" name="gwapi_enable_ui" <?=
+#: <input type="checkbox" name="gwapi_enable_ui" <?=
 #: get_option('gwapi_enable_ui') ? 'checked' : ''; ?>> <?php _e('Yes, enable
 #: the SMS sending UI', 'gwapi'); ?>
 msgid "Yes, enable the SMS sending UI"
@@ -58,11 +878,6 @@ msgid "OAuth Key"
 msgstr "OAuth Nøgle"
 
 # wpml-name: 01d07562762ad117b3825328b89cebde
-#: <p> <?php $link = [':link' => '<a href="https://GatewayAPI.com"
-#: target="_blank"><strong>GatewayAPI.com</strong></a>']; ?> <?=
-#: strtr(__('Please enter your OAuth Key and Secret below. You find this
-#: information by logging into :link then navigate to <strong>Settings »
-#: Keys</strong>.', 'gwapi'), $link);
 msgid "Please enter your OAuth Key and OAuth Secret below. You find this information by logging into :link and then navigate to <strong>Settings » OAuth Keys</strong>."
 msgstr "Indtast venligst din OAuth-nøgle og OAuth-hemmelighed nedenfor. Du finder disse oplysninger ved at logge ind i :link og navigere hen til <strong>Settings » OAuth Keys</strong>."
 
@@ -173,8 +988,7 @@ msgid "Edit group"
 msgstr "Redigér gruppe"
 
 # wpml-name: a37ede293936e29279ed543129451ec3
-#: 'name' => __('Recipient groups', 'gwapi'), 'singular_name' group',
-#: 'menu_name' __('Groups',
+#: <div id="shortcodeGroups"> <h2><?php _e('Groups', 'gwapi'; ?></h2>
 msgid "Groups"
 msgstr "Grupper"
 
@@ -186,9 +1000,9 @@ msgstr "Modtagergrupper"
 
 # wpml-name: 75c1275c6b8523bededbc40e28ff6a9f
 #: <script type="text/javascript"> var GWAPI_PLUGINDIR = <?=
-#: json_encode(plugin_dir_url(GWAPI_DIR.'/gatewayapi.php')); ?>;
-#: GWAPI_I18N_DEFAULT_ERROR json_encode(__('Sorry, but there are errors in your
-#: input. Please attend to the highlighted fields below.', 'gwapi'));?>;
+#: json_encode(_gwapi_url()); ?>; GWAPI_I18N_DEFAULT_ERROR
+#: json_encode(__('Sorry, but there are errors in your input. Please attend to
+#: the highlighted fields below.', 'gwapi'));?>;
 msgid "Sorry, but there are errors in your input. Please attend to the highlighted fields below."
 msgstr "Der er desværre fejl i din indtastning. Gå venligst de fremhævede felter nedenfor igennem."
 
@@ -199,16 +1013,12 @@ msgid "Calculated at send"
 msgstr "Udregnes ved afsendelse"
 
 # wpml-name: 8aace3ec18d83874d22850b7eee93c7d
-#: return array_merge($columns, [ 'message' => __('Message', 'gwapi'), 'sender'
-#: __('Sender',
+#: gwapi_render_recipient_field([ 'type' => 'text', 'name' __('Sender',
+#: 'gwapi'),
 msgid "Sender"
 msgstr "Afsender"
 
 # wpml-name: 162867675a6aece0349493a1ee149aa2
-#: value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>> <abbr
-#: title="<?php esc_attr_e('Message is displayed immediately and usually not
-#: saved in the normal message inbox.', 'gwapi'); ?>"><?php _e('Flash SMS',
-#: ?></abbr>
 msgid "Message is displayed immediately and usually not saved in the normal message inbox."
 msgstr "Beskeden vises med det samme og gemmes normalvis ikke i modtagerens indbakke."
 
@@ -226,8 +1036,6 @@ msgid "The current status of the SMS is:"
 msgstr "Aktuel status for SMS'en er:"
 
 # wpml-name: a2692ee4f17c618dbefd22c22a386760
-#: <ul> <li> <strong>%NAME%</strong> - <?php _e('Name of the recipient',
-#: 'gwapi'); ?>
 msgid "Name of the recipient"
 msgstr "Navn på modtager"
 
@@ -240,10 +1048,6 @@ msgid "Writing one of the following tags (including both %-signs) will result in
 msgstr "Hvis du skriver en af de følgende tags (inkludér begge %-tegn) vil hver modtager få en personlig tekst:"
 
 # wpml-name: a78f57b106cad317981e279abc394dab
-#: value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>> <abbr
-#: title="<?php esc_attr_e('Message is displayed immediately and usually not
-#: saved in the normal message inbox.', 'gwapi'); ?>"><?php _e('Flash SMS',
-#: ?></abbr>
 msgid "Flash SMS"
 msgstr "Flash SMS"
 
@@ -275,8 +1079,8 @@ msgid "No recipients manually added"
 msgstr "Ingen modtagere tilføjet manuelt"
 
 # wpml-name: 49ee3087348e8d44e1feda1917443987
-#: <th width="10%"><a class="delete-btn"></a></th> width="30%"><?php _e('Phone
-#: number', 'gwapi'); ?></th> width="60%"><?php _e('Name',
+#: <div class="form-field"> <label class="control-label"> <?php _e('Name',
+#: 'gwapi'); ?>
 msgid "Name"
 msgstr "Navn"
 
@@ -293,8 +1097,8 @@ msgid "Add recipient"
 msgstr "Tilføj modtager"
 
 # wpml-name: c459712e331804deceb572918d4670f0
-#: <div class="field-group"> <label for="recipient_name"><?php _e('Name
-#: (optional)', 'gwapi'); ?></label>
+#: <div class="field-group"> <label for="recipient_name"
+#: class="control-label"><?php _e('Name (optional)', 'gwapi'); ?></label>
 msgid "Name (optional)"
 msgstr "Navn (valgfrit)"
 
@@ -387,14 +1191,13 @@ msgid "About to send"
 msgstr "Skal til at sende"
 
 # wpml-name: ec53a8c4f07baed5d8825072c89799be
-#: add_meta_box('sms-message', __('Message', 'gwapi'), '_gwapi_sms_message',
-#: 'gwapi-sms', 'normal', 'default'); add_meta_box('sms-status', __('Status',
-#: '_gwapi_sms_status', 'side',
+#: <tr> <th> <?php _e('Status', 'gwapi'); ?>
 msgid "Status"
 msgstr "Status"
 
 # wpml-name: 4c2a8fe7eaf24721cc7a9f0175115bd4
-#: return array_merge($columns, [ 'message' => __('Message', 'gwapi'),
+#: gwapi_render_recipient_field([ 'type' => 'textarea', 'name'
+#: __('Message','gwapi'),
 msgid "Message"
 msgstr "Besked"
 
@@ -418,12 +1221,6 @@ msgid "GatewayAPI Settings"
 msgstr "GatewayAPI Opsæt"
 
 # wpml-name: f6dac0f8166b43b711c85e747158ffb8
-#: if (!get_option('gwapi_key') || !get_option('gwapi_secret')) {
-#: update_post_meta($ID, 'api_status', 'bail'); $no_api_error = strtr(__("You
-#: have not entered your credentials yet. Go to :link complete the setup.",
-#: 'gwapi'), [ ':link' => '<a
-#: href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings',
-#: 'gwapi').'</a>' ]);
 msgid "You have not entered your credentials yet. Go to :link to complete the setup."
 msgstr "Du har ikke indtastet dine adgangsoplysninger endnu. Gå til :link for at gennemføre opsætningen."
 
@@ -494,8 +1291,8 @@ msgid "Phone number"
 msgstr "Telefonnummer"
 
 # wpml-name: d5aea6257900e0b66f0d407fbbe271aa
-#: <div class="field-group"> <label for="recipient_cc"><?php _e('Country code',
-#: 'gwapi') ?></label>
+#: <div class="field-group"> <label for="recipient_cc"
+#: class="control-label"><?php _e('Country code', 'gwapi') ?></label>
 msgid "Country code"
 msgstr "Landekode"
 

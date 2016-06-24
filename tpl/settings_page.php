@@ -63,7 +63,7 @@
                 </table>
 
                 <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ? 'class="hidden"': ''; ?>>
-                    <h3>Captcha for public forms</h3>
+                    <h3><?php _e('Captcha for public forms', 'gwapi'; ?></h3>
                     <p><?php _e('reCAPTCHA is a free service from Google, which greatly reduces spam and abuse from your public forms.', 'gwapi'); ?></p>
                     <p><?php _e('If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, unsubscribe etc.), then please enter your site key and secret key below.', 'gwapi'); ?></p>
                     <p><?= strtr(__('<a href="%url%" target="_blank"><strong>Click here</strong></a> to read more about reCAPTCHA and signup.', 'gwapi'), ['%url%' => 'https://www.google.com/recaptcha']); ?></p>
@@ -210,12 +210,11 @@
 
                                 <div class="form-field hidden" data-visible_on="mobile_cc">
                                     <label class="control-label">
-                                        Country limitation
+                                        <?php _e('Country limitation', 'gwapi'; ?>
                                         <i class="info has-tooltip"
                                            title="<?= esc_attr(__('If you wish to limit the countries available, please enter the country calling codes below (one per line, no “+”-prefix).', 'gwapi')); ?>"></i>
                                         <br/>
-                                        <a href="https://countrycode.org/" target="_blank">List of country calling
-                                            codes</a>
+                                        <a href="https://countrycode.org/" target="_blank"><?php _e('List of country calling codes', 'gwapi'; ?></a>
                                     </label>
                                     <div class="form-control">
                                         <textarea name="gwapi_recipient_fields[mobile_cc_countries][]" rows="5"
@@ -225,7 +224,7 @@
 
                                 <div class="form-field hidden" data-visible_on="select,radio,checkbox">
                                     <label class="control-label">
-                                        Choices
+                                        <?php _e('Choices', 'gwapi'; ?>
                                         <i class="info has-tooltip"
                                            title="<?= esc_attr(__('Enter a single choice per line. Prefix the line with two exclamation marks (!!), to make an option selected by default.', 'gwapi')) ?>"></i>
                                     </label>
@@ -239,7 +238,7 @@
                                     <div class="form-field">
                                         <div class="form-control">
                                             <button type="button" class="button button-danger" data-delete="true"
-                                                    data-warning="<?= esc_attr(__('Are you sure that you want to delete this field?', 'gwapi')); ?>"><?php _e('Delete this field'); ?></button>
+                                                    data-warning="<?= esc_attr(__('Are you sure that you want to delete this field?', 'gwapi')); ?>"><?php _e('Delete this field', 'gwapi'); ?></button>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -268,76 +267,71 @@
                 </p>
 
                 <div id="shortcodeType">
-                    <h2>Action of form</h2>
-                    <p>What should happen when the form is successfully submitted?</p>
+                    <h2><?php _e('Action of form', 'gwapi'); ?></h2>
+                    <p><?php _e('What should happen when the form is successfully submitted?', 'gwapi'); ?></p>
                     <div>
                         <label>
-                            <input checked type="radio" name="action" value="signup"> User is signed up (recipient is created)
+                            <input checked type="radio" name="action" value="signup"> <?php _e('User is signed up (recipient is created)', 'gwapi'); ?>
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="radio" name="action" value="update"> User is updated (existing recipient is
-                            updated)
+                            <input type="radio" name="action" value="update"> <?php _e('User is updated (existing recipient is updated)', 'gwapi'); ?>
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="radio" name="action" value="unsubscribe"> User is unsubscribed (existing
-                            recipient
-                            is deleted)
+                            <input type="radio" name="action" value="unsubscribe"> <?php _e('User is unsubscribed (existing recipient is deleted)', 'gwapi'); ?>
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="radio" name="action" value="send_sms"> Send an SMS
+                            <input type="radio" name="action" value="send_sms"> <?php _e('Send an SMS', 'gwapi'); ?>
                         </label>
                     </div>
                 </div>
 
                 <div id="captcha">
-                    <h2>Require CAPTCHA</h2>
+                    <h2><?php _e('Require CAPTCHA', 'gwapi'); ?></h2>
                     <p>
-                        Would you like to use Google's free reCAPTCHA-service to protect the form against spam bots and abuse?
+                        <?php _e('Would you like to use Google\'s free reCAPTCHA-service to protect the form against spam bots and abuse?', 'gwapi'); ?>
                     </p>
                     <div>
                         <label>
-                            <input type="checkbox" name="recaptcha" value="1"> Yes, I would like to enable reCAPTCHA on this form.
+                            <input type="checkbox" name="recaptcha" value="1"> <?php _e('Yes, I would like to enable reCAPTCHA on this form.', 'gwapi'; ?>
                         </label>
                     </div>
                 </div>
 
                 <div id="shortcodeGroups">
-                    <h2>Groups</h2>
+                    <h2><?php _e('Groups', 'gwapi'; ?></h2>
                     <p>
-                        Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action "Send SMS", this is the groups who will receive the SMS.
+                        <?php _e('Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action "Send SMS", this is the groups who will receive the SMS.', 'gwapi'; ?>
                     </p>
                     <select multiple name="groups" size="5" style="width: 100%; height: auto;">
                         <?php foreach(get_terms('gwapi-recipient-groups', ['hide_empty' => false]) as $term): ?>
                             <option value="<?= $term->term_id ?>"><?= esc_html($term->name); ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="description">Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking.</p>
+                    <p class="description"><?php _e('Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking.', 'gwapi'; ?></p>
 
-                    <p>Would you also like to show the list of groups (containing only the above selected gorups) and allow the user to pick amongst these groups? All will be selected per default.</p>
+                    <p><?php _e('Would you also like to show the list of groups (containing only the above selected gorups) and allow the user to pick amongst these groups? All will be selected per default.', 'gwapi'; ?></p>
                     <div>
                         <label>
-                            <input type="checkbox" name="editable" value="1"> Yes, show the list of selected groups and allow user to edit.
+                            <input type="checkbox" name="editable" value="1"> <?php _e('Yes, show the list of selected groups and allow user to edit.', 'gwapi'; ?>
                         </label>
                     </div>
                 </div>
                 <h2></h2>
 
                 <div id="shortcodeSendSms" class="hidden">
-                    <h2>Send SMS</h2>
+                    <h2><?php _e('Send SMS', 'gwapi'; ?></h2>
                     <p>
-                        <strong style="color: red">Warning:</strong> Please consider that embedding this into a public part of your website enables
-                        any visitor to send SMS'es to the selected groups. This is rarely a good idea. Pages utilizing
-                        this shortcode should at least be password protected or be limited to specific user roles.
+                        <strong style="color: red"><?php _e('Warning:', 'gwapi'; ?></strong> <?php _e('Please consider that embedding this into a public part of your website enables any visitor to send SMS\'es to the selected groups. This is rarely a good idea. Pages utilizing this shortcode should at least be password protected or be limited to specific user roles.', 'gwapi'; ?>
                     </p>
                     <div>
                         <label>
-                            <input type="checkbox" name="sender" value="1"> Allow the sender name to be changed.
+                            <input type="checkbox" name="sender" value="1"> <?php _e('Allow the sender name to be changed.', 'gwapi'; ?>
                         </label>
                     </div>
                 </div>
