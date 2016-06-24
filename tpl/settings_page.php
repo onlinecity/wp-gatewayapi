@@ -61,6 +61,34 @@
                         </td>
                     </tr>
                 </table>
+
+                <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ? 'class="hidden"': ''; ?>>
+                    <h3>Captcha for public forms</h3>
+                    <p><?php _e('reCAPTCHA is a free service from Google, which greatly reduces spam and abuse from your public forms.', 'gwapi'); ?></p>
+                    <p><?php _e('If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, unsubscribe etc.), then please enter your site key and secret key below.', 'gwapi'); ?></p>
+                    <p><?= strtr(__('<a href="%url%" target="_blank"><strong>Click here</strong></a> to read more about reCAPTCHA and signup.', 'gwapi'), ['%url%' => 'https://www.google.com/recaptcha']); ?></p>
+
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row"><?php _e('ReCAPTCHA Site Key', 'gwapi'); ?></th>
+                            <td>
+                                <label>
+                                    <input type="text" size="50"
+                                           name="gwapi_recaptcha_site_key" value="<?= esc_attr(get_option('gwapi_recaptcha_site_key')); ?>">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row"><?php _e('ReCAPTCHA Secret key', 'gwapi'); ?></th>
+                            <td>
+                                <label>
+                                    <input type="text" size="50"
+                                           name="gwapi_recaptcha_secret_key" value="<?= esc_attr(get_option('gwapi_recaptcha_secret_key')); ?>">
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
             <!-- BASE SETTINGS -->
 
@@ -303,8 +331,8 @@
                 <div id="shortcodeSendSms" class="hidden">
                     <h2>Send SMS</h2>
                     <p>
-                        Friendly alert: Please consider that embedding this into a public part of your website enables
-                        any visitor to send SMS'es to the selected groups. This is usually not intended. Pages utilizing
+                        <strong style="color: red">Warning:</strong> Please consider that embedding this into a public part of your website enables
+                        any visitor to send SMS'es to the selected groups. This is rarely a good idea. Pages utilizing
                         this shortcode should at least be password protected or be limited to specific user roles.
                     </p>
                     <div>
@@ -312,15 +340,10 @@
                             <input type="checkbox" name="sender" value="1"> Allow the sender name to be changed.
                         </label>
                     </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" name="sendtime" value="1"> Allow send-time to be specified.
-                        </label>
-                    </div>
                 </div>
 
                 <h2><?php _e('Your shortcode'); ?></h2>
-                <code><?php _e('[gwapi action="signup"]'); ?></code>
+                <textarea disabled id="final_shortcode" rows="2" style="width: 100%; font-family: monospace">[gwapi action="signup"]</textarea>
             </div>
             <!-- SHORTCODE GENERATOR -->
 

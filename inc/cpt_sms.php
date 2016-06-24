@@ -62,22 +62,27 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
     $recipientsByID = [];
 
     // by recipient group
-    if (in_array('groups',$sources)) {
+    if (in_array('groups',$sources) || !$sources) {
         $groups = get_post_meta($ID, 'recipient_groups', true);
 
-        // fetch recipient ids and prepare for use in SQL
-        $recipientIDs = implode(',', (new WP_Query($q=[
+        $recipientsQ = [
             "post_type" => "gwapi-recipient",
             "fields" => "ids",
-            "tax_query" => [
+            "posts_per_page" => -1
+        ];
+
+        if (in_array('groups', $sources)) {
+            $recipientsQ["tax_query"] = [
                 [
                     'taxonomy' => 'gwapi-recipient-groups',
                     'field' => 'term_id',
                     'terms' => $groups
                 ]
-            ],
-            "posts_per_page" => -1
-        ]))->posts);
+            ];
+        }
+
+        // fetch recipient ids and prepare for use in SQL
+        $recipientIDs = implode(',', (new WP_Query($recipientsQ))->posts);
 
         // fetch the phone numbers
         global $wpdb; /** @var $wpdb wpdb  */
@@ -99,6 +104,25 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
                 $recipientsByNumber[$msisdn]['%NAME%'] = $row->post_title;
             }
         }
+
+        // other tags to fetch from the database
+        $tags_meta_keys = [];
+        foreach($tags as $tag) {
+            $meta_key = strtolower(trim($tag, '%'));
+            if ($meta_key == 'name') continue; // special
+            $tags_meta_keys[] = $meta_key;
+        }
+
+        if ($tags_meta_keys) {
+            $meta_keys_safe = [];
+            foreach($tags_meta_keys as $k) { $meta_keys_safe[] = $wpdb->_real_escape($k); }
+            foreach($wpdb->get_results($q="SELECT post_ID, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_ID IN ($recipientIDs) AND meta_key IN ('".implode("','",$meta_keys_safe)."')") as $row) {
+                $msisdn = $recipientsByID[$row->post_ID];
+                $tag = '%'.strtoupper($row->meta_key).'%';
+                $tag_def = gwapi_get_tag_specification($tag);
+                $recipientsByNumber[$msisdn][$tag] = apply_filters('gwapi_format_tag_'.$tag_def['type'], $row->meta_value, $tag_def);
+            }
+        }
     }
 
     // manually added
@@ -109,7 +133,16 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
         $recipientsByNumber[$msisdn] = [];
 
         if (in_array('%NAME%', $tags)) {
-            $recipientsByNumber[$msisdn]['%NAME%'] = $sr->name;
+            $recipientsByNumber[$msisdn]['%NAME%'] = $sr['name'];
+        }
+    }
+
+    // ensure everybody has all tags, at least with just empty strings
+    foreach($tags as $t) {
+        foreach($recipientsByNumber as &$n) {
+            if (!isset($n[$t])) {
+                $n[$t] = '';
+            }
         }
     }
 
@@ -125,6 +158,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
  * @internal This hook is NOT protected against multiple calls and should NOT be called directly.
  */
 add_action('gwapi_send_sms', function($ID) {
+    if (wp_is_post_revision($ID)) return; // no reason to spend any more time on a revision
     if (get_post_meta($ID, 'api_status', true) != 'about_to_send') return; // got here some wrong way
     update_post_meta($ID, 'api_status', 'sending');
 
@@ -162,7 +196,6 @@ add_action('gwapi_send_sms', function($ID) {
         update_post_meta($ID, 'api_error', 'No recipients added.');
         return;
     }
-
     $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr);
 
     if (!is_wp_error($send_req)) {
@@ -174,3 +207,13 @@ add_action('gwapi_send_sms', function($ID) {
         update_post_meta($ID, 'api_error', json_encode($send_req->get_error_message()));
     }
 });
+
+/**
+ * Checkbox-tag: Unserialize the raw database value and comma-separate the list.
+ */
+add_filter('gwapi_format_tag_checkbox', function($value, $def) {
+    $value = unserialize($value);
+
+    if (!$value) return __('None', 'gwapi');
+    return implode(', ',$value);
+}, 5, 2);

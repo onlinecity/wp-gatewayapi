@@ -55,10 +55,7 @@ function _gwapi_all_recipient_field_types($grouped = false)
             'url' => __('URL', 'gwapi'),
             'digits' => __('Digits only', 'gwapi'),
             'textarea' => __('Textarea', 'gwapi'),
-        ],
-        __('Password','gwapi') => [
-            'password_plain' => __('Insecure (visible in backend)', 'gwapi'),
-            'password_secure' => __('Secure (safely hashed)', 'gwapi')
+            'password_plain' => __('Insecure (visible in backend and SMS\'es)', 'gwapi'),
         ],
         __('Multiple choices', 'gwapi') => [
             'select' => __('Select (single)','gwapi'),
@@ -109,6 +106,7 @@ function gwapi_render_recipient_field($row, WP_Post $recipient)
     $base_html = apply_filters('gwapi_recipient_fields_base_'.$style.'_html', '', $style);
     $base_html = apply_filters('gwapi_recipient_fields_base_html', $base_html, $style);
 
+    $row = apply_filters('gwapi_recipient_row_attributes', $row);
     $field_html = apply_filters('gwapi_recipient_field_'.$row['type'].'_html', '', $recipient, $row);
     $field_html = apply_filters('gwapi_recipient_field_html', $field_html, $recipient, $row);
 
@@ -138,10 +136,11 @@ add_filter('gwapi_recipient_fields_base_div_html', function($html, $style) {
  */
 add_filter('gwapi_recipient_field_text_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    return '<input type="text" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
+    return '<input'.$disabled.' type="text" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
 }, 1, 3);
 
 /**
@@ -149,10 +148,11 @@ add_filter('gwapi_recipient_field_text_html', function($html, WP_Post $recipient
  */
 add_filter('gwapi_recipient_field_email_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    return '<input type="email" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
+    return '<input'.$disabled.' type="email" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
 }, 1, 3);
 
 /**
@@ -160,10 +160,11 @@ add_filter('gwapi_recipient_field_email_html', function($html, WP_Post $recipien
  */
 add_filter('gwapi_recipient_field_url_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    return '<input type="url" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
+    return '<input'.$disabled.' type="url" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
 }, 1, 3);
 
 /**
@@ -171,10 +172,11 @@ add_filter('gwapi_recipient_field_url_html', function($html, WP_Post $recipient,
  */
 add_filter('gwapi_recipient_field_digits_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    return '<input type="number" step="1" min="0" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
+    return '<input'.$disabled.' type="number" step="1" min="0" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" '.($required?'required':'').' />';
 }, 1, 3);
 
 /**
@@ -182,10 +184,11 @@ add_filter('gwapi_recipient_field_digits_html', function($html, WP_Post $recipie
  */
 add_filter('gwapi_recipient_field_textarea_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    return '<textarea rows="5" cols="30" name="gwapi['.strtolower($field['field_id']).']" '.($required?'required':'').'>'.esc_html($recipient_value).'</textarea>';
+    return '<textarea'.$disabled.' rows="5" cols="30" name="gwapi['.strtolower($field['field_id']).']" '.($required?'required':'').'>'.esc_html($recipient_value).'</textarea>';
 }, 1, 3);
 
 /**
@@ -193,21 +196,11 @@ add_filter('gwapi_recipient_field_textarea_html', function($html, WP_Post $recip
  */
 add_filter('gwapi_recipient_field_password_plain_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    return '<input type="'.(is_admin() ? 'text' : 'password').'" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr(is_admin() ? $recipient_value : '').'" placeholder="'.(!is_admin() && $recipient_value ? 'Enter a value to update' : '').'" '.($required?'required':'').' />';
-}, 1, 3);
-
-/**
- * Render a secure password field
- */
-add_filter('gwapi_recipient_field_password_secure_html', function($html, WP_Post $recipient, $field) {
-    $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
-    $required = isset($field['required']) && $field['required'];
-
-    return '<input type="password" name="gwapi['.strtolower($field['field_id']).']" placeholder="'.($recipient_value ? esc_attr(__('Enter a new value to update','gwapi')) : '').'" '.($required?'required':'').' />';
+    return '<input'.$disabled.' type="'.(is_admin() ? 'text' : 'password').'" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr(is_admin() ? $recipient_value : '').'" placeholder="'.(!is_admin() && $recipient_value ? 'Enter a value to update' : '').'" '.($required?'required':'').' />';
 }, 1, 3);
 
 /**
@@ -215,10 +208,11 @@ add_filter('gwapi_recipient_field_password_secure_html', function($html, WP_Post
  */
 add_filter('gwapi_recipient_field_select_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
-    $html = '<select name="gwapi['.$field_meta_key.']">';
+    $html = '<select'.$disabled.' name="gwapi['.$field_meta_key.']">';
     if (!$required) {
         $html .= '<option></option>';
     }
@@ -248,7 +242,8 @@ add_filter('gwapi_recipient_field_select_html', function($html, WP_Post $recipie
  */
 add_filter('gwapi_recipient_field_radio_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
     $choices = explode("\n", $field['choices']);
     foreach($choices as $choice) {
@@ -263,7 +258,7 @@ add_filter('gwapi_recipient_field_radio_html', function($html, WP_Post $recipien
             $is_selected = $recipient_value == $choice;
         }
 
-        $html .= '<div><label><input required type="radio" name="gwapi['.$field_meta_key.']" value="'.esc_attr($choice).'" '.($is_selected?'checked':'').'>'.esc_html($choice).'</label></div>';
+        $html .= '<div><label><input'.$disabled.' required type="radio" name="gwapi['.$field_meta_key.']" value="'.esc_attr($choice).'" '.($is_selected?'checked':'').'>'.esc_html($choice).'</label></div>';
     }
 
     return $html;
@@ -274,11 +269,12 @@ add_filter('gwapi_recipient_field_radio_html', function($html, WP_Post $recipien
  */
 add_filter('gwapi_recipient_field_checkbox_html', function($html, WP_Post $recipient, $field) {
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
     $required = isset($field['required']) && $field['required'];
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
 
     $choices = explode("\n", $field['choices']);
-    foreach($choices as $choice) {
+    foreach($choices as $i => $choice) {
         $is_selected = strpos($choice, '!!') === 0;
         if ($is_selected) {
             $choice = substr($choice, 2);
@@ -294,7 +290,9 @@ add_filter('gwapi_recipient_field_checkbox_html', function($html, WP_Post $recip
             }
         }
 
-        $html .= '<div><label><input '.($required?'required':'').' type="checkbox" name="gwapi['.$field_meta_key.'][]" value="'.esc_attr($choice).'" '.($is_selected?'checked':'').'>'.esc_html($choice).'</label></div>';
+        $key = isset($field['choices_keys']) ? $field['choices_keys'][$i] : $choice;
+
+        $html .= '<div><label><input'.$disabled.' '.($required?'required':'').' type="checkbox" name="gwapi['.$field_meta_key.'][]" value="'.esc_attr($key).'" '.($is_selected?'checked':'').'>'.esc_html($choice).'</label></div>';
     }
 
     return $html;
@@ -307,7 +305,7 @@ add_filter('gwapi_recipient_field_hidden_html', function($html, WP_Post $recipie
     if ($field['type'] == 'hidden' && !is_admin()) return $html;
 
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
 
     return '<input type="text" name="gwapi['.strtolower($field['field_id']).']" value="'.esc_attr($recipient_value).'" />';
 }, 1, 3);
@@ -317,9 +315,13 @@ add_filter('gwapi_recipient_field_hidden_html', function($html, WP_Post $recipie
  */
 add_filter('gwapi_recipient_field_mobile_cc_html', function($html, WP_Post $recipient, $field) {
     if ($field['type'] == 'hidden' && !is_admin()) return $html;
+    $disabled = isset($field['disabled']) && $field['disabled'] ? ' disabled' : '';
+
+    wp_enqueue_script('gwapi-widgets');
+    wp_enqueue_style('select2-4');
 
     $field_meta_key = strtolower($field['field_id']);
-    $recipient_value = get_post_meta($recipient->ID, strtolower($field_meta_key), true);
+    $recipient_value = apply_filters('gwapi_recipient_value', get_post_meta($recipient->ID, strtolower($field_meta_key), true), $recipient, $field);
 
     $only_ccs = "";
     if (isset($field['mobile_cc_countries']) && $field['mobile_cc_countries']) {
@@ -327,7 +329,7 @@ add_filter('gwapi_recipient_field_mobile_cc_html', function($html, WP_Post $reci
         foreach($ccs as &$cc) { $cc = (int)trim($cc); }
         $only_ccs = ' data-only-ccs="'.esc_attr(implode(',', $ccs)).'"';
     }
-    $html = '<select name="gwapi['.strtolower($field['field_id']).']" data-gwapi-mobile-cc'.$only_ccs.'>';
+    $html = '<select'.$disabled.' name="gwapi['.strtolower($field['field_id']).']" data-gwapi-mobile-cc'.$only_ccs.'>';
 
     if ($recipient_value) {
         $html .= '<option selected value="'.esc_attr($recipient_value).'">'.esc_html($recipient_value).'</option>';
@@ -336,3 +338,54 @@ add_filter('gwapi_recipient_field_mobile_cc_html', function($html, WP_Post $reci
     $html .= '</select>';
     return $html;
 }, 1, 3);
+
+add_filter('gwapi_recipient_value', function($value, $recipient, $field) {
+    if ($field['field_id'] == 'NAME') {
+        return get_the_title($recipient->ID);
+    }
+    return $value;
+}, 10, 3);
+
+function gwapi_render_recipient_editable_groups($atts, WP_Post $post = null) {
+
+    $limit_groups = isset($atts['groups']) ? explode(",", $atts['groups']) : [];
+    if (!$limit_groups) {
+        $limit_groups = get_terms([
+            'hide_empty' => false,
+            'taxonomy' => 'gwapi-recipient-groups',
+            'fields' => 'ids'
+        ]);
+    }
+
+    // render the groups as a checkbox widget
+    $data = '';
+    $groups = get_terms([
+        'taxonomy' => 'gwapi-recipient-groups',
+        'hide_empty' => false,
+        'include' => $limit_groups
+    ]);
+
+    // current groups?
+    $select_all = is_null($post);
+    $current_groups = [];
+    if ($post) {
+        $current_groups = wp_get_object_terms($post->ID, 'gwapi-recipient-groups', ['fields' => 'ids']);
+    }
+
+    $choices = [];
+    $choices_keys = [];
+    foreach($groups as $group) {
+        $select_this = $select_all ? : in_array($group->term_id, $current_groups);
+        $choices[] = ($select_this ? '!! ' : '').$group->name;
+        $choices_keys[] = $group->term_id;
+    }
+
+    gwapi_render_recipient_field([
+        'type' => 'checkbox',
+        'name' => __('Groups', 'gwapi'),
+        'description' => $atts['action'] == 'send_sms' ? __('Select the groups you would like to send to. If none is selected, the SMS will be sent to everyone.', 'gwapi') : __('Select the groups with has the content that you would like to receive.', 'gwapi'),
+        'choices' => implode("\n", $choices),
+        'choices_keys' => $choices_keys,
+        'field_id' => '_gwapi_recipient_groups'
+    ], $post?:new WP_Post(new stdClass()));
+}

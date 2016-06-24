@@ -15,6 +15,8 @@ add_action('admin_init', function () {
     register_setting('gwapi', 'gwapi_key');
     register_setting('gwapi', 'gwapi_secret');
     register_setting('gwapi', 'gwapi_enable_ui');
+    register_setting('gwapi', 'gwapi_recaptcha_site_key');
+    register_setting('gwapi', 'gwapi_recaptcha_secret_key');
     register_setting('gwapi', 'gwapi_default_sender');
     register_setting('gwapi', 'gwapi_recipient_fields');
 });

@@ -35,6 +35,7 @@
                         options.only_ccs[i] = $.trim(options.only_ccs[i]);
                     }
                 }
+                if (typeof options.only_ccs != 'object') options.only_ccs = [options.only_ccs];
                 options.only_ccs = _.invert(options.only_ccs);
             }
 

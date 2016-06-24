@@ -195,42 +195,54 @@ jQuery(function($) {
             // send sms enables more UI
             if (action == 'send_sms') {
                 $('#shortcodeSendSms').removeClass('hidden');
-            } else {
-                $('#shortcodeSendSms').addClass('hidden');
+                $('#captcha').addClass('hidden');
             }
+            else {
+                $('#shortcodeSendSms').addClass('hidden');
+                $('#captcha').removeClass('hidden');
+            }
+
+            // unsubscribe hides a lot
+            if (action == 'unsubscribe') $('#shortcodeGroups').addClass('hidden');
+            else $('#shortcodeGroups').removeClass('hidden');
+
 
             // generate the shortcode
             var ss = '[gwapi action="'+action+'"';
 
-
             // groups?
-            var groups = outer.find('[name=groups]').val();
+            var groups = outer.find('> :not(.hidden) [name=groups]').val();
             if (groups && groups.length) {
                 ss += ' groups="'+groups.join(',')+'"'
             }
 
             // editable groups?
-            if (outer.find('[name=editable]').is(':checked')) {
+            if (outer.find('> :not(.hidden) [name=editable]').is(':checked')) {
                 ss += ' edit-groups=1';
             }
 
             // send sms?
             if (action == 'send_sms') {
-                if (outer.find('[name=sender]').is(':checked')) ss += ' edit-sender=1';
-                if (outer.find('[name=sendtime]').is(':checked')) ss += ' edit-sendtime=1';
+                if (outer.find('> :not(.hidden) [name=sender]').is(':checked')) ss += ' edit-sender=1';
             }
 
             // reCAPTCHA?
-            if (outer.find('[name="recaptcha"]').is(':checked')) {
+            if (outer.find('> :not(.hidden) [name="recaptcha"]').is(':checked')) {
                 ss += ' recaptcha=1'
             }
 
-
             ss +=']';
-            outer.find('code').text(ss);
+            outer.find('#final_shortcode').text(ss);
         };
 
         outer.on('change', 'input,select,textarea', updateShortcode);
+
+        outer.parents('form').submit(function() {
+            var fields = outer.find('input,textarea,select').prop('disabled', true);
+            setTimeout(function() {
+                field.prop('disabled', false);
+            }, 1000);
+        });
     }
 
     initialize();
