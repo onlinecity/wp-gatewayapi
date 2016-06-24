@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.5.2
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -62,6 +62,11 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
 
 == Changelog ==
+
+= 1.1.0 =
+* Editable custom fields for recipients: Settings page now features a custom fields editor for recipient forms.
+* Short code generator: Possible to generate shortcodes from the backend for signup, update, unsubscribe and send SMS.
+* Tags-support for all custom fields.
 
 = 1.0.1 =
 * Cosmetical changes: A few inconsistencies has been fixed in the naming and the documentation.

@@ -63,7 +63,7 @@
                 </table>
 
                 <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ? 'class="hidden"': ''; ?>>
-                    <h3><?php _e('Captcha for public forms', 'gwapi'; ?></h3>
+                    <h3><?php _e('Captcha for public forms', 'gwapi'); ?></h3>
                     <p><?php _e('reCAPTCHA is a free service from Google, which greatly reduces spam and abuse from your public forms.', 'gwapi'); ?></p>
                     <p><?php _e('If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, unsubscribe etc.), then please enter your site key and secret key below.', 'gwapi'); ?></p>
                     <p><?= strtr(__('<a href="%url%" target="_blank"><strong>Click here</strong></a> to read more about reCAPTCHA and signup.', 'gwapi'), ['%url%' => 'https://www.google.com/recaptcha']); ?></p>
@@ -210,11 +210,11 @@
 
                                 <div class="form-field hidden" data-visible_on="mobile_cc">
                                     <label class="control-label">
-                                        <?php _e('Country limitation', 'gwapi'; ?>
+                                        <?php _e('Country limitation', 'gwapi'); ?>
                                         <i class="info has-tooltip"
                                            title="<?= esc_attr(__('If you wish to limit the countries available, please enter the country calling codes below (one per line, no “+”-prefix).', 'gwapi')); ?>"></i>
                                         <br/>
-                                        <a href="https://countrycode.org/" target="_blank"><?php _e('List of country calling codes', 'gwapi'; ?></a>
+                                        <a href="https://countrycode.org/" target="_blank"><?php _e('List of country calling codes', 'gwapi'); ?></a>
                                     </label>
                                     <div class="form-control">
                                         <textarea name="gwapi_recipient_fields[mobile_cc_countries][]" rows="5"
@@ -224,7 +224,7 @@
 
                                 <div class="form-field hidden" data-visible_on="select,radio,checkbox">
                                     <label class="control-label">
-                                        <?php _e('Choices', 'gwapi'; ?>
+                                        <?php _e('Choices', 'gwapi'); ?>
                                         <i class="info has-tooltip"
                                            title="<?= esc_attr(__('Enter a single choice per line. Prefix the line with two exclamation marks (!!), to make an option selected by default.', 'gwapi')) ?>"></i>
                                     </label>
@@ -298,45 +298,45 @@
                     </p>
                     <div>
                         <label>
-                            <input type="checkbox" name="recaptcha" value="1"> <?php _e('Yes, I would like to enable reCAPTCHA on this form.', 'gwapi'; ?>
+                            <input type="checkbox" name="recaptcha" value="1"> <?php _e('Yes, I would like to enable reCAPTCHA on this form.', 'gwapi'); ?>
                         </label>
                     </div>
                 </div>
 
                 <div id="shortcodeGroups">
-                    <h2><?php _e('Groups', 'gwapi'; ?></h2>
+                    <h2><?php _e('Groups', 'gwapi'); ?></h2>
                     <p>
-                        <?php _e('Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action "Send SMS", this is the groups who will receive the SMS.', 'gwapi'; ?>
+                        <?php _e('Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action "Send SMS", this is the groups who will receive the SMS.', 'gwapi'); ?>
                     </p>
                     <select multiple name="groups" size="5" style="width: 100%; height: auto;">
                         <?php foreach(get_terms('gwapi-recipient-groups', ['hide_empty' => false]) as $term): ?>
                             <option value="<?= $term->term_id ?>"><?= esc_html($term->name); ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="description"><?php _e('Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking.', 'gwapi'; ?></p>
+                    <p class="description"><?php _e('Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking.', 'gwapi'); ?></p>
 
-                    <p><?php _e('Would you also like to show the list of groups (containing only the above selected gorups) and allow the user to pick amongst these groups? All will be selected per default.', 'gwapi'; ?></p>
+                    <p><?php _e('Would you also like to show the list of groups (containing only the above selected gorups) and allow the user to pick amongst these groups? All will be selected per default.', 'gwapi'); ?></p>
                     <div>
                         <label>
-                            <input type="checkbox" name="editable" value="1"> <?php _e('Yes, show the list of selected groups and allow user to edit.', 'gwapi'; ?>
+                            <input type="checkbox" name="editable" value="1"> <?php _e('Yes, show the list of selected groups and allow user to edit.', 'gwapi'); ?>
                         </label>
                     </div>
                 </div>
                 <h2></h2>
 
                 <div id="shortcodeSendSms" class="hidden">
-                    <h2><?php _e('Send SMS', 'gwapi'; ?></h2>
+                    <h2><?php _e('Send SMS', 'gwapi'); ?></h2>
                     <p>
-                        <strong style="color: red"><?php _e('Warning:', 'gwapi'; ?></strong> <?php _e('Please consider that embedding this into a public part of your website enables any visitor to send SMS\'es to the selected groups. This is rarely a good idea. Pages utilizing this shortcode should at least be password protected or be limited to specific user roles.', 'gwapi'; ?>
+                        <strong style="color: red"><?php _e('Warning:', 'gwapi'); ?></strong> <?php _e('Please consider that embedding this into a public part of your website enables any visitor to send SMS\'es to the selected groups. This is rarely a good idea. Pages utilizing this shortcode should at least be password protected or be limited to specific user roles.', 'gwapi'); ?>
                     </p>
                     <div>
                         <label>
-                            <input type="checkbox" name="sender" value="1"> <?php _e('Allow the sender name to be changed.', 'gwapi'; ?>
+                            <input type="checkbox" name="sender" value="1"> <?php _e('Allow the sender name to be changed.', 'gwapi'); ?>
                         </label>
                     </div>
                 </div>
 
-                <h2><?php _e('Your shortcode'); ?></h2>
+                <h2><?php _e('Your shortcode', 'gwapi'); ?></h2>
                 <textarea disabled id="final_shortcode" rows="2" style="width: 100%; font-family: monospace">[gwapi action="signup"]</textarea>
             </div>
             <!-- SHORTCODE GENERATOR -->
