@@ -63,10 +63,17 @@ jQuery(function($) {
         checkbox.change(function() {
             if ($(this).is(':checked')) {
                 tabs.removeClass('hidden');
+                $('#enableCaptcha').removeClass('hidden');
             } else {
                 tabs.addClass('hidden');
+                $('#enableCaptcha').addClass('hidden');
             }
         }).change();
+        
+        // if changing TO another tab AFTER enabling sending UI, submit form
+        if (!checkbox.is(':checked')) {
+          tabs.click(function() { $('#submit').click(); });
+        }
     }
 
     function handleRecipientFieldSorting()
