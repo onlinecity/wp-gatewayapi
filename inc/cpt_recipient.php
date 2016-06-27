@@ -63,5 +63,5 @@ add_action('init', function () {
     add_filter('enter_title_here', function($title, $post) {
         if (get_post_type($post) !== 'gwapi-recipient') return $title;
         return __('Name of recipient', 'gwapi');
-    });
+    }, 10, 2);
 });
