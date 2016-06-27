@@ -141,7 +141,7 @@
                                             required <?= isset($af['is_builtin']) && $af['is_builtin'] ? 'disabled' : ''; ?>
                                             type="text" name="gwapi_recipient_fields[field_id][]"
                                             value="<?= esc_attr(isset($af['field_id']) ? $af['field_id'] : ''); ?>">
-                                        <?php if ($af['is_builtin'] && $af['is_builtin']): ?>
+                                        <?php if (isset($af['is_builtin']) && $af['is_builtin']): ?>
                                             <input required type="hidden" name="gwapi_recipient_fields[field_id][]"
                                                    value="<?= esc_attr(isset($af['field_id']) ? $af['field_id'] : ''); ?>">
                                         <?php endif; ?>
@@ -201,7 +201,7 @@
                                             <?php endforeach; ?>
                                         </select>
 
-                                        <?php if ($af['is_builtin'] && $af['is_builtin']): ?>
+                                        <?php if (isset($af['is_builtin']) && $af['is_builtin']): ?>
                                             <input type="hidden" name="gwapi_recipient_fields[type][]"
                                                    value="<?= esc_attr(isset($af['type']) ? $af['type'] : ''); ?>">
                                         <?php endif; ?>
