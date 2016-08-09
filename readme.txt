@@ -3,8 +3,8 @@ Contributors: onlinecity
 Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
-Tested up to: 4.5.2
-Stable tag: 1.1.2
+Tested up to: 4.6.0
+Stable tag: 1.1.5
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -26,6 +26,7 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 - Use recipient-specific tags.
 - Stores a list of sent SMS'es.
 - Track the delivery status of an SMS.
+- Automatic synchronization of recipients and WordPress users.
 
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
 
@@ -62,6 +63,18 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
 
 == Changelog ==
+
+= 1.1.5 =
+* Support for automatic synchronization of WordPress users => recipients (one-way) including all meta fields and groups.
+
+= 1.1.4 =
+* Update WordPress Extension-page.
+
+= 1.1.3 =
+Bugfixes:
+* Options page didn't load initially after update.
+* CSS/JS missing.
+* A few notices squashed.
 
 = 1.1.2 =
 * Bugfix: Final step of signup failed could fail if anonymous user.
@@ -112,3 +125,4 @@ The recipients-argument may consist of either:
   { "4512345678": { "%NAME%": "John Doe", "%GENDER%": "Male" } }
 
 *Note: SMS'es sent via `gwapi_send_sms` are NOT saved in WordPress. They are however still accessible via the traffic log on GatewayAPI.com*
+
