@@ -8,6 +8,7 @@
         <h2 class="nav-tab-wrapper">
             <a href="#base" class="nav-tab"><?php _e('General settings', 'gwapi'); ?></a>
             <a href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient fields', 'gwapi'); ?></a>
+            <a href="#user-sync" class="nav-tab hidden"><?php _e('User synchronization', 'gwapi'); ?></a>
             <a href="#build-shortcode" class="nav-tab hidden"><?php _e('Build Shortcode', 'gwapi'); ?></a>
         </h2>
 
@@ -255,6 +256,106 @@
                 <br><br>
             </div>
             <!-- RECIPIENT FIELDS -->
+
+
+            <!-- USER SYNCHRONIZATION -->
+            <div class="tab hidden" data-tab="user-sync" id="userSync">
+                <p>
+                    <?php _e('It is possible to create recipients and keep them up-to-date automatically. As soon as the minimum required information on a user in the WordPress user is present, a recipient will be created automatically.','gwapi'); ?>
+                </p>
+                <p>
+                    <?php _e('If any information changes on the WordPress user or the user is deleted, the recipient is updated or deleted as well. In other words, the recipient works as an always up-to-date copy of the relevant users.','gwapi'); ?>
+                </p>
+                <p>
+                    <?php _e('Please note: It is <strong>your responsibility</strong> to ensure that the information on a user is valid and that mobile numbers are unique. If a user is not present in the recipients list, then there\'s either missing or invalid information on the user, or the number is already associated with another user.','gwapi'); ?>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" name="gwapi_user_sync_enable" value="1" id="userSyncEnableCb" <?= get_option('gwapi_user_sync_enable') ? 'checked' : ''; ?>> <?php _e('Enable user synchronization'); ?>
+                    </label>
+                </p>
+                <div id="userSyncEnabled" <?= get_option('gwapi_user_sync_enable') ? '' : 'class="hidden"'; ?>>
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Mobile number', 'gwapi'); ?></th>
+                            <td>
+                                <input type="text" required name="gwapi_user_sync_meta_number" value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_number')); ?>" size="32"/>
+                                <p class="description">
+                                    <?php _e('Which user meta key contains the mobile number?', 'gwapi'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Mobile country code', 'gwapi'); ?></th>
+                            <td>
+                                <input type="text" required name="gwapi_user_sync_meta_countrycode" value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode')); ?>" size="32"/>
+                                <p class="description">
+                                    <?php _e('Which user meta key contains the country code for the mobile number?', 'gwapi'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Default country code', 'gwapi'); ?></th>
+                            <td>
+                                <div style="max-width: 400px">
+                                    <select name="gwapi_user_sync_meta_default_countrycode">
+                                    </select>
+                                </div>
+                                <p class="description">
+                                    <?php _e('If only the mobile number, but not the country code, is specified on a user, then this value will be assumed.', 'gwapi'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Other fields', 'gwapi'); ?></th>
+                            <td>
+                                <textarea name="gwapi_user_sync_meta_other_fields" id="" cols="50" rows="6" placeholder="<?= esc_attr(__('Meta Key : Recipient Field Key', 'gwapi')); ?>"><?= esc_html(get_option('gwapi_user_sync_meta_other_fields')); ?></textarea>
+                                <p class="description">
+                                    <?php _e('If you want to map other fields from the user and to the meta fields on the recipient, then please list them below. Enter a user meta key, add a colon and then enter the corresponding recipient meta field. To add more fields, separate with newline.', 'gwapi'); ?>
+                                </p>
+                            </td>
+                        </tr>
+
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Groups', 'gwapi'); ?></th>
+                            <td>
+                                <p class="description">
+                                    <?php _e('If you wish to automatically subscribe recipients to specific groups, then please tell which groups a user should be assigned to, when a specific user meta key is present. This user meta key just needs to be present and hold any value except "0", "false" or be empty.', 'gwapi'); ?>
+                                </p>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th width="33%" style="padding: 15px 10px 0 0"><?php _e('Group name', 'gwapi'); ?></th>
+                                            <th width="66%" style="padding: 15px 10px 0 0"><?php _e('User meta field', 'gwapi'); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $groups = get_terms([
+                                            'taxonomy' => 'gwapi-recipient-groups',
+                                            'hide_empty' => false
+                                        ]);
+                                        $gmap = get_option('gwapi_user_sync_group_map') ? : [];
+                                        foreach($groups as $g) { /** @var $g WP_Term */
+                                            ?>
+                                            <tr>
+                                                <td style="padding: 5px 10px 0 0"><?= $g->name; ?></td>
+                                                <td style="padding: 5px 10px 0 0"><input type="text" name="gwapi_user_sync_group_map[<?= $g->term_id ?>]" value="<?= esc_attr(isset($gmap[$g->term_id]) ? $gmap[$g->term_id] : null) ?>"></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- USER SYNCHRONIZATION -->
 
 
             <!-- SHORTCODE GENERATOR -->

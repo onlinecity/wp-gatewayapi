@@ -12,16 +12,131 @@ msgstr ""
 "Language-Team: \n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.8\n"
+
+# wpml-name: 5750c1e05728fd532a018ac415b55f87
+#: gwapi_render_recipient_field([ 'type' => 'digits', 'name' __('Confirmation
+#: code', 'gwapi'),
+msgid "Confirmation code"
+msgstr "Bekræftelseskode"
+
+# wpml-name: 2bc0d786612ea8a0e59a74c4443d4c63
+#: </div> <h2><?php _e('Your shortcode', 'gwapi'); ?></h2>
+msgid "Your shortcode"
+msgstr "Din shortcode"
+
+# wpml-name: 8bb308bedc7c098e5cb98e7614ccf3db
+#: <tr> <th width="33%" style="padding: 15px 10px 0 0"><?php _e('Group name',
+#: 'gwapi'); ?></th> width="66%" _e('User meta field',
+msgid "User meta field"
+msgstr "Bruger metafelt"
+
+# wpml-name: c6155aaecccf794cd2a00fcc35898022
+#: <thead> <tr> <th width="33%" style="padding: 15px 10px 0 0"><?php _e('Group
+#: name', 'gwapi'); ?></th>
+msgid "Group name"
+msgstr "Gruppenavn"
+
+# wpml-name: b154f8593601e2007fa7f8bf52c1b040
+#: <td> <p class="description"> <?php _e('If you wish to automatically
+#: subscribe recipients specific groups, then please tell which groups a user
+#: should be assigned to, when meta key is present. This just needs present and
+#: hold any value except "0", "false" or empty.', 'gwapi'); ?>
+msgid "If you wish to automatically subscribe recipients to specific groups, then please tell which groups a user should be assigned to, when a specific user meta key is present. This user meta key just needs to be present and hold any value except \"0\", \"false\" or be empty."
+msgstr "Hvis du ønsker automatisk at tilmelde modtagere til bestemte grupper, så fortæl venligst hvilke grupper en bruger skal tilmeldes, når en bestemt metaværdi er til stede på brugeren. Denne metaværdi skal blot eksistere og indeholde en værdi som ikke er “0”, “false” samt må ikke være tom."
+
+# wpml-name: f2b2e36f85a91cc3ec4f137b5f05b03c
+#: <textarea name="gwapi_user_sync_meta_other_fields" id="" cols="50" rows="6"
+#: placeholder="<?= esc_attr(__('Meta Key : Recipient Field Key', 'gwapi'));
+#: ?>"><?= esc_html(get_option('gwapi_user_sync_meta_other_fields'));
+#: ?></textarea> <p class="description"> <?php _e('If you want to map other
+#: fields from the user and meta on recipient, then please list them below.
+#: Enter a key, add colon enter corresponding recipient field. To more fields,
+#: separate with newline.', 'gwapi'); ?>
+msgid "If you want to map other fields from the user and to the meta fields on the recipient, then please list them below. Enter a user meta key, add a colon and then enter the corresponding recipient meta field. To add more fields, separate with newline."
+msgstr "Hvis du ønsker at tilknytte andre metafelter fra brugeren og over på modtageren, så indtast dem venligst nedenfor. Skriv en brugers metafelt, skriv et kolon (:) samt skriv nøglen for modtageren. For at tilføje flere felter, opdel med linjeskift."
+
+# wpml-name: 07c3e6195b406fdac60370f67542938e
+#: <tr valign="top"> <th scope="row"><?php _e('Other fields', 'gwapi'); ?></th>
+msgid "Other fields"
+msgstr "Andre felter"
+
+# wpml-name: 429bc09988afd850d01b56404384e171
+#: </div> <p class="description"> <?php _e('If only the mobile number, but not
+#: country code, is specified on a user, then this value will be assumed.',
+#: 'gwapi'); ?>
+msgid "If only the mobile number, but not the country code, is specified on a user, then this value will be assumed."
+msgstr "Hvis kun mobilnummer, men ikke landekode, er tilknyttet en bruger, så vil denne værdi blive brugt."
+
+# wpml-name: cc5ad707fa39d9305a838586e13e2e23
+#: <tr valign="top"> <th scope="row"><?php _e('Default country code', 'gwapi');
+#: ?></th>
+msgid "Default country code"
+msgstr "Standard landekode"
+
+# wpml-name: 635b9239d353061ba80c061abc6ffc53
+#: <input type="text" required name="gwapi_user_sync_meta_countrycode"
+#: value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode'));
+#: ?>" size="32"/> <p class="description"> <?php _e('Which user meta key
+#: contains the country code for mobile number?', 'gwapi'); ?>
+msgid "Which user meta key contains the country code for the mobile number?"
+msgstr "Hvilken metanøgle på brugeren indeholder landekoden for mobilnummeret?"
+
+# wpml-name: 18fccd6c74e8d4e141fd8d037a915019
+#: <input type="text" required name="gwapi_user_sync_meta_number" value="<?php
+#: echo esc_attr(get_option('gwapi_user_sync_meta_number')); ?>" size="32"/> <p
+#: class="description"> <?php _e('Which user meta key contains the mobile
+#: number?', 'gwapi'); ?>
+msgid "Which user meta key contains the mobile number?"
+msgstr "Hvilken metanøgle indeholder mobilnummeret?"
+
+# wpml-name: 9d2bbd75e37ccf358b2c2c55933f702d
+#: </p> <p> <?php _e('Please note: It is <strong>your responsibility</strong>
+#: to ensure that the information on a user valid and mobile numbers are
+#: unique. If not present in recipients list, then there\'s either missing or
+#: invalid user, number already associated with another user.','gwapi'); ?>
+msgid "Please note: It is <strong>your responsibility</strong> to ensure that the information on a user is valid and that mobile numbers are unique. If a user is not present in the recipients list, then there's either missing or invalid information on the user, or the number is already associated with another user."
+msgstr "Bemærk venligst: Det er <strong>dit ansvar</strong> at sørge for at informationerne på en bruger er gyldige og at mobilnummeret er unikt. Hvis en bruger ikke er at finde i modtagerlisten, så er det enten fordi der mangler mobilnummer eller andre værdier er ugyldige, eller fordi nummeret er tilknyttet en anden modtager."
+
+# wpml-name: bbe06f76e14a6fa4e7963203c06c5d6f
+#: </p> <p> <?php _e('If any information changes on the WordPress user or is
+#: deleted, recipient updated deleted as well. In other words, works an always
+#: up-to-date copy of relevant users.','gwapi'); ?>
+msgid "If any information changes on the WordPress user or the user is deleted, the recipient is updated or deleted as well. In other words, the recipient works as an always up-to-date copy of the relevant users."
+msgstr "Hvis oplysninger ændrer sig på en WordPress bruger eller hvis brugeren er slettet, så opdateres eller slettes modtageren ligeledes. Med andre ord, så vil modtageren altid være up-to-date og spejlet med oplysningerne fra brugeren."
+
+# wpml-name: cfad6e66ee11c057e282325207235d06
+#: <div class="tab hidden" data-tab="user-sync" id="userSync"> <p> <?php _e('It
+#: is possible to create recipients and keep them up-to-date automatically. As
+#: soon as the minimum required information on a user in WordPress present,
+#: recipient will be created automatically.','gwapi'); ?>
+msgid "It is possible to create recipients and keep them up-to-date automatically. As soon as the minimum required information on a user in the WordPress user is present, a recipient will be created automatically."
+msgstr "Det er muligt at oprette modtagere og holde dem opdateret helt automatisk. Så snart de påkrævede oplysninger er oprettet på en WordPress bruger, vil modtageren blive oprettet automatisk."
+
+# wpml-name: 6f15c441b1f41d5f5f6ab9033ac4a15e
+#: <a href="#base" class="nav-tab"><?php _e('General settings', 'gwapi');
+#: ?></a> href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient
+#: fields', href="#user-sync" _e('User synchronization',
+msgid "User synchronization"
+msgstr "Brugersynkronisering"
+
+# wpml-name: 1630b5995d7f65d71695a55568fcc8d8
+#: <th scope="row"><?php _e('Other fields', 'gwapi'); ?></th> <td> <textarea
+#: name="gwapi_user_sync_meta_other_fields" id="" cols="50" rows="6"
+#: placeholder="<?= esc_attr(__('Meta Key : Recipient Field Key', 'gwapi'));
+#: ?>"><?= esc_html(get_option('gwapi_user_sync_meta_other_fields'));
+#: ?></textarea>
+msgid "Meta Key : Recipient Field Key"
+msgstr "Bruger metanøgle : Modtagerfelt"
 
 # wpml-name: 412b635037952ff964176c0146d880ba
 #: <div> <label> <input type="checkbox" name="sender" value="1"> <?php
-#: _e('Allow the sender name to be changed.', 'gwapi'; ?>
+#: _e('Allow the sender name to be changed.', 'gwapi'); ?>
 msgid "Allow the sender name to be changed."
 msgstr "Tilad at afsendernavn ændres."
 
 # wpml-name: 415b4e54dc301267522e9b19752449ca
-#: <h2><?php _e('Send SMS', 'gwapi'; ?></h2> <p> <strong style="color:
+#: <h2><?php _e('Send SMS', 'gwapi'); ?></h2> <p> <strong style="color:
 #: red"><?php _e('Warning:', ?></strong> <?php _e('Please consider that
 #: embedding this into a public part of your website enables any visitor to
 #: send SMS\'es the selected groups. This is rarely good idea. Pages utilizing
@@ -31,7 +146,7 @@ msgid "Please consider that embedding this into a public part of your website en
 msgstr "Overvej venligst at det at benytte denne formular på en reelt offentligt tilgængelig side åbner op for, at enhver besøgende kan sende SMS’er til de valgte grupper. Dette er meget sjældent en god idé. Sider som benytter denne shortcode bør som minimum kodeordsbeskytte eller sikre på andre måder."
 
 # wpml-name: 3f3e336e2f1fa10375efd923fca18b55
-#: <h2><?php _e('Send SMS', 'gwapi'; ?></h2> <p> <strong style="color:
+#: <h2><?php _e('Send SMS', 'gwapi'); ?></h2> <p> <strong style="color:
 #: red"><?php _e('Warning:', ?></strong> <?php _e('Please consider that
 #: embedding this into a public part of your website enables any visitor to
 #: send SMS\'es the selected groups. This is rarely good idea. Pages utilizing
@@ -42,14 +157,14 @@ msgstr "Advarsel:"
 
 # wpml-name: ff739a388830f9608d8c8002b6bb31c2
 #: <div> <label> <input type="checkbox" name="editable" value="1"> <?php
-#: _e('Yes, show the list of selected groups and allow user to edit.', 'gwapi';
-#: ?>
+#: _e('Yes, show the list of selected groups and allow user to edit.',
+#: 'gwapi'); ?>
 msgid "Yes, show the list of selected groups and allow user to edit."
 msgstr "Ja, vis listen med de udvalgte grupper og tillad at vælge til og fra."
 
 # wpml-name: 92b6936f2c23040408902cd2e385145c
 #: <p class="description"><?php _e('Select multiple groups by holding down CTRL
-#: (Windows) / CMD (Mac) while clicking.', 'gwapi'; ?></p> <p><?php _e('Would
+#: (Windows) / CMD (Mac) while clicking.', 'gwapi'); ?></p> <p><?php _e('Would
 #: you also like to show the list of (containing only above selected gorups)
 #: and allow user pick amongst these groups? All will be per default.',
 msgid "Would you also like to show the list of groups (containing only the above selected gorups) and allow the user to pick amongst these groups? All will be selected per default."
@@ -58,12 +173,12 @@ msgstr "Ønsker du også at vise listen af grupper (som kun indeholder de ovenfo
 # wpml-name: 6a42ccdd27a07a5660f004946dd46803
 #: <?php endforeach; ?> </select> <p class="description"><?php _e('Select
 #: multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking.',
-#: 'gwapi'; ?></p>
+#: 'gwapi'); ?></p>
 msgid "Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while clicking."
 msgstr "Vælg flere grupper ved at holde CTRL nede (Windows) / CMD (Mac) imens du klikker til og fra."
 
 # wpml-name: ac70e4de74b0443332a173803a444b24
-#: <h2><?php _e('Groups', 'gwapi'; ?></h2> <p> <?php _e('Which group(s) should
+#: <h2><?php _e('Groups', 'gwapi'); ?></h2> <p> <?php _e('Which group(s) should
 #: be affected? If action is signup or update, the user will added to selected
 #: groups. With "Send SMS", this groups who receive SMS.', ?>
 msgid "Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action \"Send SMS\", this is the groups who will receive the SMS."
@@ -71,7 +186,7 @@ msgstr "Hvilke(n) gruppe(r) skal påvirkes? Hvis handlingen er tilmeld eller opd
 
 # wpml-name: 30ab2fa5de3f02c55a47e544cdbcfc78
 #: <div> <label> <input type="checkbox" name="recaptcha" value="1"> <?php
-#: _e('Yes, I would like to enable reCAPTCHA on this form.', 'gwapi'; ?>
+#: _e('Yes, I would like to enable reCAPTCHA on this form.', 'gwapi'); ?>
 msgid "Yes, I would like to enable reCAPTCHA on this form."
 msgstr "Ja, jeg ønsker at aktivere reCAPTCHA på denne formular."
 
@@ -133,7 +248,7 @@ msgstr "Slet dette felt"
 
 # wpml-name: 6ef697f11922be2e4de0971f7d70997f
 #: <div class="form-field hidden" data-visible_on="select,radio,checkbox">
-#: <label class="control-label"> <?php _e('Choices', 'gwapi'; ?>
+#: <label class="control-label"> <?php _e('Choices', 'gwapi'); ?>
 msgid "Choices"
 msgstr "Muligheder"
 
@@ -141,19 +256,19 @@ msgstr "Muligheder"
 #: title="<?= esc_attr(__('If you wish to limit the countries available, please
 #: enter country calling codes below (one per line, no “+”-prefix).',
 #: 'gwapi')); ?>"></i> <br/> <a href="https://countrycode.org/"
-#: target="_blank"><?php _e('List of codes', 'gwapi'; ?></a>
+#: target="_blank"><?php _e('List of codes', 'gwapi'); ?></a>
 msgid "List of country calling codes"
 msgstr "Liste over telefon-landekode"
 
 # wpml-name: 5ef90e510046b2b04f639c94ff93dd98
 #: <div class="form-field hidden" data-visible_on="mobile_cc"> <label
-#: class="control-label"> <?php _e('Country limitation', 'gwapi'; ?>
+#: class="control-label"> <?php _e('Country limitation', 'gwapi'); ?>
 msgid "Country limitation"
 msgstr "Landebegrænsning"
 
 # wpml-name: f161bb11fe746ae805ac6ed705231bf9
 #: <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ?
-#: 'class="hidden"': ''; ?>> <h3><?php _e('Captcha for public forms', 'gwapi';
+#: 'class="hidden"': ''; ?>> <h3><?php _e('Captcha for public forms', 'gwapi');
 #: ?></h3>
 msgid "Captcha for public forms"
 msgstr "CAPTCHA i offentlige formularer"
@@ -249,26 +364,26 @@ msgid "ReCAPTCHA Site Key"
 msgstr "ReCAPTCHA “Site key”"
 
 # wpml-name: 3336d1c3853baa70921a18023cfa95a9
-#: <h3><?php _e('Captcha for public forms', 'gwapi'; ?></h3> <p><?php
+#: <h3><?php _e('Captcha for public forms', 'gwapi'); ?></h3> <p><?php
 #: _e('reCAPTCHA is a free service from Google, which greatly reduces spam and
-#: abuse your forms.', 'gwapi'); ?></p> _e('If you would like to use reCAPTCHA
-#: on the GatewayAPI forms (signup, unsubscribe etc.), then please enter site
-#: key secret below.',
+#: abuse your forms.', ?></p> _e('If you would like to use reCAPTCHA on the
+#: GatewayAPI forms (signup, unsubscribe etc.), then please enter site key
+#: secret below.',
 msgid "If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, unsubscribe etc.), then please enter your site key and secret key below."
 msgstr "Hvis du ønsker at benytte reCAPTCHA på de offentligt tilgængelige GatewayAPI-formularer (tilmeld, afmeld osv.), så indtast venligst din “site key” og “secret key” nedenfor."
 
 # wpml-name: 977d419ec898a8bfa45e53a4dbda258f
 #: <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ?
-#: 'class="hidden"': ''; ?>> <h3><?php _e('Captcha for public forms', 'gwapi';
+#: 'class="hidden"': ''; ?>> <h3><?php _e('Captcha for public forms', 'gwapi');
 #: ?></h3> <p><?php _e('reCAPTCHA is a free service from Google, which greatly
-#: reduces spam and abuse your forms.', 'gwapi'); ?></p>
+#: reduces spam and abuse your forms.', ?></p>
 msgid "reCAPTCHA is a free service from Google, which greatly reduces spam and abuse from your public forms."
 msgstr "reCAPTCHA er en gratis tjeneste fra Google, som er bygget til at reducere spam-indtastninger og misbrug af dine offentlige formularer."
 
 # wpml-name: 99ceace0afb41069620552b55995e593
-#: <a href="#base" class="nav-tab"><?php _e('General settings', 'gwapi');
-#: ?></a> href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient
-#: fields', href="#build-shortcode" _e('Build Shortcode',
+#: <a href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient
+#: fields', 'gwapi'); ?></a> href="#user-sync" _e('User synchronization',
+#: href="#build-shortcode" _e('Build Shortcode',
 msgid "Build Shortcode"
 msgstr "Byg Shortcode"
 
@@ -303,7 +418,7 @@ msgid "Are you sure that you want to delete this field?"
 msgstr "Er du sikker på at du ønsker at slette dette felt?"
 
 # wpml-name: d710642f30d9a2aa6303b9141c33cfb0
-#: <?php _e('Choices', 'gwapi'; ?> <i class="info has-tooltip" title="<?=
+#: <?php _e('Choices', 'gwapi'); ?> <i class="info has-tooltip" title="<?=
 #: esc_attr(__('Enter a single choice per line. Prefix the line with two
 #: exclamation marks (!!), to make an option selected by default.', 'gwapi'))
 #: ?>"></i>
@@ -311,7 +426,7 @@ msgid "Enter a single choice per line. Prefix the line with two exclamation mark
 msgstr "Indtast en enkelt valgmulighed pr. linje. Foranstil to udråbstegn (!!) på en linje, for at forhåndsvælge muligheden."
 
 # wpml-name: 85ccae0e446db53548475a451135ae2f
-#: <?php _e('Country limitation', 'gwapi'; ?> <i class="info has-tooltip"
+#: <?php _e('Country limitation', 'gwapi'); ?> <i class="info has-tooltip"
 #: title="<?= esc_attr(__('If you wish to limit the countries available, please
 #: enter country calling codes below (one per line, no “+”-prefix).',
 #: 'gwapi')); ?>"></i>
@@ -479,8 +594,8 @@ msgid "Your SMS has been queued for delivery and should arrive shortly."
 msgstr "Din SMS er sat i kø til levering og bør ankomme om kort tid."
 
 # wpml-name: a76483d7286ffbd53a010f1904231f80
-#: <div id="shortcodeSendSms" class="hidden"> <h2><?php _e('Send SMS', 'gwapi';
-#: ?></h2>
+#: <div id="shortcodeSendSms" class="hidden"> <h2><?php _e('Send SMS',
+#: 'gwapi'); ?></h2>
 msgid "Send SMS"
 msgstr "Send SMS"
 
@@ -647,8 +762,9 @@ msgid "Sign up"
 msgstr "Tilmeld"
 
 # wpml-name: 7f485baff94ded814bfa3394c7842996
-#: 'name' => 'Confirmation code', 'field_id' 'sms_verify', 'description'
-#: __('Please enter the code that you have just received by SMS.', 'gwapi'),
+#: 'name' => __('Confirmation code', 'gwapi'), 'field_id' 'sms_verify',
+#: 'description' __('Please enter the code that you have just received by
+#: SMS.',
 msgid "Please enter the code that you have just received by SMS."
 msgstr "Indtast venligst koden du netop har modtaget pr. SMS."
 
@@ -767,8 +883,8 @@ msgid "Mobile country code of recipient"
 msgstr "Mobil landekode på modtager"
 
 # wpml-name: 9cd471e492a821e43309db48d106cc38
-#: ], __('Special', 'gwapi') => [ 'mobile_cc' __('Mobile country
-#: code','gwapi'),
+#: <tr valign="top"> <th scope="row"><?php _e('Mobile country code', 'gwapi');
+#: ?></th>
 msgid "Mobile country code"
 msgstr "Mobil landekode"
 
@@ -830,7 +946,8 @@ msgid "Custom fields"
 msgstr "Selvdefinerede felter"
 
 # wpml-name: d1457170f205323fa446500f864338e7
-#: ], [ 'is_builtin' => true, 'name' __('Mobile number', 'gwapi'),
+#: <table class="form-table"> <tr valign="top"> <th scope="row"><?php
+#: _e('Mobile number', 'gwapi'); ?></th>
 msgid "Mobile number"
 msgstr "Mobilnummer"
 
@@ -988,7 +1105,7 @@ msgid "Edit group"
 msgstr "Redigér gruppe"
 
 # wpml-name: a37ede293936e29279ed543129451ec3
-#: <div id="shortcodeGroups"> <h2><?php _e('Groups', 'gwapi'; ?></h2>
+#: <div id="shortcodeGroups"> <h2><?php _e('Groups', 'gwapi'); ?></h2>
 msgid "Groups"
 msgstr "Grupper"
 

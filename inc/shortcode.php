@@ -49,7 +49,7 @@ function _gwapi_shortcode_render_recipient_login_confirm($atts, $recipient)
     <?php
     gwapi_render_recipient_field([
         'type' => 'digits',
-        'name' => 'Confirmation code',
+        'name' => __('Confirmation code', 'gwapi'),
         'field_id' => 'sms_verify',
         'description' => __('Please enter the code that you have just received by SMS.', 'gwapi'),
         'required' => 1
@@ -138,7 +138,7 @@ function _gwapi_shortcode_handle_signup($atts)
             echo '<input type="hidden" name="gwapi_action" value="signup_confirm_save">';
             gwapi_render_recipient_field([
                 'type' => 'digits',
-                'name' => 'Confirmation code',
+                'name' => __('Confirmation code', 'gwapi'),
                 'field_id' => 'sms_verify',
                 'description' => __('Please enter the code that you have just received by SMS.', 'gwapi'),
                 'required' => 1
@@ -321,7 +321,7 @@ function _gwapi_shortcode_handle_unsubscribe($atts) {
 
                 gwapi_render_recipient_field([
                     'type' => 'digits',
-                    'name' => 'Confirmation code',
+                    'name' => __('Confirmation code', 'gwapi'),
                     'field_id' => 'sms_verify',
                     'description' => __('Please enter the code that you have just received by SMS.', 'gwapi'),
                     'required' => 1

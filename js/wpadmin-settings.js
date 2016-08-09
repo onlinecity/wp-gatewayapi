@@ -11,6 +11,7 @@ jQuery(function($) {
         handleTabs();
         handleToggleRecipientFormTab();
 
+        handleUserSynchronization();
 
         handleRecipientFieldSorting();
         handleRecipientTypeCriteria();
@@ -57,8 +58,8 @@ jQuery(function($) {
     function handleToggleRecipientFormTab()
     {
         var checkbox = outer.find('input[name="gwapi_enable_ui"]');
-        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"]');
-        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"]');
+        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"]');
+        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"], [data-tab="user-sync"]');
 
         checkbox.change(function() {
             if ($(this).is(':checked')) {
@@ -250,6 +251,22 @@ jQuery(function($) {
                 field.prop('disabled', false);
             }, 1000);
         });
+    }
+
+    function handleUserSynchronization()
+    {
+        // the enable/disable everything toggle
+        var outer = $('#userSync');
+        outer.find('#userSyncEnableCb').change(function() {
+            if ($(this).is(':checked')) {
+                $('#userSyncEnabled').removeClass('hidden');
+            } else {
+                $('#userSyncEnabled').addClass('hidden');
+            }
+        });
+
+        // country code
+        $('select[name="gwapi_user_sync_meta_default_countrycode"]').gwapiMobileCc();
     }
 
     initialize();

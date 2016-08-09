@@ -19,4 +19,11 @@ add_action('admin_init', function () {
     register_setting('gwapi', 'gwapi_recaptcha_secret_key');
     register_setting('gwapi', 'gwapi_default_sender');
     register_setting('gwapi', 'gwapi_recipient_fields');
+
+    register_setting('gwapi', 'gwapi_user_sync_enable', 'intval');
+    register_setting('gwapi', 'gwapi_user_sync_meta_number');
+    register_setting('gwapi', 'gwapi_user_sync_meta_countrycode');
+    register_setting('gwapi', 'gwapi_user_sync_meta_default_countrycode', 'intval');
+    register_setting('gwapi', 'gwapi_user_sync_meta_other_fields');
+    register_setting('gwapi', 'gwapi_user_sync_group_map');
 });

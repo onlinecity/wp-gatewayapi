@@ -49,6 +49,10 @@ add_action('init', function () {
         if (!is_admin()) {
             include "$D/inc/shortcode.php";
         }
+
+        if (get_option('gwapi_user_sync_enable')) {
+            include "$D/inc/user_sync.php";
+        }
     }
 
     // admin: editor required
