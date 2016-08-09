@@ -43,7 +43,7 @@ jQuery(function ($) {
 
         function doCount() {
             var chars = textarea.val().length;
-            var regex_matches = textarea.val().match(/[\^{}\\~€|\[\]]/gmu) || [];
+            var regex_matches = textarea.val().match(/[\^{}\\~€|\[\]]/gm) || [];
             chars += regex_matches.length;
             var split = chars <= 160 ? 160 : 153;
 
