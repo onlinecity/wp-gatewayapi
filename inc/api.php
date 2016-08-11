@@ -59,7 +59,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
 
     foreach($recipients_formatted as $msisdn => $tags) {
         $rec = [
-            'msisdn' => gwapi_bigint($msisdn),
+            'msisdn' => filter_var($msisdn, FILTER_SANITIZE_NUMBER_INT),
             'tagvalues' => []
         ];
         foreach($allTags as $t) {
@@ -130,19 +130,4 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
     }
 
     return new WP_Error('tech_fail', 'No valid transports.');
-}
-
-
-/**
- * For 32 bit machines, return an integer but as a string, as 32 bit is not enough to store 15 digit long MSISDNs.
- * On 64 bit, just cast to int.
- *
- * @param $long_str
- */
-function gwapi_bigint($long_str)
-{
-    if (PHP_INT_SIZE === 4) $long_str = ltrim(preg_replace('/D+/', '', $long_str),'0');
-    else $long_str = (int)$long_str;
-
-    return $long_str;
 }
