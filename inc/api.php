@@ -59,7 +59,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
 
     foreach($recipients_formatted as $msisdn => $tags) {
         $rec = [
-            'msisdn' => (int)$msisdn,
+            'msisdn' => filter_var($msisdn, FILTER_SANITIZE_NUMBER_INT),
             'tagvalues' => []
         ];
         foreach($allTags as $t) {
