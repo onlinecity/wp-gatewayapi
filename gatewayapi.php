@@ -44,7 +44,6 @@ add_action('init', function () {
         include "$D/inc/tax_recipient.php";
         include "$D/inc/cpt_recipient_ui.php";
         include "$D/inc/validation.php";
-        include "$D/inc/css_js.php";
 
         if (!is_admin()) {
             include "$D/inc/shortcode.php";
@@ -54,6 +53,9 @@ add_action('init', function () {
             include "$D/inc/user_sync.php";
         }
     }
+		if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
+			include "$D/inc/css_js.php";
+		}
 
     // admin: editor required
     if (!current_user_can('edit_others_posts')) return;

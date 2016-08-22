@@ -259,11 +259,11 @@ jQuery(function($) {
         var outer = $('#userSync');
         outer.find('#userSyncEnableCb').change(function() {
             if ($(this).is(':checked')) {
-                $('#userSyncEnabled').removeClass('hidden');
+                $('#userSyncEnabled').removeClass('hidden').find('input,textarea').prop('disabled', false);
             } else {
-                $('#userSyncEnabled').addClass('hidden');
+                $('#userSyncEnabled').addClass('hidden').find('input,textarea').prop('disabled', true);
             }
-        });
+        }).change();
 
         // country code
         $('select[name="gwapi_user_sync_meta_default_countrycode"]').gwapiMobileCc();
