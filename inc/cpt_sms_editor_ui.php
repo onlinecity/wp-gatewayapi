@@ -102,7 +102,7 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
 
     <div class="gwapi-row">
         <div class="col-40">
-            <h4>Add recipient</h4>
+            <h4><?php _e('Add recipient', 'gwapi'); ?></h4>
             <div class="gwapi-star-errors"></div>
 
             <div class="field-group">
@@ -181,7 +181,7 @@ function _gwapi_sms_message(WP_Post $post)
         <tbody>
         <tr>
             <th width="25%">
-                <?php _e('Sender'); ?>
+                <?php _e('Sender', 'gwapi'); ?>
             </th>
             <td>
                 <input type="text" name="gwapi[sender]" size="15"
@@ -214,8 +214,16 @@ function _gwapi_sms_message(WP_Post $post)
                 <?php _e('Message', 'gwapi') ?>
             </th>
             <td>
+                <?php
+                $counterI18N = [
+                    'character' => __('character','gwapi'),
+                    'characters' => __('characters','gwapi'),
+                    'sms' => __('SMS','gwapi'),
+                    'smses' => __('SMS\'es','gwapi')
+                ];
+                ?>
                 <textarea <?= ($published) ? 'readonly' : ''; ?> name="gwapi[message]" rows="10" style="width: 100%"
-                                                                 placeholder="Enter your SMS message here."><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>
+                                                                 placeholder="<?= esc_attr(__('Enter your SMS message here.', 'gwapi')); ?>" data-counter-i18n="<?= esc_attr(json_encode($counterI18N)); ?>"><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>
                 <div>
                     <p><?php _e('Writing one of the following tags (including both %-signs) will result in each recipient receiving a personalized text:', 'gwapi'); ?></p>
                     <ul>
@@ -251,7 +259,7 @@ function _gwapi_sms_status(WP_Post $post) {
             break;
 
         case 'bail':
-            echo '<span style="color: red"><strong>'.__('Failed before sending: ').'</strong><br />'.$error.'</span>';
+            echo '<span style="color: red"><strong>'.__('Failed before sending:', 'gwapi').'</strong><br />'.$error.'</span>';
             break;
 
         case 'tech_error':
@@ -259,15 +267,15 @@ function _gwapi_sms_status(WP_Post $post) {
             if ($error_json && isset($error_json->message)) {
                 $error = $error_json->message;
             }
-            echo '<span style="color: red"><strong>'.__('Technical error: ').'</strong><br />'.$error.'</span>';
+            echo '<span style="color: red"><strong>'.__('Technical error:', 'gwapi').'</strong><br />'.$error.'</span>';
             break;
 
         case 'is_sent':
-            echo '<span style="color: green; font-weight: bold">SMS was successfully sent</span><br />ID: '.$ids;
+            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gwapi').'</span><br />ID: '.$ids;
             break;
 
         default:
-            echo 'Not sent yet';
+            _e('Not sent yet', 'gwapi');
             break;
     }
     ?>

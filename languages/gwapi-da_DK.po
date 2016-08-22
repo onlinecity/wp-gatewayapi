@@ -1480,3 +1480,27 @@ msgstr "Modtager"
 #: __('Recipients',
 msgid "Recipients"
 msgstr "Modtagere"
+
+msgid "Enable user synchronization"
+msgstr "Slå brugersynkronisering til"
+
+msgid "Enter your SMS message here."
+msgstr "Indtast din SMS-besked her."
+
+msgid "character"
+msgstr "tegn"
+
+msgid "characters"
+msgstr "tegn"
+
+msgid "Failed before sending:"
+msgstr "Fejlede før afsendelse:"
+
+msgid "Technical error:"
+msgstr "Teknisk fejl:"
+
+msgid "SMS was successfully sent"
+msgstr "SMS blev sent uden problemer"
+
+msgid "Not sent yet"
+msgstr "Ikke afsendt endnu"

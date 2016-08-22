@@ -271,7 +271,7 @@
                 </p>
                 <p>
                     <label>
-                        <input type="checkbox" name="gwapi_user_sync_enable" value="1" id="userSyncEnableCb" <?= get_option('gwapi_user_sync_enable') ? 'checked' : ''; ?>> <?php _e('Enable user synchronization'); ?>
+                        <input type="checkbox" name="gwapi_user_sync_enable" value="1" id="userSyncEnableCb" <?= get_option('gwapi_user_sync_enable') ? 'checked' : ''; ?>> <?php _e('Enable user synchronization', 'gwapi'); ?>
                     </label>
                 </p>
                 <div id="userSyncEnabled" <?= get_option('gwapi_user_sync_enable') ? '' : 'class="hidden"'; ?>>

@@ -34,7 +34,7 @@ function _gwapi_recipient(WP_Post $post)
             </th>
             <td>
                 <input type="number" name="gwapi[number]"
-                       placeholder="Phone number - digits only"
+                       placeholder="<?= esc_attr(__('Phone number - digits only', 'gwapi')) ?>"
                        value="<?= $number ? esc_attr($number) : '' ?>"
                        style="width: 250px">
             </td>

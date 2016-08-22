@@ -50,7 +50,10 @@ jQuery(function ($) {
             var smses = Math.ceil(chars / split);
             if (smses == 0) smses = 1;
 
-            countEl.text(chars + ' characters (' + smses + ' sms)');
+            var charsText = chars == 1 ? textarea.data('counter-i18n').character : textarea.data('counter-i18n').characters;
+            var smsText = smses == 1 ? textarea.data('counter-i18n').sms : textarea.data('counter-i18n').smses;
+
+            countEl.text(chars + ' '+charsText+' (' + smses + ' '+smsText+')');
         }
 
         textarea.keyup(doCount);
