@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.6.0
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -18,15 +18,32 @@ All you need, is to create a free account at GatewayAPI.com, which includes €2
 
 If you would like to send SMS'es from the backend, the plugin provides UI's for:
 
-- Managing recipients.
-- Grouping recipients.
-- Sending to everyone in a group.
-- Sending to manually added recipients at send time.
-- Specify a sender-text.
-- Use recipient-specific tags.
-- Stores a list of sent SMS'es.
+**Backend:**
+
+- Use WordPress admin to manage and send - or do it all from PHP.
+- Manage and group recipients.
+- Send to single recipients or groups.
+- Change sender text, type of SMS - completely unbranded SMS'es.
+- Dynamically use meta-data within your SMS'es.
 - Track the delivery status of an SMS.
-- Automatic synchronization of recipients and WordPress users.
+- Automatic synchronization of recipients and WordPress users, including selected metadata.
+- Add unlimited meta fields to your recipients: 11 content types to pick from!
+
+**Integration in your website:**
+
+- Short-code generator, creating sign up, update and unsubscribe forms.
+- Public forms feature CAPTCHA and two-factor flows.
+- Custom security? Create a "Send SMS" form via a shortcode.
+
+**Backed by high quality, low price EU-based SMS-gateway:**
+
+- GatewayAPI.com has sent 180+ million SMS'es.
+- We regularly send over 1.500 SMS'es per second.
+- Headquarters in Copenhagen, Denmark.
+- Company founded in 1999.
+- Free support, no subscription AND unbeatable prices.
+- Most SMS'es are delivered within 0,3 second.
+
 
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
 
@@ -63,6 +80,11 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
 
 == Changelog ==
+
+= 1.1.6 =
+* Bugfix: Safari-specific issue with SMS-counter.
+* Bugfix: Hidden required fields might break the settings-pages.
+* Updated translations for Danish.
 
 = 1.1.5 =
 * Support for automatic synchronization of WordPress users => recipients (one-way) including all meta fields and groups.
