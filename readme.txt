@@ -49,11 +49,11 @@ If you would prefer to disable the UI-features and do all the sending from code,
 
 = Getting Started =
 
-There's more information in the "Installation"-tab, but you could also just watch this video tutorial, showing you how
-to get set up and sending your first SMS:
+We have created a number of short tutorials, demonstrating how to get started and use the various features. Watch the following video to see how to set everything up and send your first SMS:
 
 https://vimeo.com/168035068
 
+[Click here for more videos](https://wordpress.org/plugins/gatewayapi/installation/).
 
 
 == Installation ==
@@ -65,9 +65,31 @@ This section describes how to install the plugin and get it working.
 1. Go to "Settings » GatewayAPI Settings" and add an OAuth key and associated secret from your GatewayAPI.com account.
 1. (Optional) Enable the sending UI and then go to "SMS'es » Create SMS" and try to send an SMS to yourself, verifying that all is setup correctly.
 
-We've also produced this quick video tutorial to help you get started:
+We've also produced a number of videos to help you get started:
 
-https://vimeo.com/168035068
+= Getting started =
+
+This quick tutorial shows you how to get GatewayAPI Plugin for WordPress installed and configured, and goes as far as to send of an actual SMS.
+
+https://vimeo.com/179720894
+
+= Recipients, groups and extra fields =
+
+This quick tutorial shows you how to create groups, add recipients to the groups, as well as how to add custom fields to the recipients, allowing for any extra data to be stored and used in SMS'es.
+
+https://vimeo.com/179720962
+
+= Forms for sign up, update and unsubscribe =
+
+This tutorial shows you how to create forms for the public, using the built-in UI for creating "shortcodes" (tiny pieces of code which can be pasted into any WordPress-page).
+
+https://vimeo.com/179721068
+
+= Importing recipients from spreadsheets =
+
+This tutorial shows you how to import recipients from any spreadsheet and into the recipients database of the GatewayAPI. It even shows how to overwrite and update the database, import extra fields from spreadsheets and how to add the recipients into groups. It works with any spreadsheet app (Excel, Numbers, LibreOffice, Google Docs - you name it!).
+
+https://vimeo.com/179721183
 
 == Frequently Asked Questions ==
 
