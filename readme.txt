@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.6.0
-Stable tag: 1.1.6
+Stable tag: 1.2.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -44,8 +44,14 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 - Free support, no subscription AND unbeatable prices.
 - Most SMS'es are delivered within 0,3 second.
 
-
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
+
+= New in v1.2.0: Integration with Contact Form 7 =
+
+GatewayAPI automatically detects and extends Contact Form 7 to support public signing up, updating and unsubscribing. GatewayAPI adds a country code, mobile number and a groups selection field to the Contact Form 7 form builder.
+
+The Contact Form 7-integration also features support fetching form field defaults based on the currently logged in users metadata, GET-variables, post meta data etc.
+
 
 = Getting Started =
 
@@ -79,7 +85,7 @@ This quick tutorial shows you how to create groups, add recipients to the groups
 
 https://vimeo.com/179720962
 
-= Forms for sign up, update and unsubscribe =
+= Built-in forms for sign up, update and unsubscribe =
 
 This tutorial shows you how to create forms for the public, using the built-in UI for creating "shortcodes" (tiny pieces of code which can be pasted into any WordPress-page).
 
@@ -91,6 +97,10 @@ This tutorial shows you how to import recipients from any spreadsheet and into t
 
 https://vimeo.com/179721183
 
+= Contact Form 7-based forms =
+
+Video coming soon. Please see the "How to"-section for now, for more information on how to use properly use the Contact Form 7-integration.
+
 == Frequently Asked Questions ==
 
 = How well does this plugin handle 10.000+'s of recipients =
@@ -100,8 +110,13 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 == Screenshots ==
 1. Set up your OAuth key and secret here. This settings page is available for administrators only.
 2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
+3. Contact Form 7: GatewayAPI automatically adds extra controls for supporting signup/update/unsubscribe in the Contact Form 7 form builder.
+4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.2.0 =
+* Contact Form 7: Integration supporting signup, update and unsubscribe forms for frontend. Two-factor flow possible for update-flow.
 
 = 1.1.6 =
 * Bugfix: Safari-specific issue with SMS-counter.
@@ -170,3 +185,18 @@ The recipients-argument may consist of either:
 
 *Note: SMS'es sent via `gwapi_send_sms` are NOT saved in WordPress. They are however still accessible via the traffic log on GatewayAPI.com*
 
+= Contact Form 7 =
+
+If you are already into Contact Form 7, the additional fields should be selfexplainatory.
+
+**Defaults**
+
+You can fetch defaults for the GatewayAPI fields in the same manner as is supported by most of Contact Form 7's built-in fields. Our implementation is mostly compatible with that implementation.
+
+Enter for instance `get` to fetch from a query string variable of the same name. Enter `user_SOMEKEY` to fetch from the user fields or user meta, where `SOMEKEY` is replaced by the field name (either built-in information like email or display_name, or a meta key). Please note that some plugins, such as WP User Manager prefixes all their user meta keys. So if a WP User Manager field was labeled `phone`, the appropriate default value would be `user_wpmu_phone`.
+
+**Verification**
+
+Currently a two-step flow is supported for updating recipients. In this flow, the user receives an SMS before gaining access to updating his or her profile.
+
+In the near future, this will be expanded to also support signing up and unsubscription. To use two-step flow for signup and unsubscribe, you must for now rely on the GatewayAPI built-in form generator, available in the GatewayAPI settings.
