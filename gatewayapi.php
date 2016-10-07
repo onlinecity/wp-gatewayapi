@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Send SMS'es through WordPress.
-Version:     1.1.6
+Version:     1.2.0 DEV
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     GPLv2
@@ -26,6 +26,24 @@ function _gwapi_url()
     return $dir;
 }
 
+function _gwapi_initialize_cf7_admin()
+{
+	require_once( _gwapi_dir().'/inc/integration_contact_form_7.php' );
+	GwapiContactForm7::getInstance()->initAdmin();
+}
+
+function _gwapi_initialize_cf7_shortcodes()
+{
+	require_once( _gwapi_dir().'/inc/integration_contact_form_7.php' );
+	GwapiContactForm7::getInstance()->handleShortcodes();
+}
+
+function _gwapi_initialize_cf7_submit($form)
+{
+	require_once( _gwapi_dir().'/inc/integration_contact_form_7.php' );
+	GwapiContactForm7::getInstance()->handleSubmit($form);
+}
+
 
 add_action('init', function () {
     $D = _gwapi_dir();
@@ -37,7 +55,12 @@ add_action('init', function () {
     include "$D/inc/api.php";
     include "$D/inc/recipient_forms.php";
 
-    if (get_option('gwapi_enable_ui')) {
+	// plugin: contact form 7
+	add_action( 'wpcf7_admin_init', "_gwapi_initialize_cf7_admin", 18);
+	add_action( 'wpcf7_init', "_gwapi_initialize_cf7_shortcodes", 18);
+	add_action( "wpcf7_before_send_mail", "_gwapi_initialize_cf7_submit" );
+
+	if (get_option('gwapi_enable_ui')) {
         include "$D/inc/helpers.php";
         include "$D/inc/cpt_sms.php";
         include "$D/inc/cpt_recipient.php";
