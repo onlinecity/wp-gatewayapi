@@ -398,9 +398,9 @@ class GwapiContactForm7 {
 			if ( strlen( $val ) ) {
 				return $val;
 			}
+		} else {
+			return $opt;
 		}
-
-		return null;
 	}
 
 	public function handlePhone($contact_form)
