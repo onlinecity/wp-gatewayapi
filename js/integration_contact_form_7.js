@@ -12,6 +12,7 @@ jQuery(function($) {
 
         var action = actionEl.val();
         if (action == 'update') handleUpdate();
+        if (action == 'signup') handleSignup();
 
     }
 
@@ -102,6 +103,42 @@ jQuery(function($) {
                     });
                 });
             });
+        });
+    }
+
+    function handleSignup()
+    {
+        $(document).ajaxSuccess(function(event, xhr, settings) {
+            if (!settings.extraData._wpcf7_is_ajax_call) return; // wrong call
+
+            var res = xhr.responseJSON;
+            if (!res) return; // wrong format
+
+            if (res.gwapi_verify && res.gwapi_prompt) {
+                var innerF = $('.wpcf7-response-output.wpcf7-display-none.wpcf7-mail-sent-ng').hide();
+                var form = innerF.closest('form');
+                function enterVerifyCode() {
+                    var code = window.prompt(res.gwapi_prompt);
+                    if (!code) {
+                        if (!window.confirm('Not entering the code will cancel the signup. If this is what you want, then click "Ok". Clicking cancel will allow you to try and enter the code again.')) {
+                            enterVerifyCode();
+                        }
+                    } else {
+                        // do we have an input field for the code?
+                        var inputCode = form.find('input[name="_gwapi_verify_signup"]');
+                        if (!inputCode.length) {
+                            $('<input name="_gwapi_verify_signup" type="hidden">').appendTo($('.wpcf7-form'));
+                        }
+                        inputCode = form.find('input[name="_gwapi_verify_signup"]');
+                        inputCode.val(code);
+                        form.submit();
+                    }
+                }
+                enterVerifyCode();
+
+            } else if (res.gwapi_error) {
+                $('.wpcf7-response-output.wpcf7-display-none.wpcf7-mail-sent-ng').text(res.gwapi_error);
+            }
         });
     }
 
