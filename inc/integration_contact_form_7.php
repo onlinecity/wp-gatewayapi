@@ -28,6 +28,7 @@ class GwapiContactForm7 {
 	public function initAdmin()
 	{
 		$this->addTagGenerator();
+		$this->addSmsReplyUi();
 	}
 
 	public function handleShortcodes()
@@ -51,6 +52,32 @@ class GwapiContactForm7 {
 		}
 	}
 
+	private function addSmsReplyUi()
+	{
+		$_this = $this;
+		add_filter('wpcf7_editor_panels', function($panels) use ($_this) {
+			$sms_panel = [
+				'title' => 'SMS reply',
+				'callback' => [$this, 'renderSmsReplyUi']
+			];
+			$new_panels = [];
+
+			foreach($panels as $k=>$p) {
+				$new_panels[$k] = $p;
+				if ($k == 'mail-panel') {
+					$new_panels['sms-reply-panel'] = $sms_panel;
+				}
+			}
+
+			return $new_panels;
+		}, 10, 1);
+
+		// handle save
+		if (isset($_POST['_gwapi_form_settings'])) {
+			update_post_meta($_POST['post_ID'], '_gwapi', $_POST['_gwapi_form_settings']);
+		}
+	}
+
 	private function addShortcodes()
 	{
 		static $is_called = false;
@@ -65,6 +92,58 @@ class GwapiContactForm7 {
 			$func = [$this, 'handle'.substr($key, 3)];
 			wpcf7_add_shortcode( array($key), $func, true );
 		}
+	}
+
+	public function renderSmsReplyUi(WPCF7_ContactForm $post)
+	{
+		$opt = get_post_meta((int)$post->ID(), '_gwapi', true) ? : [];
+		?>
+		<div class="contact-form-editor-box-sms-reply" id="gwapi-sms-reply">
+			<h2>SMS reply</h2>
+
+			<p>
+				Please note that replying via SMS requires that the GatewayAPI phone number and country code fields has been added to the form.
+			</p>
+
+			<fieldset>
+				<legend>In the following fields, these tags are available:<br>
+					<?= $post->suggest_mail_tags(); ?>
+				</legend>
+				<table class="form-table">
+					<tbody>
+					<tr>
+						<th scope="row">
+							<label for="gwapi-sms-reply-enable">Enable?</label>
+						</th>
+						<td>
+							<label><input type="checkbox" name="_gwapi_form_settings[reply-enable]" value="1" <?= isset($opt['reply-enable']) && $opt['reply-enable'] ? 'checked' : ''; ?>>Yes, send an auto-reply to the recipients phone number, when the form has been succesfully submitted.</label>
+						</td>
+					</tr>
+					<tr class="only-show-on-enabled-sms-reply">
+						<th scope="row">
+							<label for="gwapi-sms-reply-sender">From</label>
+						</th>
+						<td>
+							<input type="text" id="gwapi-sms-reply-sender" name="_gwapi_form_settings[reply-sender]" class="large-text code" size="70" value="<?= isset($opt['reply-sender']) && $opt['reply-sender'] ? esc_attr($opt['reply-sender']) : ''; ?>" maxlength="15">
+							<p class="help-block">Up to 11 character or 15 digits.</p>
+						</td>
+					</tr>
+
+					<tr class="only-show-on-enabled-sms-reply">
+						<th scope="row">
+							<label for="gwapi-sms-reply-body">The message</label>
+						</th>
+						<td>
+							<textarea id="gwapi-sms-reply-body" name="_gwapi_form_settings[reply-body]" cols="100" rows="5" class="large-text code"><?= isset($opt['reply-sender']) && $opt['reply-body'] ? esc_attr($opt['reply-body']) : ''; ?></textarea>
+						</td>
+					</tr>
+
+					</tbody>
+				</table>
+			</fieldset>
+		</div>
+		<?php
+		wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url().'js/integration_contact_form_7.js', ['jquery']);
 	}
 
 	private function handleSubmitSignupVerify(WPCF7_ContactForm $wpcf7, WPCF7_Submission $submit)
@@ -165,10 +244,6 @@ class GwapiContactForm7 {
 			}
 
 			switch($data['gwapi_action']) {
-				case 'unsubscribe':
-					wp_trash_post($curID);
-					break;
-
 				case 'update':
 					$insert_data['ID'] = $curID;
 
@@ -185,7 +260,32 @@ class GwapiContactForm7 {
 
 					break;
 			}
+
+			// does the form have an sms auto reply?
+			$send_sms = get_post_meta($wpcf7->id(), '_gwapi', true) ? : [];
+			if ($send_sms && $send_sms['reply-enable']) {
+				$this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
+			}
+
+			if (isset($data['gwapi_action']) && $data['gwapi_action'] == 'unsubscribe') {
+				wp_trash_post($curID);
+			}
 		}
+	}
+
+	private function sendSubmitSmsReply(WPCF7_ContactForm $wpcf7, WPCF7_Submission $submission, $sms)
+	{
+		$country_code_field = $wpcf7->form_scan_shortcode(['type' => 'gw_country']);
+		$phone_field = $wpcf7->form_scan_shortcode(['type' => 'gw_phone']);
+
+		if (!$phone_field || !$country_code_field) return;
+		if (!isset($sms['reply-body']) || !trim($sms['reply-body'])) return; // nothing to send
+
+		$body = trim(wpcf7_mail_replace_tags($sms['reply-body']));
+		$from = trim(wpcf7_mail_replace_tags($sms['reply-sender'])) ? : null;
+
+		$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].$_POST['gwapi_phone']);
+		gwapi_send_sms($body, $phone, $from);
 	}
 
 	public function tagGeneratePhone($contact_form, $args = '')
@@ -392,21 +492,6 @@ class GwapiContactForm7 {
 								only then will the rest of the form be presented.
 							</p>
 						</td>
-					</tr>
-					<tr>
-						<th scope="row">
-							<label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>">Send SMS-reply on success</label>
-						</th>
-						<td>
-							<fieldset>
-								<textarea name="values" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" class="values" style="width: 100%" rows="6" placeholder="Enter SMS-reply here"></textarea>
-								<p class="description">
-									If you wish to send an SMS-reply to recipient upon success, then please enter the message here.
-								</p>
-							</fieldset>
-						</td>
-
-						</th>
 					</tr>
 					</tbody>
 				</table>

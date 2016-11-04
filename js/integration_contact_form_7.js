@@ -8,12 +8,31 @@ jQuery(function($) {
         actionEl = $('.wpcf7-form input[name="gwapi_action"]');
 
         // requires verify?
-        if (!actionEl.data('verify')) return;
+        if (actionEl.data('verify')) {
+            var action = actionEl.val();
+            if (action == 'update') handleUpdate();
+            if (action == 'signup') handleSignup();
+        }
 
-        var action = actionEl.val();
-        if (action == 'update') handleUpdate();
-        if (action == 'signup') handleSignup();
+        // admin form: sms reply
+        handleEditorSmsReply();
+    }
 
+    function handleEditorSmsReply()
+    {
+        var panel = $('#sms-reply-panel.contact-form-editor-panel');
+        if (!panel.length) return;
+
+        var updateVisibleFieldsFn = function() {
+            var isVisible = $(this).is(':checked');
+            var shouldBeToggled = panel.find('.only-show-on-enabled-sms-reply');
+            if (isVisible) shouldBeToggled.show();
+            else shouldBeToggled.hide();
+        };
+
+        var replyEnableSel = 'input[name="_gwapi_form_settings[reply-enable]"]';
+        panel.on('change', replyEnableSel, updateVisibleFieldsFn);
+        panel.find(replyEnableSel).each(updateVisibleFieldsFn);
     }
 
     function handleUpdate()

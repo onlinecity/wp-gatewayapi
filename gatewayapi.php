@@ -60,7 +60,7 @@ add_action('init', function () {
 	add_action( 'wpcf7_init', "_gwapi_initialize_cf7_shortcodes", 18);
 	add_action( "wpcf7_before_send_mail", "_gwapi_initialize_cf7_submit" );
 
-	if (get_option('gwapi_enable_ui')) {
+    if (get_option('gwapi_enable_ui')) {
         include "$D/inc/helpers.php";
         include "$D/inc/cpt_sms.php";
         include "$D/inc/cpt_recipient.php";
