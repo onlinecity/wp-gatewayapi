@@ -29,9 +29,9 @@ class GWAPI_User_Sync
     {
         // built-in
         $this->required_to_look_for = [
-            'number' => get_option('gwapi_user_sync_meta_number'),
-            'cc' => get_option('gwapi_user_sync_meta_countrycode')
+            'number' => get_option('gwapi_user_sync_meta_number')
         ];
+        if (get_option('gwapi_user_sync_meta_countrycode')) $this->required_to_look_for['cc'] = get_option('gwapi_user_sync_meta_countrycode');
 
         // other fields
         $otherFields = explode("\n", get_option('gwapi_user_sync_meta_other_fields'));
@@ -165,6 +165,59 @@ class GWAPI_User_Sync
             }
         }
     }
+
+    /**
+     * Synchronize all users.
+     */
+    public function syncAll()
+    {
+        header("Content-type: application/json");
+        $userQ = [
+            'fields' => 'ID',
+            'number' => 100,
+            'meta_query' => [
+                [
+                    'key' => $this->required_to_look_for['number'],
+                    'compare' => 'EXISTS'
+                ]
+            ]
+        ];
+
+        // initializing - just show status, ie. how many users are applicable for syncing
+        if (!isset($_GET['page'])) {
+            $q = new WP_User_Query($userQ);
+            $total = $q->get_total();
+            if (!$total) {
+                die(json_encode(['html' => __('There are no users to synchronize at this time, ie. no users which has the meta field for mobile number.', 'gwapi'), 'finished' => true]));
+            }
+
+            die(json_encode([
+                'html' => sprintf(_n("%d user is being synchronized now.", "%d users are being synchronized now", $total, 'gwapi'), $total),
+                'finished' => false
+            ]));
+        }
+
+        // synchronize 100 at a time
+        $userQ['paged'] = $_GET['page'];
+        $q = new WP_User_Query($userQ);
+        $IDs = $q->get_results();
+        $max = $q->get_total();
+        if (!$IDs) {
+            die(json_encode([
+                'html' => sprintf(__('User synchronization is complete. %d users were synchronized.', 'gwapi'), $max),
+                'finished' => true
+            ]));
+        }
+        foreach($IDs as $ID) {
+            $this->syncMe($ID);
+        }
+
+        $done = count($IDs) + ($_GET['page']-1) * 100;
+        die(json_encode([
+            'html' => sprintf( __('%d users of %d synchronized...', 'gwapi'), $done, $max ),
+            'finished' => false
+        ]));
+    }
 }
 
 /**
@@ -184,4 +237,9 @@ add_action('delete_user', function($user_ID) {
     if ($recID = get_user_meta($user_ID, '_gwapi_recipient_id', true)) {
         wp_delete_post($recID);
     }
+});
+
+add_action('wp_ajax_gwapi_user_sync', function() {
+    $user_sync = GWAPI_User_Sync::getInstance();
+    $user_sync->syncAll();
 });

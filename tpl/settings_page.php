@@ -289,7 +289,7 @@
                         <tr valign="top">
                             <th scope="row"><?php _e('Mobile country code', 'gwapi'); ?></th>
                             <td>
-                                <input type="text" required name="gwapi_user_sync_meta_countrycode" value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode')); ?>" size="32"/>
+                                <input type="text" name="gwapi_user_sync_meta_countrycode" value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode')); ?>" size="32"/>
                                 <p class="description">
                                     <?php _e('Which user meta key contains the country code for the mobile number?', 'gwapi'); ?>
                                 </p>
@@ -350,6 +350,18 @@
                                         ?>
                                     </tbody>
                                 </table>
+                            </td>
+                        </tr>
+
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Synchronize now' , 'gwapi'); ?></th>
+                            <td>
+                                <label>
+                                    <input type="checkbox" name="synchronize_on_next_load" id="gwapiSynchronizeOnNextLoad"> <?php _e('Synchronize all existing users on submit.'); ?>
+                                </label>
+                                <p class="description">
+                                    <?php _e('Enabling this will force a one-time synchronization of all users, when you save these settings. This is useful when initially setting this plugin up and in cases where you might have updated the user database directly, so that the regular hooks on which the user synchronization relies, has not been triggered.', 'gwapi'); ?>
+                                </p>
                             </td>
                         </tr>
                     </table>
@@ -444,7 +456,6 @@
 
 
         </div>
-
 
         <hr>
 
