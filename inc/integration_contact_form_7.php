@@ -10,7 +10,7 @@
 class GwapiContactForm7 {
 	private static $instance;
 
-	private $types = ['gw_phone' => '📱 phone', 'gw_country' => '📱 countrycode', 'gw_groups' => '📱 groups', 'gw_action' => '📱 action*'];
+	private $types = [];
 
 	public static function getInstance()
 	{
@@ -22,7 +22,12 @@ class GwapiContactForm7 {
 	}
 
 	private function __construct() {
-
+		$this->types = [
+			'gw_phone' => '📱 '.__('phone', 'gwapi'),
+			'gw_country' => '📱 '.__('countrycode', 'gwapi'),
+			'gw_groups' => '📱 '.__('groups', 'gwapi'),
+			'gw_action' => '📱 '.__('action*', 'gwapi')
+		];
 	}
 
 	public function initAdmin()
@@ -57,7 +62,7 @@ class GwapiContactForm7 {
 		$_this = $this;
 		add_filter('wpcf7_editor_panels', function($panels) use ($_this) {
 			$sms_panel = [
-				'title' => 'SMS reply',
+				'title' => __('SMS reply', 'gwapi'),
 				'callback' => [$this, 'renderSmsReplyUi']
 			];
 			$new_panels = [];
@@ -99,39 +104,39 @@ class GwapiContactForm7 {
 		$opt = get_post_meta((int)$post->ID(), '_gwapi', true) ? : [];
 		?>
 		<div class="contact-form-editor-box-sms-reply" id="gwapi-sms-reply">
-			<h2>SMS reply</h2>
+			<h2><?php _e('SMS reply', 'gwapi'); ?></h2>
 
 			<p>
-				Please note that replying via SMS requires that the GatewayAPI phone number and country code fields has been added to the form.
+				<?php _e('Please note that replying via SMS requires that the GatewayAPI phone number and country code fields has been added to the form.', 'gwapi'); ?>
 			</p>
 
 			<fieldset>
-				<legend>In the following fields, these tags are available:<br>
+				<legend><?php _e('In the following fields, these tags are available:', 'gwapi'); ?><br>
 					<?= $post->suggest_mail_tags(); ?>
 				</legend>
 				<table class="form-table">
 					<tbody>
 					<tr>
 						<th scope="row">
-							<label for="gwapi-sms-reply-enable">Enable?</label>
+							<label for="gwapi-sms-reply-enable"><?php _e('Enable?', 'gwapi'); ?></label>
 						</th>
 						<td>
-							<label><input type="checkbox" name="_gwapi_form_settings[reply-enable]" value="1" <?= isset($opt['reply-enable']) && $opt['reply-enable'] ? 'checked' : ''; ?>>Yes, send an auto-reply to the recipients phone number, when the form has been succesfully submitted.</label>
+							<label><input type="checkbox" name="_gwapi_form_settings[reply-enable]" value="1" <?= isset($opt['reply-enable']) && $opt['reply-enable'] ? 'checked' : ''; ?>><?php _e('Yes, send an auto-reply to the recipients phone number, when the form has been succesfully submitted.', 'gwapi'); ?></label>
 						</td>
 					</tr>
 					<tr class="only-show-on-enabled-sms-reply">
 						<th scope="row">
-							<label for="gwapi-sms-reply-sender">From</label>
+							<label for="gwapi-sms-reply-sender"><?php _e('From', 'contact-form-7'); ?></label>
 						</th>
 						<td>
 							<input type="text" id="gwapi-sms-reply-sender" name="_gwapi_form_settings[reply-sender]" class="large-text code" size="70" value="<?= isset($opt['reply-sender']) && $opt['reply-sender'] ? esc_attr($opt['reply-sender']) : ''; ?>" maxlength="15">
-							<p class="help-block">Up to 11 character or 15 digits.</p>
+							<p class="help-block"><?php _e('Up to 11 character or 15 digits.', 'gwapi'); ?></p>
 						</td>
 					</tr>
 
 					<tr class="only-show-on-enabled-sms-reply">
 						<th scope="row">
-							<label for="gwapi-sms-reply-body">The message</label>
+							<label for="gwapi-sms-reply-body"><?php _e('Message', 'gwapi'); ?></label>
 						</th>
 						<td>
 							<textarea id="gwapi-sms-reply-body" name="_gwapi_form_settings[reply-body]" cols="100" rows="5" class="large-text code"><?= isset($opt['reply-sender']) && $opt['reply-body'] ? esc_attr($opt['reply-body']) : ''; ?></textarea>
@@ -174,10 +179,10 @@ class GwapiContactForm7 {
 			header("Content-type: application/json");
 			if (!$code) {
 				set_transient('gwapi_verify_signup_'.$phone, $code=rand(100000,999999), 60*5);
-				gwapi_send_sms('Your verification code: '.$code, $phone);
-				die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => "We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number."]));
+				gwapi_send_sms(__("Your verification code:", 'gwapi')." ".$code, $phone);
+				die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gwapi') ]));
 			} else {
-				die(json_encode(['gwapi_verify' => true, 'gwapi_error' => "You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again."]));
+				die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gwapi') ]));
 			}
 		}
 	}
@@ -253,7 +258,7 @@ class GwapiContactForm7 {
 					// update groups? update groups
 					if ($groups_field) {
 						// remove all current groups
-						$groupIDs = $data['gwapi_groups'];
+						$groupIDs = isset($data['gwapi_groups']) && $data['gwapi_groups'] ? $data['gwapi_groups'] : [];
 						foreach($groupIDs as &$gid) { $gid = (int)$gid; }
 						wp_set_object_terms($curID, $groupIDs, 'gwapi-recipient-groups');
 					}
@@ -301,15 +306,15 @@ class GwapiContactForm7 {
 				<table class="form-table">
 					<tbody>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>">Id attribute</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php _e('Id attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>"></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>">Class attribute</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php _e('Class attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>"></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>">Default value</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>"><?php _e('Default value', 'gwapi'); ?></label></th>
 						<td><input type="text" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['default'] . '-default' ); ?>"></td>
 					</tr>
 					</tbody>
@@ -337,28 +342,28 @@ class GwapiContactForm7 {
 		?>
 		<div class="control-box">
 			<fieldset>
-				<legend><?=esc_html( $description )?></legend>
+				<legend><?=esc_html( __($description, 'gwapi') )?></legend>
 
 				<table class="form-table">
 					<tbody>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-groups' ); ?>">Limit countries</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-groups' ); ?>"><?php _e('Limit countries', 'gwapi'); ?></label></th>
 						<td>
 							<input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-onlycc' ); ?>">
-							<p class="description">Enter all calling codes allowed, separated by comma. Leave empty to allow all. See the <a href="https://countrycode.org/" target="_blank">list of calling codes</a>.</p>
+							<p class="description"><?php _e('Enter all calling codes allowed, separated by comma. Leave empty to allow all. See the <a href="https://countrycode.org/" target="_blank">list of calling codes</a>.', 'gwapi'); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>">Id attribute</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php _e('Id attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>"></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>">Class attribute</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php _e('Class attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>"></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>">Default country code</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>"><?php _e('Default country code', 'gwapi'); ?></label></th>
 						<td><input type="text" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['default'] . '-default' ); ?>"></td>
 					</tr>
 					</tbody>
@@ -391,13 +396,13 @@ class GwapiContactForm7 {
 		?>
 		<div class="control-box">
 			<fieldset>
-				<legend><?=esc_html( $description )?></legend>
+				<legend><?=esc_html( __($description,'gwapi') )?></legend>
 
 				<table class="form-table">
 					<tbody>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-groups' ); ?>">Pick groups</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-groups' ); ?>"><?php _e('Pick groups', 'gwapi'); ?></label></th>
 						<td>
 							<div style="width: 100%; max-height: 100px; overflow: auto;">
 								<?php $terms = get_terms('gwapi-recipient-groups', ['hide_empty' => false]); ?>
@@ -409,20 +414,20 @@ class GwapiContactForm7 {
 					</tr>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-allow-select' ); ?>">Hidden field</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-allow-select' ); ?>"><?php _e('Hidden field', 'gwapi'); ?></label></th>
 						<td>
 							<label>
 								<input type="checkbox" name="hidden" class="option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" />
-								Hide this field. Recipients will be subscribed to all of the selected groups.
+								<?php _e('Hide this field. Recipients will be subscribed to all of the selected groups.', 'gwapi'); ?>
 							</label>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>">Id attribute</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php _e('Id attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>"></td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>">Class attribute</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php _e('Class attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>"></td>
 					</tr>
 					</tbody>
@@ -455,41 +460,40 @@ class GwapiContactForm7 {
 		?>
 		<div class="control-box">
 			<fieldset>
-				<legend><?=esc_html( $description )?></legend>
+				<legend><?=esc_html( __($description, 'gwapi') )?></legend>
 
 				<table class="form-table">
 					<tbody>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-action' ); ?>">Triggered action</label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-action' ); ?>"><?php _e('Triggered action', 'gwapi'); ?></label></th>
 						<td>
-							<label><input type="radio" checked name="action" class="option" value="signup" id="<?php echo esc_attr( $args['content'] . '-action-signup' ); ?>"> Signup</label>
-							<p class="description"style="margin-top: 0; margin-bottom: 10px">Sign up a new subscriber. If a recipient with same phone number exists, the signup will fail.</p>
+							<label><input type="radio" checked name="action" class="option" value="signup" id="<?php echo esc_attr( $args['content'] . '-action-signup' ); ?>"> <?php _e('Signup', 'gwapi'); ?></label>
+							<p class="description"style="margin-top: 0; margin-bottom: 10px"><?php _e('Sign up a new subscriber. If a recipient with same phone number exists, the signup will fail.', 'gwapi'); ?></p>
 
-							<label><input type="radio" name="action" class="option" value="unsubscribe"> Unsubscribe</label>
-							<p class="description"style="margin-top: 0; margin-bottom: 10px">Unsubscribe a subscriber, ie. move the recipient to the trash.</p>
+							<label><input type="radio" name="action" class="option" value="unsubscribe"> <?php _e('Unsubscribe', 'gwapi'); ?></label>
+							<p class="description"style="margin-top: 0; margin-bottom: 10px"><?php _e('Unsubscribe a subscriber, ie. move the recipient to the trash.', 'gwapi'); ?></p>
 
-							<label><input type="radio" name="action" class="option" value="update"> Update</label>
-							<p class="description" style="margin-top: 0;">Update an existing subscriber, ie. a recipient with the given phone number must already exist.</p>
+							<label><input type="radio" name="action" class="option" value="update"> <?php _e('Update', 'gwapi'); ?></label>
+							<p class="description" style="margin-top: 0;"><?php _e('Update an existing subscriber, ie. a recipient with the given phone number must already exist.', 'gwapi'); ?></p>
 						</td>
 					</tr>
 					<tr>
 						<th scope="row">
-							<label for="<?php echo esc_attr( $args['content'] . '-verify' ); ?>">Require verification</label>
+							<label for="<?php echo esc_attr( $args['content'] . '-verify' ); ?>"><?php _e('Require verification', 'gwapi'); ?></label>
 						</th>
 						<td>
 							<label>
 								<input type="radio" checked name="verify" class="option" id="<?php echo esc_attr( $args['content'] . '-verify' ); ?>" value="yes" />
-								Yes (recommended)
+								<?php _e('Yes (recommended)', 'gwapi'); ?>
 							</label>
 							<label>
 								<input type="radio" name="verify" class="option" id="<?php echo esc_attr( $args['content'] . '-verify' ); ?>" value="no" />
-								No
+								<?php _e('No', 'gwapi'); ?>
 							</label>
 							<p class="description">
-								An SMS will be sent to confirm the ownership of the number with a one-time verification code.<br />
-								When updating, this triggers another flow: The user will have to enter mobile and country code, verify the number and
-								only then will the rest of the form be presented.
+								<?php _e('An SMS will be sent to confirm the ownership of the number with a one-time verification code.', 'gwapi'); ?><br />
+								<?php _e('When updating, this triggers another flow: The user will have to enter mobile and country code, verify the number and only then will the rest of the form be presented.', 'gwapi'); ?>
 							</p>
 						</td>
 					</tr>
@@ -693,12 +697,12 @@ class GwapiContactForm7 {
 			// iterate the posted groups - the groups posted must all be in the list of valid groups
 			foreach($groupsSelected as $groupID) {
 				if (!in_array($groupID, $groupsPossible)) {
-					$res->invalidate($tag, 'One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.');
+					$res->invalidate($tag, __('One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gwapi') );
 				}
 			}
 		} else { // if IS hidden: ALL groups should have been submitted
 			if (count($groupsPossible) != count($groupsSelected)) {
-				$res->invalidate($tag, 'One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.');
+				$res->invalidate($tag, __('One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gwapi') );
 			}
 		}
 
@@ -720,7 +724,7 @@ class GwapiContactForm7 {
 
 		$phone = isset($_POST['gwapi_phone']) ? $_POST['gwapi_phone'] : null;
 		if (!$phone || !ctype_digit($phone)) {
-			$res->invalidate($tag, 'The phone number must consist of digits only.');
+			$res->invalidate($tag, __('The phone number must consist of digits only.', 'gwapi') );
 			return $res;
 		}
 
@@ -735,12 +739,12 @@ class GwapiContactForm7 {
 
 		// signup: does the phone number already exist?
 		if (isset($_POST['gwapi_action']) && $_POST['gwapi_action'] == 'signup' && $phone_exists === true) {
-			$res->invalidate($tag, 'You are already subscribed with this phone number.');
+			$res->invalidate($tag, __('You are already subscribed with this phone number.', 'gwapi') );
 		}
 
 		// unsubscribe or update: does the phone number already exist?
 		if (isset($_POST['gwapi_action']) && in_array($_POST['gwapi_action'], ['unsubscribe', 'update']) && $phone_exists === false) {
-			$res->invalidate($tag, 'You are not subscribed with this phone number.');
+			$res->invalidate($tag, __('You are not subscribed with this phone number.', 'gwapi') );
 		}
 
 		return $res;
@@ -778,7 +782,7 @@ class GwapiContactForm7 {
 
 		// is the country code entered, within the list of valid country codes?
 		if (!in_array($cc, $valid_country_codes)) {
-			$res->invalidate($tag, 'The phone country code selected, is not within the list of valid country codes.');
+			$res->invalidate($tag, __('The phone country code selected, is not within the list of valid country codes.', 'gwapi') );
 		}
 
 		return $res;
@@ -803,7 +807,7 @@ class GwapiContactForm7 {
 		$shouldBe = substr($origName, 7);
 
 		if ($shouldBe != $action) {
-			$res->invalidate($tag, json_encode([$shouldBe, $action]).'The action for the form is not consistent with the per-form configured action. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.');
+			$res->invalidate($tag, __('The action for the form is not consistent with the per-form configured action. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gwapi') );
 			return $res;
 		}
 
@@ -811,7 +815,7 @@ class GwapiContactForm7 {
 		if ($action === 'update' && in_array('verify:yes', $tag->options)) {
 			$code = get_transient('gwapi_verify_'.$_POST['gwapi_country'].$_POST['gwapi_phone']);
 			if ($code != $_POST['_gwapi_token']) {
-				$res->invalidate($tag, 'It doesn\'t seem that you have verified your number by SMS, or the verification has expired. Note that you must submit the form within 30 minutes after validating.');
+				$res->invalidate($tag, __('It doesn\'t seem that you have verified your number by SMS, or the verification has expired. Note that you must submit the form within 30 minutes after validating.', 'gwapi') );
 			}
 		}
 
@@ -821,9 +825,9 @@ class GwapiContactForm7 {
 			$code = get_transient("gwapi_verify_signup_" . $phone);
 			if (isset($_POST['_gwapi_verify_signup'])) {
 				if ($code && $code != preg_replace('/\D+/', '', $_POST['_gwapi_verify_signup'])) {
-					$res->invalidate($tag, "The verification code that you entered, was incorrect.");
+					$res->invalidate($tag, __("The verification code that you entered, was incorrect.", 'gwapi') );
 				} else if (!$code) {
-					$res->invalidate($tag, "The verification code has expired. You have just 5 minutes to enter the code. Please try again.");
+					$res->invalidate($tag, __("The verification code has expired. You have just 5 minutes to enter the code. Please try again.", 'gwapi') );
 				}
 			}
 		}
@@ -863,7 +867,7 @@ class GwapiContactForm7 {
 
 		// valid?
 		if (!isset($_POST['cc']) || !isset($_POST['number'])) {
-			die(json_encode(['success' => false, 'message' => 'You must supply both country code and phone number.']));
+			die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gwapi') ]));
 		}
 
 		// prevent abuse
@@ -891,18 +895,18 @@ class GwapiContactForm7 {
 
 		// valid?
 		if (!isset($_POST['cc']) || !isset($_POST['number']) || !isset($_POST['code'])) {
-			die(json_encode(['success' => false, 'message' => 'You must supply both country code and phone number.']));
+			die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gwapi') ]));
 		}
 
 		// prevent abuse
 		$this_phone = get_transient('gwapi_verify1_'.$_POST['cc'].$_POST['number']) ? : 0;
-		if ($this_phone > 10) die(json_encode(['success' => false, 'message' => 'Due to too many attempts at verifying SMS-codes within a short period of time, your request has been blocked. Try again later.']));
+		if ($this_phone > 10) die(json_encode(['success' => false, 'message' => __('Due to too many attempts at verifying SMS-codes within a short period of time, your request has been blocked. Try again later.', 'gwapi') ]));
 		set_transient('gwapi_verify1_'.$_POST['cc'].$_POST['number'], $this_phone+1, 60*60*4);
 
 		// check if the code is valid
 		$code = get_transient('gwapi_verify_'.$_POST['cc'].$_POST['number']);
-		if (!$code) die(json_encode(['success' => false, 'message' => 'There is no verification going on for this phone number. Perhaps you waited too long? These codes expire after 30 minutes.']));
-		if ($code != $_POST['code']) die(json_encode(['success' => false, 'message' => 'The code is invalid. Please try again.']));
+		if (!$code) die(json_encode(['success' => false, 'message' => __('There is no verification going on for this phone number. Perhaps you waited too long? These codes expire after 30 minutes.', 'gwapi') ]));
+		if ($code != $_POST['code']) die(json_encode(['success' => false, 'message' => __('The code is invalid. Please try again.', 'gwapi') ]));
 
 		// find the recipient, if there is any, and return all information
 		$q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [ [ 'key' => 'cc', 'value' => $_POST['cc'] ], ['key' => 'number', 'value' => $_POST['number']] ]]);
