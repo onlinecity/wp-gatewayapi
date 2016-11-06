@@ -3,7 +3,7 @@ Contributors: onlinecity
 Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
-Tested up to: 4.6.0
+Tested up to: 4.6.1
 Stable tag: 1.2.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
