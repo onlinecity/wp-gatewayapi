@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.6.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -51,6 +51,8 @@ If you would prefer to disable the UI-features and do all the sending from code,
 GatewayAPI automatically detects and extends Contact Form 7 to support public signing up, updating and unsubscribing. GatewayAPI adds a country code, mobile number and a groups selection field to the Contact Form 7 form builder.
 
 The Contact Form 7-integration also features support fetching form field defaults based on the currently logged in users metadata, GET-variables, post meta data etc.
+
+Furthermore, in v1.2.1, we improved with support for auto-replying to the new/updated/just unsubscribed recipient. Furthermore, a two-step validation can now be activated for the recipient signup flow.
 
 
 = Getting Started =
@@ -114,6 +116,15 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.2.1 =
+* User synchronization:
+ * No longer requires a country code meta field, instead allowing a default country code when this value is missing.
+ * Now possible to trigger a "one time" synchronization.
+* Contact Form 7:
+ * Now possible to send an SMS-reply on form success automatically.
+ * SMS-validation for signup, before allowing the form to submit successfully.
+ * Bugfix: Validation now works for all GatewayAPI-fields.
 
 = 1.2.0 =
 * Contact Form 7: Integration supporting signup, update and unsubscribe forms for frontend. Two-factor flow possible for update-flow.
