@@ -14,6 +14,63 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "X-Generator: Poedit 1.8.11\n"
 
+# wpml-name: e46a25d251913eca8bdfb1d9dfa60c64
+#: <td> <label> <input type="checkbox" name="synchronize_on_next_load"
+#: id="gwapiSynchronizeOnNextLoad"> <?php _e('Synchronize all existing users on
+#: submit.' ,'gwapi'); ?>
+msgid "Synchronize all existing users on submit."
+msgstr "Synkronisér alle brugere når indstillingerne gemmes."
+
+# wpml-name: 0b318300cc689b74a29cfcb61d0c9566
+#: if (!$IDs) { die(json_encode([ 'html' => sprintf(__('User synchronization is
+#: complete. %d users were synchronized.', 'gwapi'), $max),
+msgid "User synchronization is complete. %d users were synchronized."
+msgstr "Brugersynkronisering gennemført. %d brugere blev synkroniseret."
+
+# wpml-name: 7fd46df15b1e1c5cfb222f1001c20662
+#: $done = count($IDs) + ($_GET['page']-1) * 100; die(json_encode([ 'html' =>
+#: sprintf( __('%d users of %d synchronized...', 'gwapi'), $done, $max ),
+msgid "%d users of %d synchronized..."
+msgstr "%d brugere ud af %d synkroniseret…"
+
+# wpml-name: 8efeb0483a47dbf53000616dd27c1d24
+#: die(json_encode([ 'html' => sprintf(_n("%d user is being synchronized now.",
+#: "%d users are now", $total, 'gwapi'), $total),
+msgid "%d user is being synchronized now."
+msgstr "%d bruger er ved at blive synkroniseret."
+
+# wpml-name: 1b78506f11436c0676d0cd175f6bb918
+#: $total = $q->get_total(); if (!$total) { die(json_encode(['html' =>
+#: __('There are no users to synchronize at this time, ie. which has the meta
+#: field for mobile number.', 'gwapi'), 'finished' true]));
+msgid "There are no users to synchronize at this time, ie. no users which has the meta field for mobile number."
+msgstr "Der er ingen brugere som skal synkroniseres på nuværende tidpunkt, dvs. ingen brugere hvor meta-feltet for mobilnummer er til stede."
+
+# wpml-name: 296a30e2525e8b70a683efbd864d95cd
+#: die(json_encode([ 'html' => sprintf(_n("%d user is being synchronized now.",
+#: "%d users are now", $total, 'gwapi'), $total),
+msgid "%d users are being synchronized now"
+msgstr "%d brugere synkroniseres nu"
+
+# wpml-name: 8b36eba43c9a0b25920918d6d2ec3fa2
+#: </label> <p class="description"> <?php _e('Enabling this will force a
+#: one-time synchronization of all users, when you save these settings. This is
+#: useful initially setting plugin up and in cases where might have updated the
+#: user database directly, so that regular hooks on which relies, has not been
+#: triggered.', 'gwapi'); ?>
+msgid "Enabling this will force a one-time synchronization of all users, when you save these settings. This is useful when initially setting this plugin up and in cases where you might have updated the user database directly, so that the regular hooks on which the user synchronization relies, has not been triggered."
+msgstr "Slåes dette felt til vil der blive lave en én-gangs-synkronisering af alle brugere, så snart indstillingerne på denne side gemmes. Dette er brugbart når du indledningsvist opsætter pluginnet eller i situationer hvor ændringer f.eks. er foretaget på databaseniveau og de nødvendige automatiske handlinger derfor ikke er kørt."
+
+# wpml-name: 8627813f208ddbebe9a238113f3f97f8
+#: <tr valign="top"> <th scope="row"><?php _e('Synchronize now' , 'gwapi');
+#: ?></th>
+msgid "Synchronize now"
+msgstr "Synkronisér nu"
+
+# wpml-name: 51d8b1a38b2fc7fb51f74d2c656a3bab
+msgid "Synchronize existing users"
+msgstr "Synkronisér eksisterende brugere"
+
 # wpml-name: 6406640337323a3f112bb2cd50f491d6
 #: if (!$code) { set_transient('gwapi_verify_signup_'.$phone,
 #: $code=rand(100000,999999), 60*5); gwapi_send_sms(__("Your verification
@@ -1210,10 +1267,10 @@ msgid "Default country code"
 msgstr "Standard landekode"
 
 # wpml-name: 635b9239d353061ba80c061abc6ffc53
-#: <input type="text" required name="gwapi_user_sync_meta_countrycode"
-#: value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode'));
-#: ?>" size="32"/> <p class="description"> <?php _e('Which user meta key
-#: contains the country code for mobile number?', 'gwapi'); ?>
+#: <input type="text" name="gwapi_user_sync_meta_countrycode" value="<?php echo
+#: esc_attr(get_option('gwapi_user_sync_meta_countrycode')); ?>" size="32"/> <p
+#: class="description"> <?php _e('Which user meta key contains the country code
+#: for mobile number?', 'gwapi'); ?>
 msgid "Which user meta key contains the country code for the mobile number?"
 msgstr "Hvilken metanøgle på brugeren indeholder landekoden for mobilnummeret?"
 

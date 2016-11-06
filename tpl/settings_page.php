@@ -357,7 +357,7 @@
                             <th scope="row"><?php _e('Synchronize now' , 'gwapi'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="synchronize_on_next_load" id="gwapiSynchronizeOnNextLoad"> <?php _e('Synchronize all existing users on submit.'); ?>
+                                    <input type="checkbox" name="synchronize_on_next_load" id="gwapiSynchronizeOnNextLoad"> <?php _e('Synchronize all existing users on submit.' ,'gwapi'); ?>
                                 </label>
                                 <p class="description">
                                     <?php _e('Enabling this will force a one-time synchronization of all users, when you save these settings. This is useful when initially setting this plugin up and in cases where you might have updated the user database directly, so that the regular hooks on which the user synchronization relies, has not been triggered.', 'gwapi'); ?>

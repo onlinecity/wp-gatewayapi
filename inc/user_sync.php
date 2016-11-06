@@ -106,7 +106,7 @@ class GWAPI_User_Sync
             // base recipient object
             $name = $user->display_name;
             $userCc = $this->required_to_look_for['cc'] ? get_user_meta($userID, $this->required_to_look_for['cc'], true) : null;
-            if (!$userCc) get_option('gwapi_user_sync_meta_default_countrycode');
+            if (!$userCc) $userCc = get_option('gwapi_user_sync_meta_default_countrycode');
             $recObject = [
                 'post_title' => $name,
                 'post_status' => 'publish',
