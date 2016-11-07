@@ -14,6 +14,51 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "X-Generator: Poedit 1.8.11\n"
 
+# wpml-name: 76c51a12781c105c173965d1830c2bd1
+#: 'no_code_entered' => __("You did not enter a code. It is possible for you to
+#: continue.", 'gwapi'), 'bad_code' the code correctly. Please try again.",
+#: 'no_code_try_again' __('Not entering will cancel signup. Clicking OK allow
+#: and again.', 'gwapi')
+msgid "Not entering the code will cancel the signup. Clicking OK will allow you to try and enter the code again."
+msgstr "Hvis du ikke indtaster en kode, vil tilmelding blive annulleret. Trykker du OK får du mulighed for at prøve igen."
+
+# wpml-name: 77a1103e360c52f05fd2a1b0911d6e27
+#: 'verification_sms_sent' => __("We have just sent you an SMS with a
+#: verification code. Please enter it below:", 'gwapi'), 'no_code_entered'
+#: __("You did not It is possible for to continue.", 'bad_code' the code
+#: correctly. try again.",
+msgid "You did not enter the code correctly. Please try again."
+msgstr "Du har lavet fejl i indtastningen. Prøv venligst igen."
+
+# wpml-name: 5c905e8cc09d41f9f4c13bbad9917ce5
+#: 'country_and_cc' => __('You must supply both country code and phone number
+#: in order to continue.', 'gwapi'), 'verification_sms_sent' __("We have just
+#: sent you an SMS with a verification code. Please enter it below:",
+#: 'no_code_entered' __("You did not It is possible for continue.",
+msgid "You did not enter a code. It is not possible for you to continue."
+msgstr "Du indtastede ikke en kode. Det er ikke muligt for dig at fortsætte."
+
+# wpml-name: 48e422acbbd29ecaf9937660ca6c7667
+#: wp_localize_script('gwapi_integration_contact_form_7', 'i18n_gwapi_cf7', [
+#: 'country_and_cc' => __('You must supply both country code and phone number
+#: in order to continue.', 'gwapi'), 'verification_sms_sent' __("We have just
+#: sent you an SMS with a verification code. Please enter it below:",
+msgid "We have just sent you an SMS with a verification code. Please enter it below:"
+msgstr "Vi har netop afsendt en SMS med en bekræftelseskode. Indtast den venligst nedenfor:"
+
+# wpml-name: bf701dae9aff5bb22b8f000dc9bf6199
+msgid "1.2.2"
+msgstr "1.2.2"
+
+# wpml-name: 4d75601964cf8822aa732f1b72e8bcd1
+#: wp_enqueue_script('gwapi_integration_contact_form_7',
+#: _gwapi_url().'js/integration_contact_form_7.js', ['jquery']);
+#: wp_localize_script('gwapi_integration_contact_form_7', 'i18n_gwapi_cf7', [
+#: 'country_and_cc' => __('You must supply both country code and phone number
+#: in order to continue.', 'gwapi'),
+msgid "You must supply both country code and phone number in order to continue."
+msgstr "Du skal indtaste både landekode og telefonnummer for at kunne fortsætte."
+
 # wpml-name: e46a25d251913eca8bdfb1d9dfa60c64
 #: <td> <label> <input type="checkbox" name="synchronize_on_next_load"
 #: id="gwapiSynchronizeOnNextLoad"> <?php _e('Synchronize all existing users on
@@ -72,9 +117,10 @@ msgid "Synchronize existing users"
 msgstr "Synkronisér eksisterende brugere"
 
 # wpml-name: 6406640337323a3f112bb2cd50f491d6
-#: if (!$code) { set_transient('gwapi_verify_signup_'.$phone,
-#: $code=rand(100000,999999), 60*5); gwapi_send_sms(__("Your verification
-#: code:", 'gwapi')." ".$code, $phone);
+#: $code = rand(100000,999999);
+#: set_transient('gwapi_verify_'.$_POST['cc'].$_POST['number'], $code, 60*30);
+#: gwapi_send_sms(__("Your verification code:", 'gwapi').$code,
+#: $_POST['cc'].ltrim($_POST['number'], '0'));
 msgid "Your verification code:"
 msgstr "Din verifikationskode:"
 
@@ -375,8 +421,8 @@ msgstr "Din bekræftelseskode: %code%"
 
 # wpml-name: 56bdecf4f430f149d66ad9720fb6b1a6
 #: $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'],
-#: $_POST['gwapi']['number']); $msisdn preg_replace('/\D+/', '',
-#: $_POST['gwapi']['cc'].$_POST['gwapi']['number']); if
+#: ltrim($_POST['gwapi']['number'], '0')); $msisdn preg_replace('/\D+/', '',
+#: $_POST['gwapi']['cc'].ltrim($_POST['gwapi']['number'], if
 #: (!is_wp_error($recipient)) return new WP_Error('already_exists',__('You are
 #: already subscribed with the phone number specified.','gwapi'));
 msgid "You are already subscribed with the phone number specified."

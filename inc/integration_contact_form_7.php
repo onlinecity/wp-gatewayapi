@@ -148,7 +148,7 @@ class GwapiContactForm7 {
 			</fieldset>
 		</div>
 		<?php
-		wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url().'js/integration_contact_form_7.js', ['jquery']);
+		$this->enqueueContactform7Js();
 	}
 
 	private function handleSubmitSignupVerify(WPCF7_ContactForm $wpcf7, WPCF7_Submission $submit)
@@ -173,7 +173,7 @@ class GwapiContactForm7 {
 
 		// has the user entered a verification pin code?
 		if (!isset($_POST['_gwapi_verify_signup'])) {
-			$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].ltrim($_POST['gwapi_phone']. '0'));
+			$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].ltrim($_POST['gwapi_phone'], '0'));
 			$code = get_transient("gwapi_verify_signup_".$phone);
 
 			header("Content-type: application/json");
@@ -847,7 +847,7 @@ class GwapiContactForm7 {
 
 		<?php
 		if (in_array('verify:yes', $contact_form['options'])) {
-			wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url().'js/integration_contact_form_7.js', ['jquery']);
+			$this->enqueueContactform7Js();
 			?>
 			<script>
 				var gwapi_admin_ajax = <?= json_encode(admin_url('admin-ajax.php')); ?>;
@@ -927,5 +927,21 @@ class GwapiContactForm7 {
 			}
 		}
 		die(json_encode(['success' => true, 'recipient' => $recipient]));
+	}
+
+	private function enqueueContactform7Js()
+	{
+		static $first_call = false;
+		if ($first_call) return;
+		$first_call = true;
+
+		wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url().'js/integration_contact_form_7.js', ['jquery']);
+		wp_localize_script('gwapi_integration_contact_form_7', 'i18n_gwapi_cf7', [
+			'country_and_cc' => __('You must supply both country code and phone number in order to continue.', 'gwapi'),
+			'verification_sms_sent' => __("We have just sent you an SMS with a verification code. Please enter it below:", 'gwapi'),
+			'no_code_entered' => __("You did not enter a code. It is not possible for you to continue.", 'gwapi'),
+			'bad_code' => __("You did not enter the code correctly. Please try again.", 'gwapi'),
+			'no_code_try_again' => __('Not entering the code will cancel the signup. Clicking OK will allow you to try and enter the code again.', 'gwapi')
+		]);
 	}
 }
