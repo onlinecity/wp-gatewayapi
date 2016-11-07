@@ -118,8 +118,8 @@ function _gwapi_shortcode_handle_signup($atts)
         // STEP 2: CONFIRM SMS
         case 'signup_confirm_sms':
             // verify the information posted
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
-            $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], ltrim($_POST['gwapi']['number'], '0'));
+            $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].ltrim($_POST['gwapi']['number'], '0'));
             if (!is_wp_error($recipient)) return new WP_Error('already_exists',__('You are already subscribed with the phone number specified.','gwapi'));
 
             // save the information supplied by the user
@@ -201,7 +201,7 @@ function _gwapi_shortcode_handle_update($atts)
             if ($valid) {
                 // send the verification sms
                 $code = rand(100000,999999);
-                $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+                $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].ltrim($_POST['gwapi']['number'],'0'));
                 set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
                 $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gwapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );

@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.6.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -116,6 +116,9 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.2.2 =
+* Better international phone numbers support: Prefixed 0's in the phone number itself (between country prefix and phone number) is now correctly.
 
 = 1.2.1 =
 * User synchronization:
