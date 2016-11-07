@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.6.1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -117,8 +117,12 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 
 == Changelog ==
 
+= 1.2.3 =
+* Bugfix: The new verification SMS for Contact Form 7 had a typo, breaking verification SMS'es.
+* Missing translations: The popup-messages related to verification were not translated to danish.
+
 = 1.2.2 =
-* Better international phone numbers support: Prefixed 0's in the phone number itself (between country prefix and phone number) is now correctly.
+* Better international phone numbers support: Prefixed 0's in the phone number itself (between country prefix and phone number) is now correctly working.
 
 = 1.2.1 =
 * User synchronization:
