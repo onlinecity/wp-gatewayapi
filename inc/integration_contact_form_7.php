@@ -173,7 +173,7 @@ class GwapiContactForm7 {
 
 		// has the user entered a verification pin code?
 		if (!isset($_POST['_gwapi_verify_signup'])) {
-			$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].$_POST['gwapi_phone']);
+			$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].ltrim($_POST['gwapi_phone']. '0'));
 			$code = get_transient("gwapi_verify_signup_".$phone);
 
 			header("Content-type: application/json");
@@ -289,7 +289,7 @@ class GwapiContactForm7 {
 		$body = trim(wpcf7_mail_replace_tags($sms['reply-body']));
 		$from = trim(wpcf7_mail_replace_tags($sms['reply-sender'])) ? : null;
 
-		$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].$_POST['gwapi_phone']);
+		$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].ltrim($_POST['gwapi_phone'],'0'));
 		gwapi_send_sms($body, $phone, $from);
 	}
 
@@ -881,7 +881,7 @@ class GwapiContactForm7 {
 		// save + send verification SMS
 		$code = rand(100000,999999);
 		set_transient('gwapi_verify_'.$_POST['cc'].$_POST['number'], $code, 60*30);
-		gwapi_send_sms("Your verification code: ".$code, $_POST['cc'].$_POST['number']);
+		gwapi_send_sms(__("Your verification code:", 'gwapi').$code, $_POST['cc'].ltrim($_POST['number'], '0'));
 
 		die(json_encode(['success' => true]));
 	}
