@@ -92,7 +92,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
         };
         foreach($tmp as $recID => $row) {
             if (!$row['cc'] || !$row['number']) continue;
-            $msisdn = $row['cc'].$row['number'];
+            $msisdn = $row['cc'].ltrim($row['number'],'0');
             $recipientsByNumber[$msisdn] = [];
             $recipientsByID[$recID] = $msisdn;
         }
@@ -127,7 +127,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
 
     // manually added
     foreach(get_post_meta($ID, 'single_recipient') as $sr) {
-        $msisdn = $sr['cc'].$sr['number'];
+        $msisdn = $sr['cc'].ltrim($sr['number'],'0');
         if (isset($recipientsByNumber[$msisdn])) continue;
 
         $recipientsByNumber[$msisdn] = [];
