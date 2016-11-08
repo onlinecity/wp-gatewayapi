@@ -117,6 +117,10 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 
 == Changelog ==
 
+= 1.2.4 =
+* Contact Form 7: Added support for forms which also contained a reCaptcha-field.
+* Code cleanup
+
 = 1.2.3 =
 * Bugfix: The new verification SMS for Contact Form 7 had a typo, breaking verification SMS'es.
 * Missing translations: The popup-messages related to verification were not translated to danish.
