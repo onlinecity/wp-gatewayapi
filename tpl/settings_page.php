@@ -486,7 +486,7 @@
                                 <li>
                                     <?php _e('Paste the following URL into the Web hook URL input field.', 'gwapi'); ?>
                                     <div class="description" style="text-decoration:underline">
-                                        <input name="gwapi_receive_sms_url" style="width:100%" value="<?php echo esc_attr(admin_url('admin-ajax.php?action=gwapi_receive_sms')); ?>">
+                                        <input name="gwapi_receive_sms_url" style="width:100%" value="<?php echo esc_attr(_gwapi_receive_sms_url()); ?>">
                                     </div>
                                 </li>
                             </ol>

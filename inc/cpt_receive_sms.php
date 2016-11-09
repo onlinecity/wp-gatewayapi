@@ -1,5 +1,30 @@
 <?php
 
+add_action('init', function () {
+    $args = array(
+        'labels' => array(
+            'name' => __("Inbox", 'gwapi'),
+            'singular_name' => __('Inbox', 'gwapi'),
+            'menu_name' => __('Inbox', 'gwapi'),
+        ),
+        'hierarchical' => false,
+        'supports' => false,
+        'public' => false,
+        'show_ui' => get_option('gwapi_enable_ui'),
+        'show_in_menu' => 'edit.php?post_type=gwapi-sms',
+        'menu_position' => 10,
+        'show_in_nav_menus' => true,
+        'publicly_queryable' => false,
+        'exclude_from_search' => true,
+        'has_archive' => false,
+        'query_var' => false,
+        'map_meta_cap' => true,
+        'capability_type' => 'post',
+        'capabilities' => array('create_posts' => false)
+    );
+    register_post_type('gwapi-receive-sms', $args);
+});
+
 /**
  * Handler that receive smses from gatewayapi
  * We expect to receive a json payload with the smses
@@ -24,6 +49,9 @@
  */
 function _gwapi_receive_sms_json_handler()
 {
+    if (!(isset($_GET['token']) && $_GET['token'] === _gwapi_receive_sms_token())) {
+        throw new \InvalidArgumentException('Invalid token');
+    }
     $sms = json_decode(file_get_contents('php://input'), true);
     wp_insert_post(array(
         'guid' => 'gwapi-receive-sms-' . $sms['id'],
@@ -34,6 +62,22 @@ function _gwapi_receive_sms_json_handler()
     ));
     header('Content-type: application/json');
     die();
+}
+
+function _gwapi_receive_sms_token()
+{
+    $key = 'gwapi_receive_sms_token';
+    $token = get_option($key);
+    if (!$token) {
+        $token = wp_generate_password(32, false);
+        update_option($key, $token, false);
+    }
+    return $token;
+}
+
+function _gwapi_receive_sms_url()
+{
+    return admin_url('admin-ajax.php?action=gwapi_receive_sms&token=' . _gwapi_receive_sms_token());
 }
 
 add_action('wp_ajax_priv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
