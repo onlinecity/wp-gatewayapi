@@ -78,9 +78,10 @@ add_action('init', function () {
         }
 
         // Support receive-sms and sms-inbox features ?
-        include "$D/inc/cpt_receive_sms.php";
         if (get_option('gwapi_sms_inbox_enable')) {
+            include "$D/inc/cpt_receive_sms.php";
         }
+        include "$D/inc/receive_sms.php";
 
     }
     if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
