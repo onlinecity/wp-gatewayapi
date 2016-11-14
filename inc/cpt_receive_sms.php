@@ -176,7 +176,9 @@ add_action('parse_request', function ($wp) {
         'payload'
     ];
     $args = $wp->query_vars;
-    unset($args['posts_per_page']);
+    $args['posts_per_page'] = 10000;
+    unset($args['paged']);
+    $args['nopaging'] = true;
     header('Pragma: public');
     header('Expires: 0');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
