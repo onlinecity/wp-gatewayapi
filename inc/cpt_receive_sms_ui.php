@@ -33,19 +33,16 @@ function _gwapi_receive_sms_box(WP_Post $post)
         <?php foreach ($metas as $key => $description): ?>
             <tr>
                 <th width="25%">
-                    <?php echo $key; ?>
+                    <abbr title="<?php echo esc_attr(__($description, 'gwapi')); ?>"><?php echo $key; ?></abbr>
                 </th>
                 <td>
-                    <p>
-                        <?php
-                        $value = get_post_meta($post->ID, $key, true);
-                        if ($value && in_array($key, ['senttime'])) {
-                            $value = esc_attr(date_i18n(get_option('date_format'), $value) . ' @ ' . date_i18n(get_option('time_format'), $value));
-                        }
-                        echo nl2br(esc_attr($value) ?: '-');
-                        ?>
-                    </p>
-                    <p class="description"><?php _e($description, 'gwapi'); ?></p>
+                    <?php
+                    $value = get_post_meta($post->ID, $key, true);
+                    if ($value && in_array($key, ['senttime'])) {
+                        $value = esc_attr(date_i18n(get_option('date_format'), $value) . ' @ ' . date_i18n(get_option('time_format'), $value));
+                    }
+                    echo nl2br(esc_attr($value) ?: '-');
+                    ?>
                 </td>
             </tr>
 
