@@ -90,7 +90,7 @@ function _gwapi_receive_sms_token()
     if (get_option('gwapi_receive_sms_enable')) {
         $key = 'gwapi_receive_sms_token';
         $token = get_option($key);
-        if (!isset($token)) {
+        if (!$token) {
             $token = wp_generate_password(32, false);
             update_option($key, $token, false);
         }
