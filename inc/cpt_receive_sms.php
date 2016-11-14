@@ -209,23 +209,21 @@ add_action('parse_request', function ($wp) {
             echo $writer->writeToString();
             break;
         default:
-            $brk = "\r\n";
-            $sep = "\t";
-            $labels = array_map(function ($meta) {
-                return '"' . $meta . '"';
-            }, $metas);
-            $response = join($sep, $labels) . $brk;
+            $out = fopen('php://output', 'w');
+            fputcsv($out, $metas);
+
             while (have_posts()) {
                 the_post();
                 $metadata = get_post_meta(get_the_ID());
-                $row = '';
+                $row = [];
                 foreach ($metas as $meta) {
                     $value = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
-                    $row .= ('"' . $value . '"' . $sep);
+                    $row[] = $value;
                 }
-                $response .= $row . $brk;
+                fputcsv($out, $row);
             }
-            echo $response;
+
+            fclose($out);
             break;
     }
     wp_reset_query();
