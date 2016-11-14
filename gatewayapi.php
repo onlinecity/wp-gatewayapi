@@ -77,12 +77,10 @@ add_action('init', function () {
             include "$D/inc/user_sync.php";
         }
 
-        // Support receive-sms and sms-inbox features ?
-        if (get_option('gwapi_sms_inbox_enable')) {
+        // enable receive-sms?
+        if (get_option('gwapi_receive_sms_enable')) {
             include "$D/inc/cpt_receive_sms.php";
         }
-        include "$D/inc/receive_sms.php";
-
     }
     if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
         include "$D/inc/css_js.php";
@@ -98,5 +96,12 @@ add_action('init', function () {
         include "$D/inc/cpt_sms_editor_ui.php";
         include "$D/inc/cpt_sms_listing_ui.php";
         include "$D/inc/recipient_import.php";
+
+        // only include receive-sms ui if receive-sms is enabled
+        if (get_option('gwapi_receive_sms_enable')) {
+            include "$D/inc/cpt_receive_sms_ui.php";
+            include_once "$D/lib/xlsxwriter.class.php";
+        }
     }
+
 }, 9);

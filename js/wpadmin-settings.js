@@ -12,7 +12,7 @@ jQuery(function($) {
         handleToggleRecipientFormTab();
 
         handleUserSynchronization();
-        handleSmsInbox();
+        handleReceiveSms();
 
         handleRecipientFieldSorting();
         handleRecipientTypeCriteria();
@@ -270,22 +270,11 @@ jQuery(function($) {
         $('select[name="gwapi_user_sync_meta_default_countrycode"]').gwapiMobileCc();
     }
 
-    function handleSmsInbox()
+    function handleReceiveSms()
     {
-        // the enable/disable everything toggle
-        var outer = $('#smsInbox');
-        outer.find('#smsInboxEnableCb').change(function() {
-            if ($(this).is(':checked')) {
-                $('#smsInboxEnabled').removeClass('hidden').find('input,textarea').prop('disabled', false);
-            } else {
-                $('#smsInboxEnabled').addClass('hidden').find('input,textarea').prop('disabled', true);
-            }
-        }).change();
-
-        $('#smsInboxEnabled input[name="gwapi_receive_sms_url"]').click(function(ev) {
+        $('#receiveSmsEnabled input[name="gwapi_receive_sms_url"]').click(function(ev) {
            $(this).select && $(this).select();
         });
-
     }
 
     initialize();

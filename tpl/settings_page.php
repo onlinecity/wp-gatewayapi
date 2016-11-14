@@ -454,11 +454,11 @@
                 </p>
                 <p>
                     <label>
-                        <input type="checkbox" name="gwapi_sms_inbox_enable" value="1" id="smsInboxEnableCb" <?= get_option('gwapi_sms_inbox_enable') ? 'checked' : ''; ?>> <?php _e('Yes please, I would like to receive SMS messages.', 'gwapi'); ?>
+                        <input type="checkbox" name="gwapi_receive_sms_enable" value="1" id="receiveSmsEnableCb" <?= get_option('gwapi_receive_sms_enable') ? 'checked' : ''; ?>> <?php _e('Yes please, I would like to receive SMS messages.', 'gwapi'); ?>
                     </label>
                 </p>
 
-                <div id="smsInboxEnabled" <?= get_option('gwapi_sms_inbox_enable') ? '' : 'class="hidden"'; ?>>
+                <div id="receiveSmsEnabled" <?= get_option('gwapi_receive_sms_enable') ? '' : 'class="hidden"'; ?>>
 
                     <hr>
 
