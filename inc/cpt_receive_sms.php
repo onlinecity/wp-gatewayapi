@@ -190,7 +190,11 @@ add_action('parse_request', function ($wp) {
     switch ($format) {
         case 'xlsx':
             $writer = new \XLSXWriter();
-            $writer->writeSheetHeader('Sheet1', $metas);
+            $headers = [];
+            foreach ($metas as $meta) {
+                $headers[$meta] = 'string';
+            }
+            $writer->writeSheetHeader('Sheet1', $headers);
             while (have_posts()) {
                 the_post();
                 $metadata = get_post_meta(get_the_ID());
@@ -223,6 +227,7 @@ add_action('parse_request', function ($wp) {
             break;
     }
     wp_reset_query();
+    die();
 });
 
 add_action('admin_footer', function () {
