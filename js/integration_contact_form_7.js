@@ -8,11 +8,31 @@ jQuery(function($) {
         actionEl = $('.wpcf7-form input[name="gwapi_action"]');
 
         // requires verify?
-        if (!actionEl.data('verify')) return;
+        if (actionEl.data('verify')) {
+            var action = actionEl.val();
+            if (action == 'update') handleUpdate();
+            if (action == 'signup') handleSignup();
+        }
 
-        var action = actionEl.val();
-        if (action == 'update') handleUpdate();
+        // admin form: sms reply
+        handleEditorSmsReply();
+    }
 
+    function handleEditorSmsReply()
+    {
+        var panel = $('#sms-reply-panel.contact-form-editor-panel');
+        if (!panel.length) return;
+
+        var updateVisibleFieldsFn = function() {
+            var isVisible = $(this).is(':checked');
+            var shouldBeToggled = panel.find('.only-show-on-enabled-sms-reply');
+            if (isVisible) shouldBeToggled.show();
+            else shouldBeToggled.hide();
+        };
+
+        var replyEnableSel = 'input[name="_gwapi_form_settings[reply-enable]"]';
+        panel.on('change', replyEnableSel, updateVisibleFieldsFn);
+        panel.find(replyEnableSel).each(updateVisibleFieldsFn);
     }
 
     function handleUpdate()
@@ -45,7 +65,7 @@ jQuery(function($) {
             var cc = $('[name="gwapi_country"]').val();
             var mobile = $('[name="gwapi_phone"]').val();
             if (!cc || !mobile) {
-                $('.wpcf7-response-output').text('You must supply both country code and phone number in order to continue.').addClass('wpcf7-validation-errors').show();
+                $('.wpcf7-response-output').text(i18n_gwapi_cf7.country_and_cc).addClass('wpcf7-validation-errors').show();
                 return false;
             }
 
@@ -62,14 +82,14 @@ jQuery(function($) {
                 }
 
                 // success! ask for SMS code
-                var code = window.prompt("We have just sent you an SMS with a verification code. Please enter it below:");
+                var code = window.prompt(i18n_gwapi_cf7.verification_sms_sent);
                 if (!code) {
-                    return window.alert("You did not enter a code. It is not possible for you to continue.");
+                    return window.alert(i18n_gwapi_cf7.no_code_entered);
                 }
 
                 $.post(gwapi_admin_ajax, {action: 'gwapi_verify_sms', 'cc': cc, 'number': mobile, 'code': code}).done(function(res) {
                     if (!res.success) {
-                        return window.alert("You did not enter the code correctly. Please try again.");
+                        return window.alert(i18n_gwapi_cf7.bad_code);
                     }
 
                     // inject the verification token into the form
@@ -102,6 +122,42 @@ jQuery(function($) {
                     });
                 });
             });
+        });
+    }
+
+    function handleSignup()
+    {
+        $(document).ajaxSuccess(function(event, xhr, settings) {
+            if (!settings.extraData._wpcf7_is_ajax_call) return; // wrong call
+
+            var res = xhr.responseJSON;
+            if (!res) return; // wrong format
+
+            if (res.gwapi_verify && res.gwapi_prompt) {
+                var innerF = $('.wpcf7-response-output.wpcf7-display-none.wpcf7-mail-sent-ng').hide();
+                var form = innerF.closest('form');
+                function enterVerifyCode() {
+                    var code = window.prompt(res.gwapi_prompt);
+                    if (!code) {
+                        if (window.confirm(i18n_gwapi_cf7.no_code_try_again)) {
+                            enterVerifyCode();
+                        }
+                    } else {
+                        // do we have an input field for the code?
+                        var inputCode = form.find('input[name="_gwapi_verify_signup"]');
+                        if (!inputCode.length) {
+                            $('<input name="_gwapi_verify_signup" type="hidden">').appendTo($('.wpcf7-form'));
+                        }
+                        inputCode = form.find('input[name="_gwapi_verify_signup"]');
+                        inputCode.val(code);
+                        form.submit();
+                    }
+                }
+                enterVerifyCode();
+
+            } else if (res.gwapi_error) {
+                $('.wpcf7-response-output.wpcf7-display-none.wpcf7-mail-sent-ng').text(res.gwapi_error);
+            }
         });
     }
 

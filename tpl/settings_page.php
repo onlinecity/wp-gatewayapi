@@ -5,7 +5,6 @@
         <?php settings_fields('gwapi'); ?>
         <?php do_settings_sections('gwapi'); ?>
 
-
         <h2 class="nav-tab-wrapper">
             <a href="#base" class="nav-tab"><?php _e('General settings', 'gwapi'); ?></a>
             <a href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient fields', 'gwapi'); ?></a>
@@ -13,6 +12,7 @@
             <a href="#build-shortcode" class="nav-tab hidden"><?php _e('Build Shortcode', 'gwapi'); ?></a>
             <a href="#sms-inbox" class="nav-tab hidden"><?php _e('SMS Inbox', 'gwapi'); ?></a>
         </h2>
+
 
         <div class="tab-inner">
 
@@ -28,20 +28,20 @@
                     <tr valign="top">
                         <th scope="row"><?php _e('OAuth Key', 'gwapi'); ?></th>
                         <td><input type="text" name="gwapi_key" value="<?php echo esc_attr(get_option('gwapi_key')); ?>"
-                                size="32"/></td>
+                                   size="32"/></td>
                     </tr>
 
                     <tr valign="top">
                         <th scope="row"><?php _e('OAuth Secret', 'gwapi'); ?></th>
                         <td><input type="text" name="gwapi_secret"
-                                value="<?php echo esc_attr(get_option('gwapi_secret')); ?>" size="64"/></td>
+                                   value="<?php echo esc_attr(get_option('gwapi_secret')); ?>" size="64"/></td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><?php _e('Enable sending UI', 'gwapi'); ?></th>
                         <td>
                             <label>
                                 <input type="checkbox"
-                                    name="gwapi_enable_ui" <?= get_option('gwapi_enable_ui') ? 'checked' : ''; ?>>
+                                       name="gwapi_enable_ui" <?= get_option('gwapi_enable_ui') ? 'checked' : ''; ?>>
                                 <?php _e('Yes, enable the SMS sending UI', 'gwapi'); ?>
                             </label>
                             <p class="help-block">
@@ -55,7 +55,7 @@
                         <td>
                             <label>
                                 <input type="text" maxlength="15" name="gwapi_default_sender"
-                                    value="<?= esc_attr(get_option('gwapi_default_sender')); ?>">
+                                       value="<?= esc_attr(get_option('gwapi_default_sender')); ?>">
                             </label>
                             <p class="help-block">
                                 <?php _e('Must consist of either 11 characters or 15 digits.', 'gwapi'); ?>
@@ -64,7 +64,7 @@
                     </tr>
                 </table>
 
-                <div id="enableCaptcha" <?= !get_option('gwapi_enable_ui') ? 'class="hidden"' : ''; ?>>
+                <div id="enableCaptcha" <?=!get_option('gwapi_enable_ui') ? 'class="hidden"': ''; ?>>
                     <h3><?php _e('Captcha for public forms', 'gwapi'); ?></h3>
                     <p><?php _e('reCAPTCHA is a free service from Google, which greatly reduces spam and abuse from your public forms.', 'gwapi'); ?></p>
                     <p><?php _e('If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, unsubscribe etc.), then please enter your site key and secret key below.', 'gwapi'); ?></p>
@@ -76,7 +76,7 @@
                             <td>
                                 <label>
                                     <input type="text" size="50"
-                                        name="gwapi_recaptcha_site_key" value="<?= esc_attr(get_option('gwapi_recaptcha_site_key')); ?>">
+                                           name="gwapi_recaptcha_site_key" value="<?= esc_attr(get_option('gwapi_recaptcha_site_key')); ?>">
                                 </label>
                             </td>
                         </tr>
@@ -85,7 +85,7 @@
                             <td>
                                 <label>
                                     <input type="text" size="50"
-                                        name="gwapi_recaptcha_secret_key" value="<?= esc_attr(get_option('gwapi_recaptcha_secret_key')); ?>">
+                                           name="gwapi_recaptcha_secret_key" value="<?= esc_attr(get_option('gwapi_recaptcha_secret_key')); ?>">
                                 </label>
                             </td>
                         </tr>
@@ -118,17 +118,17 @@
 
                             <div class="field-group label-left with-drag with-decoration">
                                 <div class="drag-handle has-tooltip"
-                                    title="You can re-order the items by dragging this handle."></div>
+                                     title="You can re-order the items by dragging this handle."></div>
 
                                 <div class="form-field">
                                     <label class="control-label">
                                         <?php _e('Name', 'gwapi'); ?>
                                         <i class="info has-tooltip"
-                                            title="<?= esc_attr(__('Shown in all pulic forms which uses this field.', 'gwapi')) ?>"></i>
+                                           title="<?= esc_attr(__('Shown in all pulic forms which uses this field.', 'gwapi')) ?>"></i>
                                     </label>
                                     <div class="form-control">
                                         <input required type="text" name="gwapi_recipient_fields[name][]"
-                                            value="<?= esc_attr(isset($af['name']) ? $af['name'] : ''); ?>">
+                                               value="<?= esc_attr(isset($af['name']) ? $af['name'] : ''); ?>">
                                     </div>
                                 </div>
 
@@ -136,7 +136,7 @@
                                     <label class="control-label">
                                         <?php _e('Field ID', 'gwapi'); ?>
                                         <i class="info has-tooltip"
-                                            title="<?= esc_attr(__('This is used as the tag when sending SMS\'es, in shortcodes and is used as the meta key.', 'gwapi')) ?>"></i>
+                                           title="<?= esc_attr(__('This is used as the tag when sending SMS\'es, in shortcodes and is used as the meta key.', 'gwapi')) ?>"></i>
                                     </label>
                                     <div class="form-control">
                                         <input
@@ -145,7 +145,7 @@
                                             value="<?= esc_attr(isset($af['field_id']) ? $af['field_id'] : ''); ?>">
                                         <?php if (isset($af['is_builtin']) && $af['is_builtin']): ?>
                                             <input required type="hidden" name="gwapi_recipient_fields[field_id][]"
-                                                value="<?= esc_attr(isset($af['field_id']) ? $af['field_id'] : ''); ?>">
+                                                   value="<?= esc_attr(isset($af['field_id']) ? $af['field_id'] : ''); ?>">
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -154,11 +154,11 @@
                                     <label class="control-label">
                                         <?php _e('Description', 'gwapi'); ?>
                                         <i class="info has-tooltip"
-                                            title="<?= esc_attr(__('A helpful description of what input the user is expected to put in the field.', 'gwapi')) ?>"></i>
+                                           title="<?= esc_attr(__('A helpful description of what input the user is expected to put in the field.', 'gwapi')) ?>"></i>
                                     </label>
                                     <div class="form-control">
                                         <input type="text" name="gwapi_recipient_fields[description][]"
-                                            value="<?= esc_attr(isset($af['description']) ? $af['description'] : ''); ?>">
+                                               value="<?= esc_attr(isset($af['description']) ? $af['description'] : ''); ?>">
                                     </div>
                                 </div>
 
@@ -166,7 +166,7 @@
                                     <label class="control-label">
                                         <?php _e('Required field?', 'gwapi'); ?>
                                         <i class="info has-tooltip"
-                                            title="<?= esc_attr(__('Required fields must be filled when adding recipients. For multiple choice field types, at least one value must be picked.', 'gwapi')) ?>"></i>
+                                           title="<?= esc_attr(__('Required fields must be filled when adding recipients. For multiple choice field types, at least one value must be picked.', 'gwapi')) ?>"></i>
                                     </label>
                                     <div class="form-control">
                                         <label>
@@ -177,7 +177,7 @@
 
                                             <?php if (isset($af['is_builtin']) && $af['is_builtin']): ?>
                                                 <input type="hidden" name="gwapi_recipient_fields[required][]"
-                                                    value="<?= esc_attr(isset($af['required']) ? $af['required'] : ''); ?>">
+                                                       value="<?= esc_attr(isset($af['required']) ? $af['required'] : ''); ?>">
                                             <?php endif; ?>
                                         </label>
                                     </div>
@@ -205,7 +205,7 @@
 
                                         <?php if (isset($af['is_builtin']) && $af['is_builtin']): ?>
                                             <input type="hidden" name="gwapi_recipient_fields[type][]"
-                                                value="<?= esc_attr(isset($af['type']) ? $af['type'] : ''); ?>">
+                                                   value="<?= esc_attr(isset($af['type']) ? $af['type'] : ''); ?>">
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -214,13 +214,13 @@
                                     <label class="control-label">
                                         <?php _e('Country limitation', 'gwapi'); ?>
                                         <i class="info has-tooltip"
-                                            title="<?= esc_attr(__('If you wish to limit the countries available, please enter the country calling codes below (one per line, no “+”-prefix).', 'gwapi')); ?>"></i>
+                                           title="<?= esc_attr(__('If you wish to limit the countries available, please enter the country calling codes below (one per line, no “+”-prefix).', 'gwapi')); ?>"></i>
                                         <br/>
                                         <a href="https://countrycode.org/" target="_blank"><?php _e('List of country calling codes', 'gwapi'); ?></a>
                                     </label>
                                     <div class="form-control">
                                         <textarea name="gwapi_recipient_fields[mobile_cc_countries][]" rows="5"
-                                            placeholder="Leave blank to allow all countries"><?= esc_attr(isset($af['mobile_cc_countries']) ? $af['mobile_cc_countries'] : ''); ?></textarea>
+                                                  placeholder="Leave blank to allow all countries"><?= esc_attr(isset($af['mobile_cc_countries']) ? $af['mobile_cc_countries'] : ''); ?></textarea>
                                     </div>
                                 </div>
 
@@ -228,11 +228,11 @@
                                     <label class="control-label">
                                         <?php _e('Choices', 'gwapi'); ?>
                                         <i class="info has-tooltip"
-                                            title="<?= esc_attr(__('Enter a single choice per line. Prefix the line with two exclamation marks (!!), to make an option selected by default.', 'gwapi')) ?>"></i>
+                                           title="<?= esc_attr(__('Enter a single choice per line. Prefix the line with two exclamation marks (!!), to make an option selected by default.', 'gwapi')) ?>"></i>
                                     </label>
                                     <div class="form-control">
                                         <textarea name="gwapi_recipient_fields[choices][]"
-                                            rows="5"><?= esc_attr(isset($af['choices']) ? $af['choices'] : ''); ?></textarea>
+                                                  rows="5"><?= esc_attr(isset($af['choices']) ? $af['choices'] : ''); ?></textarea>
                                     </div>
                                 </div>
 
@@ -240,7 +240,7 @@
                                     <div class="form-field">
                                         <div class="form-control">
                                             <button type="button" class="button button-danger" data-delete="true"
-                                                data-warning="<?= esc_attr(__('Are you sure that you want to delete this field?', 'gwapi')); ?>"><?php _e('Delete this field', 'gwapi'); ?></button>
+                                                    data-warning="<?= esc_attr(__('Are you sure that you want to delete this field?', 'gwapi')); ?>"><?php _e('Delete this field', 'gwapi'); ?></button>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -253,7 +253,7 @@
 
                 <button class="button" type="button" data-add-btn>+ <?php _e('Add another field', 'gwapi'); ?></button>
                 <button class="button" type="button" data-reset-btn
-                    data-warning="<?= esc_attr(__('Are you sure that you want to reset to default? All your field configurations above will be lost immediately with no way of recovery.', 'gwapi')); ?>"><?php _e('Reset to default', 'gwapi'); ?></button>
+                        data-warning="<?= esc_attr(__('Are you sure that you want to reset to default? All your field configurations above will be lost immediately with no way of recovery.', 'gwapi')); ?>"><?php _e('Reset to default', 'gwapi'); ?></button>
                 <br><br>
             </div>
             <!-- RECIPIENT FIELDS -->
@@ -262,13 +262,13 @@
             <!-- USER SYNCHRONIZATION -->
             <div class="tab hidden" data-tab="user-sync" id="userSync">
                 <p>
-                    <?php _e('It is possible to create recipients and keep them up-to-date automatically. As soon as the minimum required information on a user in the WordPress user is present, a recipient will be created automatically.', 'gwapi'); ?>
+                    <?php _e('It is possible to create recipients and keep them up-to-date automatically. As soon as the minimum required information on a user in the WordPress user is present, a recipient will be created automatically.','gwapi'); ?>
                 </p>
                 <p>
-                    <?php _e('If any information changes on the WordPress user or the user is deleted, the recipient is updated or deleted as well. In other words, the recipient works as an always up-to-date copy of the relevant users.', 'gwapi'); ?>
+                    <?php _e('If any information changes on the WordPress user or the user is deleted, the recipient is updated or deleted as well. In other words, the recipient works as an always up-to-date copy of the relevant users.','gwapi'); ?>
                 </p>
                 <p>
-                    <?php _e('Please note: It is <strong>your responsibility</strong> to ensure that the information on a user is valid and that mobile numbers are unique. If a user is not present in the recipients list, then there\'s either missing or invalid information on the user, or the number is already associated with another user.', 'gwapi'); ?>
+                    <?php _e('Please note: It is <strong>your responsibility</strong> to ensure that the information on a user is valid and that mobile numbers are unique. If a user is not present in the recipients list, then there\'s either missing or invalid information on the user, or the number is already associated with another user.','gwapi'); ?>
                 </p>
                 <p>
                     <label>
@@ -290,7 +290,7 @@
                         <tr valign="top">
                             <th scope="row"><?php _e('Mobile country code', 'gwapi'); ?></th>
                             <td>
-                                <input type="text" required name="gwapi_user_sync_meta_countrycode" value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode')); ?>" size="32"/>
+                                <input type="text" name="gwapi_user_sync_meta_countrycode" value="<?php echo esc_attr(get_option('gwapi_user_sync_meta_countrycode')); ?>" size="32"/>
                                 <p class="description">
                                     <?php _e('Which user meta key contains the country code for the mobile number?', 'gwapi'); ?>
                                 </p>
@@ -328,32 +328,41 @@
                                 </p>
                                 <table>
                                     <thead>
-                                    <tr>
-                                        <th width="33%" style="padding: 15px 10px 0 0"><?php _e('Group name', 'gwapi'); ?></th>
-                                        <th width="66%" style="padding: 15px 10px 0 0"><?php _e('User meta field', 'gwapi'); ?></th>
-                                    </tr>
+                                        <tr>
+                                            <th width="33%" style="padding: 15px 10px 0 0"><?php _e('Group name', 'gwapi'); ?></th>
+                                            <th width="66%" style="padding: 15px 10px 0 0"><?php _e('User meta field', 'gwapi'); ?></th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    <?php
-                                    $groups = get_terms([
-                                        'taxonomy' => 'gwapi-recipient-groups',
-                                        'hide_empty' => false
-                                    ]);
-                                    $gmap = get_option('gwapi_user_sync_group_map') ?: [];
-                                    foreach ($groups as $g) {
-                                        /** @var $g WP_Term */
-                                        ?>
-                                        <tr>
-                                            <td style="padding: 5px 10px 0 0"><?= $g->name; ?></td>
-                                            <td style="padding: 5px 10px 0 0">
-                                                <input type="text" name="gwapi_user_sync_group_map[<?= $g->term_id ?>]" value="<?= esc_attr(isset($gmap[$g->term_id]) ? $gmap[$g->term_id] : null) ?>">
-                                            </td>
-                                        </tr>
                                         <?php
-                                    }
-                                    ?>
+                                        $groups = get_terms([
+                                            'taxonomy' => 'gwapi-recipient-groups',
+                                            'hide_empty' => false
+                                        ]);
+                                        $gmap = get_option('gwapi_user_sync_group_map') ? : [];
+                                        foreach($groups as $g) { /** @var $g WP_Term */
+                                            ?>
+                                            <tr>
+                                                <td style="padding: 5px 10px 0 0"><?= $g->name; ?></td>
+                                                <td style="padding: 5px 10px 0 0"><input type="text" name="gwapi_user_sync_group_map[<?= $g->term_id ?>]" value="<?= esc_attr(isset($gmap[$g->term_id]) ? $gmap[$g->term_id] : null) ?>"></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
+                            </td>
+                        </tr>
+
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Synchronize now' , 'gwapi'); ?></th>
+                            <td>
+                                <label>
+                                    <input type="checkbox" name="synchronize_on_next_load" id="gwapiSynchronizeOnNextLoad"> <?php _e('Synchronize all existing users on submit.' ,'gwapi'); ?>
+                                </label>
+                                <p class="description">
+                                    <?php _e('Enabling this will force a one-time synchronization of all users, when you save these settings. This is useful when initially setting this plugin up and in cases where you might have updated the user database directly, so that the regular hooks on which the user synchronization relies, has not been triggered.', 'gwapi'); ?>
+                                </p>
                             </td>
                         </tr>
                     </table>
@@ -495,6 +504,7 @@
                 </div>
             </div>
             <!-- SMS INBOX -->
+            
         </div>
 
         <hr>

@@ -26,6 +26,8 @@ jQuery(function($) {
         handleRecipientFieldAddRow();
 
         handleShortcodeGenerator();
+
+        handleOneTimeUserSync();
     }
 
     function handleTooltips()
@@ -275,6 +277,39 @@ jQuery(function($) {
         $('#receiveSmsEnabled input[name="gwapi_receive_sms_url"]').click(function(ev) {
            $(this).select && $(this).select();
         });
+	}
+
+    function handleOneTimeUserSync()
+    {
+        $('body').on('change', '#gwapiSynchronizeOnNextLoad', function() {
+            sessionStorage.setItem('gwapiSynchronizeOnNextLoad', $(this).is(':checked') ? '1' : '');
+        });
+
+        var finishUserSync = function() {
+            $('#isSyncingStatus').parent().removeClass('notice-info').addClass('notice-success');
+        };
+
+        var doSync = sessionStorage.getItem('gwapiSynchronizeOnNextLoad') == '1';
+        if (doSync) {
+            sessionStorage.removeItem('gwapiSynchronizeOnNextLoad');
+
+            $('<div class="notice notice-info"><p id="isSyncingStatus"></p></div>').insertBefore($('#userSyncEnabled'));
+
+            $.post(ajaxurl+'?action=gwapi_user_sync', function(res) {
+                $('#isSyncingStatus').prepend(res.html);
+                if (res.finished) return finishUserSync();
+
+                var offset = 1;
+                var updateFn = function() {
+                    $.post(ajaxurl+'?action=gwapi_user_sync&page='+(offset++), function(res) {
+                        $('#isSyncingStatus').html(res.html);
+                        if (!res.finished) updateFn();
+                        else finishUserSync();
+                    });
+                };
+                updateFn();
+            });
+        }
     }
 
     initialize();
