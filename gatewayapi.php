@@ -28,20 +28,20 @@ function _gwapi_url()
 
 function _gwapi_initialize_cf7_admin()
 {
-	require_once( _gwapi_dir().'/inc/integration_contact_form_7.php' );
-	GwapiContactForm7::getInstance()->initAdmin();
+    require_once(_gwapi_dir() . '/inc/integration_contact_form_7.php');
+    GwapiContactForm7::getInstance()->initAdmin();
 }
 
 function _gwapi_initialize_cf7_shortcodes()
 {
-	require_once( _gwapi_dir().'/inc/integration_contact_form_7.php' );
-	GwapiContactForm7::getInstance()->handleShortcodes();
+    require_once(_gwapi_dir() . '/inc/integration_contact_form_7.php');
+    GwapiContactForm7::getInstance()->handleShortcodes();
 }
 
 function _gwapi_initialize_cf7_submit($form)
 {
-	require_once( _gwapi_dir().'/inc/integration_contact_form_7.php' );
-	GwapiContactForm7::getInstance()->handleSubmit($form);
+    require_once(_gwapi_dir() . '/inc/integration_contact_form_7.php');
+    GwapiContactForm7::getInstance()->handleSubmit($form);
 }
 
 
@@ -49,18 +49,19 @@ add_action('init', function () {
     $D = _gwapi_dir();
 
     // load translations
-    load_plugin_textdomain( 'gwapi', false, 'gatewayapi/languages' );
+    load_plugin_textdomain('gwapi', false, 'gatewayapi/languages');
 
     // public
     include "$D/inc/api.php";
     include "$D/inc/recipient_forms.php";
 
-	// plugin: contact form 7
-	add_action( 'wpcf7_admin_init', "_gwapi_initialize_cf7_admin", 18);
-	add_action( 'wpcf7_init', "_gwapi_initialize_cf7_shortcodes", 18);
-	add_action( "wpcf7_before_send_mail", "_gwapi_initialize_cf7_submit" );
+    // plugin: contact form 7
+    add_action('wpcf7_admin_init', "_gwapi_initialize_cf7_admin", 18);
+    add_action('wpcf7_init', "_gwapi_initialize_cf7_shortcodes", 18);
+    add_action("wpcf7_before_send_mail", "_gwapi_initialize_cf7_submit");
 
     if (get_option('gwapi_enable_ui')) {
+
         include "$D/inc/helpers.php";
         include "$D/inc/cpt_sms.php";
         include "$D/inc/cpt_recipient.php";
@@ -75,10 +76,15 @@ add_action('init', function () {
         if (get_option('gwapi_user_sync_enable')) {
             include "$D/inc/user_sync.php";
         }
+
+        // enable receive-sms?
+        if (get_option('gwapi_receive_sms_enable')) {
+            include "$D/inc/cpt_receive_sms.php";
+        }
     }
-		if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
-			include "$D/inc/css_js.php";
-		}
+    if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
+        include "$D/inc/css_js.php";
+    }
 
     // admin: editor required
     if (!current_user_can('edit_others_posts')) return;
@@ -90,5 +96,12 @@ add_action('init', function () {
         include "$D/inc/cpt_sms_editor_ui.php";
         include "$D/inc/cpt_sms_listing_ui.php";
         include "$D/inc/recipient_import.php";
+
+        // only include receive-sms ui if receive-sms is enabled
+        if (get_option('gwapi_receive_sms_enable')) {
+            include "$D/inc/cpt_receive_sms_ui.php";
+            include_once "$D/lib/xlsxwriter.class.php";
+        }
     }
+
 }, 9);
