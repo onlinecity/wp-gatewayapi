@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.6.1
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -29,6 +29,12 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 - Automatic synchronization of recipients and WordPress users, including selected metadata.
 - Add unlimited meta fields to your recipients: 11 content types to pick from!
 
+**Receive SMS'es:**
+
+- Reeive SMS'es sent from the phones of your visitors and others.
+- View received messages from the backend, via the "SMS Inbox".
+- Handle incoming SMS'es using standard WordPress hooks *(currently requires programming)*.
+
 **Integration in your website:**
 
 - Short-code generator, creating sign up, update and unsubscribe forms.
@@ -46,13 +52,10 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
 
-= New in v1.2.0: Integration with Contact Form 7 =
+= NEW IN 1.3: RECEIVE SMS'ES =
 
-GatewayAPI automatically detects and extends Contact Form 7 to support public signing up, updating and unsubscribing. GatewayAPI adds a country code, mobile number and a groups selection field to the Contact Form 7 form builder.
+In this latest version, it is now possible to receive SMS'es as well! When enabling this new feature, your installation is immediately be prepared to receive SMS'es. Using standard WordPress-hooks, you can respond or do other actions (currently requires programming).
 
-The Contact Form 7-integration also features support fetching form field defaults based on the currently logged in users metadata, GET-variables, post meta data etc.
-
-Furthermore, in v1.2.1, we improved with support for auto-replying to the new/updated/just unsubscribed recipient. Furthermore, a two-step validation can now be activated for the recipient signup flow.
 
 
 = Getting Started =
@@ -103,6 +106,7 @@ https://vimeo.com/179721183
 
 Video coming soon. Please see the "How to"-section for now, for more information on how to use properly use the Contact Form 7-integration.
 
+
 == Frequently Asked Questions ==
 
 = How well does this plugin handle 10.000+'s of recipients =
@@ -116,6 +120,9 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.3.0 =
+* Support for receiving SMS'es added, including setup-wizard and inbox.
 
 = 1.2.3 =
 * Bugfix: The new verification SMS for Contact Form 7 had a typo, breaking verification SMS'es.
