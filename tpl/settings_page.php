@@ -467,41 +467,43 @@
                     </label>
                 </p>
 
-                <div id="receiveSmsEnabled" <?= get_option('gwapi_receive_sms_enable') ? '' : 'class="hidden"'; ?>>
+                <?php if (get_option('gwapi_receive_sms_enable')): ?>
+                    <div id="receiveSmsEnabled" <?= get_option('gwapi_receive_sms_enable') ? '' : 'class="hidden"'; ?>>
 
-                    <hr>
+                        <hr>
 
-                    <h3><?php _e('Configuration', 'gwapi'); ?> </h3>
+                        <h3><?php _e('Configuration', 'gwapi'); ?> </h3>
 
-                    <table class="form-table">
+                        <table class="form-table">
 
-                        <tr valign="top">
-                            <p>
-                                <?php _e('Before your installation is capable of receiving SMS messages you must configure GatewayAPI.', 'gwapi'); ?>
-                            </p>
-                            <p>
-                                <?php _e('Please follow these simple steps:', 'gwapi'); ?>
-                            </p>
-                            <ol>
-                                <li>
-                                    <?php _e('Visit gatewayapi.com and click Settings > Web Hooks or <a target="_blank" href="https://gatewayapi.com/app/settings/web-hooks/">follow this link</a>.', 'gwapi'); ?>
-                                </li>
-                                <li>
-                                    <?php _e('Click ADD NEW.', 'gwapi'); ?>
-                                </li>
-                                <li>
-                                    <?php _e('Enter a Unique label.', 'gwapi'); ?>
-                                </li>
-                                <li>
-                                    <?php _e('Paste the following URL into the Web hook URL input field.', 'gwapi'); ?>
-                                    <div class="description" style="text-decoration:underline">
-                                        <input name="gwapi_receive_sms_url" style="width:100%" value="<?php echo esc_attr(_gwapi_receive_sms_url()); ?>">
-                                    </div>
-                                </li>
-                            </ol>
-                        </tr>
-                    </table>
-                </div>
+                            <tr valign="top">
+                                <p>
+                                    <?php _e('Before your installation is capable of receiving SMS messages you must configure GatewayAPI.', 'gwapi'); ?>
+                                </p>
+                                <p>
+                                    <?php _e('Please follow these simple steps:', 'gwapi'); ?>
+                                </p>
+                                <ol>
+                                    <li>
+                                        <?php _e('Visit gatewayapi.com and click Settings > Web Hooks or <a target="_blank" href="https://gatewayapi.com/app/settings/web-hooks/">follow this link</a>.', 'gwapi'); ?>
+                                    </li>
+                                    <li>
+                                        <?php _e('Click ADD NEW.', 'gwapi'); ?>
+                                    </li>
+                                    <li>
+                                        <?php _e('Enter a Unique label.', 'gwapi'); ?>
+                                    </li>
+                                    <li>
+                                        <?php _e('Paste the following URL into the Web hook URL input field.', 'gwapi'); ?>
+                                        <div class="description" style="text-decoration:underline">
+                                            <input name="gwapi_receive_sms_url" style="width:100%" value="<?php echo esc_attr(_gwapi_receive_sms_url()); ?>">
+                                        </div>
+                                    </li>
+                                </ol>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
             <!-- SMS INBOX -->
             
