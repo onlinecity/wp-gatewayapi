@@ -80,6 +80,8 @@ add_action('init', function () {
         // enable receive-sms?
         if (get_option('gwapi_receive_sms_enable')) {
             include "$D/inc/cpt_receive_sms.php";
+            include "$D/inc/cpt_receive_handler.php";
+            include "$D/inc/receive_action_autoreply.php";
         }
     }
     if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
