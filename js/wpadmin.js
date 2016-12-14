@@ -2,6 +2,12 @@ jQuery(function ($) {
 
     function initialize() {
         var body = $('body');
+
+        // if we find a gwapi[message] textarea we enable smsLengthCounter plugin
+        if (body.find('textarea[name="gwapi[message]"]').length) {
+            smsLengthCounter();
+        }
+
         var has_send_ui = body.hasClass('post-type-gwapi-sms');
         var has_recipient_ui = body.hasClass('post-type-gwapi-recipient');
         var has_receive_sms_ui = body.hasClass('post-type-gwapi-receive-sms');
@@ -10,7 +16,6 @@ jQuery(function ($) {
         loadCountryCodes();
 
         if (has_send_ui) {
-            smsLengthCounter();
             validateSmsSendOnPublish();
             handlePickRecipientTypes();
             handleMoveRecipientGroupsAround();

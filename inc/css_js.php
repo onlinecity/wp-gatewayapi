@@ -25,7 +25,7 @@ add_action('admin_enqueue_scripts', function () {
   $screen = get_current_screen();
   _gwapi_enqueue_uideps();
 
-  if ($screen->post_type && !in_array($screen->post_type, ['gwapi-sms', 'gwapi-recipient', 'gwapi-form', 'gwapi-receive-sms'])) return;
+  if ($screen->post_type && !in_array($screen->post_type, ['gwapi-sms', 'gwapi-recipient', 'gwapi-form', 'gwapi-receive-sms', 'gwapi-receive-action'])) return;
   if ($screen->taxonomy && !in_array($screen->taxonomy, ['gwapi-recipient-groups'])) return;
 
   wp_enqueue_style('gwapi-admin', _gwapi_url(). 'css/wpadmin.css');

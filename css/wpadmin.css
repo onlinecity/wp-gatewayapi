@@ -21,7 +21,8 @@ body.post-type-gwapi-sms abbr {
     border-bottom: 1px dotted black;
 }
 
-body.post-type-gwapi-sms .sms-length-counter {
+body.post-type-gwapi-sms .sms-length-counter,
+body.post-type-gwapi-receive-action .sms-length-counter {
     text-align: right;
     font-style: italic;
     color: grey;

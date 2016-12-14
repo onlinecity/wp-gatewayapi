@@ -100,8 +100,8 @@ function _gwapi_receive_action_ui()
                 <?php _e('Phone number', 'gwapi'); ?>
             </th>
             <td>
-                <input type="text" name="gwapi[msisdn]" size="25" placeholder="451204"
-                       value="<?= esc_attr(get_post_meta($ID, 'msisdn', true)); ?>">
+                <input type="text" name="gwapi[receiver]" size="25" placeholder="451204"
+                       value="<?= esc_attr(get_post_meta($ID, 'receiver', true)); ?>">
                 <p class="description"><?php _e('Which number are SMS\'es sent to?', 'gwapi'); ?></p>
             </td>
         </tr>
@@ -145,6 +145,6 @@ add_action('save_post_gwapi-receive-action', function($post_ID) {
 
     if (isset($_POST['gwapi']['action'])) update_post_meta($post_ID, 'action', $_POST['gwapi']['action']);
     if (isset($_POST['gwapi']['keyword'])) update_post_meta($post_ID, 'keyword', $_POST['gwapi']['keyword']);
-    if (isset($_POST['gwapi']['msisdn'])) update_post_meta($post_ID, 'msisdn', $_POST['gwapi']['msisdn']);
+    if (isset($_POST['gwapi']['receiver'])) update_post_meta($post_ID, 'receiver', $_POST['gwapi']['receiver'] ?: '451204');
 
 }, 10);

@@ -149,7 +149,7 @@ function _gwapi_receive_sms_json_handler()
     @flush();
 
     // handle incoming SMS
-    do_action( 'gwapi_sms_received', [ $ID, get_post($ID) ] );
+    do_action('gwapi_sms_received', $ID);
 }
 
 add_action('wp_ajax_priv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
@@ -254,7 +254,7 @@ add_action('admin_footer', function () {
 /**
  * Trigger additional actions when an SMS is received.
  */
-add_action('gwapi_sms_received', function($post_ID, $post) {
+add_action('gwapi_sms_received', function ($post_ID) {
 
     list($keyword) = explode(' ', trim(get_post_meta($post_ID, 'message', true)), 2);
 
@@ -275,9 +275,9 @@ add_action('gwapi_sms_received', function($post_ID, $post) {
         ]
     ]);
 
-    while($actions->have_posts()) {
+    while ($actions->have_posts()) {
         $actions->the_post();
-        do_action('gwapi_received_action_'.get_post_meta(get_the_ID(), 'action', true), [ $post_ID, get_the_ID() ]);
+        do_action('gwapi_received_action_' . get_post_meta(get_the_ID(), 'action', true), [$post_ID, get_the_ID()]);
     }
 
-}, 5, 2);
+}, 5);
