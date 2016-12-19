@@ -132,15 +132,24 @@ function _gwapi_receive_sms_json_handler()
         die(json_encode(['success' => false, 'error' => 'Invalid token']));
     }
     $sms = json_decode(file_get_contents('php://input'), true);
-    wp_insert_post(array(
+    $ID = wp_insert_post(array(
         'post_name' => $sms['id'],
         'post_status' => 'publish',
         'post_type' => 'gwapi-receive-sms',
         'post_category' => 'gwapi',
         'meta_input' => $sms
     ));
+
     header('Content-type: application/json');
-    die(json_encode(['success' => true]));
+    echo json_encode(['success' => true]);
+
+    // try to get data pushed to gatewayapi now, in case handling of incoming SMS somehow fails
+    if (function_exists('fastcgi_finish_request')) @fastcgi_finish_request();
+    @ob_flush();
+    @flush();
+
+    // handle incoming SMS
+    do_action('gwapi_sms_received', $ID);
 }
 
 add_action('wp_ajax_priv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
@@ -242,3 +251,33 @@ add_action('admin_footer', function () {
 });
 
 
+/**
+ * Trigger additional actions when an SMS is received.
+ */
+add_action('gwapi_sms_received', function ($post_ID) {
+
+    list($keyword) = explode(' ', trim(get_post_meta($post_ID, 'message', true)), 2);
+
+    $actions = new WP_Query([
+        "post_type" => "gwapi-receive-action",
+        "posts_per_page" => -1,
+        "orderby" => "menu_order",
+        "order" => "ASC",
+        "meta_query" => [
+            [
+                'key' => 'receiver',
+                'value' => get_post_meta($post_ID, 'receiver', true)
+            ],
+            [
+                'key' => 'keyword',
+                'value' => $keyword
+            ]
+        ]
+    ]);
+
+    while ($actions->have_posts()) {
+        $actions->the_post();
+        do_action('gwapi_received_action_' . get_post_meta(get_the_ID(), 'action', true), [$post_ID, get_the_ID()]);
+    }
+
+}, 5);
