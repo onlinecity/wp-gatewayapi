@@ -3,8 +3,8 @@ Contributors: onlinecity
 Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
-Tested up to: 4.6.1
-Stable tag: 1.3.0
+Tested up to: 4.7.0
+Stable tag: 1.3.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -33,7 +33,8 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 
 - Reeive SMS'es sent from the phones of your visitors and others.
 - View received messages from the backend, via the "SMS Inbox".
-- Handle incoming SMS'es using standard WordPress hooks *(currently requires programming)*.
+- Handle incoming SMS'es from WordPress-hooks (for programmers).
+- Create automated replies based on incoming text.
 
 **Integration in your website:**
 
@@ -120,6 +121,9 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.3.1 =
+* New UI for creating automated actions. Currently supports "autoreply" based on keyword.
 
 = 1.3.0 =
 * Support for receiving SMS'es added, including setup-wizard and inbox.
