@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Send SMS'es through WordPress.
-Version:     1.3.0
+Version:     1.3.1
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     GPLv2
