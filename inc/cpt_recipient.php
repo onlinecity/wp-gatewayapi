@@ -45,7 +45,7 @@ add_action('init', function () {
 
         $target = &$submenu['edit.php?post_type=gwapi-sms'];
         foreach($submenu['edit.php?post_type=gwapi-recipient'] as $idx => $r) {
-            $target[$idx+15] = $r;
+            $target[$idx+14] = $r;
         }
 
         // remove original menu
