@@ -28,10 +28,11 @@ jQuery(function ($) {
         if (has_recipient_ui) {
             validateSmsRecipientOnPublish();
             addFormFieldTooltips();
+            handleRecipientExport();
         }
 
         if (has_receive_sms_ui) {
-            handleReceiveSmsUi();
+            handleSmsExport();
         }
 
     }
@@ -344,21 +345,37 @@ jQuery(function ($) {
         });
     }
 
-    function handleReceiveSmsUi() {
-        // add csv and xlsx buttons on the posts list
+    /**
+     * Buttons for exporting SMS'es to CSV and XLS.
+     */
+    function handleSmsExport() {
         if ($('form#posts-filter').length) {
           var buttons = [
             '<a class="add-new-h2 gwapi-receive-sms-export-button" data-format="csv">CSV</a>',
             '<a class="add-new-h2 gwapi-receive-sms-export-button" data-format="xlsx">XLSX</a>'
           ];
-          if ($('.wrap span.subtitle').length) {
-            $('.wrap span.subtitle').before(buttons);
-          } else {
-              $('<span>').css({float: 'left', 'margin-top': '15px', 'margin-left': '10px'}).append(buttons).insertBefore($('#posts-filter'));
-          }
+          $('<span>').css({float: 'left', 'margin-top': '15px', 'margin-left': '10px'}).append(buttons).insertBefore($('#posts-filter'));
           $('.gwapi-receive-sms-export-button').click(function() {
               var form = $('form#gwapiReceiveSmsExportForm');
               form.find('input[name="gwapi_receive_sms_export_format"]').val($(this).attr('data-format'));
+              form.submit();
+           });
+        }
+    }
+
+    /**
+     * Buttons for exporting recipients to CSV and XLS.
+     */
+    function handleRecipientExport() {
+        if ($('form#posts-filter').length) {
+          var buttons = [
+            '<a class="add-new-h2 gwapi-recipient-export-button" data-format="csv">CSV</a>',
+            '<a class="add-new-h2 gwapi-recipient-export-button" data-format="xlsx">XLSX</a>'
+          ];
+          $('<span>').css({float: 'left', 'margin-top': '15px', 'margin-left': '10px'}).append(buttons).insertBefore($('#posts-filter'));
+          $('.gwapi-recipient-export-button').click(function() {
+              var form = $('form#gwapiRecipientExportForm');
+              form.find('input[name="gwapi_recipient_export_format"]').val($(this).attr('data-format'));
               form.submit();
            });
         }
