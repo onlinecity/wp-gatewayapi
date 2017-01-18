@@ -394,6 +394,21 @@ class GwapiContactForm7 {
 		$type = 'gw_groups';
 		$description = "Generate the GatewayAPI Groups selection. Select which groups to sign the recipient up to or make it possible for the recipients to select themselves.";
 		?>
+        <script>
+            (function() {
+                if (window.gwapiUpdateGroupsInput) return;
+                window.gwapiUpdateGroupsInput = function(scope) {
+                    var $ = jQuery;
+
+                    var ids = [];
+                    var outer = $(scope).closest('div');
+                    outer.find('input[type=checkbox]:checked').each(function() {
+                       ids.push($(this).val())
+                    });
+                    outer.find('input[type=text]').val(ids.join(' '));
+                };
+            })();
+        </script>
 		<div class="control-box">
 			<fieldset>
 				<legend><?=esc_html( __($description,'gwapi') )?></legend>
@@ -407,12 +422,12 @@ class GwapiContactForm7 {
 							<div style="width: 100%; max-height: 100px; overflow: auto;">
 								<?php $terms = get_terms('gwapi-recipient-groups', ['hide_empty' => false]); ?>
 								<?php foreach($terms as $t): ?>
-									<label style="display: block; margin-top: 3px; margin-bottom: 3px;"><input type="checkbox" name="<?= $t->term_id; ?>" class="option"> <?= $t->name; ?></label>
+									<label style="display: block; margin-top: 3px; margin-bottom: 3px;"><input onchange="gwapiUpdateGroupsInput(this)" type="checkbox" value="<?= $t->term_id; ?>" class="group_ids"> <?= $t->name; ?></label>
 								<?php endforeach; ?>
+                                <input style="display: none" name="values" class="oneline" type="text" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" />
 							</div>
 						</td>
 					</tr>
-
 					<tr>
 						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-allow-select' ); ?>"><?php _e('Hidden field', 'gwapi'); ?></label></th>
 						<td>
@@ -640,11 +655,21 @@ class GwapiContactForm7 {
 		$group_ids = [];
 		$is_hidden = false;
 		$field_id = $contact_form['name'] ? substr($contact_form['name'], 3) : null;
+
 		foreach($contact_form['options'] as $opt) {
 			if (strpos($opt, 'class:')===0) $classes[] = substr($opt, strpos($opt, ':')+1);
-			if (ctype_digit($opt)) $group_ids[] = (int)$opt;
+			if (ctype_digit($opt)) $group_ids[] = (int)$opt; // classic style IDs without quotes
 			if ($opt === 'hidden') $is_hidden = true;
 		}
+
+        // proper CF7-style values with quotes
+		if (isset($contact_form['values']) && is_array($contact_form['values']) && count($contact_form['values']) == 1) {
+		    foreach(explode(' ',$contact_form['values'][0]) as $id) {
+		        $id = (int)$id;
+		        if ($id) $group_ids[] = $id;
+            }
+        }
+
 		if (!$group_ids) return ''; // nothing to do
 
 		// fetch the groups
