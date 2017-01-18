@@ -144,9 +144,19 @@ jQuery(function($) {
             var res = xhr.responseJSON;
             if (!res) return; // wrong format
 
+            var innerF = $('.wpcf7-response-output.wpcf7-display-none.wpcf7-mail-sent-ng');
+            var form = innerF.closest('form');
+
+            if (res.spam_trap_resolve) {
+                if (!form.find('.gwapi-spam-trap-resolve').length) {
+                    form.append($('<input type="hidden" name="gwapi_spam_trap_resolve" class="gwapi-spam-trap-resolve">').val(res.spam_trap_resolve));
+                } else {
+                    $('.gwapi-spam-trap-resolve').val(res.spam_trap_resolve);
+                }
+            }
+
             if (res.gwapi_verify && res.gwapi_prompt) {
-                var innerF = $('.wpcf7-response-output.wpcf7-display-none.wpcf7-mail-sent-ng').hide();
-                var form = innerF.closest('form');
+                innerF.hide();
                 function enterVerifyCode() {
                     var code = window.prompt(res.gwapi_prompt);
                     if (!code) {

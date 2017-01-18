@@ -354,9 +354,8 @@ jQuery(function ($) {
           if ($('.wrap span.subtitle').length) {
             $('.wrap span.subtitle').before(buttons);
           } else {
-            $('.wrap a.page-title-action').parent().append(buttons);
+              $('<span>').css({float: 'left', 'margin-top': '15px', 'margin-left': '10px'}).append(buttons).insertBefore($('#posts-filter'));
           }
-          $('.wrap a.page-title-action').parent().append();
           $('.gwapi-receive-sms-export-button').click(function() {
               var form = $('form#gwapiReceiveSmsExportForm');
               form.find('input[name="gwapi_receive_sms_export_format"]').val($(this).attr('data-format'));

@@ -122,6 +122,10 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 
 == Changelog ==
 
+= 1.3.3 =
+* Contact Form 7: Added support for forms which also contained a reCaptcha-field.
+* Code cleanup
+
 = 1.3.2 =
 * Bugfix: A menu item had gone missing in the backend.
 

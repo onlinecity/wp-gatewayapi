@@ -46,6 +46,27 @@ class GwapiContactForm7 {
 
 		add_action('wp_ajax_nopriv_gwapi_verify_sms', [$this, 'verifySms']);
 		add_action('wp_ajax_gwapi_verify_sms', [$this, 'verifySms']);
+
+		// when confirming verify codes, don't fall into double-spam trap
+		$this->resolveCF7SpamTrap();
+	}
+
+	/**
+	 * Make sure the CF7 spam trap is just being resolved once - especially reCaptcha fails if trying to verify the same
+	 * token twice, so after first succesful resolve, allow our own multi-use token.
+	 */
+	private function resolveCF7SpamTrap()
+	{
+		if (!isset($_POST['gwapi_spam_trap_resolve']) || !$_POST['gwapi_spam_trap_resolve']) return;
+		$user_token = $_POST['gwapi_spam_trap_resolve'];
+
+		$resolve_token = get_transient('gwapi_spam_trap_resolve_'.gwapi_get_msisdn($_POST['gwapi_country'], $_POST['gwapi_phone']));
+		if ($resolve_token !== $user_token) return; // fail regularly, somethings wrong with the token
+
+		add_filter('wpcf7_spam', function() {
+			return false;
+		}, 20);
+
 	}
 
 	public function addTagGenerator()
@@ -173,16 +194,20 @@ class GwapiContactForm7 {
 
 		// has the user entered a verification pin code?
 		if (!isset($_POST['_gwapi_verify_signup'])) {
-			$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].ltrim($_POST['gwapi_phone'], '0'));
+			$phone = gwapi_get_msisdn($_POST['gwapi_country'],$_POST['gwapi_phone']);
 			$code = get_transient("gwapi_verify_signup_".$phone);
 
 			header("Content-type: application/json");
 			if (!$code) {
 				set_transient('gwapi_verify_signup_'.$phone, $code=rand(100000,999999), 60*5);
+
+				$spam_trap_resolve = wp_generate_password(32, false);
+				set_transient('gwapi_spam_trap_resolve_'.$phone, $spam_trap_resolve, 60*5);
+
 				gwapi_send_sms(__("Your verification code:", 'gwapi')." ".$code, $phone);
-				die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gwapi') ]));
+				die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gwapi'), 'spam_trap_resolve' => $spam_trap_resolve ]));
 			} else {
-				die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gwapi') ]));
+				die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gwapi'), 'spam_trap_resolve' => $spam_trap_resolve ]));
 			}
 		}
 	}
@@ -289,7 +314,7 @@ class GwapiContactForm7 {
 		$body = trim(wpcf7_mail_replace_tags($sms['reply-body']));
 		$from = trim(wpcf7_mail_replace_tags($sms['reply-sender'])) ? : null;
 
-		$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].ltrim($_POST['gwapi_phone'],'0'));
+		$phone = gwapi_get_msisdn($_POST['gwapi_country'],$_POST['gwapi_phone']);
 		gwapi_send_sms($body, $phone, $from);
 	}
 
@@ -906,7 +931,9 @@ class GwapiContactForm7 {
 		// save + send verification SMS
 		$code = rand(100000,999999);
 		set_transient('gwapi_verify_'.$_POST['cc'].$_POST['number'], $code, 60*30);
-		gwapi_send_sms(__("Your verification code:", 'gwapi').$code, $_POST['cc'].ltrim($_POST['number'], '0'));
+
+		$phone = gwapi_get_msisdn($_POST['gwapi_country'],$_POST['gwapi_phone']);
+		gwapi_send_sms(__("Your verification code:", 'gwapi').$code, $phone);
 
 		die(json_encode(['success' => true]));
 	}

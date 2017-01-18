@@ -80,7 +80,6 @@ function gwapi_get_tag_specification($tag)
     return false;
 }
 
-
 /**
  * Get receive-sms token if enabled
  * @return string
@@ -148,3 +147,7 @@ function bit_admin_add_search_column($post_type, $meta_key)
     }, 10, 2);
 }
 
+function gwapi_get_msisdn($cc, $number) {
+    $phone = preg_replace('/\D+/', '', $cc.ltrim($number, '0'));
+    return $phone;
+}
