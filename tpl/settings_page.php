@@ -10,6 +10,7 @@
             <a href="#recipients-fields" class="nav-tab hidden"><?php _e('Recipient fields', 'gwapi'); ?></a>
             <a href="#user-sync" class="nav-tab hidden"><?php _e('User synchronization', 'gwapi'); ?></a>
             <a href="#build-shortcode" class="nav-tab hidden"><?php _e('Build Shortcode', 'gwapi'); ?></a>
+            <a href="#sms-inbox" class="nav-tab hidden"><?php _e('SMS Inbox', 'gwapi'); ?></a>
         </h2>
 
 
@@ -422,7 +423,7 @@
                         <?php _e('Which group(s) should be affected? If action is signup or update, the user will be added to the selected groups. With action "Send SMS", this is the groups who will receive the SMS.', 'gwapi'); ?>
                     </p>
                     <select multiple name="groups" size="5" style="width: 100%; height: auto;">
-                        <?php foreach(get_terms('gwapi-recipient-groups', ['hide_empty' => false]) as $term): ?>
+                        <?php foreach (get_terms('gwapi-recipient-groups', ['hide_empty' => false]) as $term): ?>
                             <option value="<?= $term->term_id ?>"><?= esc_html($term->name); ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -455,6 +456,57 @@
             <!-- SHORTCODE GENERATOR -->
 
 
+            <!-- SMS INBOX -->
+            <div class="tab hidden" data-tab="sms-inbox" id="smsInbox">
+                <p>
+                    <?php _e('Do you want to receive SMS messages for this installation?', 'gwapi'); ?>
+                </p>
+                <p>
+                    <label>
+                        <input type="checkbox" name="gwapi_receive_sms_enable" value="1" id="receiveSmsEnableCb" <?= get_option('gwapi_receive_sms_enable') ? 'checked' : ''; ?>> <?php _e('Yes please, I would like to receive SMS messages.', 'gwapi'); ?>
+                    </label>
+                </p>
+
+                <?php if (get_option('gwapi_receive_sms_enable')): ?>
+                    <div id="receiveSmsEnabled" <?= get_option('gwapi_receive_sms_enable') ? '' : 'class="hidden"'; ?>>
+
+                        <hr>
+
+                        <h3><?php _e('Configuration', 'gwapi'); ?> </h3>
+
+                        <table class="form-table">
+
+                            <tr valign="top">
+                                <p>
+                                    <?php _e('Before your installation is capable of receiving SMS messages you must configure GatewayAPI.', 'gwapi'); ?>
+                                </p>
+                                <p>
+                                    <?php _e('Please follow these simple steps:', 'gwapi'); ?>
+                                </p>
+                                <ol>
+                                    <li>
+                                        <?php _e('Visit gatewayapi.com and click Settings > Web Hooks or <a target="_blank" href="https://gatewayapi.com/app/settings/web-hooks/">follow this link</a>.', 'gwapi'); ?>
+                                    </li>
+                                    <li>
+                                        <?php _e('Click ADD NEW.', 'gwapi'); ?>
+                                    </li>
+                                    <li>
+                                        <?php _e('Enter a Unique label.', 'gwapi'); ?>
+                                    </li>
+                                    <li>
+                                        <?php _e('Paste the following URL into the Web hook URL input field.', 'gwapi'); ?>
+                                        <div class="description" style="text-decoration:underline">
+                                            <input name="gwapi_receive_sms_url" style="width:100%" value="<?php echo esc_attr(_gwapi_receive_sms_url()); ?>">
+                                        </div>
+                                    </li>
+                                </ol>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <!-- SMS INBOX -->
+            
         </div>
 
         <hr>

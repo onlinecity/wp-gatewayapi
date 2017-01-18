@@ -2,14 +2,20 @@ jQuery(function ($) {
 
     function initialize() {
         var body = $('body');
+
+        // if we find a gwapi[message] textarea we enable smsLengthCounter plugin
+        if (body.find('textarea[name="gwapi[message]"]').length) {
+            smsLengthCounter();
+        }
+
         var has_send_ui = body.hasClass('post-type-gwapi-sms');
         var has_recipient_ui = body.hasClass('post-type-gwapi-recipient');
-        if (!has_send_ui && !has_recipient_ui) return; // bail early
+        var has_receive_sms_ui = body.hasClass('post-type-gwapi-receive-sms');
+        if (!has_send_ui && !has_recipient_ui && !has_receive_sms_ui) return; // bail early
 
         loadCountryCodes();
 
         if (has_send_ui) {
-            smsLengthCounter();
             validateSmsSendOnPublish();
             handlePickRecipientTypes();
             handleMoveRecipientGroupsAround();
@@ -23,6 +29,11 @@ jQuery(function ($) {
             validateSmsRecipientOnPublish();
             addFormFieldTooltips();
         }
+
+        if (has_receive_sms_ui) {
+            handleReceiveSmsUi();
+        }
+
     }
 
     /**
@@ -217,7 +228,7 @@ jQuery(function ($) {
         _.each(selected_types, function(t) {
             recipientTypesEl.find('[value="'+t+'"]').prop('checked', true).trigger('change');
         });
-        
+
         // recipient groups
         var groupsEl = $('.recipient-groups');
         var selected_groups = groupsEl.data('selected_groups') || [];
@@ -333,6 +344,25 @@ jQuery(function ($) {
         });
     }
 
+    function handleReceiveSmsUi() {
+        // add csv and xlsx buttons on the posts list
+        if ($('form#posts-filter').length) {
+          var buttons = [
+            '<a class="add-new-h2 gwapi-receive-sms-export-button" data-format="csv">CSV</a>',
+            '<a class="add-new-h2 gwapi-receive-sms-export-button" data-format="xlsx">XLSX</a>'
+          ];
+          if ($('.wrap span.subtitle').length) {
+            $('.wrap span.subtitle').before(buttons);
+          } else {
+              $('<span>').css({float: 'left', 'margin-top': '15px', 'margin-left': '10px'}).append(buttons).insertBefore($('#posts-filter'));
+          }
+          $('.gwapi-receive-sms-export-button').click(function() {
+              var form = $('form#gwapiReceiveSmsExportForm');
+              form.find('input[name="gwapi_receive_sms_export_format"]').val($(this).attr('data-format'));
+              form.submit();
+           });
+        }
+    }
 
     initialize();
 

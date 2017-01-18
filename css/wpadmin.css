@@ -1,8 +1,28 @@
+/**
+ * Receive SMS
+ */
+body.post-type-gwapi-receive-sms table.gwapi-receive-sms-table td {
+    padding-bottom: 0px;
+}
+body.post-type-gwapi-receive-sms .wrap a.page-title-action,
+body.post-type-gwapi-receive-sms .postbox-container #minor-publishing-actions,
+body.post-type-gwapi-receive-sms .postbox-container #publishing-action input[name="save"],
+body.post-type-gwapi-receive-sms .postbox-container .misc-pub-section.misc-pub-visibility,
+body.post-type-gwapi-receive-sms .postbox-container .edit-post-status,
+body.post-type-gwapi-receive-sms .postbox-container .edit-visibility,
+body.post-type-gwapi-receive-sms .postbox-container .edit-timestamp {
+    display: none !important;
+}
+body.post-type-gwapi-receive-sms abbr {
+    border-bottom: 1px dotted black;
+}
+
 body.post-type-gwapi-sms abbr {
     border-bottom: 1px dotted black;
 }
 
-body.post-type-gwapi-sms .sms-length-counter {
+body.post-type-gwapi-sms .sms-length-counter,
+body.post-type-gwapi-receive-action .sms-length-counter {
     text-align: right;
     font-style: italic;
     color: grey;
@@ -81,13 +101,13 @@ body.post-type-gwapi-sms .misc-pub-section.misc-pub-visibility {
     float: left;
 }
 
-@media(max-width: 991px) {
+@media (max-width: 991px) {
     .gwapi-row .col-30, .gwapi-row .col-40, .gwapi-row .col-50, .gwapi-row .col-60, .gwapi-row .col-70 {
         width: 100%;
     }
 }
 
-@media(min-width: 992px) {
+@media (min-width: 992px) {
     .select2-container {
         min-width: 240px;
     }
@@ -160,6 +180,7 @@ body.post-type-gwapi-sms .misc-pub-section.misc-pub-visibility {
     padding: 15px;
     box-sizing: border-box;
 }
+
 .field-group.with-decoration.with-drag {
     padding-left: 75px;
 }

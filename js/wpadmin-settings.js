@@ -12,6 +12,7 @@ jQuery(function($) {
         handleToggleRecipientFormTab();
 
         handleUserSynchronization();
+        handleReceiveSms();
 
         handleRecipientFieldSorting();
         handleRecipientTypeCriteria();
@@ -60,8 +61,8 @@ jQuery(function($) {
     function handleToggleRecipientFormTab()
     {
         var checkbox = outer.find('input[name="gwapi_enable_ui"]');
-        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"]');
-        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"], [data-tab="user-sync"]');
+        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"]');
+        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"], [data-tab="user-sync"], [data-tab="sms-inbox"]');
 
         checkbox.change(function() {
             if ($(this).is(':checked')) {
@@ -72,7 +73,7 @@ jQuery(function($) {
                 $('#enableCaptcha').addClass('hidden');
             }
         }).change();
-        
+
         // if changing TO another tab AFTER enabling sending UI, submit form
         if (!checkbox.is(':checked')) {
           tabs.click(function() { $('#submit').click(); });
@@ -270,6 +271,13 @@ jQuery(function($) {
         // country code
         $('select[name="gwapi_user_sync_meta_default_countrycode"]').gwapiMobileCc();
     }
+
+    function handleReceiveSms()
+    {
+        $('#receiveSmsEnabled input[name="gwapi_receive_sms_url"]').click(function(ev) {
+           $(this).select && $(this).select();
+        });
+	}
 
     function handleOneTimeUserSync()
     {
