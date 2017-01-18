@@ -185,9 +185,10 @@ add_action('parse_request', function ($wp) {
         'payload'
     ];
     $args = $wp->query_vars;
-    $args['posts_per_page'] = 10000;
+    $args['posts_per_page'] = -1;
+    $args['fields'] = 'ids';
     unset($args['paged']);
-    $args['nopaging'] = true;
+
     header('Pragma: public');
     header('Expires: 0');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -196,8 +197,9 @@ add_action('parse_request', function ($wp) {
     header('Content-Description: File Transfer');
     header('Content-Disposition: attachment; filename="' . $filename . '";');
     header('Content-Transfer-Encoding: binary');
-    // generate the csv or xlsx response
-    query_posts($args);
+
+
+    $q = new WP_Query($args);
     switch ($format) {
         case 'xlsx':
             $writer = new \XLSXWriter();
@@ -206,9 +208,8 @@ add_action('parse_request', function ($wp) {
                 $headers[$meta] = 'string';
             }
             $writer->writeSheetHeader('Sheet1', $headers);
-            while (have_posts()) {
-                the_post();
-                $metadata = get_post_meta(get_the_ID());
+            foreach($q->posts as $ID) {
+                $metadata = get_post_meta($ID);
                 $columns = [];
                 foreach ($metas as $meta) {
                     $columns[] = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
@@ -221,9 +222,8 @@ add_action('parse_request', function ($wp) {
             $out = fopen('php://output', 'w');
             fputcsv($out, $metas);
 
-            while (have_posts()) {
-                the_post();
-                $metadata = get_post_meta(get_the_ID());
+            foreach($q->posts as $ID) {
+                $metadata = get_post_meta($ID);
                 $row = [];
                 foreach ($metas as $meta) {
                     $value = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
