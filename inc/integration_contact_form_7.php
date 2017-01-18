@@ -212,6 +212,34 @@ class GwapiContactForm7 {
 		}
 	}
 
+    /**
+     * Return a list of group IDs from a tag. This is provided in order to have a backwards compatible and simple way of
+     * fetching the list of IDs defined in a tag.
+     */
+	private function getGroupIdsFromTag($tag)
+    {
+        $group_ids = [];
+
+        $options = is_array($tag) ? (isset($tag['options']) ? $tag['options'] : []) : (isset($tag->options) ? $tag->options : []);
+        $values = is_array($tag) ? (isset($tag['values']) ? $tag['values'] : []) : (isset($tag->values) ? $tag->values : []);
+
+        foreach($options as $opt) {
+                if (ctype_digit($opt)) $group_ids[] = (int)$opt; // classic style IDs without quotes
+        }
+
+        // proper CF7-style values with quotes
+        if ($values) {
+            if (is_array($values) && count($values) == 1) $values = $values[0];
+
+            foreach(explode(' ',$values) as $id) {
+                $id = (int)$id;
+                if ($id) $group_ids[] = $id;
+            }
+        }
+
+        return $group_ids;
+    }
+
 	public function handleSubmit($form)
 	{
 		$wpcf7        = WPCF7_ContactForm::get_current(); /** @var $wpcf7 WPCF7_ContactForm */
@@ -282,10 +310,21 @@ class GwapiContactForm7 {
 
 					// update groups? update groups
 					if ($groups_field) {
-						// remove all current groups
+
+					    // get current groups
+                        $cur_groups = wp_get_object_terms($curID, 'gwapi-recipient-groups', ['fields' => 'ids']);
+                        $possible_groups = $this->getGroupIdsFromTag($groups_field[0]);
+
+                        // append groups not selectable, but previously selected, in this option
+                        $append_groups = [];
+                        foreach($cur_groups as $gID) {
+                            if (!in_array($gID, $possible_groups)) $append_groups[] = $gID;
+                        }
+
 						$groupIDs = isset($data['gwapi_groups']) && $data['gwapi_groups'] ? $data['gwapi_groups'] : [];
 						foreach($groupIDs as &$gid) { $gid = (int)$gid; }
-						wp_set_object_terms($curID, $groupIDs, 'gwapi-recipient-groups');
+						//print_r([$groupIDs, $append_groups]);die();
+						wp_set_object_terms($curID, array_merge($groupIDs, $append_groups), 'gwapi-recipient-groups');
 					}
 
 					break;
@@ -683,17 +722,10 @@ class GwapiContactForm7 {
 
 		foreach($contact_form['options'] as $opt) {
 			if (strpos($opt, 'class:')===0) $classes[] = substr($opt, strpos($opt, ':')+1);
-			if (ctype_digit($opt)) $group_ids[] = (int)$opt; // classic style IDs without quotes
 			if ($opt === 'hidden') $is_hidden = true;
 		}
 
-        // proper CF7-style values with quotes
-		if (isset($contact_form['values']) && is_array($contact_form['values']) && count($contact_form['values']) == 1) {
-		    foreach(explode(' ',$contact_form['values'][0]) as $id) {
-		        $id = (int)$id;
-		        if ($id) $group_ids[] = $id;
-            }
-        }
+        $group_ids = $this->getGroupIdsFromTag($contact_form);
 
 		if (!$group_ids) return ''; // nothing to do
 
@@ -734,10 +766,8 @@ class GwapiContactForm7 {
 		$tag['name'] = 'gwapi-groups';
 		$tag = new WPCF7_Shortcode( $tag );
 
-		$groupsPossible = [];
-		foreach($tag->options as $o) {
-			if (ctype_digit($o)) $groupsPossible[] = $o;
-		}
+		$groupsPossible = $this->getGroupIdsFromTag($tag);
+
 		$groupsPossible = array_unique($groupsPossible);
 		$groupsSelected = isset($_POST['gwapi_groups']) ? array_unique($_POST['gwapi_groups']) : [];
 
