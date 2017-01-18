@@ -42,14 +42,25 @@ jQuery(function($) {
         // hide all other fields but cc and number
         var hiddens=[];
         $('.wpcf7-form-control-wrap').each(function() {
-            if ($(this).find('input,select').attr('name').substring(0,6) != 'gwapi_') {
-                var nodeNameParent = $(this).parent().prop('nodeName');
-                var hidden = $(this);
-                if (nodeNameParent != 'form') hidden = $(this).parent();
+            var fields = $(this).find('input,select');
+            fields.each(function() {
+                if ($(this).attr('name') == 'gwapi_country' || $(this).attr('name') == 'gwapi_phone') return;
 
-                hidden.hide();
-                hiddens.push(hidden);
-            }
+                var prevParent = null;
+                var hideMeParent = null;
+                var parents = $(this).parents();
+                parents.each(function() {
+                    if (hideMeParent) return;
+                    var nodeName = $(this).prop('nodeName');
+                    if (nodeName.toLowerCase() == 'form') hideMeParent = prevParent || true;
+                    prevParent = $(this);
+                });
+
+                if (!hideMeParent || hideMeParent === true) return;
+
+                hideMeParent.hide();
+                hiddens.push(hideMeParent);
+            })
         });
 
         // hide original submit-button
