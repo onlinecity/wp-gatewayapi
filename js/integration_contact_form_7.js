@@ -5,7 +5,7 @@ jQuery(function($) {
     {
 
         // find the action-tag
-        actionEl = $('.wpcf7-form input[name="gwapi_action"]');
+        actionEl = $('.wpcf7-form input[data-gwapi="action"]');
 
         // requires verify?
         if (actionEl.data('verify')) {
@@ -73,8 +73,8 @@ jQuery(function($) {
 
         // on success, update the form, hide own submit and insert real submit
         newSubmit.click(function() {
-            var cc = $('[name="gwapi_country"]').val();
-            var mobile = $('[name="gwapi_phone"]').val();
+            var cc = $('[data-gwapi="country"]').val();
+            var mobile = $('[data-gwapi="phone"]').val();
             if (!cc || !mobile) {
                 $('.wpcf7-response-output').text(i18n_gwapi_cf7.country_and_cc).addClass('wpcf7-validation-errors').show();
                 return false;
@@ -107,9 +107,9 @@ jQuery(function($) {
                     $('<input type="hidden" name="_gwapi_token" value="'+code+'">').insertAfter(actionEl);
 
                     // mark the phone and country code fields readonly
-                    $('[name="gwapi_phone"]').prop('readonly', true);
-                    var gwapiCountryEl = $('[name="gwapi_country"]').prop('disabled', true);
-                    $('<input type="hidden" name="gwapi_country">').val(cc).insertAfter(gwapiCountryEl);
+                    $('[data-gwapi="phone"]').prop('readonly', true);
+                    var gwapiCountryEl = $('[data-gwapi="country"]').prop('disabled', true);
+                    $('<input type="hidden" name="'+gwapiCountryEl.attr('name')+'">').val(cc).insertAfter(gwapiCountryEl);
 
                     // remove our submit and re-insert all hidden fields and re-enable proper submit
                     newSubmit.remove();
