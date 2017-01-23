@@ -44,7 +44,7 @@ jQuery(function($) {
         $('.wpcf7-form-control-wrap').each(function() {
             var fields = $(this).find('input,select');
             fields.each(function() {
-                if ($(this).attr('name') == 'gwapi_country' || $(this).attr('name') == 'gwapi_phone') return;
+                if ($(this).attr('data-gwapi') == 'country' || $(this).attr('data-gwapi') == 'phone') return;
 
                 var prevParent = null;
                 var hideMeParent = null;
@@ -121,7 +121,13 @@ jQuery(function($) {
 
                     // for the rest of the fields, update with the current value
                     $.each(res.recipient, function(key, val) {
-                        var el = $('.wpcf7-form [name="'+key+'"], .wpcf7-form [name="'+key+'[]"]');
+                        var el = '';
+                        if (key.substr(0,5) == 'gwapi') {
+                            el = $('.wpcf7-form [data-gwapi="'+key.substr(6)+'"]');
+                        } else {
+                            el = $('.wpcf7-form [name="'+key+'"], .wpcf7-form [name="'+key+'[]"]');
+                        }
+
                         if (Array.isArray(val)) {
                             el.prop('checked', false);
                             $.each(val, function(key2, val2) {

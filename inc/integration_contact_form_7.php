@@ -181,8 +181,10 @@ class GwapiContactForm7 {
 		// must have gw_actions to be relevant at all
 		$actions_field = current($actions_field);
 
-		// must be a signup
-		if ($actions_field['name'] != 'action:signup') return;
+        $isSignup = in_array('action:signup', $actions_field['options']);
+        if (!$isSignup) $isSignup = $actions_field['name'] == 'action:signup'; // legacy way of detecting that this is a signup!
+
+		if (!$isSignup) return;
 
 		// must contain a verify:yes requirement
 		if (!$actions_field['options'] || $actions_field['options'][0] != 'verify:yes') return;
@@ -193,8 +195,8 @@ class GwapiContactForm7 {
 		// must have phone and country code
 		if (!$phone_field || !$country_code_field) return;
 
-		$cc = $_POST[$country_code_field->name];
-		$local = $_POST[$phone_field->name];
+		$cc = $_POST[$country_code_field['name']];
+		$local = $_POST[$phone_field['name']];
 
 		// has the user entered a verification pin code?
 		if (!isset($_POST['_gwapi_verify_signup'])) {
@@ -254,17 +256,17 @@ class GwapiContactForm7 {
 
 		if (!$submission ) return;
 		if ( $submission ) {
-			$country_code_field = $wpcf7->form_scan_shortcode(['type' => 'gw_country']);
-			$groups_field = $wpcf7->form_scan_shortcode(['type' => 'gw_groups']);
-			$actions_field = $wpcf7->form_scan_shortcode(['type' => 'gw_action']);
-			$phone_field = $wpcf7->form_scan_shortcode(['type' => 'gw_phone']);
+			$country_code_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_country']));
+			$groups_field       = current($wpcf7->form_scan_shortcode(['type' => 'gw_groups']));
+			$actions_field      = current($wpcf7->form_scan_shortcode(['type' => 'gw_action']));
+			$phone_field        = current($wpcf7->form_scan_shortcode(['type' => 'gw_phone']));
 
 			$all_fields = $wpcf7->form_scan_shortcode();
 
 			if (!$country_code_field || !$phone_field || !$actions_field ) return; // nothing to do
 
-            $cc = $_POST[$country_code_field->name];
-            $local = $_POST[$phone_field->name];
+            $cc = $_POST[$country_code_field['name']];
+            $local = $_POST[$phone_field['name']];
 
 			$data = $submission->get_posted_data();
 
@@ -308,7 +310,7 @@ class GwapiContactForm7 {
 				}
 			}
 
-			switch($data['gwapi_action']) {
+			switch($data[$actions_field['name']]) {
 				case 'update':
 					$insert_data['ID'] = $curID;
 
@@ -320,7 +322,7 @@ class GwapiContactForm7 {
 
 					    // get current groups
                         $cur_groups = wp_get_object_terms($curID, 'gwapi-recipient-groups', ['fields' => 'ids']);
-                        $possible_groups = $this->getGroupIdsFromTag($groups_field[0]);
+                        $possible_groups = $this->getGroupIdsFromTag($groups_field);
 
                         // append groups not selectable, but previously selected, in this option
                         $append_groups = [];
@@ -328,7 +330,7 @@ class GwapiContactForm7 {
                             if (!in_array($gID, $possible_groups)) $append_groups[] = $gID;
                         }
 
-						$groupIDs = isset($data['gwapi_groups']) && $data['gwapi_groups'] ? $data['gwapi_groups'] : [];
+						$groupIDs = isset($data[$groups_field['name']]) && $data[$groups_field['name']] ? $data[$groups_field['name']] : [];
 						foreach($groupIDs as &$gid) { $gid = (int)$gid; }
 						wp_set_object_terms($curID, array_merge($groupIDs, $append_groups), 'gwapi-recipient-groups');
 					}
@@ -342,7 +344,7 @@ class GwapiContactForm7 {
 				$this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
 			}
 
-			if (isset($data['gwapi_action']) && $data['gwapi_action'] == 'unsubscribe') {
+			if (isset($data[$actions_field['name']]) && $data[$actions_field['name']] == 'unsubscribe') {
 				wp_trash_post($curID);
 			}
 		}
@@ -817,8 +819,8 @@ class GwapiContactForm7 {
 	{
 	    $cf = WPCF7_ContactForm::get_current(); /** @var $cf WPCF7_ContactForm */
 	    $action_field = current($cf->scan_form_tags(['type' => 'gw_action']));
-	    $cc_field = current($cf->scan_form_tags(['type' => 'gw_country']));
-	    $local_field = current($cf->scan_form_tags(['type' => 'gw_phone']));
+	    $cc_field     = current($cf->scan_form_tags(['type' => 'gw_country']));
+	    $local_field  = current($cf->scan_form_tags(['type' => 'gw_phone']));
 
 		$tag = new WPCF7_Shortcode( $tag );
 
@@ -901,10 +903,10 @@ class GwapiContactForm7 {
 	 */
 	public function validateAction(WPCF7_Validation $res, $tag)
 	{
-        $cf = WPCF7_ContactForm::get_current(); /** @var $cf WPCF7_ContactForm */
+        $cf           = WPCF7_ContactForm::get_current(); /** @var $cf WPCF7_ContactForm */
         $action_field = current($cf->scan_form_tags(['type' => 'gw_action']));
-        $cc_field = current($cf->scan_form_tags(['type' => 'gw_country']));
-        $local_field = current($cf->scan_form_tags(['type' => 'gw_phone']));
+        $cc_field     = current($cf->scan_form_tags(['type' => 'gw_country']));
+        $local_field  = current($cf->scan_form_tags(['type' => 'gw_phone']));
 
         $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
         $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
@@ -942,10 +944,20 @@ class GwapiContactForm7 {
 	{
 		$classes = ['gwapi-action','wpcf7-form-control-wrap', str_replace(':', '', $contact_form['name'])];
 		$with_verify = in_array('verify:yes', $contact_form['options']);
+
+		$action = '';
+		$possible_actions = array_merge([$contact_form['name']], $contact_form['options']);
+		foreach($possible_actions as $possible_action) {
+            if (strpos($possible_action, 'action:') === 0) { // legacy approach!
+                $action = substr($possible_action, strpos($possible_action, ':')+1);
+            }
+        }
+
+
 		ob_start();
 		?>
 		<span class="<?= implode($classes,' '); ?>">
-			<input type="hidden" <?= $with_verify ? 'data-verify="true"' : ''; ?>  data-gwapi="action" name="<?= $contact_form['name']; ?>" value="<?= substr($contact_form['name'], strpos($contact_form['name'], ':')+1); ?>">
+			<input type="hidden" <?= $with_verify ? 'data-verify="true"' : ''; ?>  data-gwapi="action" name="<?= $contact_form['name']; ?>" value="<?= $action; ?>">
 		</span>
 
 		<?php
@@ -973,19 +985,20 @@ class GwapiContactForm7 {
 			die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gwapi') ]));
 		}
 
+        $phone = gwapi_get_msisdn($_POST['cc'],$_POST['number']);
+
 		// prevent abuse
-		$very_close = get_transient('gwapi_notify1_'.$_POST['cc'].$_POST['number']);
-		$same_day = get_transient('gwapi_notify2_'.$_POST['cc'].$_POST['number']) ? : 0;
-		//if ($very_close) die(json_encode(['success' => false, 'message' => 'You have very recently requested a verification SMS. To prevent abuse, your request has been blocked. Try again in a couple of minutes.']));
-		//if ($same_day > 2) die(json_encode(['success' => false, 'message' => 'You have requested verification SMS\'es too many times during the last 24 hours. To prevent abuse, your request has been blocked.']));
-		set_transient('gwapi_notify1_'.$_POST['cc'].$_POST['number'], 1, 60);
-		set_transient('gwapi_notify2_'.$_POST['cc'].$_POST['number'], $same_day+1, 60*60*24);
+		$very_close = get_transient('gwapi_notify1_'.$phone);
+		$same_day = get_transient('gwapi_notify2_'.$phone) ? : 0;
+		if ($very_close) die(json_encode(['success' => false, 'message' => 'You have very recently requested a verification SMS. To prevent abuse, your request has been blocked. Try again in a couple of minutes.']));
+		if ($same_day > 2) die(json_encode(['success' => false, 'message' => 'You have requested verification SMS\'es too many times during the last 24 hours. To prevent abuse, your request has been blocked.']));
+		set_transient('gwapi_notify1_'.$phone, 1, 60);
+		set_transient('gwapi_notify2_'.$phone, $same_day+1, 60*60*24);
 
 		// save + send verification SMS
 		$code = rand(100000,999999);
-		set_transient('gwapi_verify_'.$_POST['cc'].$_POST['number'], $code, 60*30);
+		set_transient('gwapi_verify_'.$phone, $code, 60*30);
 
-		$phone = gwapi_get_msisdn($_POST['gwapi_country'],$_POST['gwapi_phone']);
 		gwapi_send_sms(__("Your verification code:", 'gwapi').$code, $phone);
 
 		die(json_encode(['success' => true]));
