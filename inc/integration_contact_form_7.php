@@ -265,20 +265,27 @@ class GwapiContactForm7 {
 
 			if (!$country_code_field || !$phone_field || !$actions_field ) return; // nothing to do
 
+            // get form action
+            $action = null;
+            foreach($actions_field['options'] as $o) {
+                if (strpos($o, 'action:') === 0) $action = trim(substr($o, 7));
+            }
+            if (!$action) $action = substr($o['name'], 7);
+
             $cc = $_POST[$country_code_field['name']];
             $local = $_POST[$phone_field['name']];
 
 			$data = $submission->get_posted_data();
 
 			$curID = null;
-			if (in_array($data[$actions_field['name']], ['unsubscribe', 'update'])) {
+			if (in_array($action, ['unsubscribe', 'update'])) {
 				$q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [ [ 'key' => 'cc', 'value' => $cc ], ['key' => 'number', 'value' => $local ] ]]);
 				$curID = $q->post->ID;
 				if (!$curID) return; // should never happen, validation would have caught this...
 			}
 
 			$insert_data = null;
-			if (in_array($data[$actions_field['name']], ['update', 'signup'])) {
+			if (in_array($action, ['update', 'signup'])) {
 				// title/name for recipient
 				$title = '';
 				$name_fields = ['name', 'full_name'];
@@ -310,7 +317,7 @@ class GwapiContactForm7 {
 				}
 			}
 
-			switch($data[$actions_field['name']]) {
+			switch($action) {
 				case 'update':
 					$insert_data['ID'] = $curID;
 
@@ -344,7 +351,7 @@ class GwapiContactForm7 {
 				$this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
 			}
 
-			if (isset($data[$actions_field['name']]) && $data[$actions_field['name']] == 'unsubscribe') {
+			if ($action == 'unsubscribe') {
 				wp_trash_post($curID);
 			}
 		}
@@ -576,6 +583,9 @@ class GwapiContactForm7 {
 
 							<label><input type="radio" name="action" class="option" value="update"> <?php _e('Update', 'gwapi'); ?></label>
 							<p class="description" style="margin-top: 0;"><?php _e('Update an existing subscriber, ie. a recipient with the given phone number must already exist.', 'gwapi'); ?></p>
+
+							<label><input type="radio" name="action" class="option" value="sms"> <?php _e('Send SMS', 'gwapi'); ?></label>
+							<p class="description" style="margin-top: 0;"><?php _e('Send SMS from the frontend. <strong>Warning:</strong> anyone with access to a page with this on, can send SMS\'es on your behalf!', 'gwapi'); ?></p>
 						</td>
 					</tr>
 					<tr>
