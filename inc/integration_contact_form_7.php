@@ -51,6 +51,7 @@ class GwapiContactForm7 {
 		$this->resolveCF7SpamTrap();
 	}
 
+
 	/**
 	 * Make sure the CF7 spam trap is just being resolved once - especially reCaptcha fails if trying to verify the same
 	 * token twice, so after first succesful resolve, allow our own multi-use token.
@@ -180,8 +181,10 @@ class GwapiContactForm7 {
 		// must have gw_actions to be relevant at all
 		$actions_field = current($actions_field);
 
-		// must be a signup
-		if ($actions_field['name'] != 'action:signup') return;
+        $isSignup = in_array('action:signup', $actions_field['options']);
+        if (!$isSignup) $isSignup = $actions_field['name'] == 'action:signup'; // legacy way of detecting that this is a signup!
+
+		if (!$isSignup) return;
 
 		// must contain a verify:yes requirement
 		if (!$actions_field['options'] || $actions_field['options'][0] != 'verify:yes') return;
@@ -192,9 +195,12 @@ class GwapiContactForm7 {
 		// must have phone and country code
 		if (!$phone_field || !$country_code_field) return;
 
+		$cc = $_POST[$country_code_field['name']];
+		$local = $_POST[$phone_field['name']];
+
 		// has the user entered a verification pin code?
 		if (!isset($_POST['_gwapi_verify_signup'])) {
-			$phone = gwapi_get_msisdn($_POST['gwapi_country'],$_POST['gwapi_phone']);
+			$phone = gwapi_get_msisdn($cc,$local);
 			$code = get_transient("gwapi_verify_signup_".$phone);
 
 			header("Content-type: application/json");
@@ -250,26 +256,29 @@ class GwapiContactForm7 {
 
 		if (!$submission ) return;
 		if ( $submission ) {
-			$country_code_field = $wpcf7->form_scan_shortcode(['type' => 'gw_country']);
-			$groups_field = $wpcf7->form_scan_shortcode(['type' => 'gw_groups']);
-			$actions_field = $wpcf7->form_scan_shortcode(['type' => 'gw_action']);
-			$phone_field = $wpcf7->form_scan_shortcode(['type' => 'gw_phone']);
+			$country_code_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_country']));
+			$groups_field       = current($wpcf7->form_scan_shortcode(['type' => 'gw_groups']));
+			$actions_field      = current($wpcf7->form_scan_shortcode(['type' => 'gw_action']));
+			$phone_field        = current($wpcf7->form_scan_shortcode(['type' => 'gw_phone']));
 
 			$all_fields = $wpcf7->form_scan_shortcode();
 
 			if (!$country_code_field || !$phone_field || !$actions_field ) return; // nothing to do
 
+            $cc = $_POST[$country_code_field['name']];
+            $local = $_POST[$phone_field['name']];
+
 			$data = $submission->get_posted_data();
 
 			$curID = null;
-			if (in_array($data['gwapi_action'], ['unsubscribe', 'update'])) {
-				$q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [ [ 'key' => 'cc', 'value' => $_POST['gwapi_country'] ], ['key' => 'number', 'value' => $_POST['gwapi_phone']] ]]);
+			if (in_array($data[$actions_field['name']], ['unsubscribe', 'update'])) {
+				$q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [ [ 'key' => 'cc', 'value' => $cc ], ['key' => 'number', 'value' => $local ] ]]);
 				$curID = $q->post->ID;
 				if (!$curID) return; // should never happen, validation would have caught this...
 			}
 
 			$insert_data = null;
-			if (in_array($data['gwapi_action'], ['update', 'signup'])) {
+			if (in_array($data[$actions_field['name']], ['update', 'signup'])) {
 				// title/name for recipient
 				$title = '';
 				$name_fields = ['name', 'full_name'];
@@ -280,15 +289,15 @@ class GwapiContactForm7 {
 					if (isset($_POST['first_name'])) $title = $_POST['first_name'];
 					if (isset($_POST['last_name'])) $title .= " ".$_POST['last_name'];
 				}
-				if (!$title) $title = '+'.$data['gwapi_country']." ".$data['gwapi_phone'];
+				if (!$title) $title = '+'.$cc.' '.$local;
 
 				// data
 				$insert_data = [
 					"post_type" => "gwapi-recipient",
 					"post_status" => "publish",
 					"meta_input" => [
-						"cc" => $data['gwapi_country'],
-						"number" => $data['gwapi_phone']
+						"cc" => $cc,
+						"number" => $local
 					],
 					"post_title" => $title
 				];
@@ -301,7 +310,7 @@ class GwapiContactForm7 {
 				}
 			}
 
-			switch($data['gwapi_action']) {
+			switch($data[$actions_field['name']]) {
 				case 'update':
 					$insert_data['ID'] = $curID;
 
@@ -313,7 +322,7 @@ class GwapiContactForm7 {
 
 					    // get current groups
                         $cur_groups = wp_get_object_terms($curID, 'gwapi-recipient-groups', ['fields' => 'ids']);
-                        $possible_groups = $this->getGroupIdsFromTag($groups_field[0]);
+                        $possible_groups = $this->getGroupIdsFromTag($groups_field);
 
                         // append groups not selectable, but previously selected, in this option
                         $append_groups = [];
@@ -321,9 +330,8 @@ class GwapiContactForm7 {
                             if (!in_array($gID, $possible_groups)) $append_groups[] = $gID;
                         }
 
-						$groupIDs = isset($data['gwapi_groups']) && $data['gwapi_groups'] ? $data['gwapi_groups'] : [];
+						$groupIDs = isset($data[$groups_field['name']]) && $data[$groups_field['name']] ? $data[$groups_field['name']] : [];
 						foreach($groupIDs as &$gid) { $gid = (int)$gid; }
-						//print_r([$groupIDs, $append_groups]);die();
 						wp_set_object_terms($curID, array_merge($groupIDs, $append_groups), 'gwapi-recipient-groups');
 					}
 
@@ -336,7 +344,7 @@ class GwapiContactForm7 {
 				$this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
 			}
 
-			if (isset($data['gwapi_action']) && $data['gwapi_action'] == 'unsubscribe') {
+			if (isset($data[$actions_field['name']]) && $data[$actions_field['name']] == 'unsubscribe') {
 				wp_trash_post($curID);
 			}
 		}
@@ -370,6 +378,10 @@ class GwapiContactForm7 {
 				<table class="form-table">
 					<tbody>
 					<tr>
+						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php _e('Name attribute', 'gwapi'); ?></label></th>
+						<td><input required type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>"></td>
+					</tr>
+                    <tr>
 						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php _e('Id attribute', 'gwapi'); ?></label></th>
 						<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>"></td>
 					</tr>
@@ -410,7 +422,10 @@ class GwapiContactForm7 {
 
 				<table class="form-table">
 					<tbody>
-
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php _e('Name attribute', 'gwapi'); ?></label></th>
+                        <td><input required type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>"></td>
+                    </tr>
 					<tr>
 						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-groups' ); ?>"><?php _e('Limit countries', 'gwapi'); ?></label></th>
 						<td>
@@ -479,7 +494,10 @@ class GwapiContactForm7 {
 
 				<table class="form-table">
 					<tbody>
-
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php _e('Name attribute', 'gwapi'); ?></label></th>
+                        <td><input required type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>"></td>
+                    </tr>
 					<tr>
 						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-groups' ); ?>"><?php _e('Pick groups', 'gwapi'); ?></label></th>
 						<td>
@@ -543,7 +561,10 @@ class GwapiContactForm7 {
 
 				<table class="form-table">
 					<tbody>
-
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php _e('Name attribute', 'gwapi'); ?></label></th>
+                        <td><input required type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>"></td>
+                    </tr>
 					<tr>
 						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-action' ); ?>"><?php _e('Triggered action', 'gwapi'); ?></label></th>
 						<td>
@@ -654,7 +675,7 @@ class GwapiContactForm7 {
 		$default = $this->getFieldDefaultValue($default_field,'gwapi_country');
 		?>
 		<span class="<?= implode($classes,' '); ?>">
-			<input type="tel" name="gwapi_phone" id="<?= $field_id ? 'id="'.$field_id.'"' : ''; ?>" onkeyup="this.value = this.value.replace(/\D+/,'')" onchange="this.value = this.value.replace(/\D+/,'')" value="<?= esc_attr($default); ?>">
+			<input type="tel" data-gwapi="phone" name="<?= $contact_form['name']; ?>" id="<?= $field_id ? 'id="'.$field_id.'"' : ''; ?>" onkeyup="this.value = this.value.replace(/\D+/,'')" onchange="this.value = this.value.replace(/\D+/,'')" value="<?= esc_attr($default); ?>">
 		</span>
 		<?php
 
@@ -695,13 +716,13 @@ class GwapiContactForm7 {
 		if (count($country_codes) === 1):
 			?>
 			<span class="<?= implode($classes,' '); ?>">
-				<input type="hidden" name="gwapi_country" value="<?= current($country_codes); ?>" <?= $field_id ? 'id="'.$field_id.'"' : ''; ?>>
+				<input type="hidden"  data-gwapi="country" name="<?= $contact_form['name']; ?>" value="<?= current($country_codes); ?>" <?= $field_id ? 'id="'.$field_id.'"' : ''; ?>>
 			</span>
 			<?php
 		else:
 			?>
 				<span class="<?= implode($classes,' '); ?>">
-					<select name="gwapi_country" <?= $field_id ? 'id="'.$field_id.'"' : ''; ?> <?= ($default?'value="'.esc_attr($default).'"':''); ?>>
+					<select  data-gwapi="country" name="<?= $contact_form['name']; ?>" <?= $field_id ? 'id="'.$field_id.'"' : ''; ?> <?= ($default?'value="'.esc_attr($default).'"':''); ?>>
 						<?php foreach($out_country_codes as $c): ?>
 							<option value="<?= $c->phone; ?>" <?= $default==$c->phone?'selected':'' ?>><?= $c->name ?> (+<?= $c->phone; ?>)</option>
 						<?php endforeach; ?>
@@ -737,14 +758,14 @@ class GwapiContactForm7 {
 			?>
 			<div class="<?= implode($classes,' '); ?>">
 				<?php foreach($groups as $g): ?>
-					<label style="margin-bottom: 5px; display: block;"><input type="checkbox" name="gwapi_groups[]" value="<?= $g->term_id; ?>"> <?= esc_html($g->name); ?></label>
+					<label style="margin-bottom: 5px; display: block;"><input type="checkbox"  data-gwapi="groups" name="<?= $contact_form['name']; ?>[]" value="<?= $g->term_id; ?>"> <?= esc_html($g->name); ?></label>
 				<?php endforeach; ?>
 			</div>
 		<?php
 		else:
 			foreach($groups as $g): ?>
 			<span class="<?= implode($classes,' '); ?>">
-				<input type="hidden" name="gwapi_groups[]" value="<?= $g->term_id; ?>">
+				<input type="hidden"  data-gwapi="groups" name="<?= $contact_form['name']; ?>[]" value="<?= $g->term_id; ?>">
 			</span>
 			<?php endforeach;
 		endif;
@@ -763,13 +784,10 @@ class GwapiContactForm7 {
 	 */
 	public function validateGroups(WPCF7_Validation $res, $tag)
 	{
-		$tag['name'] = 'gwapi-groups';
 		$tag = new WPCF7_Shortcode( $tag );
-
 		$groupsPossible = $this->getGroupIdsFromTag($tag);
-
 		$groupsPossible = array_unique($groupsPossible);
-		$groupsSelected = isset($_POST['gwapi_groups']) ? array_unique($_POST['gwapi_groups']) : [];
+		$groupsSelected = isset($_POST[$tag->name]) ? array_unique($_POST[$tag->name]) : [];
 
 		// if NOT hidden, then check:
 		// are the groups selected within the list of possible groups?
@@ -799,31 +817,36 @@ class GwapiContactForm7 {
 	 */
 	public function validatePhone(WPCF7_Validation $res, $tag)
 	{
-		$tag['name'] = 'gwapi-phone';
+	    $cf = WPCF7_ContactForm::get_current(); /** @var $cf WPCF7_ContactForm */
+	    $action_field = current($cf->scan_form_tags(['type' => 'gw_action']));
+	    $cc_field     = current($cf->scan_form_tags(['type' => 'gw_country']));
+	    $local_field  = current($cf->scan_form_tags(['type' => 'gw_phone']));
+
 		$tag = new WPCF7_Shortcode( $tag );
 
-		$phone = isset($_POST['gwapi_phone']) ? $_POST['gwapi_phone'] : null;
+		$phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
 		if (!$phone || !ctype_digit($phone)) {
 			$res->invalidate($tag, __('The phone number must consist of digits only.', 'gwapi') );
 			return $res;
 		}
 
-		$action = isset($_POST['gwapi_action']) ? $_POST['gwapi_action'] : null;
+		$action = isset($_POST[$action_field['name']]) ? $_POST[$action_field['name']] : null;
 		if (!$action) return $res; // invalid, but this post will simply be ignored because of that, which is good
 
 		$phone_exists = null;
-		if (isset($_POST['gwapi_country']) && $_POST['gwapi_country'] && isset($_POST['gwapi_phone']) && $_POST['gwapi_phone']) {
-			$q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [ [ 'key' => 'cc', 'value' => $_POST['gwapi_country'] ], ['key' => 'number', 'value' => $_POST['gwapi_phone']] ]]);
+		$cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
+		if ($cc) {
+			$q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [ [ 'key' => 'cc', 'value' => $cc ], ['key' => 'number', 'value' => $phone] ]]);
 			$phone_exists = $q->have_posts();
 		}
 
 		// signup: does the phone number already exist?
-		if (isset($_POST['gwapi_action']) && $_POST['gwapi_action'] == 'signup' && $phone_exists === true) {
+		if ($action && $action == 'signup' && $phone_exists === true) {
 			$res->invalidate($tag, __('You are already subscribed with this phone number.', 'gwapi') );
 		}
 
 		// unsubscribe or update: does the phone number already exist?
-		if (isset($_POST['gwapi_action']) && in_array($_POST['gwapi_action'], ['unsubscribe', 'update']) && $phone_exists === false) {
+		if ($action && in_array($action, ['unsubscribe', 'update']) && $phone_exists === false) {
 			$res->invalidate($tag, __('You are not subscribed with this phone number.', 'gwapi') );
 		}
 
@@ -840,10 +863,12 @@ class GwapiContactForm7 {
 	 */
 	public function validateCountry(WPCF7_Validation $res, $tag)
 	{
-		$tag['name'] = 'gwapi-country';
+        $cf = WPCF7_ContactForm::get_current(); /** @var $cf WPCF7_ContactForm */
+        $cc_field = current($cf->scan_form_tags(['type' => 'gw_country']));
+
 		$tag = new WPCF7_Shortcode( $tag );
 
-		$cc = isset($_POST['gwapi_country']) ? $_POST['gwapi_country'] : null;
+		$cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
 
 		// do we have a list of country codes to limit from?
 		$valid_country_codes = [];
@@ -878,22 +903,22 @@ class GwapiContactForm7 {
 	 */
 	public function validateAction(WPCF7_Validation $res, $tag)
 	{
-		$origName = $tag['name'];
-		$tag['name'] = 'gwapi-action';
+        $cf           = WPCF7_ContactForm::get_current(); /** @var $cf WPCF7_ContactForm */
+        $action_field = current($cf->scan_form_tags(['type' => 'gw_action']));
+        $cc_field     = current($cf->scan_form_tags(['type' => 'gw_country']));
+        $local_field  = current($cf->scan_form_tags(['type' => 'gw_phone']));
+
+        $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
+        $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
+
 		$tag = new WPCF7_Shortcode( $tag );
 
 		// the action selected must be within the list of valid actions
-		$action = isset($_POST['gwapi_action']) ? $_POST['gwapi_action'] : '';
-		$shouldBe = substr($origName, 7);
-
-		if ($shouldBe != $action) {
-			$res->invalidate($tag, __('The action for the form is not consistent with the per-form configured action. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gwapi') );
-			return $res;
-		}
+		$action = isset($_POST[$action_field['name']]) ? $_POST[$action_field['name']] : '';
 
 		// update action + verification
 		if ($action === 'update' && in_array('verify:yes', $tag->options)) {
-			$code = get_transient('gwapi_verify_'.$_POST['gwapi_country'].$_POST['gwapi_phone']);
+			$code = get_transient('gwapi_verify_'.gwapi_get_msisdn($cc, $phone));
 			if ($code != $_POST['_gwapi_token']) {
 				$res->invalidate($tag, __('It doesn\'t seem that you have verified your number by SMS, or the verification has expired. Note that you must submit the form within 30 minutes after validating.', 'gwapi') );
 			}
@@ -901,8 +926,8 @@ class GwapiContactForm7 {
 
 		// signup action + verification
 		if ($action === 'signup' && in_array('verify:yes', $tag->options)) {
-			$phone = preg_replace('/\D+/', '', $_POST['gwapi_country'].$_POST['gwapi_phone']);
-			$code = get_transient("gwapi_verify_signup_" . $phone);
+			$msisdn = gwapi_get_msisdn($cc, $phone);
+			$code = get_transient("gwapi_verify_signup_" . $msisdn);
 			if (isset($_POST['_gwapi_verify_signup'])) {
 				if ($code && $code != preg_replace('/\D+/', '', $_POST['_gwapi_verify_signup'])) {
 					$res->invalidate($tag, __("The verification code that you entered, was incorrect.", 'gwapi') );
@@ -919,10 +944,20 @@ class GwapiContactForm7 {
 	{
 		$classes = ['gwapi-action','wpcf7-form-control-wrap', str_replace(':', '', $contact_form['name'])];
 		$with_verify = in_array('verify:yes', $contact_form['options']);
+
+		$action = '';
+		$possible_actions = array_merge([$contact_form['name']], $contact_form['options']);
+		foreach($possible_actions as $possible_action) {
+            if (strpos($possible_action, 'action:') === 0) { // legacy approach!
+                $action = substr($possible_action, strpos($possible_action, ':')+1);
+            }
+        }
+
+
 		ob_start();
 		?>
 		<span class="<?= implode($classes,' '); ?>">
-			<input type="hidden" <?= $with_verify ? 'data-verify="true"' : ''; ?> name="gwapi_action" value="<?= substr($contact_form['name'], strpos($contact_form['name'], ':')+1); ?>">
+			<input type="hidden" <?= $with_verify ? 'data-verify="true"' : ''; ?>  data-gwapi="action" name="<?= $contact_form['name']; ?>" value="<?= $action; ?>">
 		</span>
 
 		<?php
@@ -950,19 +985,20 @@ class GwapiContactForm7 {
 			die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gwapi') ]));
 		}
 
+        $phone = gwapi_get_msisdn($_POST['cc'],$_POST['number']);
+
 		// prevent abuse
-		$very_close = get_transient('gwapi_notify1_'.$_POST['cc'].$_POST['number']);
-		$same_day = get_transient('gwapi_notify2_'.$_POST['cc'].$_POST['number']) ? : 0;
-		//if ($very_close) die(json_encode(['success' => false, 'message' => 'You have very recently requested a verification SMS. To prevent abuse, your request has been blocked. Try again in a couple of minutes.']));
-		//if ($same_day > 2) die(json_encode(['success' => false, 'message' => 'You have requested verification SMS\'es too many times during the last 24 hours. To prevent abuse, your request has been blocked.']));
-		set_transient('gwapi_notify1_'.$_POST['cc'].$_POST['number'], 1, 60);
-		set_transient('gwapi_notify2_'.$_POST['cc'].$_POST['number'], $same_day+1, 60*60*24);
+		$very_close = get_transient('gwapi_notify1_'.$phone);
+		$same_day = get_transient('gwapi_notify2_'.$phone) ? : 0;
+		if ($very_close) die(json_encode(['success' => false, 'message' => 'You have very recently requested a verification SMS. To prevent abuse, your request has been blocked. Try again in a couple of minutes.']));
+		if ($same_day > 2) die(json_encode(['success' => false, 'message' => 'You have requested verification SMS\'es too many times during the last 24 hours. To prevent abuse, your request has been blocked.']));
+		set_transient('gwapi_notify1_'.$phone, 1, 60);
+		set_transient('gwapi_notify2_'.$phone, $same_day+1, 60*60*24);
 
 		// save + send verification SMS
 		$code = rand(100000,999999);
-		set_transient('gwapi_verify_'.$_POST['cc'].$_POST['number'], $code, 60*30);
+		set_transient('gwapi_verify_'.$phone, $code, 60*30);
 
-		$phone = gwapi_get_msisdn($_POST['gwapi_country'],$_POST['gwapi_phone']);
 		gwapi_send_sms(__("Your verification code:", 'gwapi').$code, $phone);
 
 		die(json_encode(['success' => true]));
@@ -1017,7 +1053,7 @@ class GwapiContactForm7 {
 		if ($first_call) return;
 		$first_call = true;
 
-		wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url().'js/integration_contact_form_7.js', ['jquery']);
+		wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url().'js/integration_contact_form_7.js', ['jquery'], 2);
 		wp_localize_script('gwapi_integration_contact_form_7', 'i18n_gwapi_cf7', [
 			'country_and_cc' => __('You must supply both country code and phone number in order to continue.', 'gwapi'),
 			'verification_sms_sent' => __("We have just sent you an SMS with a verification code. Please enter it below:", 'gwapi'),
