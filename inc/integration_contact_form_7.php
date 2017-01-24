@@ -26,6 +26,7 @@ class GwapiContactForm7 {
 			'gw_phone' => '📱 '.__('phone', 'gwapi'),
 			'gw_country' => '📱 '.__('countrycode', 'gwapi'),
 			'gw_groups' => '📱 '.__('groups', 'gwapi'),
+			'gw_smstext' => '📱 '.__('smstext', 'gwapi'),
 			'gw_action' => '📱 '.__('action*', 'gwapi')
 		];
 	}
@@ -624,6 +625,72 @@ class GwapiContactForm7 {
 		<?php
 	}
 
+	public function tagGenerateSmstext($contact_form, $args = '')
+    {
+        $args = wp_parse_args( $args, array() );
+        $type = 'gw_smstext';
+
+        ?>
+        <div class="control-box">
+            <fieldset>
+                <legend><?php _e('SMS text field. This makes it possible to write an SMS message intended for sending.') ?></legend>
+
+                <table class="form-table">
+                    <tbody>
+
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?></label></th>
+                        <td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>" /></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>"><?php echo esc_html( __( 'Placeholder', 'gwapi' ) ); ?></label></th>
+                        <td><input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" />
+                    </tr>
+
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'contact-form-7' ) ); ?></label></th>
+                        <td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>" /></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php echo esc_html( __( 'Class attribute', 'contact-form-7' ) ); ?></label></th>
+                        <td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" /></td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-counter' ); ?>"><?php echo esc_html( __( 'Enable counter', 'gwapi' ) ); ?></label></th>
+                        <td>
+                            <label><input type="checkbox" name="counter" class="option" checked /> <?php echo esc_html( __( 'Displays how many SMS\'es this message spans as you type it.', 'gwapi' ) ); ?></label></td>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-tags' ); ?>"><?php echo esc_html( __( 'Link to tags', 'gwapi' ) ); ?></label></th>
+                        <td>
+                            <label><input type="checkbox" name="tags" class="option" checked /> <?php echo esc_html( __( 'Links to a table of possible SMS-tags (opens in popup).', 'gwapi' ) ); ?></label></td>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+
+        <div class="insert-box">
+            <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
+
+            <div class="submitbox">
+                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'contact-form-7' ) ); ?>" />
+            </div>
+
+            <br class="clear" />
+
+            <p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
+        </div>
+        <?php
+    }
+
 	/**
 	 * Get the default value for a field.
 	 *
@@ -747,9 +814,7 @@ class GwapiContactForm7 {
 	public function handleGroups($contact_form)
 	{
 		$classes = ['gwapi-groups','wpcf7-form-control-wrap', str_replace(':', '', $contact_form['name'])];
-		$group_ids = [];
 		$is_hidden = false;
-		$field_id = $contact_form['name'] ? substr($contact_form['name'], 3) : null;
 
 		foreach($contact_form['options'] as $opt) {
 			if (strpos($opt, 'class:')===0) $classes[] = substr($opt, strpos($opt, ':')+1);
@@ -779,6 +844,48 @@ class GwapiContactForm7 {
 			</span>
 			<?php endforeach;
 		endif;
+
+		return ob_get_clean();
+	}
+
+	public function handleSmstext($tag)
+	{
+        $tag = new WPCF7_FormTag($tag);
+        $id = $tag->get_id_option();
+		$classes = ['gwapi-smstext','wpcf7-form-control-wrap', $tag->name, $tag->get_class_option()];
+
+		$has_counter = in_array('counter', $tag->options);
+		$has_tags = in_array('tags', $tag->options);
+        $placeholder = current($tag->labels);
+
+        $extras_style = 'float: right; opacity: 0.8; margin-left: 20px; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em;';
+
+        $counterI18N = [
+            'character' => __('character','gwapi'),
+            'characters' => __('characters','gwapi'),
+            'sms' => __('SMS','gwapi'),
+            'smses' => __('SMS\'es','gwapi')
+        ];
+
+        ?>
+        <div class="<?= implode($classes,' '); ?>" <?= $id ? 'id="'.$id.'"' : '' ; ?>>
+            <textarea name="<?= $tag->name; ?>" cols="40" rows="10" placeholder="<?= esc_attr($placeholder); ?>"></textarea>
+
+            <?php if ($has_tags): ?>
+                <div class="gwapi-tags" style="<?= $extras_style; ?>">
+                    <a href="#gwapi-tags" data-tags="<?= esc_attr(json_encode(gwapi_all_tags())); ?>"><?php _e('Show tags','gwapi'); ?></a>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($has_counter): ?>
+                <div class="gwapi-counter" data-i18n="<?= esc_attr(json_encode($counterI18N)); ?>" style="<?= $extras_style; ?>">...</div>
+            <?php endif; ?>
+
+            <div style="clear: both; height: 1px; margin-top: -1px;"></div> <!-- clearfix -->
+        </div>
+        <?php
+
+        wp_enqueue_script('gwapi_integration_contact_form_7_frontend', _gwapi_url().'js/integration_contact_form_7_frontend.js', ['jquery'], 1);
 
 		return ob_get_clean();
 	}
