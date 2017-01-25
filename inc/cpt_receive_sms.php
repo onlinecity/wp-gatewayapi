@@ -157,6 +157,7 @@ add_action('wp_ajax_nopriv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler'
 
 add_action('parse_request', function ($wp) {
     global $current_screen;
+    if (!is_object($current_screen)) return;
     if ($current_screen->post_type != 'gwapi-receive-sms') return;
     if (!isset($_POST['gwapi_receive_sms_export_format'])) return;
     switch ($_POST['gwapi_receive_sms_export_format']) {

@@ -62,7 +62,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
     $recipientsByID = [];
 
     // by recipient group
-    if (in_array('groups',$sources) || !$sources) {
+    if (!$sources || in_array('groups',$sources)) {
         $groups = get_post_meta($ID, 'recipient_groups', true);
 
         $recipientsQ = [
@@ -71,7 +71,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
             "posts_per_page" => -1
         ];
 
-        if (in_array('groups', $sources)) {
+        if ($sources && in_array('groups', $sources)) {
             $recipientsQ["tax_query"] = [
                 [
                     'taxonomy' => 'gwapi-recipient-groups',

@@ -120,7 +120,7 @@ class GwapiContactForm7
 
             // add shortcode
             $func = [$this, 'handle' . substr($key, 3)];
-            wpcf7_add_shortcode(array($key), $func, true);
+            wpcf7_add_form_tag(array($key), $func, true);
         }
     }
 
@@ -185,7 +185,7 @@ class GwapiContactForm7
 
     private function handleSubmitSignupVerify(WPCF7_ContactForm $wpcf7, WPCF7_Submission $submit)
     {
-        $actions_field = $wpcf7->form_scan_shortcode(['type' => 'gw_action']);
+        $actions_field = $wpcf7->scan_form_tags(['type' => 'gw_action']);
         if (!count($actions_field)) return;
 
         // must have gw_actions to be relevant at all
@@ -199,8 +199,8 @@ class GwapiContactForm7
         // must contain a verify:yes requirement
         if (!$actions_field['options'] || $actions_field['options'][0] != 'verify:yes') return;
 
-        $phone_field = $wpcf7->form_scan_shortcode(['type' => 'gw_phone']);
-        $country_code_field = $wpcf7->form_scan_shortcode(['type' => 'gw_country']);
+        $phone_field = $wpcf7->scan_form_tags(['type' => 'gw_phone']);
+        $country_code_field = $wpcf7->scan_form_tags(['type' => 'gw_country']);
 
         // must have phone and country code
         if (!$phone_field || !$country_code_field) return;
@@ -267,12 +267,12 @@ class GwapiContactForm7
 
         if (!$submission) return;
 
-        $country_code_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_country']));
-        $groups_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_groups']));
-        $actions_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_action']));
-        $phone_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_phone']));
+        $country_code_field = current($wpcf7->scan_form_tags(['type' => 'gw_country']));
+        $groups_field = current($wpcf7->scan_form_tags(['type' => 'gw_groups']));
+        $actions_field = current($wpcf7->scan_form_tags(['type' => 'gw_action']));
+        $phone_field = current($wpcf7->scan_form_tags(['type' => 'gw_phone']));
 
-        $all_fields = $wpcf7->form_scan_shortcode();
+        $all_fields = $wpcf7->scan_form_tags();
 
         if (!$actions_field) return; // nothing to do
 
@@ -283,8 +283,8 @@ class GwapiContactForm7
         }
         if (!$action) $action = substr($o['name'], 7);
 
-        $cc = $_POST[$country_code_field['name']];
-        $local = $_POST[$phone_field['name']];
+        $cc = isset($_POST[$country_code_field['name']]) ? $_POST[$country_code_field['name']] : null;
+        $local = isset($_POST[$phone_field['name']]) ? $_POST[$phone_field['name']] : null;
 
         $data = $submission->get_posted_data();
 
@@ -348,13 +348,18 @@ class GwapiContactForm7
                         if (!in_array($gID, $possible_groups)) $append_groups[] = $gID;
                     }
 
+                    $groupIDs = isset($_POST[$groups_field['name']]) ? $_POST[$groups_field['name']] : [];
+                    foreach($groupIDs as &$gID) {
+                        $gID = (int)$gID;
+                    }
+
                     wp_set_object_terms($curID, array_merge($groupIDs, $append_groups), 'gwapi-recipient-groups');
                 }
 
                 break;
 
             case 'sms':
-                $smstext_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_smstext']));
+                $smstext_field = current($wpcf7->scan_form_tags(['type' => 'gw_smstext']));
                 $smstext = $_POST[$smstext_field['name']];
 
                 $args = [
@@ -362,7 +367,8 @@ class GwapiContactForm7
                     'post_status' => 'publish',
                     'meta_input' => [
                         'recipient_groups' => $this->getGroupIdsFromTag($groups_field),
-                        'message' => $smstext
+                        'message' => $smstext,
+                        'recipients' => ['groups']
                     ]
                 ];
                 wp_insert_post($args);
@@ -371,7 +377,7 @@ class GwapiContactForm7
 
         // does the form have an sms auto reply?
         $send_sms = get_post_meta($wpcf7->id(), '_gwapi', true) ?: [];
-        if ($send_sms && $send_sms['reply-enable']) {
+        if ($send_sms && isset($send_sms['reply-enable']) && $send_sms['reply-enable']) {
             $this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
         }
 
@@ -382,8 +388,8 @@ class GwapiContactForm7
 
     private function sendSubmitSmsReply(WPCF7_ContactForm $wpcf7, WPCF7_Submission $submission, $sms)
     {
-        $country_code_field = $wpcf7->form_scan_shortcode(['type' => 'gw_country']);
-        $phone_field = $wpcf7->form_scan_shortcode(['type' => 'gw_phone']);
+        $country_code_field = $wpcf7->scan_form_tags(['type' => 'gw_country']);
+        $phone_field = $wpcf7->scan_form_tags(['type' => 'gw_phone']);
 
         if (!$phone_field || !$country_code_field) return;
         if (!isset($sms['reply-body']) || !trim($sms['reply-body'])) return; // nothing to send
@@ -1034,7 +1040,7 @@ class GwapiContactForm7
      */
     public function validateGroups(WPCF7_Validation $res, $tag)
     {
-        $tag = new WPCF7_Shortcode($tag);
+        $tag = new WPCF7_FormTag($tag);
         $groupsPossible = $this->getGroupIdsFromTag($tag);
         $groupsPossible = array_unique($groupsPossible);
         $groupsSelected = isset($_POST[$tag->name]) ? array_unique($_POST[$tag->name]) : [];
@@ -1073,7 +1079,7 @@ class GwapiContactForm7
         $cc_field = current($cf->scan_form_tags(['type' => 'gw_country']));
         $local_field = current($cf->scan_form_tags(['type' => 'gw_phone']));
 
-        $tag = new WPCF7_Shortcode($tag);
+        $tag = new WPCF7_FormTag($tag);
 
         $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
         if (!$phone || !ctype_digit($phone)) {
@@ -1118,7 +1124,7 @@ class GwapiContactForm7
         /** @var $cf WPCF7_ContactForm */
         $cc_field = current($cf->scan_form_tags(['type' => 'gw_country']));
 
-        $tag = new WPCF7_Shortcode($tag);
+        $tag = new WPCF7_FormTag($tag);
 
         $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
 
@@ -1164,7 +1170,7 @@ class GwapiContactForm7
         $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
         $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
 
-        $tag = new WPCF7_Shortcode($tag);
+        $tag = new WPCF7_FormTag($tag);
 
         // the action selected must be within the list of valid actions
         $action = isset($_POST[$action_field['name']]) ? $_POST[$action_field['name']] : '';
@@ -1195,23 +1201,29 @@ class GwapiContactForm7
 
     public function validateSmstext(WPCF7_Validation $res, $tag)
     {
-        $tag = new WPCF7_Shortcode($tag);
+        $tag = new WPCF7_FormTag($tag);
 
         $wpcf7 = WPCF7_ContactForm::get_current();
         /** @var $wpcf7 WPCF7_ContactForm */
         $submission = WPCF7_Submission::get_instance();
         $data = $submission->get_posted_data();
 
-        $action_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_action']));
+        $action_field = current($wpcf7->scan_form_tags(['type' => 'gw_action']));
 
         // skip if this is not an SMS action
         if (!in_array('action:sms', $action_field['options'])) return $res;
 
         // rules:
+        // - sms text may not be empty
         // - there must be a groups field
         // - at least one group must be selected
         // - there must be at least one recipient in the selected groups
-        $groups_field = current($wpcf7->form_scan_shortcode(['type' => 'gw_groups']));
+        if (!isset($data[$tag->name]) || !trim($data[$tag->name])) {
+            $res->invalidate($tag, __('The SMS text may not be empty.'));
+            return $res;
+        }
+
+        $groups_field = current($wpcf7->scan_form_tags(['type' => 'gw_groups']));
         if (!$groups_field) {
             $res->invalidate($tag, __('You must have a groups field in this form (it may be hidden) in order to select recipients.', 'gwapi'));
             return $res;
