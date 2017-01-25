@@ -320,7 +320,7 @@ msgstr "%d brugere synkroniseres nu"
 
 # wpml-name: 8b36eba43c9a0b25920918d6d2ec3fa2
 msgid "Enabling this will force a one-time synchronization of all users, when you save these settings. This is useful when initially setting this plugin up and in cases where you might have updated the user database directly, so that the regular hooks on which the user synchronization relies, has not been triggered."
-msgstr "Slåes dette felt til vil der blive lave en én-gangs-synkronisering af alle brugere, så snart indstillingerne på denne side gemmes. Dette er brugbart når du indledningsvist opsætter pluginnet eller i situationer hvor ændringer f.eks. er foretaget på databaseniveau og de nødvendige automatiske handlinger derfor ikke er kørt."
+msgstr "Slåes dette felt til vil der blive lavet en éngangs-synkronisering af alle brugere, så snart indstillingerne på denne side gemmes. Dette er brugbart når du indledningsvist opsætter pluginnet eller i situationer hvor ændringer f.eks. er foretaget på databaseniveau og de nødvendige automatiske handlinger derfor ikke er kørt."
 
 # wpml-name: 8627813f208ddbebe9a238113f3f97f8
 msgid "Synchronize now"
