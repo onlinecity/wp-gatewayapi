@@ -65,6 +65,7 @@ add_action('admin_footer', function () {
  */
 add_action('parse_request', function ($wp) {
     global $current_screen;
+    if (!is_object($current_screen)) return;
     if ($current_screen->post_type != 'gwapi-recipient') return;
     if (!isset($_POST['gwapi_recipient_export_format'])) return;
     switch ($_POST['gwapi_recipient_export_format']) {
