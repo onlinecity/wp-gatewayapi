@@ -265,6 +265,12 @@ class GwapiContactForm7
         // special case: signup + verification SMS
         $this->handleSubmitSignupVerify($wpcf7, $submission);
 
+        // does the form have an sms auto reply?
+        $send_sms = get_post_meta($wpcf7->id(), '_gwapi', true) ? : false;
+        if ($send_sms && isset($send_sms['reply-enable']) && $send_sms['reply-enable']) {
+            $this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
+        }
+
         if (!$submission) return;
 
         $country_code_field = current($wpcf7->scan_form_tags(['type' => 'gw_country']));
@@ -375,12 +381,6 @@ class GwapiContactForm7
                 break;
         }
 
-        // does the form have an sms auto reply?
-        $send_sms = get_post_meta($wpcf7->id(), '_gwapi', true) ?: [];
-        if ($send_sms && isset($send_sms['reply-enable']) && $send_sms['reply-enable']) {
-            $this->sendSubmitSmsReply($wpcf7, $submission, $send_sms);
-        }
-
         if ($action == 'unsubscribe') {
             wp_trash_post($curID);
         }
@@ -388,8 +388,8 @@ class GwapiContactForm7
 
     private function sendSubmitSmsReply(WPCF7_ContactForm $wpcf7, WPCF7_Submission $submission, $sms)
     {
-        $country_code_field = $wpcf7->scan_form_tags(['type' => 'gw_country']);
-        $phone_field = $wpcf7->scan_form_tags(['type' => 'gw_phone']);
+        $country_code_field = current($wpcf7->scan_form_tags(['type' => 'gw_country']));
+        $phone_field = current($wpcf7->scan_form_tags(['type' => 'gw_phone']));
 
         if (!$phone_field || !$country_code_field) return;
         if (!isset($sms['reply-body']) || !trim($sms['reply-body'])) return; // nothing to send
@@ -397,7 +397,7 @@ class GwapiContactForm7
         $body = trim(wpcf7_mail_replace_tags($sms['reply-body']));
         $from = trim(wpcf7_mail_replace_tags($sms['reply-sender'])) ?: null;
 
-        $phone = gwapi_get_msisdn($_POST['gwapi_country'], $_POST['gwapi_phone']);
+        $phone = gwapi_get_msisdn($_POST[$country_code_field['name']], $_POST[$phone_field['name']]);
         gwapi_send_sms($body, $phone, $from);
     }
 
@@ -887,14 +887,12 @@ class GwapiContactForm7
     public function handleCountry($contact_form)
     {
         $classes = ['gwapi-country', 'wpcf7-form-control-wrap', str_replace(':', '', $contact_form['name'])];
-        $country_codes = [];
         $field_id = $contact_form['name'] ? substr($contact_form['name'], 3) : null;
         $default_field = '';
         foreach ($contact_form['options'] as $opt) {
             if (strpos($opt, 'class:') === 0) $classes[] = substr($opt, strpos($opt, ':') + 1);
             if (strpos($opt, 'default:') === 0) $default_field = substr($opt, strpos($opt, ':') + 1);
         }
-
         $country_codes = explode(' ', str_replace(',', ' ', current($contact_form['values']) ));
 
         // list of country codes
