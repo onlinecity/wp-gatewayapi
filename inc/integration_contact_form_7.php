@@ -486,7 +486,7 @@ class GwapiContactForm7
                         <td>
                             <input type="text" name="values" class="oneline"
                                    id="<?php echo esc_attr($args['content'] . '-onlycc'); ?>">
-                            <p class="description"><?php _e('Enter all calling codes allowed, separated by comma. Leave empty to allow all. See the <a href="https://countrycode.org/" target="_blank">list of calling codes</a>.', 'gwapi'); ?></p>
+                            <p class="description"><?php _e('Enter all calling codes allowed, separated by space. Leave empty to allow all. See the <a href="https://countrycode.org/" target="_blank">list of calling codes</a>.', 'gwapi'); ?></p>
                         </td>
                     </tr>
                     <tr>
@@ -894,9 +894,8 @@ class GwapiContactForm7
             if (strpos($opt, 'class:') === 0) $classes[] = substr($opt, strpos($opt, ':') + 1);
             if (strpos($opt, 'default:') === 0) $default_field = substr($opt, strpos($opt, ':') + 1);
         }
-        foreach ($contact_form['values'] as $opt) {
-            if (preg_match('/^[\d,]+$/', $opt)) $country_codes = explode(',', $opt);
-        }
+
+        $country_codes = explode(' ', str_replace(',', ' ', current($contact_form['values']) ));
 
         // list of country codes
         $all_country_codes = json_decode(file_get_contents(_gwapi_dir() . '/lib/countries/countries.min.json'));
@@ -1129,10 +1128,7 @@ class GwapiContactForm7
         $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
 
         // do we have a list of country codes to limit from?
-        $valid_country_codes = [];
-        foreach ($tag->values as $opt) {
-            if (preg_match('/^[\d,]+$/', $opt)) $valid_country_codes = explode(',', $opt);
-        }
+        $valid_country_codes = explode(' ', str_replace(',',' ',$tag->values[0]));
 
         // no valid country codes? then ALL country codes are valid - load list of valid country codes
         if (!$valid_country_codes) {
