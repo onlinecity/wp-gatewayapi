@@ -19,6 +19,10 @@
 
             <!-- BASE SETTINGS -->
             <div data-tab="base" class="tab hidden" id="baseTab">
+                <p class="gwapi-about-help">
+                    <?php _e('Need help with the plugin? We highly recommend that you check out the <a href="https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide" target="_blank"><strong>User Guide</strong></a>.', 'gwapi'); ?>
+                </p>
+
                 <p>
                     <?php $link = [':link' => '<a href="https://GatewayAPI.com" target="_blank"><strong>GatewayAPI.com</strong></a>']; ?>
                     <?= strtr(__('Please enter your OAuth Key and OAuth Secret below. You find this information by logging into :link and then navigate to <strong>Settings » API Keys</strong>.', 'gwapi'), $link); ?>
@@ -512,5 +516,6 @@
         <hr>
 
         <?php submit_button(); ?>
+
     </form>
 </div>

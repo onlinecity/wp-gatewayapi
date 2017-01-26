@@ -4,7 +4,7 @@ Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
 Tested up to: 4.7.0
-Stable tag: 1.3.2
+Stable tag: 1.4.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -12,9 +12,9 @@ Send SMS'es from the WordPress-backend or via the programmers API.
 
 == Description ==
 
-GatewayAPI enables you to send SMS'es straight from the WordPress backend or via the programmers API.
+This plugin enables you to send SMS'es straight from the WordPress backend or via the programmers API.
 
-All you need, is to create a free account at GatewayAPI.com, which includes €2 of credit.
+All you need, is to create a free account at [GatewayAPI.com](https://gatewayapi.com), which includes €2 of credit.
 
 If you would like to send SMS'es from the backend, the plugin provides UI's for:
 
@@ -42,6 +42,18 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 - Public forms feature CAPTCHA and two-factor flows.
 - Custom security? Create a "Send SMS" form via a shortcode.
 
+**Contact Form 7-integration:**
+
+- Create signup/update/unsubscribe/send SMS-forms in Contact Form 7.
+- Send SMS auto-replies on any form.
+- Full integration with wizard-style shortcode tag generation.
+
+**Easy to get started:**
+
+- Complete step-by-step user guide with many screenshots.
+- The plugin has helpful texts all around.
+- Live chat support and mail support from GatewayAPI.com.
+
 **Backed by high quality, low price EU-based SMS-gateway:**
 
 - GatewayAPI.com has sent 180+ million SMS'es.
@@ -53,10 +65,9 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
 
-= NEW IN 1.3: RECEIVE SMS'ES =
+= NEW IN VERSION 1.4: PROPER CONTACT FORM 7-INTEGRATION =
 
-In this latest version, it is now possible to receive SMS'es as well! When enabling this new feature, your installation is immediately be prepared to receive SMS'es. Using standard WordPress-hooks, you can respond or do other actions (currently requires programming).
-
+This version sports better integration with Contact Form 7, as well as the possibility to create "Send SMS"-forms in Contact Form 7.
 
 
 = Getting Started =
@@ -72,7 +83,7 @@ https://vimeo.com/168035068
 
 This section describes how to install the plugin and get it working.
 
-1. If you haven't already, then go to GatewayAPI.com and create a free account.
+1. If you haven't already, then go to [GatewayAPI.com](https://gatewayapi.com) and create a free account.
 1. Install and activate the plugin.
 1. Go to "Settings » GatewayAPI Settings" and add an OAuth key and associated secret from your GatewayAPI.com account.
 1. (Optional) Enable the sending UI and then go to "SMS'es » Create SMS" and try to send an SMS to yourself, verifying that all is setup correctly.
@@ -103,10 +114,6 @@ This tutorial shows you how to import recipients from any spreadsheet and into t
 
 https://vimeo.com/179721183
 
-= Contact Form 7-based forms =
-
-Video coming soon. Please see the "How to"-section for now, for more information on how to use properly use the Contact Form 7-integration.
-
 
 == Frequently Asked Questions ==
 
@@ -121,6 +128,17 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.4.0 =
+Note: **v1.4.0 may break your Countact Form 7-forms containing GatewayAPI-fields**, as the shortode-syntax has slightly changed for most of our fields. We needed to do this change to fix multiple bugs and inconsistencies. Please re-add the GatewayAPI-fields to your Contact Form 7-forms when updating the plugin.
+
+* Contact Form 7:
+  * Ability to send SMS'es from the frontend.
+  * Updating a subscriber: Forms now only updates groups specifically selected for the form.
+  * Bugfixes and code cleanup, improved shortcode syntax.
+
+* Complete user guide for the system (available online).
+* Export of recipients to Excel and CSV-formats.
 
 = 1.3.3 =
 * Contact Form 7: Added support for forms which also contained a reCaptcha-field.
@@ -195,10 +213,14 @@ Bugfixes:
 
 == How to use ==
 
-Either use the UI, which should be pretty self-explainatory, or use the programmers API. See the "Installation"-tab for
-a quick how-to.
+= Most users: User Guide =
 
-= Programmers API: `gwapi_send_sms` =
+Most topics are shown in a step-by-step style with numerous screenshots in our User Guide - even quite advanced topics.
+
+[Open the User Guide](https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide)
+
+
+= Advanced: Programmers API=
 
 Send an SMS to one or multiple recipients by calling `gwapi_send_sms` with the following arguments
 
@@ -220,19 +242,3 @@ The recipients-argument may consist of either:
   { "4512345678": { "%NAME%": "John Doe", "%GENDER%": "Male" } }
 
 *Note: SMS'es sent via `gwapi_send_sms` are NOT saved in WordPress. They are however still accessible via the traffic log on GatewayAPI.com*
-
-= Contact Form 7 =
-
-If you are already into Contact Form 7, the additional fields should be selfexplainatory.
-
-**Defaults**
-
-You can fetch defaults for the GatewayAPI fields in the same manner as is supported by most of Contact Form 7's built-in fields. Our implementation is mostly compatible with that implementation.
-
-Enter for instance `get` to fetch from a query string variable of the same name. Enter `user_SOMEKEY` to fetch from the user fields or user meta, where `SOMEKEY` is replaced by the field name (either built-in information like email or display_name, or a meta key). Please note that some plugins, such as WP User Manager prefixes all their user meta keys. So if a WP User Manager field was labeled `phone`, the appropriate default value would be `user_wpmu_phone`.
-
-**Verification**
-
-Currently a two-step flow is supported for updating recipients. In this flow, the user receives an SMS before gaining access to updating his or her profile.
-
-In the near future, this will be expanded to also support signing up and unsubscription. To use two-step flow for signup and unsubscribe, you must for now rely on the GatewayAPI built-in form generator, available in the GatewayAPI settings.

@@ -316,3 +316,15 @@ i.info {
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+.gwapi-about-help {
+    background-color: #04b0db;
+    border-color: #1d70a8;
+    color: white;
+    padding: 10px 10px;
+    font-size: 1.2em;
+}
+
+.gwapi-about-help a {
+    color: white;
+}
