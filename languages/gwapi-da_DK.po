@@ -14,6 +14,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "X-Generator: Poedit 1.8.11\n"
 
+# wpml-name: 1bf6e69c18341244d990250bf5aa3ce0
+msgid "1.4.0"
+msgstr "1.4.0"
+
+# wpml-name: 42d2179e05bdcaba8031b5365b630281
+msgid "Need help with the plugin? We highly recommend that you check out the <a href=\"https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide\" target=\"_blank\"><strong>User Guide</strong></a>."
+msgstr "Hjælp til pluginet? Tjek endelig vores <a href=\"https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide\" target=\"_blank\"><strong>Bruger-guide</strong></a> ud!"
+
+# wpml-name: 6a26f548831e6a8c26bfbbd9f6ec61e0
+msgid "Help"
+msgstr "Hjælp"
+
+# wpml-name: 7a97419a6312bf2f5dcdb87d844f3d07
+msgid "User Guide"
+msgstr "Brugerguide"
+
 # wpml-name: c20f2aa07704ed799127e8709ea990d6
 msgid "Enter all calling codes allowed, separated by space. Leave empty to allow all. See the <a href=\"https://countrycode.org/\" target=\"_blank\">list of calling codes</a>."
 msgstr "Indtast alle landekoder som er tillad, adskildt af mellemrum. Lad feltet være tomt for at tillade alle lande. Se <a href=\"https://countrycode.org/\" target=\"_blank\">liste over landekoder hér</a>."
