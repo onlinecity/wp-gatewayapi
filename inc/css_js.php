@@ -4,7 +4,7 @@ function _gwapi_enqueue_uideps()
 {
   wp_register_style('select2-4', _gwapi_url(). 'lib/select2/css/select2.min.css');
   wp_register_script('select2-4', _gwapi_url(). 'lib/select2/js/select2.min.js', ['jquery'], 1, true);
-  wp_register_script('gwapi-widgets', _gwapi_url(). 'js/widgets.js', ['jquery', 'select2-4', 'underscore'], 2, true);
+  wp_register_script('gwapi-widgets', _gwapi_url(). 'js/widgets.js', ['jquery', 'select2-4', 'underscore'], 3, true);
 
   wp_enqueue_script('gwapi-widgets');
   wp_enqueue_style('select2-4');	

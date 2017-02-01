@@ -40,7 +40,7 @@
             }
 
             // fetch countries list
-            if (!countriesRes) countriesRes = $.get(GWAPI_PLUGINDIR + 'lib/countries/countries.min.json');
+            if (!countriesRes) countriesRes = $.getJSON(GWAPI_PLUGINDIR + 'lib/countries/countries.min.json');
 
             countriesRes.done(function (countries) {
 
