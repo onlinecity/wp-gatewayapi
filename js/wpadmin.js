@@ -23,6 +23,8 @@ jQuery(function ($) {
             handleAddSingleRecipient();
             handleRemoveSingleRecipient();
             lockdownOnPublish();
+
+            handleSending();
         }
 
         if (has_recipient_ui) {
@@ -379,6 +381,22 @@ jQuery(function ($) {
               form.submit();
            });
         }
+    }
+
+    /**
+     * When status is "sending", start the batch-sender.
+     */
+    function handleSending()
+    {
+        if (!$('#sms-status [data-should-send]').length) return;
+
+        $.post(ajaxurl, {
+            'action': 'gwapi_send_next_batch',
+            'post_ID': $('#post_ID').val()
+        }).done(function(ret) {
+            $('#sms-status .inside').html(ret.html);
+            handleSending();
+        });
     }
 
     initialize();

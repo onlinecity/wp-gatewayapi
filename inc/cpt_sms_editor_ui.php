@@ -2,6 +2,8 @@
 /**
  * SMS Editor
  */
+const _GWAPIUI_MAX_RECIPIENTS_PER_BATCH = 500;
+
 add_action('admin_init', function () {
     add_meta_box('sms-recipients', __('Recipients', 'gwapi'), '_gwapi_sms_recipients', 'gwapi-sms', 'normal', 'default');
     add_meta_box('sms-recipient-groups', __('Recipient groups', 'gwapi'), '_gwapi_sms_recipient_groups', 'gwapi-sms', 'normal', 'default');
@@ -255,7 +257,9 @@ function _gwapi_sms_status(WP_Post $post) {
             break;
 
         case 'sending':
-            echo __('Sending...', 'gwapi');
+            $is_sending = $post->batch_is_running;
+
+            echo '<strong style="color: blue" '.(!$is_sending ? 'data-should-send' : '').'>'.__('Sending...', 'gwapi').'</strong>';
             break;
 
         case 'bail':
@@ -271,7 +275,7 @@ function _gwapi_sms_status(WP_Post $post) {
             break;
 
         case 'is_sent':
-            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gwapi').'</span><br />ID: '.$ids;
+            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gwapi').'</span><br /><div class="text-ellipsis">ID: '.implode(', ',$ids).'</div>';
             break;
 
         default:
@@ -280,7 +284,19 @@ function _gwapi_sms_status(WP_Post $post) {
     }
     ?>
     </p>
+    <?php
 
+    if ($status == 'sending') _gwapi_get_sent_status_progress($post);
+}
+
+function _gwapi_get_sent_status_progress(WP_Post $post)
+{
+    $recipients_total = (int)get_post_meta($post->ID, 'recipients_count', true);
+    $recipients_handled = (int)(get_post_meta($post->ID, 'recipients_handled', true) ? : 0);
+    ?>
+    <div class="progress">
+        <div class="completed" style="width: <?= $recipients_handled / $recipients_total * 100; ?>%"></div>
+    </div>
     <?php
 }
 
@@ -410,4 +426,67 @@ add_action('wp_ajax_gatewayapi_sms_manual_delete_recipient', function () {
     $wpdb->query($q = $wpdb->prepare("DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_id = %d AND meta_key = 'single_recipient';", $post_ID, $_POST['meta_ID']));
 
     die(json_encode(['success' => true, $q]));
+});
+
+/**
+ * AJAX: Send next batch of SMS.
+ */
+add_action('wp_ajax_gwapi_send_next_batch', function() {
+    header("Content-type: application/json");
+
+    $post = get_post($_POST['post_ID']);
+    $ID = $post->ID;
+
+    try {
+        if (get_post_type($post) != 'gwapi-sms') throw new InvalidArgumentException(__('Invalid post type.', 'gwapi'));
+        $status = get_post_meta($post->ID, 'api_status', true);
+        if ($status != 'sending') throw new \InvalidArgumentException(__('SMS is not in the right state for sending.','gwapi'));
+        if ($post->batch_is_running) throw new \InvalidArgumentException(__('Sending is already in progress','gwapi'));
+
+        update_post_meta($ID, 'batch_is_running', time());
+
+        // who is in next batch?
+        $handled_count = (int)$post->recipients_handled ? : 0;
+
+        // ensure we don't try to send the same batch multiple times
+        update_post_meta($ID, 'recipients_handled', $handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH);
+
+        // base information for SMS
+        $sender = $post->sender;
+        $message = $post->message;
+        $destaddr = $post->destaddr ? : 'MOBILE';
+
+        // get all recipients
+        $allTags = _gwapi_extract_tags_from_message($message);
+        $allRecipients = _gwapi_create_recipients_for_sms($ID, $allTags);
+        $recipients = array_slice($allRecipients, $handled_count, _GWAPIUI_MAX_RECIPIENTS_PER_BATCH, true);
+
+        $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr);
+
+        if (!is_wp_error($send_req)) {
+            if ($handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH >= count($allRecipients)) {
+                update_post_meta($ID, 'api_status', 'is_sent');
+            }
+
+            $ids = $post->api_ids ? : [];
+            $ids[] = $send_req;
+            update_post_meta($ID, 'api_ids', $ids);
+        } else {
+            /** @var $send_req WP_Error */
+            update_post_meta($ID, 'api_status', 'tech_error');
+            update_post_meta($ID, 'api_error', json_encode($send_req->get_error_message()));
+        }
+
+        // reset the "batch_is_running" status
+        update_post_meta($post->ID, 'batch_is_running', false);
+
+    } catch(\Exception $e) {
+        die(json_encode(['error' => $e->getMessage()]));
+    }
+
+    ob_start();
+    _gwapi_sms_status(get_post($ID));
+
+    $html = ob_get_clean();
+    die(json_encode(['status' => 'success', 'html' => $html]));
 });

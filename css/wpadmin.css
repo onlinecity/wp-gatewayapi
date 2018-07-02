@@ -328,3 +328,32 @@ i.info {
 .gwapi-about-help a {
     color: white;
 }
+
+/* sms-status sending */
+#sms-status .progress {
+    height: 20px;
+    border: 1px solid #e5e5e5;
+    border-radius: 3px 3px;
+    background-color: #e5e5e5;
+}
+
+#sms-status .progress .completed {
+    height: 20px;
+    background-color: blue;
+}
+
+#sms-status .text-ellipsis {
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1px solid #efefef;
+    padding: 5px;
+}
+
+#sms-status .text-ellipsis:hover {
+    white-space: normal;
+    overflow: auto;
+    max-height: 150px;
+}

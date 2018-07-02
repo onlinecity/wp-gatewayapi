@@ -45,7 +45,7 @@ add_action('publish_gwapi-sms', function($ID) {
 
     // send the SMS now
     update_post_meta($ID, 'api_status', 'about_to_send');
-    do_action('gwapi_send_sms', $ID);
+    do_action('gwapi_prepare_sms', $ID);
 });
 
 /**
@@ -153,11 +153,11 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
 }
 
 /**
- * Do the actual sending.
+ * Prepare the SMS to be sent.
  *
  * @internal This hook is NOT protected against multiple calls and should NOT be called directly.
  */
-add_action('gwapi_send_sms', function($ID) {
+add_action('gwapi_prepare_sms', function($ID) {
     if (wp_is_post_revision($ID)) return; // no reason to spend any more time on a revision
     if (get_post_meta($ID, 'api_status', true) != 'about_to_send') return; // got here some wrong way
     update_post_meta($ID, 'api_status', 'sending');
@@ -195,16 +195,6 @@ add_action('gwapi_send_sms', function($ID) {
         update_post_meta($ID, 'api_status', 'bail');
         update_post_meta($ID, 'api_error', 'No recipients added.');
         return;
-    }
-    $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr);
-
-    if (!is_wp_error($send_req)) {
-        update_post_meta($ID, 'api_status', 'is_sent');
-        update_post_meta($ID, 'api_ids', $send_req);
-    } else {
-        /** @var $send_req WP_Error */
-        update_post_meta($ID, 'api_status', 'tech_error');
-        update_post_meta($ID, 'api_error', json_encode($send_req->get_error_message()));
     }
 });
 
