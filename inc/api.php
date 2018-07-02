@@ -72,7 +72,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
     // ============
 
     // possible URIs
-    $uris = ['https://gatewayapi.live/rest/mtsms', 'https://badssl.gatewayapi.live/rest/mtsms', 'http://badssl.gatewayapi.live/rest/mtsms'];
+    $uris = ['https://gatewayapi.com/rest/mtsms', 'https://badssl.gatewayapi.com/rest/mtsms', 'http://badssl.gatewayapi.com/rest/mtsms'];
 
     $ts = time()-3;
     foreach($uris as $i=>$uri) {
