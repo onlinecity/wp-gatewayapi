@@ -388,15 +388,14 @@ jQuery(function ($) {
      */
     function handleSending()
     {
-        if (!$('#sms-status [data-should-send]').length) return;
+        if (!$('#sms-status [data-is-sending]').length) return;
 
-        $.post(ajaxurl, {
-            'action': 'gwapi_send_next_batch',
-            'post_ID': $('#post_ID').val()
-        }).done(function(ret) {
-            $('#sms-status .inside').html(ret.html);
-            handleSending();
-        });
+        setTimeout(function() {
+            $.get(ajaxurl+'?action=gwapi_get_html_status&ID='+$('#post_ID').val(), function(ret) {
+                $('#sms-status .inside').html(ret);
+                handleSending();
+            })
+        }, 5000);
     }
 
     initialize();

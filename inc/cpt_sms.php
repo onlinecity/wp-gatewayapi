@@ -1,5 +1,7 @@
 <?php
 
+const _GWAPIUI_MAX_RECIPIENTS_PER_BATCH = 500;
+
 // post type SMS'es
 add_action('init', function () {
 
@@ -45,7 +47,7 @@ add_action('publish_gwapi-sms', function($ID) {
 
     // send the SMS now
     update_post_meta($ID, 'api_status', 'about_to_send');
-    do_action('gwapi_prepare_sms', $ID);
+    _gwapi_prepare_sms($ID);
 });
 
 /**
@@ -153,11 +155,9 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
 }
 
 /**
- * Prepare the SMS to be sent.
- *
- * @internal This hook is NOT protected against multiple calls and should NOT be called directly.
+ * Prepare the SMS to be sent and start sending.
  */
-add_action('gwapi_prepare_sms', function($ID) {
+function _gwapi_prepare_sms($ID) {
     if (wp_is_post_revision($ID)) return; // no reason to spend any more time on a revision
     if (get_post_meta($ID, 'api_status', true) != 'about_to_send') return; // got here some wrong way
     update_post_meta($ID, 'api_status', 'sending');
@@ -196,6 +196,91 @@ add_action('gwapi_prepare_sms', function($ID) {
         update_post_meta($ID, 'api_error', 'No recipients added.');
         return;
     }
+
+    $res = wp_remote_post(admin_url('admin-ajax.php'), [
+        'body' => [
+            'action' => 'gwapi_send_next_batch',
+            'post_ID' => $ID
+        ],
+        'blocking' => false
+    ]);
+
+    if (is_wp_error($res)) {
+        set_time_limit(-1);
+        do_action('wp_ajax_nopriv_gwapi_send_next_batch', false);
+    }
+};
+
+/**
+ * AJAX: Send next batch of SMS.
+ */
+add_action('wp_ajax_nopriv_gwapi_send_next_batch', function($can_use_remote = true) {
+    $post = get_post($_POST['post_ID']);
+    $ID = $post->ID;
+
+    try {
+        if (get_post_type($post) != 'gwapi-sms') throw new InvalidArgumentException(__('Invalid post type.', 'gwapi'));
+        $status = get_post_meta($post->ID, 'api_status', true);
+        if ($status != 'sending') throw new \InvalidArgumentException(__('SMS is not in the right state for sending.','gwapi'));
+        if ($post->batch_is_running) throw new \InvalidArgumentException(__('Sending is already in progress','gwapi'));
+
+        update_post_meta($ID, 'batch_is_running', time());
+
+        // who is in next batch?
+        $handled_count = (int)$post->recipients_handled ? : 0;
+
+        // ensure we don't try to send the same batch multiple times
+        update_post_meta($ID, 'recipients_handled', $handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH);
+
+        // base information for SMS
+        $sender = $post->sender;
+        $message = $post->message;
+        $destaddr = $post->destaddr ? : 'MOBILE';
+
+        // get all recipients
+        $allTags = _gwapi_extract_tags_from_message($message);
+        $allRecipients = _gwapi_create_recipients_for_sms($ID, $allTags);
+        $recipients = array_slice($allRecipients, $handled_count, _GWAPIUI_MAX_RECIPIENTS_PER_BATCH, true);
+
+        $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr);
+
+        if (!is_wp_error($send_req)) {
+            if ($handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH >= count($allRecipients)) {
+                update_post_meta($ID, 'api_status', 'is_sent');
+            }
+
+            $ids = $post->api_ids ? : [];
+            $ids[] = $send_req;
+            update_post_meta($ID, 'api_ids', $ids);
+        } else {
+            /** @var $send_req WP_Error */
+            update_post_meta($ID, 'api_status', 'tech_error');
+            update_post_meta($ID, 'api_error', json_encode($send_req->get_error_message()));
+        }
+
+        // reset the "batch_is_running" status
+        update_post_meta($post->ID, 'batch_is_running', false);
+
+    } catch(\Exception $e) {
+        update_post_meta($ID, 'api_status', 'tech_error');
+        update_post_meta($ID, 'api_error', $e->getMessage());
+    }
+
+    $post = get_post($ID);
+    if ($post->api_status != 'sending') return;
+
+    if ( $can_use_remote ) {
+        wp_remote_post(admin_url('admin-ajax.php'), [
+            'body' => [
+                'action' => 'gwapi_send_next_batch',
+                'post_ID' => $ID
+            ],
+            'blocking' => false
+        ]);
+    } else {
+        do_action('wp_ajax_nopriv_gwapi_send_next_batch', false);
+    }
+
 });
 
 /**
