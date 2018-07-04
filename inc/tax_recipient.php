@@ -24,5 +24,6 @@ add_action('init', function () {
         'show_ui' => true,
         'hierarchical' => true
     ]);
+    bit_add_taxonomy_filter_to_cpt('gwapi-recipient', 'gwapi-recipient-groups');
 
 });

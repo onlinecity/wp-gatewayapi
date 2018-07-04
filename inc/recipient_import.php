@@ -19,8 +19,8 @@ add_action('wp_ajax_gwapi_import', function () {
     foreach ($rows as $row) {
         $cols = explode("\t", $row);
 
-        $cc = preg_replace('/\D+/','', trim($cols[$_POST['columns']['cc']]));
-        $number = preg_replace('/\D+/','', trim($cols[$_POST['columns']['number']]));
+        $cc = trim(preg_replace('/\D+/','', $cols[$_POST['columns']['cc']]));
+        $number = trim(preg_replace('/\D+/','', $cols[$_POST['columns']['number']]));
         if (!$cc || !$number) {
             $failed++;
             continue;
@@ -55,7 +55,7 @@ add_action('wp_ajax_gwapi_import', function () {
             "ID" => $ID,
             "post_title" => isset($cols[$_POST['columns']['name']]) ? $cols[$_POST['columns']['name']] : null,
             "post_type" => "gwapi-recipient",
-            "post_status" => "publish"
+            "post_status" => $ID ? get_post_status($ID) : "publish"
         ]);
         $ID = $newID ?: $ID;
 

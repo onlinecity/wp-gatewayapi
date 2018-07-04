@@ -38,7 +38,7 @@ add_action('manage_posts_custom_column', function($column, $ID) {
                 $list[] = $g->name;
             }
             echo implode(', ', $list);
-            if (!$list) echo '<em>None</em>';
+            if (!$list) echo '<em>'.__('None', 'gwapi').'</em>';
             break;
     }
 

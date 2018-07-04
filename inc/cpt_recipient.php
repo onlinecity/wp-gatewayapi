@@ -64,4 +64,18 @@ add_action('init', function () {
         if (get_post_type($post) !== 'gwapi-recipient') return $title;
         return __('Name of recipient', 'gwapi');
     }, 10, 2);
+
+    /**
+     * Searchable phone number.
+     */
+    add_action('current_screen', function ($current_screen) {
+        if ($current_screen->post_type === 'gwapi-recipient') {
+
+            // add support for searching meta data
+            bit_admin_add_search_column('gwapi-recipient', 'number');
+        }
+    });
 });
+
+// allow blacklisting of phone numbers
+bit_register_cpt_status('block', 'gwapi-recipient', 'Blacklistet', false);

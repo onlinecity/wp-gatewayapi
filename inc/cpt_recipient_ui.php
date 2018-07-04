@@ -25,7 +25,7 @@ function _gwapi_recipient(WP_Post $post)
             </th>
             <td>
                 <select
-                    name="gwapi[cc]"><?= $cc ? '<option value="' . $cc . '">' . $cc . '</option>' : '' ?></select>
+                    name="gwapi[cc]"><?= $cc ? '<option value="' . trim($cc) . '">' . $cc . '</option>' : '' ?></select>
             </td>
         </tr>
         <tr>
@@ -35,7 +35,7 @@ function _gwapi_recipient(WP_Post $post)
             <td>
                 <input type="number" name="gwapi[number]"
                        placeholder="<?= esc_attr(__('Phone number - digits only', 'gwapi')) ?>"
-                       value="<?= $number ? esc_attr($number) : '' ?>"
+                       value="<?= $number ? esc_attr(trim($number)) : '' ?>"
                        style="width: 250px">
             </td>
         </tr>
