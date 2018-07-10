@@ -27,6 +27,10 @@ add_action('admin_init', function () {
     register_setting('gwapi', 'gwapi_user_sync_meta_other_fields');
     register_setting('gwapi', 'gwapi_user_sync_group_map');
 
+    register_setting('gwapi', 'gwapi_security_enable');
+    register_setting('gwapi', 'gwapi_security_required_roles');
+    register_setting('gwapi', 'gwapi_security_cookie_lifetime');
+
     register_setting('gwapi', 'gwapi_receive_sms_enable', 'intval');
 
 });

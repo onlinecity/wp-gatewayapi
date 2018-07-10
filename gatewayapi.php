@@ -83,6 +83,10 @@ add_action('init', function () {
             include "$D/inc/cpt_receive_handler.php";
             include "$D/inc/receive_action_autoreply.php";
         }
+
+        if (get_option('gwapi_security_enable')) {
+            include "$D/inc/security_two_factor.php";
+        }
     }
     if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
         include "$D/inc/css_js.php";

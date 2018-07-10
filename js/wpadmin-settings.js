@@ -9,7 +9,7 @@ jQuery(function($) {
     {
         handleTooltips();
         handleTabs();
-        handleToggleRecipientFormTab();
+        handleToggleEnableUI();
 
         handleUserSynchronization();
         handleReceiveSms();
@@ -28,6 +28,8 @@ jQuery(function($) {
         handleShortcodeGenerator();
 
         handleOneTimeUserSync();
+
+        handleSecurityTab();
     }
 
     function handleTooltips()
@@ -58,11 +60,11 @@ jQuery(function($) {
         }
     }
 
-    function handleToggleRecipientFormTab()
+    function handleToggleEnableUI()
     {
         var checkbox = outer.find('input[name="gwapi_enable_ui"]');
-        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"]');
-        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"], [data-tab="user-sync"], [data-tab="sms-inbox"]');
+        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"], a[href="#security"]');
+        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"], [data-tab="user-sync"], [data-tab="sms-inbox"], [data-tab="security"]');
 
         checkbox.change(function() {
             if ($(this).is(':checked')) {
@@ -310,6 +312,13 @@ jQuery(function($) {
                 updateFn();
             });
         }
+    }
+
+    function handleSecurityTab()
+    {
+        $('#gwapiSecurityEnable').on('change', function() {
+            $('#submit').click();
+        });
     }
 
     initialize();
