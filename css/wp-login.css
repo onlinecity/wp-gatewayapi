@@ -1,0 +1,47 @@
+.hidden {
+    display: none;
+}
+
+/* select2-dropdown style in line with WordPress */
+#gwapi_mcc + span {
+    margin-bottom: 15px;
+}
+
+.select2-container--default .select2-selection--single {
+    border-radius: 0;
+    background: #fbfbfb;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    color: #32373c;
+    outline: 0;
+    padding: 3px;
+    height: auto;
+    font-size: 14px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 4px;
+}
+
+/* prettier number fields */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+    height: 38px;
+    line-height: 28px;
+}
+
+input[type=number]:invalid {
+    box-shadow: red 0px 0px 5px 0px;
+    border-color: rgba(255,0,0,0.3);
+}
+
+/* weird padding under the submit button */
+.login .button-primary {
+    margin-bottom: -15px;
+}

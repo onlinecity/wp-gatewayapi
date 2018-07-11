@@ -1,3 +1,4 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <?php
 /**
  * SMS Autoreply Editor Block: The messaging area

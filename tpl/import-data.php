@@ -1,3 +1,4 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <p>
     <?php _e('To import your recipients, please open a spreadsheet containing at least the country code and mobile numbers of your recipients. Copy all rows and simply paste into the big textarea below.', 'gwapi'); ?>
 </p>

@@ -1,3 +1,4 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <?php
 
 // fields on the SMS editor page

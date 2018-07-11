@@ -9,7 +9,9 @@ jQuery(function($) {
     {
         handleTooltips();
         handleTabs();
+
         handleToggleEnableUI();
+        handleToggleSecurityUI();
 
         handleUserSynchronization();
         handleReceiveSms();
@@ -63,8 +65,7 @@ jQuery(function($) {
     function handleToggleEnableUI()
     {
         var checkbox = outer.find('input[name="gwapi_enable_ui"]');
-        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"], a[href="#security"]');
-        var inner = outer.find('.tab-inner .tab').filter('[data-tab="recipients-fields"], [data-tab="build-shortcode"], [data-tab="user-sync"], [data-tab="sms-inbox"], [data-tab="security"]');
+        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"]');
 
         checkbox.change(function() {
             if ($(this).is(':checked')) {
@@ -73,6 +74,25 @@ jQuery(function($) {
             } else {
                 tabs.addClass('hidden');
                 $('#enableCaptcha').addClass('hidden');
+            }
+        }).change();
+
+        // if changing TO another tab AFTER enabling sending UI, submit form
+        if (!checkbox.is(':checked')) {
+          tabs.click(function() { $('#submit').click(); });
+        }
+    }
+
+    function handleToggleSecurityUI()
+    {
+        var checkbox = outer.find('input[name="gwapi_security_enable"]');
+        var tabs = outer.find('a[href="#security"]');
+
+        checkbox.change(function() {
+            if ($(this).is(':checked')) {
+                tabs.removeClass('hidden');
+            } else {
+                tabs.addClass('hidden');
             }
         }).change();
 
@@ -316,8 +336,11 @@ jQuery(function($) {
 
     function handleSecurityTab()
     {
-        $('#gwapiSecurityEnable').on('change', function() {
-            $('#submit').click();
+        $('#gwapiSecurityBypassCodeReset').click(function() {
+            $('input[name="gwapi_security_bypass_code"]').val('').css('font-family','');
+        });
+        $('input[name="gwapi_security_bypass_code"]').click(function() {
+            $(this).get(0).select();
         });
     }
 

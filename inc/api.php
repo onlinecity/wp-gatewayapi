@@ -1,3 +1,4 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <?php
 /**
  * Programmers API - ie. easy access to creating SMS'es etc.
@@ -122,12 +123,13 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
             if ($res['response']['code'] == 200) {
                 return current(json_decode($res['body'])->ids);
             }
-            return new WP_Error('tech_fail', json_encode($res['body']));
+            $error = json_decode($res['body']);
+            return new WP_Error('GWAPI_FAIL', $error->message."\nCode ".$error->code."\nUUID: ".$error->incident_uuid);
         }
 
         // error: BUT no reason to try another URL as this is not communications related
-        if (is_wp_error($res) && !isset($res->errors['http_request_failed'])) return new WP_Error('tech_fail', json_encode($res['body']));
+        if (is_wp_error($res) && !isset($res->errors['http_request_failed'])) return new WP_Error('TECH_FAIL', json_encode($res['body']));
     }
 
-    return new WP_Error('tech_fail', 'No valid transports.');
+    return new WP_Error('TECH_FAIL', 'No valid transports.');
 }

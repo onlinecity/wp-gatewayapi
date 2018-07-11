@@ -1,3 +1,4 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <div class="wrap">
     <h2><?php _e('GatewayAPI Settings', 'gwapi'); ?></h2>
 
@@ -49,8 +50,25 @@
                                        name="gwapi_enable_ui" <?= get_option('gwapi_enable_ui') ? 'checked' : ''; ?>>
                                 <?php _e('Yes, enable the SMS sending UI', 'gwapi'); ?>
                             </label>
-                            <p class="help-block">
+                            <p class="help-block description">
                                 <?php _e('Enabling this adds a new menu for sending SMS\'es and listing sent SMS\'es, as well as managing an address book.', 'gwapi'); ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row"><?php _e('Enable security-tab', 'gwapi'); ?></th>
+                        <td>
+                            <label>
+                                <input type="checkbox"
+                                       name="gwapi_security_enable" <?= get_option('gwapi_security_enable') ? 'checked' : ''; ?>
+                                       id="gwapiSecurityEnable"
+                                       value="1">
+                                <?php _e('Yes, enable the security settings tab', 'gwapi'); ?>
+                            </label>
+                            <p class="help-block description">
+                                <?php _e('Used to enable two-factor security for logging into your WordPress backend.', 'gwapi'); ?>
+                                <i class="info has-tooltip"
+                                   title="<?= esc_attr(__('Enabling two-factor forces users with certain roles, to connect their cellphone with their user account. Afterwards an additional step is added after the user/password-prompt, which asks for a one-time code. This code is immediately sent via SMS to the users cellphone. It is possible to remember a device for an extended period of time, so the user will not have to reauthorize all the time.', 'gwapi')) ?>"></i>
                             </p>
                         </td>
                     </tr>
@@ -61,7 +79,7 @@
                                 <input type="text" maxlength="15" name="gwapi_default_sender"
                                        value="<?= esc_attr(get_option('gwapi_default_sender')); ?>">
                             </label>
-                            <p class="help-block">
+                            <p class="help-block description">
                                 <?php _e('Must consist of either 11 characters or 15 digits.', 'gwapi'); ?>
                             </p>
                         </td>
@@ -104,28 +122,13 @@
             <!-- SECURITY (TWO FACTOR) -->
             <div data-tab="security" class="tab hidden" id="securityTab">
                 <p>
-                    <?= __('On this tab you can enable and configure our unique two-factor security features to your WordPress.', 'gwapi'); ?>
-                </p>
-                <p>
                     <?= __('The two-factor login system is based solely on SMS\'es, so your users will not need any apps, thus making it compatible with any mobile phone. All you will ever pay, is the cost of the text messages sent as part of the login process, while getting the greatly added security of two-factor security.', 'gwapi'); ?>
                 </p>
 
                 <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row"><?php _e('Enable two-factor security settings', 'gwapi'); ?></th>
-                        <td>
-                            <label>
-                                <input type="checkbox"
-                                       name="gwapi_security_enable" <?= get_option('gwapi_security_enable') ? 'checked' : ''; ?>
-                                       id="gwapiSecurityEnable"
-                                       value="1">
-                                <?php _e('Yes, enable the two-factor security settings.', 'gwapi'); ?>
-                            </label>
-                        </td>
-                    </tr>
                     <?php if (get_option('gwapi_security_enable')): ?>
                         <tr valign="top">
-                            <th scope="row"><?php _e('Roles requiring two-factor', 'gwapi'); ?></th>
+                            <th scope="row"><?php _e('User roles with two-factor', 'gwapi'); ?></th>
                             <td>
                                 <?php $roles = GwapiSecurityTwoFactor::getRoles(); ?>
                                 <select name="gwapi_security_required_roles[]" multiple size="<?= min(count($roles), 6); ?>" style="min-width: 250px;">
@@ -133,7 +136,7 @@
                                         <option value="<?= $role_key ?>" <?= $role_opt[1]?'selected':'' ?>><?= $role_opt[0]; ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <p class="help-block">
+                                <p class="help-block description">
                                     <?php _e('All roles selected will be forced to upgrade to two-factor on their next login. We recommend that all roles above subscriber-level are selected.', 'gwapi'); ?>
                                     <br>
                                     <?php _e('Hold down CTRL (PC) / CMD (Mac) to select multiple roles.', 'gwapi'); ?>
@@ -153,8 +156,17 @@
                                         <option <?= get_option('gwapi_security_cookie_lifetime') == $days ? 'selected' : ''; ?> value="<?= $days; ?>"><?= $text; ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <p class="help-block">
+                                <p class="help-block description">
                                     <?php _e('How often must the user be forced to re-authorize via two-factor, when visiting from the same web browser?', 'gwapi'); ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row"><?php _e('Fallback code', 'gwapi'); ?></th>
+                            <td>
+                                <input type="text" size="32" readonly name="gwapi_security_bypass_code" style="font-family: monospace" value="<?= esc_attr(GwapiSecurityTwoFactor::getBypassCode()); ?>" placeholder="<?php _e('New code is generated on save', 'gwapi'); ?>" /> <button id="gwapiSecurityBypassCodeReset" type="button" class="button button-secondary"><?php _e('Reset', 'gwapi'); ?></button>
+                                <p class="help-block description">
+                                    <?php _e('This code can be used to bypass the two-factor check, in case you loose access to your cellphone, get a new number or if you run out of credit on your GatewayAPI-account (you can enable auto-charge to avoid this). This code should be copied to a safe place.', 'gwapi'); ?>
                                 </p>
                             </td>
                         </tr>
@@ -557,7 +569,7 @@
                     </label>
                 </p>
 
-                <?php if (get_option('gwapi_receive_sms_enable')): ?>
+                <?php if (get_option('gwapi_enable_ui') && get_option('gwapi_receive_sms_enable')): ?>
                     <div id="receiveSmsEnabled" <?= get_option('gwapi_receive_sms_enable') ? '' : 'class="hidden"'; ?>>
 
                         <hr>

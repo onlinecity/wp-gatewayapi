@@ -1,3 +1,5 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
+
 <div class="wrap">
     <form method="post">
         <h1><?= __('Import recipients', 'gwapi'); ?></h1>

@@ -1,3 +1,4 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <?php
 
 add_action('admin_menu', function () {
@@ -30,6 +31,7 @@ add_action('admin_init', function () {
     register_setting('gwapi', 'gwapi_security_enable');
     register_setting('gwapi', 'gwapi_security_required_roles');
     register_setting('gwapi', 'gwapi_security_cookie_lifetime');
+    register_setting('gwapi', 'gwapi_security_bypass_code');
 
     register_setting('gwapi', 'gwapi_receive_sms_enable', 'intval');
 
