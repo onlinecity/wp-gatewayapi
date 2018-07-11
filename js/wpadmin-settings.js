@@ -337,7 +337,8 @@ jQuery(function($) {
     function handleSecurityTab()
     {
         $('#gwapiSecurityBypassCodeReset').click(function() {
-            $('input[name="gwapi_security_bypass_code"]').val('').css('font-family','');
+            $('input[name="gwapi_security_bypass_code"]').val('');
+            $('input[name="gwapi_security_bypass_code"] + input').val('');
         });
         $('input[name="gwapi_security_bypass_code"]').click(function() {
             $(this).get(0).select();

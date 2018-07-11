@@ -135,7 +135,8 @@
                             $login_bypass_url .= 'action=gwb2fa&c='.GwapiSecurityTwoFactor::getBypassCode();
                             ?>
                             <td>
-                                <input type="text" size="85" readonly name="gwapi_security_bypass_code" value="<?= $login_bypass_url; ?>" placeholder="<?php _e('New code is generated on save', 'gwapi'); ?>" /> <button id="gwapiSecurityBypassCodeReset" type="button" class="button button-secondary"><?php _e('Reset', 'gwapi'); ?></button>
+                                <input type="hidden" name="gwapi_security_bypass_code" value="<?= GwapiSecurityTwoFactor::getBypassCode(); ?>" />
+                                <input type="text" size="85" readonly value="<?= $login_bypass_url; ?>" placeholder="<?php _e('New code is generated on save', 'gwapi'); ?>" /> <button id="gwapiSecurityBypassCodeReset" type="button" class="button button-secondary"><?php _e('Reset', 'gwapi'); ?></button>
                                 <p class="help-block description">
                                     <strong style="color: blue"><?php _e('This URL should be copied to a safe place!', 'gwapi'); ?></strong> <?php _e('Use it to bypass all two-factor security measures when logging in.', 'gwapi'); ?>
                                     <i class="info has-tooltip"
