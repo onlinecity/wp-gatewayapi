@@ -128,6 +128,22 @@
                 <table class="form-table">
                     <?php if (get_option('gwapi_security_enable')): ?>
                         <tr valign="top">
+                            <th scope="row"><?php _e('Emergency bypass URL', 'gwapi'); ?></th>
+                            <?php
+                            $login_bypass_url = wp_login_url();
+                            $login_bypass_url .= (strpos($login_bypass_url, '?') === false) ? '?' : '&';
+                            $login_bypass_url .= 'action=gwb2fa&c='.GwapiSecurityTwoFactor::getBypassCode();
+                            ?>
+                            <td>
+                                <input type="text" size="85" readonly name="gwapi_security_bypass_code" value="<?= $login_bypass_url; ?>" placeholder="<?php _e('New code is generated on save', 'gwapi'); ?>" /> <button id="gwapiSecurityBypassCodeReset" type="button" class="button button-secondary"><?php _e('Reset', 'gwapi'); ?></button>
+                                <p class="help-block description">
+                                    <strong style="color: blue"><?php _e('This URL should be copied to a safe place!', 'gwapi'); ?></strong> <?php _e('Use it to bypass all two-factor security measures when logging in.', 'gwapi'); ?>
+                                    <i class="info has-tooltip"
+                                       title="<?= esc_attr(__('This could rescue you from a site lockout, in case your GatewayAPI-account ran out of credit (you should enable auto-charge to avoid this) or if you forgot to update your profile when you got a new number. You should not share this URL, but keep it as a recovery measure for you as an administrator.', 'gwapi')) ?>"></i>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr valign="top">
                             <th scope="row"><?php _e('User roles with two-factor', 'gwapi'); ?></th>
                             <td>
                                 <?php $roles = GwapiSecurityTwoFactor::getRoles(); ?>
@@ -158,15 +174,6 @@
                                 </select>
                                 <p class="help-block description">
                                     <?php _e('How often must the user be forced to re-authorize via two-factor, when visiting from the same web browser?', 'gwapi'); ?>
-                                </p>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row"><?php _e('Fallback code', 'gwapi'); ?></th>
-                            <td>
-                                <input type="text" size="32" readonly name="gwapi_security_bypass_code" style="font-family: monospace" value="<?= esc_attr(GwapiSecurityTwoFactor::getBypassCode()); ?>" placeholder="<?php _e('New code is generated on save', 'gwapi'); ?>" /> <button id="gwapiSecurityBypassCodeReset" type="button" class="button button-secondary"><?php _e('Reset', 'gwapi'); ?></button>
-                                <p class="help-block description">
-                                    <?php _e('This code can be used to bypass the two-factor check, in case you loose access to your cellphone, get a new number or if you run out of credit on your GatewayAPI-account (you can enable auto-charge to avoid this). This code should be copied to a safe place.', 'gwapi'); ?>
                                 </p>
                             </td>
                         </tr>

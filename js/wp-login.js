@@ -5,6 +5,7 @@ jQuery(function($) {
         improvedNumberFieldMno();
         handleSendVerificationSms();
         handleConfirmVerificationSms();
+        handleConfirmLoginSms();
     }
 
     function handleAjaxFailure(res)
@@ -84,15 +85,33 @@ jQuery(function($) {
     }
 
     /**
-     * When confirming the code.
+     * Add new phone: When confirming the code.
      */
     function handleConfirmVerificationSms()
     {
         $('body').on('submit', '#gwapi_confirm_phone_form', function(ev) {
             ev.preventDefault();
+            var submit_btn = $(this).find('input[type=submit]');
+            submit_btn.btnloading(true);
 
             $.post(GWAPI_ADMINURL+'admin-ajax.php?action=gwapi_security_confirm_phone', $(this).serialize(), function(res) {
                 $('.step.current').html(res.html);
+            }).fail(handleAjaxFailure);
+        });
+    }
+
+    /**
+     * Logging in: When confirming the code.
+     */
+    function handleConfirmLoginSms()
+    {
+        $('body').on('submit', '#gwapi_confirm_login_form', function(ev) {
+            ev.preventDefault();
+            var submit_btn = $(this).find('input[type=submit]');
+            submit_btn.btnloading(true);
+
+            $.post(GWAPI_ADMINURL+'admin-ajax.php?action=gwapi_security_confirm_login', $(this).serialize(), function(res) {
+                window.location = res.redirect_to;
             }).fail(handleAjaxFailure);
         });
     }

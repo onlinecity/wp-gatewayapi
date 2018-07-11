@@ -7,7 +7,7 @@
     <br/>
 </p>
 
-<form method="post" id="gwapi_confirm_phone_form">
+<form method="post" id="<?= apply_filters('gwapi_confirm_phone_form_id', 'gwapi_confirm_phone_form'); ?>">
 
     <input type="hidden" name="gwapi_2f_tmp" value="<?= esc_attr($tmp_token); ?>" />
 

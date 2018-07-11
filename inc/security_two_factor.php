@@ -25,15 +25,15 @@ class GwapiSecurityTwoFactor
         return $out;
     }
 
+    /**
+     * Returns the current bypass code or generates and saves a new one. The bypass code can be used to bypass the
+     * entire two-factor login scheme and should therefor be a last-result for administrators who are locked-out.
+     */
     public static function getBypassCode()
     {
         $code = get_option('gwapi_security_bypass_code');
         if (!$code) {
-            $parts = [];
-            for ($i = 0; $i < 6; $i++) {
-                $parts[] = strtolower(wp_generate_password(3, false, false));
-            }
-            $code = implode('-', $parts);
+            $code = strtolower(wp_generate_password(32, false, false));
             update_option('gwapi_security_bypass_code', $code, false);
         }
 
@@ -48,6 +48,8 @@ class GwapiSecurityTwoFactor
      */
     public static function handleLoginHook($username, \WP_User $user)
     {
+        if (self::bypassModeEnabled()) return;
+
         if (!self::userNeedsTwoFactor($user)) return;
         if (self::userHasValidTwofactorCookie($user)) return;
         self::replaceLoginCookieWithTempCookie($user);
@@ -80,7 +82,7 @@ class GwapiSecurityTwoFactor
      */
     private static function userHasValidTwofactorCookie(\WP_User $user)
     {
-        if (isset($_COOKIE['gwapi_2f_token']) && ($cookie_token = trim($_COOKIE['gwapi_2f_token'])) && $user->gwapi_2f_tokens) {
+        if (isset($_COOKIE['gwapi_2f_'.$user->ID]) && ($cookie_token = trim($_COOKIE['gwapi_2f_'.$user->ID])) && $user->gwapi_2f_tokens) {
             self::refreshExpiryOfUserTwoFactorTokens($user);
             $tokens = $user->gwapi_2f_tokens;
             if (isset($tokens[$cookie_token])) return true;
@@ -102,7 +104,7 @@ class GwapiSecurityTwoFactor
         }
         if (count($new_tokens) !== count($user->gwapi_2f_tokens)) {
             update_user_meta($user->ID, 'gwapi_2f_tokens', $new_tokens);
-            $user->gwapi_2f_tokens = $new_tokens; // @todo is this needed? oh well, better safe than sorry
+            $user->gwapi_2f_tokens = $new_tokens;
         }
     }
 
@@ -149,13 +151,19 @@ class GwapiSecurityTwoFactor
      */
     private static function renderTwoFactorSteps(\WP_User $user)
     {
+        // add mobile throttle?
         $throttle = GwapiSecurityTwoFactor::checkIfThrottled($user->ID, GwapiSecurityTwoFactorAddMobile::THROTTLE_ACTION, GwapiSecurityTwoFactorAddMobile::THROTTLE_MAX_TRIES, GwapiSecurityTwoFactorAddMobile::THROTTLE_EXPIRES);
         if (is_wp_error($throttle)) wp_die($throttle);
 
+        // login code throttle?
+        $throttle2 = GwapiSecurityTwoFactor::checkIfThrottled($user->ID, 'confirmlogin_'.$user->ID, GwapiSecurityTwoFactorHasMobile::THROTTLE_MAX_TRIES, GwapiSecurityTwoFactorHasMobile::THROTTLE_EXPIRES);
+        if (is_wp_error($throttle2)) wp_die($throttle2);
+
+        // let's get it on, shall we?
         if (!$user->gwapi_mcc || !$user->gwapi_mno) {
             GwapiSecurityTwoFactorAddMobile::handleAddMobile($user);
         } else {
-
+            GwapiSecurityTwoFactorHasMobile::handleLogin($user);
         }
     }
 
@@ -176,6 +184,9 @@ class GwapiSecurityTwoFactor
         return $token_data;
     }
 
+    /**
+     * Given a WP_Error object, fail in a consistent way, converting error to a JSON message.
+     */
     public static function jsonFail(\WP_Error $wp_error)
     {
         http_response_code(422);
@@ -225,20 +236,18 @@ class GwapiSecurityTwoFactor
 
         update_user_meta($user_ID, $throttle_key, $throttle);
     }
-}
 
-/**
- * This class handles the flow related to a person logging in, who does not yet have a mobile phone attached to the
- * user profile. This runs a flow pairing the mobile phone with the account, using a one time token.
- */
-class GwapiSecurityTwoFactorAddMobile
-{
-    const THROTTLE_ACTION = 'add_mobile';
-    const THROTTLE_MAX_TRIES = 3;
-    const THROTTLE_EXPIRES = 60 * 60;
+    /**
+     * Create a cookie for keeping the two-factor-part of the login persistent across logins.
+     *
+     * @param $user_ID
+     */
+    public static function createClientCookie($user_ID)
+    {
 
+    }
 
-    private static function enqueueCssJs()
+    public static function enqueueCssJs()
     {
         _gwapi_enqueue_uideps(true);
 
@@ -259,13 +268,66 @@ class GwapiSecurityTwoFactorAddMobile
         });
     }
 
+    /**
+     * Enables bypass mode for the two-factor login flow.
+     */
+    public static function enableBypassMode()
+    {
+        $bypass_code = self::getBypassCode();
+        if (!isset($_GET['c']) || $_GET['c'] != $bypass_code) {
+            wp_die('<h1>'.__('Bypass code is invalid!', 'gwapi').'</h1><p>'.__('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gwapi').'</p>');
+        }
+
+        // add the extra hidden field for the bypass-code, to the login form
+        add_action('login_form', function() use ($bypass_code) {
+            ?>
+            <input type="hidden" name="gwapi_bypass_2fa" value="<?= esc_attr($bypass_code); ?>">
+            <?php
+        });
+
+        // show a message to clearly tell the user, that the bypass mode is enabled for this request
+        ob_start();
+        ?>
+        <strong><?php _e('Two-factor bypass mode active', 'gwapi'); ?></strong><br><br/>
+        <?php _e('Issues related to two-factor, should be temporarily resolved if you log in now.', 'gwapi'); ?>
+        <?php
+        global $error;
+        $error = ob_get_clean();
+    }
+
+    /**
+     * @return bool True if the current request should bypass the two-factor login security.
+     */
+    public static function bypassModeEnabled()
+    {
+        return (isset($_POST['gwapi_bypass_2fa']) && $_POST['gwapi_bypass_2fa'] == self::getBypassCode());
+    }
+}
+
+/**
+ * This class handles the flow related to a person logging in, who does not yet have a mobile phone attached to the
+ * user profile. This runs a flow pairing the mobile phone with the account, using a one time token.
+ */
+class GwapiSecurityTwoFactorAddMobile
+{
+    const THROTTLE_ACTION = 'add_mobile';
+    const THROTTLE_MAX_TRIES = 3;
+    const THROTTLE_EXPIRES = 60 * 60;
+
+    /**
+     * Show the "add mobile" login flow, ie. the flow "new users" (in two-factor terms) has to go through to add a phone
+     * number to their account.
+     */
     public static function handleAddMobile(\WP_user $user)
     {
-        self::enqueueCssJs();
+        GwapiSecurityTwoFactor::enqueueCssJs();
 
         include _gwapi_dir() . '/tpl/wp-login-add-phone.php';
     }
 
+    /**
+     * Send a code to the mobile number given and return a UI where the result can be entered.
+     */
     public static function sendInitialSms()
     {
         header("Content-type: application/json");
@@ -319,6 +381,9 @@ class GwapiSecurityTwoFactorAddMobile
         die(json_encode(['success' => true, 'html' => $html]));
     }
 
+    /**
+     * Send the confirmation SMS.
+     */
     public static function confirmSms()
     {
         header("Content-type: application/json");
@@ -353,8 +418,11 @@ class GwapiSecurityTwoFactorAddMobile
         update_user_meta($user_ID, 'gwapi_mcc', $mcc);
         update_user_meta($user_ID, 'gwapi_mno', $mno);
 
-        // and log the user in
+        // log the user in
         wp_set_auth_cookie($user_ID, $login_info['remember']);
+
+        // finally set a cookie for remembering the 2fa on the users current device
+        GwapiSecurityTwoFactor::createClientCookie($user_ID);
 
         // then show a message of the happy success
         $redirect_to = $login_info['redirect_to'];
@@ -368,6 +436,118 @@ class GwapiSecurityTwoFactorAddMobile
     }
 }
 
+
+/**
+ * Class for handling logins from users who does have a mobile number added to their account.
+ */
+class GwapiSecurityTwoFactorHasMobile {
+    const THROTTLE_MAX_TRIES = 3;
+    const THROTTLE_EXPIRES = 60 * 60;
+
+    public static function handleLogin(\WP_User $user)
+    {
+        // send the sms
+        $mcc = preg_replace('/[^0-9]+/','', $user->gwapi_mcc);
+        $mno = preg_replace('/[^0-9]+/','', $user->gwapi_mno);
+        $msisdn = $mcc.$mno;
+
+        // our current login-replacement cookie
+        $info = GwapiSecurityTwoFactor::getLoginDataByTempToken(GwapiSecurityTwoFactor::$TMP_TOKEN);
+
+        // info for sms
+        $code = $info['code'];
+        $sender = get_bloginfo();
+        $home_url = url_shorten(get_home_url());
+        $message = strtr(__("Verification code: :code\nKind regards, :sender\n:home_url", 'gwapi'), [':code' => $code, ':sender' => $sender, ':home_url' => $home_url]);
+
+        // send sms with code
+        $status = gwapi_send_sms($message, $msisdn);
+
+        // handle errors when sending
+        if (is_wp_error($status)) {
+            $main_reason = '<h1>'.__('Problem in the two-factor security module', 'gwapi').'</h1>';
+
+            if ($status->get_error_code() == 'GWAPI_FAIL') {
+                $reason = $status->get_error_message();
+                list ($human, $tech) = explode("\n", $reason, 2);
+                $reason = $human . "<br /><br /><small>" . nl2br($tech) . "</small>";
+
+
+                wp_die(new WP_Error('GWAPI', $main_reason.'<p>'.strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gwapi'), [':reason' => $reason]).'</p>'));
+            } else {
+                wp_die(new WP_Error('GWAPI', $main_reason.'<p>'.__('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gwapi').'</p>'));
+            }
+        }
+
+        (function() use ($mcc, $mno) {
+            // anonymize the phone number
+            $mno = str_repeat('·', strlen($mno) - 3) . substr($mno, -3, 3);
+            $tmp_token = GwapiSecurityTwoFactor::$TMP_TOKEN;
+
+            // enqueue css/js
+            GwapiSecurityTwoFactor::enqueueCssJs();
+
+            // tweak the form id, so the JS hooks in properly
+            add_filter('gwapi_confirm_phone_form_id', function($c) { return "gwapi_confirm_login_form"; });
+
+            // output!
+            login_header(__('Two-factor security check', 'gwapi'));
+            echo '<div class="step current">';
+            include _gwapi_dir().'/tpl/wp-login-confirm-phone.php';
+            echo '</div>';
+            login_footer();
+        })();
+    }
+
+    /**
+     * AJAX request for confirming a two-factor sms code and if successful, setting the auth cookie, set the persistence
+     * cookie for 2fa and log the user in (by sending a URL to redirect to).
+     */
+    public static function confirmSms()
+    {
+        header("Content-type: application/json");
+
+        // token
+        $tmp_token = trim($_POST['gwapi_2f_tmp']);
+
+        // validate the token
+        $login_info = GwapiSecurityTwoFactor::getLoginDataByTempToken($tmp_token);
+        if (is_wp_error($login_info)) GwapiSecurityTwoFactor::jsonFail($login_info);
+
+        // save this attempt on the user
+        $user_ID = $login_info['user'];
+        add_filter('gwapi_throttle_error', function ($e) {
+            return __('You have tried to enter the confirmation token too many times. Please start over to try again.', 'gwapi');
+        });
+        $maybe_throttle = GwapiSecurityTwoFactor::failOnThrottle($user_ID, 'confirmlogin_' . $user_ID, self::THROTTLE_MAX_TRIES, self::THROTTLE_EXPIRES);
+        if (is_wp_error($maybe_throttle)) {
+            GwapiSecurityTwoFactor::jsonFail($maybe_throttle);
+        }
+
+        // is the code correct?
+        $user_code = preg_replace('/[^0-9]+/', '', $_POST['code']);
+        $correct_code = $login_info['code'];
+        if ($user_code != $correct_code) {
+            GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gwapi')));
+        }
+
+        // SUCCESS!
+        // log the user in
+        wp_set_auth_cookie($user_ID, $login_info['remember']);
+
+        // finally set a cookie for remembering the 2fa on the users current device
+        GwapiSecurityTwoFactor::createClientCookie($user_ID);
+
+        // redirect the user to whereever he was intending to go after the login
+        $redirect_to = $login_info['redirect_to'];
+
+        die(json_encode(['success' => true, 'redirect_to' => $redirect_to]));
+    }
+}
+
 add_action('wp_login', ['GwapiSecurityTwoFactor', 'handleLoginHook'], 10, 2);
 add_action('wp_ajax_nopriv_gwapi_security_add_phone', ['GwapiSecurityTwoFactorAddMobile', 'sendInitialSms']);
 add_action('wp_ajax_nopriv_gwapi_security_confirm_phone', ['GwapiSecurityTwoFactorAddMobile', 'confirmSms']);
+add_action('wp_ajax_nopriv_gwapi_security_confirm_login', ['GwapiSecurityTwoFactorHasMobile', 'confirmSms']);
+
+add_action('login_form_gwb2fa', ['GwapiSecurityTwoFactor', 'enableBypassMode']);
