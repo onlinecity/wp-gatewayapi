@@ -166,8 +166,10 @@
                                 <select name="gwapi_security_cookie_lifetime">
                                     <?php $options = [
                                         0 => __('Re-authorize with every login', 'gwapi'),
-                                        14 => __('Remember for up to 14 days', 'gwapi'),
-                                        30 => __('Remember for up to 30 days', 'gwapi')
+                                        1 => __('Remember for up to 1 day', 'gwapi'),
+                                        7 => __('Remember for up to 1 week', 'gwapi'),
+                                        14 => __('Remember for up to 2 weeks', 'gwapi'),
+                                        30 => __('Remember for up to 1 month', 'gwapi')
                                     ]; ?>
                                     <?php foreach ($options as $days => $text): ?>
                                         <option <?= get_option('gwapi_security_cookie_lifetime') == $days ? 'selected' : ''; ?> value="<?= $days; ?>"><?= $text; ?></option>

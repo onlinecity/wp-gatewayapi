@@ -244,7 +244,24 @@ class GwapiSecurityTwoFactor
      */
     public static function createClientCookie($user_ID)
     {
+        $valid_cookie_lifetimes = [0,1,7,14,30];
+        $cookie_lifetime = (int)get_option('gwapi_security_cookie_lifetime', 0);
+        if (!in_array($cookie_lifetime, $valid_cookie_lifetimes) || !$cookie_lifetime) return; // re-auth every time
 
+        $expires_at = time() + 60*60*24*$cookie_lifetime;
+        $user = get_user_by('ID', $user_ID);
+
+        self::refreshExpiryOfUserTwoFactorTokens($user);
+
+        $tokens = $user->gwapi_2f_tokens ? : [];
+        $token_key = wp_generate_password(24,false,false);
+        $tokens[$token_key] = $expires_at;
+
+        update_user_meta($user_ID, 'gwapi_2f_tokens', $tokens);
+        $user->gwapi_2f_tokens = $tokens;
+
+        // save cookie in request
+        self::setCookie('gwapi_2f_'.$user_ID, $token_key, $expires_at);
     }
 
     public static function enqueueCssJs()
