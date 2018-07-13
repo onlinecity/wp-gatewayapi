@@ -8,8 +8,8 @@ Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Domain Path: /languages
 Text Domain: gwapi
+Domain Path: /languages
 */
 
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
@@ -49,9 +49,6 @@ function _gwapi_initialize_cf7_submit($form)
 
 add_action('init', function () {
     $D = _gwapi_dir();
-
-    // load translations
-    load_plugin_textdomain('gwapi', false, 'gatewayapi/languages');
 
     // public
     include "$D/inc/api.php";
@@ -114,3 +111,8 @@ add_action('init', function () {
     }
 
 }, 9);
+
+add_action('plugins_loaded', function() {
+    // load translations
+    load_plugin_textdomain('gwapi', false, 'gatewayapi/languages/');
+});

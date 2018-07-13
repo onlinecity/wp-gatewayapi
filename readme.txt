@@ -1,52 +1,45 @@
 === GatewayAPI ===
 Contributors: onlinecity
-Donate link:
-Tags: sms, recipients, groups, mobile, phone
-Requires at least: 4.0
-Tested up to: 4.9.6
-Stable tag: 1.4.2
+Tags: sms, two factor, security, mobile, texting
+Requires at least: 4.6
+Tested up to: 4.9.7
+Stable tag: 1.5.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
-Send SMS'es from the WordPress-backend or via the programmers API.
+Send SMS'es and enable SMS-based two-factor security.
 
 == Description ==
 
 This plugin enables you to send SMS'es straight from the WordPress backend or via the programmers API.
 
-All you need, is to create a free account at [GatewayAPI.com](https://gatewayapi.com), which includes €2 of credit.
+Also included is free and really easy to use two-factor security, which really hardens the security of your site.
 
-If you would like to send SMS'es from the backend, the plugin provides UI's for:
+All you need, is the plugin and a free [GatewayAPI.com](https://gatewayapi.com)-account.
 
-**Backend:**
+Main features:
 
-- Use WordPress admin to manage and send - or do it all from PHP.
-- Manage and group recipients.
-- Send to single recipients or groups.
-- Change sender text, type of SMS - completely unbranded SMS'es.
-- Dynamically use meta-data within your SMS'es.
-- Track the delivery status of an SMS.
-- Automatic synchronization of recipients and WordPress users, including selected metadata.
-- Add unlimited meta fields to your recipients: 11 content types to pick from!
+* **📱 Send SMS'es / texts**
+  * Add custom data to recipients, to mail merge.
+  * Import recipient lists from CSV/Excel.
+  * Group recipients.
+  * Bulk-sending.
+  * Easy programmers API.
+  * Short-codes for signup/unsubscribe/edit profile forms.
+  * Automatic integration with Contact Form 7.
 
-**Receive SMS'es:**
+* **🔐 Two-factor security**
+  * Easy on your users: No apps needed!
+  * Easy on the admin: Tick a checkbox and it just works!
+  * Military grade security!
+  * Pick roles to enable mandatory two-factor.
+  * Re-authorize at each login or remember devices for up to 30 days.
 
-- Reeive SMS'es sent from the phones of your visitors and others.
-- View received messages from the backend, via the "SMS Inbox".
-- Handle incoming SMS'es from WordPress-hooks (for programmers).
-- Create automated replies based on incoming text.
-
-**Integration in your website:**
-
-- Short-code generator, creating sign up, update and unsubscribe forms.
-- Public forms feature CAPTCHA and two-factor flows.
-- Custom security? Create a "Send SMS" form via a shortcode.
-
-**Contact Form 7-integration:**
-
-- Create signup/update/unsubscribe/send SMS-forms in Contact Form 7.
-- Send SMS auto-replies on any form.
-- Full integration with wizard-style shortcode tag generation.
+* **✊ Receive SMS'es / texts**
+  * Use your own keyword(s) or phone numbers to receive SMS'es.
+  * View incoming messages.
+  * Auto-reply to incoming SMS'es.
+  * ... or do special handling and replies.
 
 **Easy to get started:**
 
@@ -64,10 +57,6 @@ If you would like to send SMS'es from the backend, the plugin provides UI's for:
 - Most SMS'es are delivered within 0,3 second.
 
 If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
-
-= NEW IN VERSION 1.4: PROPER CONTACT FORM 7-INTEGRATION =
-
-This version sports better integration with Contact Form 7, as well as the possibility to create "Send SMS"-forms in Contact Form 7.
 
 
 = Getting Started =
@@ -119,7 +108,14 @@ https://vimeo.com/179721183
 
 = How well does this plugin handle 10.000+'s of recipients =
 
-Theoretically it works, but it's still in the early days for this plugin and this also much depends on your hosting providers setup. The plugin can usually easily handle 10.000 recipients at a time, but we'd recommend splitting into multiple SMS'es for now.
+It works really well. We split large SMS'es into multiple smaller requests, to ease the burden on your WordPress. This also enables us to show a pretty progress bar while sending, when you are sending to more than 500 recipients at a time :-)
+
+= HELP! I'm administrator and I'm locked out of the two-factor system! =
+
+If you don't have a backup of the "Emergency bypass URL" from the setup-screen, then you need to dig into the database to disable the two-factor system. Your host probably has a phpMyAdmin that you can use to access it.
+
+Then find the `options`-table, by default `wp_options`. Search for the row where the `option_name` is `gwapi_security_enable`. Simply delete the row.
+
 
 == Screenshots ==
 1. Set up your OAuth key and secret here. This settings page is available for administrators only.
@@ -128,6 +124,12 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.5.0 =
+* New! Two-factor security upgrade to your WordPress! (optional)
+* New! Blacklisting of phone numbers.
+* Improved: Searching recipients by phone number works.
+* Improved: Better support for 10.000+ recipients + a progress bar for showing progress.
 
 = 1.4.2 =
 * Recipients:
