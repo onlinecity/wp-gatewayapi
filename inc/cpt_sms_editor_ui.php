@@ -255,7 +255,9 @@ function _gwapi_sms_status(WP_Post $post) {
             break;
 
         case 'sending':
-            echo __('Sending...', 'gwapi');
+            $is_sending = $post->batch_is_running;
+
+            echo '<strong style="color: blue" data-is-sending>'.__('Sending...', 'gwapi').'</strong>';
             break;
 
         case 'bail':
@@ -271,7 +273,7 @@ function _gwapi_sms_status(WP_Post $post) {
             break;
 
         case 'is_sent':
-            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gwapi').'</span><br />ID: '.$ids;
+            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gwapi').'</span><br /><div class="text-ellipsis">ID: '.implode(', ',$ids).'</div>';
             break;
 
         default:
@@ -280,7 +282,19 @@ function _gwapi_sms_status(WP_Post $post) {
     }
     ?>
     </p>
+    <?php
 
+    if ($status == 'sending') _gwapi_get_sent_status_progress($post);
+}
+
+function _gwapi_get_sent_status_progress(WP_Post $post)
+{
+    $recipients_total = (int)get_post_meta($post->ID, 'recipients_count', true);
+    $recipients_handled = (int)(get_post_meta($post->ID, 'recipients_handled', true) ? : 0);
+    ?>
+    <div class="progress">
+        <div class="completed" style="width: <?= $recipients_handled / $recipients_total * 100; ?>%"></div>
+    </div>
     <?php
 }
 
@@ -410,4 +424,10 @@ add_action('wp_ajax_gatewayapi_sms_manual_delete_recipient', function () {
     $wpdb->query($q = $wpdb->prepare("DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_id = %d AND meta_key = 'single_recipient';", $post_ID, $_POST['meta_ID']));
 
     die(json_encode(['success' => true, $q]));
+});
+
+add_action('wp_ajax_gwapi_get_html_status', function() {
+    header("Content-type: text/html");
+    _gwapi_sms_status(get_post($_GET['ID']));
+    die();
 });

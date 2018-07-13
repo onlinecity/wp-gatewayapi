@@ -3,8 +3,8 @@ Contributors: onlinecity
 Donate link:
 Tags: sms, recipients, groups, mobile, phone
 Requires at least: 4.0
-Tested up to: 4.7.2
-Stable tag: 1.4.1
+Tested up to: 4.9.6
+Stable tag: 1.4.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -128,6 +128,9 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.4.2 =
+* Fix: Improved handling of huge lists of recipients (ie. 1.000+ recipients in one SMS)
 
 = 1.4.1 =
 * Fix: List of countries is now always correctly parsed, even when the JSON-file (which is fetched via AJAX) does not have right mime-type.
