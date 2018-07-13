@@ -4,22 +4,22 @@
 add_action('init', function () {
 
     register_taxonomy('gwapi-recipient-groups', 'gwapi-recipient', [
-        'label' => __('Recipient groups', 'gwapi'),
+        'label' => __('Recipient groups', 'gatewayapi'),
         'labels' => [
-            'name' => __('Recipient groups', 'gwapi'),
-            'singular_name' => __('Recipient group', 'gwapi'),
-            'menu_name' => __('Groups', 'gwapi'),
-            'all_items' => __('All recipient groups', 'gwapi'),
-            'edit_item' => __('Edit group', 'gwapi'),
-            'view_item' => __('View group', 'gwapi'),
-            'update_item' => __('Update group', 'gwapi'),
-            'add_new_item' => __('Add new recipient group', 'gwapi'),
-            'new_item_name' => __('New group', 'gwapi'),
-            'search_items' => __('Search groups', 'gwapi'),
-            'popular_items' => __('Popular groups', 'gwapi'),
-            'add_or_remove_items' => __('Add or remove groups', 'gwapi'),
-            'choose_from_most_used' => __('Choose from most used groups', 'gwapi'),
-            'not_found' => __('No groups found', 'gwapi')
+            'name' => __('Recipient groups', 'gatewayapi'),
+            'singular_name' => __('Recipient group', 'gatewayapi'),
+            'menu_name' => __('Groups', 'gatewayapi'),
+            'all_items' => __('All recipient groups', 'gatewayapi'),
+            'edit_item' => __('Edit group', 'gatewayapi'),
+            'view_item' => __('View group', 'gatewayapi'),
+            'update_item' => __('Update group', 'gatewayapi'),
+            'add_new_item' => __('Add new recipient group', 'gatewayapi'),
+            'new_item_name' => __('New group', 'gatewayapi'),
+            'search_items' => __('Search groups', 'gatewayapi'),
+            'popular_items' => __('Popular groups', 'gatewayapi'),
+            'add_or_remove_items' => __('Add or remove groups', 'gatewayapi'),
+            'choose_from_most_used' => __('Choose from most used groups', 'gatewayapi'),
+            'not_found' => __('No groups found', 'gatewayapi')
         ],
         'public' => true,
         'show_ui' => true,

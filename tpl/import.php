@@ -2,7 +2,7 @@
 
 <div class="wrap">
     <form method="post">
-        <h1><?= __('Import recipients', 'gwapi'); ?></h1>
+        <h1><?= __('Import recipients', 'gatewayapi'); ?></h1>
 
         <?php
         switch(isset($_POST['step']) ? $_POST['step'] : 1) {

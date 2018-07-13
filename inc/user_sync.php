@@ -189,11 +189,11 @@ class GWAPI_User_Sync
             $q = new WP_User_Query($userQ);
             $total = $q->get_total();
             if (!$total) {
-                die(json_encode(['html' => __('There are no users to synchronize at this time, ie. no users which has the meta field for mobile number.', 'gwapi'), 'finished' => true]));
+                die(json_encode(['html' => __('There are no users to synchronize at this time, ie. no users which has the meta field for mobile number.', 'gatewayapi'), 'finished' => true]));
             }
 
             die(json_encode([
-                'html' => sprintf(_n("%d user is being synchronized now.", "%d users are being synchronized now", $total, 'gwapi'), $total),
+                'html' => sprintf(_n("%d user is being synchronized now.", "%d users are being synchronized now", $total, 'gatewayapi'), $total),
                 'finished' => false
             ]));
         }
@@ -205,7 +205,7 @@ class GWAPI_User_Sync
         $max = $q->get_total();
         if (!$IDs) {
             die(json_encode([
-                'html' => sprintf(__('User synchronization is complete. %d users were synchronized.', 'gwapi'), $max),
+                'html' => sprintf(__('User synchronization is complete. %d users were synchronized.', 'gatewayapi'), $max),
                 'finished' => true
             ]));
         }
@@ -215,7 +215,7 @@ class GWAPI_User_Sync
 
         $done = count($IDs) + ($_GET['page']-1) * 100;
         die(json_encode([
-            'html' => sprintf( __('%d users of %d synchronized...', 'gwapi'), $done, $max ),
+            'html' => sprintf( __('%d users of %d synchronized...', 'gatewayapi'), $done, $max ),
             'finished' => false
         ]));
     }

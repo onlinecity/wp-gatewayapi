@@ -9,22 +9,22 @@ $count = substr_count($data, "\n");
 ?>
 
 <p>
-    <?php _e('Your import is running. It\'s important that you do not leave this page until it has finished.' ,'gwapi'); ?>
+    <?php _e('Your import is running. It\'s important that you do not leave this page until it has finished.' ,'gatewayapi'); ?>
 </p>
 
 <table class="form-table" id="importingStatus">
     <tbody>
         <tr>
             <th>
-                <?php _e('Status', 'gwapi'); ?>
+                <?php _e('Status', 'gatewayapi'); ?>
             </th>
             <td>
-                <strong style="color: red" class="status_text"><?php _e('Importing...','gwapi'); ?></strong><br />
+                <strong style="color: red" class="status_text"><?php _e('Importing...','gatewayapi'); ?></strong><br />
             </td>
         </tr>
         <tr>
             <th>
-                <?php _e('Rows', 'gwapi') ?>
+                <?php _e('Rows', 'gatewayapi') ?>
             </th>
             <td>
                 <span class="processed">0</span> / <span class="total"><?= $count ?></span>
@@ -32,20 +32,20 @@ $count = substr_count($data, "\n");
         </tr>
         <tr>
             <th>
-                <?php _e('Invalid rows', 'gwapi'); ?>
+                <?php _e('Invalid rows', 'gatewayapi'); ?>
             </th>
             <td>
                 <strong class="invalid_rows">0</strong>
             </td>
         </tr>
         <tr>
-            <th><?php _e('New recipients', 'gwapi'); ?></th>
+            <th><?php _e('New recipients', 'gatewayapi'); ?></th>
             <td>
                 <strong class="count_new">0</strong>
             </td>
         </tr>
         <tr>
-            <th><?php _e('Updated recipients', 'gwapi'); ?></th>
+            <th><?php _e('Updated recipients', 'gatewayapi'); ?></th>
             <td>
                 <strong class="count_updated">0</strong>
             </td>

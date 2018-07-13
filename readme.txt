@@ -232,7 +232,7 @@ Most topics are shown in a step-by-step style with numerous screenshots in our U
 [Open the User Guide](https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide)
 
 
-= Advanced: Programmers API=
+= Advanced: Programmers API =
 
 Send an SMS to one or multiple recipients by calling `gwapi_send_sms` with the following arguments
 

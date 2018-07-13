@@ -3,8 +3,8 @@
 
 // fields on the SMS editor page
 add_action('admin_init', function () {
-    add_meta_box('recipient', __('Contact information', 'gwapi'), '_gwapi_recipient', 'gwapi-recipient', 'normal', 'default');
-    add_meta_box('custom_fields', __('Custom fields', 'gwapi'), '_gwapi_recipient_fields', 'gwapi-recipient', 'normal', 'default');
+    add_meta_box('recipient', __('Contact information', 'gatewayapi'), '_gwapi_recipient', 'gwapi-recipient', 'normal', 'default');
+    add_meta_box('custom_fields', __('Custom fields', 'gatewayapi'), '_gwapi_recipient_fields', 'gwapi-recipient', 'normal', 'default');
 });
 
 /**
@@ -22,20 +22,20 @@ function _gwapi_recipient(WP_Post $post)
         <tbody>
         <tr>
             <th width="25%">
-                <?php _e('Country code', 'gwapi') ?>
+                <?php _e('Country code', 'gatewayapi') ?>
             </th>
             <td>
                 <select
-                    name="gwapi[cc]"><?= $cc ? '<option value="' . trim($cc) . '">' . $cc . '</option>' : '' ?></select>
+                    name="gatewayapi[cc]"><?= $cc ? '<option value="' . trim($cc) . '">' . $cc . '</option>' : '' ?></select>
             </td>
         </tr>
         <tr>
             <th width="25%">
-                <?php _e('Phone number', 'gwapi') ?>
+                <?php _e('Phone number', 'gatewayapi') ?>
             </th>
             <td>
-                <input type="number" name="gwapi[number]"
-                       placeholder="<?= esc_attr(__('Phone number - digits only', 'gwapi')) ?>"
+                <input type="number" name="gatewayapi[number]"
+                       placeholder="<?= esc_attr(__('Phone number - digits only', 'gatewayapi')) ?>"
                        value="<?= $number ? esc_attr(trim($number)) : '' ?>"
                        style="width: 250px">
             </td>
@@ -77,7 +77,7 @@ add_action('wp_ajax_gatewayapi_validate_recipient', function () {
     $post = get_post((int) $data['post_ID'] );
 
     $errors = [];
-    $errors = apply_filters('gwapi_validate_recipient', $errors, $data['gwapi'], $post);
+    $errors = apply_filters('gwapi_validate_recipient', $errors, $data['gatewayapi'], $post);
 
     if ($errors) {
         die(json_encode(['success' => false, 'failed' => $errors]));
@@ -93,7 +93,7 @@ add_action('wp_ajax_gatewayapi_validate_recipient', function () {
 add_action('save_post_gwapi-recipient', 'gwapi_save_recipient');
 
 /**
- * Save the contents of a recipients form onto the recipient behind the given ID. Takes data from $_POST['gwapi'] if
+ * Save the contents of a recipients form onto the recipient behind the given ID. Takes data from $_POST['gatewayapi'] if
  * data is not specified.
  */
 function gwapi_save_recipient($ID, $data=null, $force_update=false) {
@@ -106,8 +106,8 @@ function gwapi_save_recipient($ID, $data=null, $force_update=false) {
 
     if (!is_array($data)) {
         // do we have data at all?
-        if (!isset($_POST['gwapi'])) return;
-        $data = isset($_POST['gwapi']) ? $_POST['gwapi'] : false;
+        if (!isset($_POST['gatewayapi'])) return;
+        $data = isset($_POST['gatewayapi']) ? $_POST['gatewayapi'] : false;
         if (!$data) return;
     }
 

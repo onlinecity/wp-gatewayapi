@@ -31,7 +31,7 @@ $columns = explode("\t", $column_row);
             </th>
             <td>
                 <select name="columns[<?= $col; ?>]" style="width: 100%" <?= $required ? 'required' : ''; ?>>
-                    <option value="">- <?php _e('Ignore', 'gwapi'); ?> -</option>
+                    <option value="">- <?php _e('Ignore', 'gatewayapi'); ?> -</option>
                     <?php foreach ($columns as $i => $col): ?>
                         <option value="<?= $i; ?>"><?= esc_html($col); ?></option>
                     <?php endforeach; ?>
@@ -69,11 +69,11 @@ $columns = explode("\t", $column_row);
     <tr>
         <th></th>
         <td>
-            <button class="button button-primary button-large" type="submit"><?php _e('Import', 'gwapi'); ?></button>
+            <button class="button button-primary button-large" type="submit"><?php _e('Import', 'gatewayapi'); ?></button>
             <p class="description">
-                <?php _e('At import the system compares your new data with your existing, based on the mobile country code and number.', 'gwapi'); ?>
-                <?php _e('If a recipient already exists, the recipient is overwritten with the not-ignored fields above.', 'gwapi'); ?>
-                <?php _e('Fields which you have chosen to "Ignore", will remain untouched for existing members.', 'gwapi'); ?>
+                <?php _e('At import the system compares your new data with your existing, based on the mobile country code and number.', 'gatewayapi'); ?>
+                <?php _e('If a recipient already exists, the recipient is overwritten with the not-ignored fields above.', 'gatewayapi'); ?>
+                <?php _e('Fields which you have chosen to "Ignore", will remain untouched for existing members.', 'gatewayapi'); ?>
             </p>
         </td>
     </tr>

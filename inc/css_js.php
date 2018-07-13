@@ -15,7 +15,7 @@ function _gwapi_enqueue_uideps($only_register = false)
     ?>
     <script type="text/javascript">
         var GWAPI_PLUGINDIR = <?= json_encode(_gwapi_url()); ?>;
-        var GWAPI_I18N_DEFAULT_ERROR = <?= json_encode(__('Sorry, but there are errors in your input. Please attend to the highlighted fields below.', 'gwapi'));?>;
+        var GWAPI_I18N_DEFAULT_ERROR = <?= json_encode(__('Sorry, but there are errors in your input. Please attend to the highlighted fields below.', 'gatewayapi'));?>;
         var GWAPI_ADMINURL = <?= json_encode(admin_url()); ?>;
     </script>
     <?php

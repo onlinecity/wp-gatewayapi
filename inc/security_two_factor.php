@@ -176,10 +176,10 @@ class GwapiSecurityTwoFactor
     public static function getLoginDataByTempToken($temp_token)
     {
         $parts = explode('-', $temp_token, 2);;
-        if (!count($parts) == 2) return new WP_Error('INVALID_TOKEN', __('Error: The format of the temporary token is invalid.', 'gwapi'));
+        if (!count($parts) == 2) return new WP_Error('INVALID_TOKEN', __('Error: The format of the temporary token is invalid.', 'gatewayapi'));
 
         $token_data = get_transient('gwapi_2f_' . $temp_token);
-        if (!$token_data) return new WP_Error('EXPIRED', __('Error: Your token seems to have expired. Please start over.', 'gwapi'));
+        if (!$token_data) return new WP_Error('EXPIRED', __('Error: Your token seems to have expired. Please start over.', 'gatewayapi'));
 
         return $token_data;
     }
@@ -230,7 +230,7 @@ class GwapiSecurityTwoFactor
         // too many attempts already?
         if (count($throttle) >= $max_attempts) {
             $time_left = "<strong>" . human_time_diff(time(), current($throttle)) . "</strong>";
-            $error_msg = apply_filters('gwapi_throttle_error', __('Your account is temporarily locked, due to too many verification attempts in a short time span.<br /><br />Please wait at least :time_left before trying again.', 'gwapi'), $user_ID, $action, $max_attempts, $expires_after_seconds);
+            $error_msg = apply_filters('gwapi_throttle_error', __('Your account is temporarily locked, due to too many verification attempts in a short time span.<br /><br />Please wait at least :time_left before trying again.', 'gatewayapi'), $user_ID, $action, $max_attempts, $expires_after_seconds);
             return new WP_Error('TOO_MANY_ATTEMPTS', strtr($error_msg, [':time_left' => $time_left]));
         }
 
@@ -275,7 +275,7 @@ class GwapiSecurityTwoFactor
             wp_enqueue_style('gwapi-wp-login', _gwapi_url() . '/css/wp-login.css');
 
             $i18n = [
-                'ajax_tech_error' => __('An unknown technical error occured while processing the request. Please try again or contact your administrator.', 'gwapi')
+                'ajax_tech_error' => __('An unknown technical error occured while processing the request. Please try again or contact your administrator.', 'gatewayapi')
             ];
             ?>
             <script>
@@ -292,7 +292,7 @@ class GwapiSecurityTwoFactor
     {
         $bypass_code = self::getBypassCode();
         if (!isset($_GET['c']) || $_GET['c'] != $bypass_code) {
-            wp_die('<h1>' . __('Bypass code is invalid!', 'gwapi') . '</h1><p>' . __('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gwapi') . '</p>');
+            wp_die('<h1>' . __('Bypass code is invalid!', 'gatewayapi') . '</h1><p>' . __('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gatewayapi') . '</p>');
         }
 
         // add the extra hidden field for the bypass-code, to the login form
@@ -305,8 +305,8 @@ class GwapiSecurityTwoFactor
         // show a message to clearly tell the user, that the bypass mode is enabled for this request
         ob_start();
         ?>
-        <strong><?php _e('Two-factor bypass mode active', 'gwapi'); ?></strong><br><br/>
-        <?php _e('Issues related to two-factor, should be temporarily resolved if you log in now.', 'gwapi'); ?>
+        <strong><?php _e('Two-factor bypass mode active', 'gatewayapi'); ?></strong><br><br/>
+        <?php _e('Issues related to two-factor, should be temporarily resolved if you log in now.', 'gatewayapi'); ?>
         <?php
         global $error;
         $error = ob_get_clean();
@@ -370,7 +370,7 @@ class GwapiSecurityTwoFactorAddMobile
         $sender = get_bloginfo();
         $home_url = url_shorten(get_home_url());
 
-        $message = strtr(__("Verification code: :code\nKind regards, :sender\n:home_url", 'gwapi'), [':code' => $login_info['code'], ':sender' => $sender, ':home_url' => $home_url]);
+        $message = strtr(__("Verification code: :code\nKind regards, :sender\n:home_url", 'gatewayapi'), [':code' => $login_info['code'], ':sender' => $sender, ':home_url' => $home_url]);
         $status = gwapi_send_sms($message, $msisdn);
 
         // save the phone number
@@ -382,9 +382,9 @@ class GwapiSecurityTwoFactorAddMobile
                 list ($human, $tech) = explode("\n", $reason, 2);
                 $reason = $human . "<br /><br /><small>" . nl2br($tech) . "</small>";
 
-                GwapiSecurityTwoFactor::jsonFail(new WP_Error('GWAPI', strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gwapi'), [':reason' => $reason])));
+                GwapiSecurityTwoFactor::jsonFail(new WP_Error('gatewayapi', strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gatewayapi'), [':reason' => $reason])));
             } else {
-                GwapiSecurityTwoFactor::jsonFail(new WP_Error('GWAPI', __('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gwapi')));
+                GwapiSecurityTwoFactor::jsonFail(new WP_Error('gatewayapi', __('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gatewayapi')));
             }
         }
 
@@ -415,7 +415,7 @@ class GwapiSecurityTwoFactorAddMobile
         // save this attempt on the user
         $user_ID = $login_info['user'];
         add_filter('gwapi_throttle_error', function ($e) {
-            return __('You have tried to enter the confirmation token too many times. Please start over to try again.', 'gwapi');
+            return __('You have tried to enter the confirmation token too many times. Please start over to try again.', 'gatewayapi');
         });
         $maybe_throttle = GwapiSecurityTwoFactor::failOnThrottle($user_ID, 'confirm_' . $tmp_token, self::THROTTLE_MAX_TRIES, self::THROTTLE_EXPIRES);
         if (is_wp_error($maybe_throttle)) {
@@ -426,7 +426,7 @@ class GwapiSecurityTwoFactorAddMobile
         $user_code = preg_replace('/[^0-9]+/', '', $_POST['code']);
         $correct_code = $login_info['code'];
         if ($user_code != $correct_code) {
-            GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gwapi')));
+            GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gatewayapi')));
         }
 
         // SUCCESS!
@@ -476,14 +476,14 @@ class GwapiSecurityTwoFactorHasMobile
         $code = $info['code'];
         $sender = get_bloginfo();
         $home_url = url_shorten(get_home_url());
-        $message = strtr(__("Verification code: :code\nKind regards, :sender\n:home_url", 'gwapi'), [':code' => $code, ':sender' => $sender, ':home_url' => $home_url]);
+        $message = strtr(__("Verification code: :code\nKind regards, :sender\n:home_url", 'gatewayapi'), [':code' => $code, ':sender' => $sender, ':home_url' => $home_url]);
 
         // send sms with code
         $status = gwapi_send_sms($message, $msisdn);
 
         // handle errors when sending
         if (is_wp_error($status)) {
-            $main_reason = '<h1>' . __('Problem in the two-factor security module', 'gwapi') . '</h1>';
+            $main_reason = '<h1>' . __('Problem in the two-factor security module', 'gatewayapi') . '</h1>';
 
             if ($status->get_error_code() == 'GWAPI_FAIL') {
                 $reason = $status->get_error_message();
@@ -491,9 +491,9 @@ class GwapiSecurityTwoFactorHasMobile
                 $reason = $human . "<br /><br /><small>" . nl2br($tech) . "</small>";
 
 
-                wp_die(new WP_Error('GWAPI', $main_reason . '<p>' . strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gwapi'), [':reason' => $reason]) . '</p>'));
+                wp_die(new WP_Error('gatewayapi', $main_reason . '<p>' . strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gatewayapi'), [':reason' => $reason]) . '</p>'));
             } else {
-                wp_die(new WP_Error('GWAPI', $main_reason . '<p>' . __('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gwapi') . '</p>'));
+                wp_die(new WP_Error('gatewayapi', $main_reason . '<p>' . __('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gatewayapi') . '</p>'));
             }
         }
 
@@ -511,7 +511,7 @@ class GwapiSecurityTwoFactorHasMobile
             });
 
             // output!
-            login_header(__('Two-factor security check', 'gwapi'));
+            login_header(__('Two-factor security check', 'gatewayapi'));
             echo '<div class="step current">';
             include _gwapi_dir() . '/tpl/wp-login-confirm-phone.php';
             echo '</div>';
@@ -537,7 +537,7 @@ class GwapiSecurityTwoFactorHasMobile
         // save this attempt on the user
         $user_ID = $login_info['user'];
         add_filter('gwapi_throttle_error', function ($e) {
-            return __('You have tried to enter the confirmation token too many times. Please start over to try again.', 'gwapi');
+            return __('You have tried to enter the confirmation token too many times. Please start over to try again.', 'gatewayapi');
         });
         $maybe_throttle = GwapiSecurityTwoFactor::failOnThrottle($user_ID, 'confirmlogin_' . $user_ID, self::THROTTLE_MAX_TRIES, self::THROTTLE_EXPIRES);
         if (is_wp_error($maybe_throttle)) {
@@ -548,7 +548,7 @@ class GwapiSecurityTwoFactorHasMobile
         $user_code = preg_replace('/[^0-9]+/', '', $_POST['code']);
         $correct_code = $login_info['code'];
         if ($user_code != $correct_code) {
-            GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gwapi')));
+            GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gatewayapi')));
         }
 
         // SUCCESS!
@@ -579,7 +579,7 @@ class GwapiSecurityTwoFactorUserProfile
         // only enable this for when editing own profile
         if ($user->ID !== wp_get_current_user()->ID) return $methods;
 
-        $methods['gwapi_msisdn'] = __('Mobile number', 'gwapi');
+        $methods['gwapi_msisdn'] = __('Mobile number', 'gatewayapi');
 
         return $methods;
     }
@@ -595,10 +595,10 @@ class GwapiSecurityTwoFactorUserProfile
         $user = wp_get_current_user();
 
         $i18n = [
-            'twofac_section_h1' => __('Two-factor security', 'gwapi'),
-            'twofac_section_intro' => __('For security reasons, it is mandatory to associate your account with a cellphone number. This greatly enhances the integrity of your account and this site in general.', 'gwapi'),
-            'twofac_add_number' => __('Add mobile number', 'gwapi'),
-            'twofac_update_number' => __('Change mobile number', 'gwapi'),
+            'twofac_section_h1' => __('Two-factor security', 'gatewayapi'),
+            'twofac_section_intro' => __('For security reasons, it is mandatory to associate your account with a cellphone number. This greatly enhances the integrity of your account and this site in general.', 'gatewayapi'),
+            'twofac_add_number' => __('Add mobile number', 'gatewayapi'),
+            'twofac_update_number' => __('Change mobile number', 'gatewayapi'),
             'twofac_link' => admin_url('admin-post.php?action=gwapi_profile_change_phone&_nonce='.$nonce),
             'twofac_msisdn' => $user->gwapi_mno ? '+'.$user->gwapi_mcc.' '.$user->gwapi_mno : '',
         ];
@@ -611,7 +611,7 @@ class GwapiSecurityTwoFactorUserProfile
     {
         // verify nonce
         if (!wp_verify_nonce($_GET['_nonce'], 'gwapi_profile_change_phone')) {
-            wp_die(__('You have followed a link containing an expired/invalid nonce. Please go back and redirect the page - then it should work.', 'gwapi'));
+            wp_die(__('You have followed a link containing an expired/invalid nonce. Please go back and redirect the page - then it should work.', 'gatewayapi'));
         }
 
         $user = wp_get_current_user();

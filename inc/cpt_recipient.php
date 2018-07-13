@@ -7,16 +7,16 @@ add_action('init', function () {
     if (!get_option('gwapi_enable_ui')) return;
 
     $labels = array(
-        'name' => __('Recipients', 'gwapi'),
-        'singular_name' => __('Recipient', 'gwapi'),
-        'add_new' => __('Create recipient', 'gwapi'),
-        'add_new_item' => __('Create new recipient', 'gwapi'),
-        'edit_item' => __('Edit recipient', 'gwapi'),
-        'new_item' => __('New recipient', 'gwapi'),
-        'search_items' => __('Search recipients', 'gwapi'),
-        'not_found' => __('No recipients found', 'gwapi'),
-        'not_found_in_trash' => __('No recipients found in trash', 'gwapi'),
-        'menu_name' => __('Recipients', 'gwapi'),
+        'name' => __('Recipients', 'gatewayapi'),
+        'singular_name' => __('Recipient', 'gatewayapi'),
+        'add_new' => __('Create recipient', 'gatewayapi'),
+        'add_new_item' => __('Create new recipient', 'gatewayapi'),
+        'edit_item' => __('Edit recipient', 'gatewayapi'),
+        'new_item' => __('New recipient', 'gatewayapi'),
+        'search_items' => __('Search recipients', 'gatewayapi'),
+        'not_found' => __('No recipients found', 'gatewayapi'),
+        'not_found_in_trash' => __('No recipients found in trash', 'gatewayapi'),
+        'menu_name' => __('Recipients', 'gatewayapi'),
     );
 
     $args = array(
@@ -63,7 +63,7 @@ add_action('init', function () {
      */
     add_filter('enter_title_here', function($title, $post) {
         if (get_post_type($post) !== 'gwapi-recipient') return $title;
-        return __('Name of recipient', 'gwapi');
+        return __('Name of recipient', 'gatewayapi');
     }, 10, 2);
 
     /**

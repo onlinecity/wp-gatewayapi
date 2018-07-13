@@ -114,5 +114,5 @@ add_action('init', function () {
 
 add_action('plugins_loaded', function() {
     // load translations
-    load_plugin_textdomain('gwapi', false, 'gatewayapi/languages/');
+    load_plugin_textdomain('gatewayapi', false, 'gatewayapi/languages/');
 });

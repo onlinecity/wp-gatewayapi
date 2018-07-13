@@ -4,12 +4,12 @@
  * SMS Editor
  */
 add_action('admin_init', function () {
-    add_meta_box('sms-recipients', __('Recipients', 'gwapi'), '_gwapi_sms_recipients', 'gwapi-sms', 'normal', 'default');
-    add_meta_box('sms-recipient-groups', __('Recipient groups', 'gwapi'), '_gwapi_sms_recipient_groups', 'gwapi-sms', 'normal', 'default');
-    add_meta_box('sms-recipient-manual', __('Enter mobiles manually', 'gwapi'), '_gwapi_sms_recipient_manual', 'gwapi-sms', 'normal', 'default');
-    add_meta_box('sms-message', __('Message', 'gwapi'), '_gwapi_sms_message', 'gwapi-sms', 'normal', 'default');
+    add_meta_box('sms-recipients', __('Recipients', 'gatewayapi'), '_gwapi_sms_recipients', 'gwapi-sms', 'normal', 'default');
+    add_meta_box('sms-recipient-groups', __('Recipient groups', 'gatewayapi'), '_gwapi_sms_recipient_groups', 'gwapi-sms', 'normal', 'default');
+    add_meta_box('sms-recipient-manual', __('Enter mobiles manually', 'gatewayapi'), '_gwapi_sms_recipient_manual', 'gwapi-sms', 'normal', 'default');
+    add_meta_box('sms-message', __('Message', 'gatewayapi'), '_gwapi_sms_message', 'gwapi-sms', 'normal', 'default');
 
-    add_meta_box('sms-status', __('Status', 'gwapi'), '_gwapi_sms_status', 'gwapi-sms', 'side', 'default');
+    add_meta_box('sms-status', __('Status', 'gatewayapi'), '_gwapi_sms_status', 'gwapi-sms', 'side', 'default');
 });
 
 /**
@@ -19,22 +19,22 @@ function _gwapi_sms_recipients(WP_Post $post)
 {
     $current_types = get_post_meta($post->ID, 'recipients', true);
     ?>
-    <p><?php _e('How would you like to select recipients for this SMS?', 'gwapi'); ?></p>
+    <p><?php _e('How would you like to select recipients for this SMS?', 'gatewayapi'); ?></p>
 
     <div class="recipient-types"
          data-selected_types="<?= $current_types ? esc_attr(json_encode($current_types)) : ''; ?>">
         <label class="gwapi-checkbox">
-            <input type="checkbox" name="gwapi[recipients][]" value="groups" data-group="sms-recipient-groups">
-            <?php _e('Use recipient groups', 'gwapi'); ?>
+            <input type="checkbox" name="gatewayapi[recipients][]" value="groups" data-group="sms-recipient-groups">
+            <?php _e('Use recipient groups', 'gatewayapi'); ?>
         </label>
 
         <label class="gwapi-checkbox">
-            <input type="checkbox" name="gwapi[recipients][]" value="manual" data-group="sms-recipient-manual">
-            <?php _e('Enter mobile numbers manually', 'gwapi'); ?>
+            <input type="checkbox" name="gatewayapi[recipients][]" value="manual" data-group="sms-recipient-manual">
+            <?php _e('Enter mobile numbers manually', 'gatewayapi'); ?>
         </label>
     </div>
 
-    <p class="description"><?php _e('Only one message will be sent per mobile number per SMS. So don\'t be afraid to mix and match the above.', 'gwapi'); ?></p>
+    <p class="description"><?php _e('Only one message will be sent per mobile number per SMS. So don\'t be afraid to mix and match the above.', 'gatewayapi'); ?></p>
     <?php
 }
 
@@ -52,30 +52,30 @@ function _gwapi_sms_recipient_groups(WP_Post $post)
     <div class="gwapi-row recipient-groups"
          data-selected_groups="<?= $current_groups ? esc_attr(json_encode($current_groups)) : ''; ?>">
         <div class="all-groups col-50">
-            <h4><?php _e('All recipient groups', 'gwapi'); ?></h4>
+            <h4><?php _e('All recipient groups', 'gatewayapi'); ?></h4>
 
             <div class="inner">
                 <?php foreach ($groups as $group): ?>
                     <label class="gwapi-checkbox">
-                        <input type="checkbox" name="gwapi[recipient_groups][]" id=""
+                        <input type="checkbox" name="gatewayapi[recipient_groups][]" id=""
                                value="<?= $group->term_id; ?>">
                         <?= $group->name; ?>
                         <span class="number"
-                              title="<?php esc_attr_e('Recipients in group', 'gwapi') ?>: <?= $group->count; ?>"><?= $group->count; ?></span>
+                              title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?= $group->count; ?>"><?= $group->count; ?></span>
                     </label>
                 <?php endforeach; ?>
             </div>
         </div>
 
         <div class="selected-groups col-50">
-            <h4><?php _e('Selected recipient groups', 'gwapi'); ?></h4>
+            <h4><?php _e('Selected recipient groups', 'gatewayapi'); ?></h4>
             <div class="inner"></div>
         </div>
     </div>
 
     <div class="footer">
-        <p class="description"><?php _e('You will be sending to all recipients who are in any of the selected groups.', 'gwapi'); ?></p>
-        <p class="description"><?php _e('Only groups with at least one recipient are listed.', 'gwapi'); ?></p>
+        <p class="description"><?php _e('You will be sending to all recipients who are in any of the selected groups.', 'gatewayapi'); ?></p>
+        <p class="description"><?php _e('Only groups with at least one recipient are listed.', 'gatewayapi'); ?></p>
     </div>
 
     <?php
@@ -103,47 +103,47 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
 
     <div class="gwapi-row">
         <div class="col-40">
-            <h4><?php _e('Add recipient', 'gwapi'); ?></h4>
+            <h4><?php _e('Add recipient', 'gatewayapi'); ?></h4>
             <div class="gwapi-star-errors"></div>
 
             <div class="field-group">
-                <label for="recipient_cc" class="control-label"><?php _e('Country code', 'gwapi') ?></label>
-                <select name="gwapi[single_recipient][cc]" id="recipient_cc"></select>
+                <label for="recipient_cc" class="control-label"><?php _e('Country code', 'gatewayapi') ?></label>
+                <select name="gatewayapi[single_recipient][cc]" id="recipient_cc"></select>
             </div>
 
             <div class="field-group">
                 <label for="recipient_number" class="control-label">
-                    <?php _e('Phone number', 'gwapi') ?>
+                    <?php _e('Phone number', 'gatewayapi') ?>
                 </label>
 
-                <input type="number" name="gwapi[single_recipient][number]"
-                       placeholder="<?= esc_attr(__('Phone number - digits only', 'gwapi')); ?>"
+                <input type="number" name="gatewayapi[single_recipient][number]"
+                       placeholder="<?= esc_attr(__('Phone number - digits only', 'gatewayapi')); ?>"
                        id="recipient_number">
             </div>
 
             <div class="field-group">
-                <label for="recipient_name" class="control-label"><?php _e('Name (optional)', 'gwapi'); ?></label>
-                <input type="text" name="gwapi[single_recipient][name]" id="recipient_name">
+                <label for="recipient_name" class="control-label"><?php _e('Name (optional)', 'gatewayapi'); ?></label>
+                <input type="text" name="gatewayapi[single_recipient][name]" id="recipient_name">
             </div>
 
-            <button type="button" class="button add_single_recipient"><?php _e('Add recipient', 'gwapi'); ?></button>
+            <button type="button" class="button add_single_recipient"><?php _e('Add recipient', 'gatewayapi'); ?></button>
 
         </div>
         <div class="col-60">
-            <h4><?php _e('Manually added recipients', 'gwapi'); ?></h4>
+            <h4><?php _e('Manually added recipients', 'gatewayapi'); ?></h4>
             <div class="inner">
                 <table class="widefat">
                     <thead>
                     <tr>
                         <th width="10%"><a class="delete-btn"></a></th>
-                        <th width="30%"><?php _e('Phone number', 'gwapi'); ?></th>
-                        <th width="60%"><?php _e('Name', 'gwapi'); ?></th>
+                        <th width="30%"><?php _e('Phone number', 'gatewayapi'); ?></th>
+                        <th width="60%"><?php _e('Name', 'gatewayapi'); ?></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr class="empty_row" <?= $recipients ? 'style="display: none;"' : ''; ?>>
                         <td colspan="3">
-                            <p class="description" style="text-align: center; margin-top: 10px;"><?php _e('No recipients manually added', 'gwapi'); ?></p>
+                            <p class="description" style="text-align: center; margin-top: 10px;"><?php _e('No recipients manually added', 'gatewayapi'); ?></p>
                         </td>
                     </tr>
                     <?php foreach ($recipients as $ID => $r): ?>
@@ -182,51 +182,51 @@ function _gwapi_sms_message(WP_Post $post)
         <tbody>
         <tr>
             <th width="25%">
-                <?php _e('Sender', 'gwapi'); ?>
+                <?php _e('Sender', 'gatewayapi'); ?>
             </th>
             <td>
-                <input type="text" name="gwapi[sender]" size="15"
+                <input type="text" name="gatewayapi[sender]" size="15"
                        value="<?= esc_attr(get_post_meta($ID, 'sender', true)); ?>">
-                <p class="description"><?php _e('The sender can be either 11 characters or 15 digits in total.', 'gwapi'); ?></p>
+                <p class="description"><?php _e('The sender can be either 11 characters or 15 digits in total.', 'gatewayapi'); ?></p>
             </td>
         </tr>
         <tr>
             <th width="25%" class="vtop-5">
-                <?php _e('Type of SMS', 'gwapi'); ?>
+                <?php _e('Type of SMS', 'gatewayapi'); ?>
             </th>
             <td>
                 <?php $destaddr = get_post_meta($ID, 'destaddr', true); ?>
                 <label>
-                    <input type="radio" name="gwapi[destaddr]"
+                    <input type="radio" name="gatewayapi[destaddr]"
                            value="MOBILE" <?= ($destaddr == 'MOBILE' || !$destaddr) ? 'checked' : ''; ?>>
-                    <?php _e('Regular SMS', 'gwapi'); ?>
+                    <?php _e('Regular SMS', 'gatewayapi'); ?>
                 </label>
                 <br/>
                 <label>
-                    <input type="radio" name="gwapi[destaddr]"
+                    <input type="radio" name="gatewayapi[destaddr]"
                            value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>>
                     <abbr
-                        title="<?php esc_attr_e('Message is displayed immediately and usually not saved in the normal message inbox. Also knows as a Flash SMS.', 'gwapi'); ?>"><?php _e('Display SMS', 'gwapi'); ?></abbr>
+                        title="<?php esc_attr_e('Message is displayed immediately and usually not saved in the normal message inbox. Also knows as a Flash SMS.', 'gatewayapi'); ?>"><?php _e('Display SMS', 'gatewayapi'); ?></abbr>
                 </label>
             </td>
         </tr>
         <tr>
             <th>
-                <?php _e('Message', 'gwapi') ?>
+                <?php _e('Message', 'gatewayapi') ?>
             </th>
             <td>
                 <?php
                 $counterI18N = [
-                    'character' => __('character','gwapi'),
-                    'characters' => __('characters','gwapi'),
-                    'sms' => __('SMS','gwapi'),
-                    'smses' => __('SMS\'es','gwapi')
+                    'character' => __('character','gatewayapi'),
+                    'characters' => __('characters','gatewayapi'),
+                    'sms' => __('SMS','gatewayapi'),
+                    'smses' => __('SMS\'es','gatewayapi')
                 ];
                 ?>
-                <textarea <?= ($published) ? 'readonly' : ''; ?> name="gwapi[message]" rows="10" style="width: 100%"
-                                                                 placeholder="<?= esc_attr(__('Enter your SMS message here.', 'gwapi')); ?>" data-counter-i18n="<?= esc_attr(json_encode($counterI18N)); ?>"><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>
+                <textarea <?= ($published) ? 'readonly' : ''; ?> name="gatewayapi[message]" rows="10" style="width: 100%"
+                                                                 placeholder="<?= esc_attr(__('Enter your SMS message here.', 'gatewayapi')); ?>" data-counter-i18n="<?= esc_attr(json_encode($counterI18N)); ?>"><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>
                 <div>
-                    <p><?php _e('Writing one of the following tags (including both %-signs) will result in each recipient receiving a personalized text:', 'gwapi'); ?></p>
+                    <p><?php _e('Writing one of the following tags (including both %-signs) will result in each recipient receiving a personalized text:', 'gatewayapi'); ?></p>
                     <ul>
                         <?php foreach(gwapi_all_tags() as $tag=>$description): ?>
                             <li>
@@ -247,22 +247,22 @@ function _gwapi_sms_status(WP_Post $post) {
     $ids = get_post_meta($post->ID, 'api_ids', true);
     $error = get_post_meta($post->ID, 'api_error', true);
     ?>
-    <p><?php _e('The current status of the SMS is:', 'gwapi'); ?></p>
+    <p><?php _e('The current status of the SMS is:', 'gatewayapi'); ?></p>
     <p>
     <?php
     switch($status) {
         case 'about_to_send':
-            echo __('About to send', 'gwapi');
+            echo __('About to send', 'gatewayapi');
             break;
 
         case 'sending':
             $is_sending = $post->batch_is_running;
 
-            echo '<strong style="color: blue" data-is-sending>'.__('Sending...', 'gwapi').'</strong>';
+            echo '<strong style="color: blue" data-is-sending>'.__('Sending...', 'gatewayapi').'</strong>';
             break;
 
         case 'bail':
-            echo '<span style="color: red"><strong>'.__('Failed before sending:', 'gwapi').'</strong><br />'.$error.'</span>';
+            echo '<span style="color: red"><strong>'.__('Failed before sending:', 'gatewayapi').'</strong><br />'.$error.'</span>';
             break;
 
         case 'tech_error':
@@ -270,15 +270,15 @@ function _gwapi_sms_status(WP_Post $post) {
             if ($error_json && isset($error_json->message)) {
                 $error = $error_json->message;
             }
-            echo '<span style="color: red"><strong>'.__('Technical error:', 'gwapi').'</strong><br />'.$error.'</span>';
+            echo '<span style="color: red"><strong>'.__('Technical error:', 'gatewayapi').'</strong><br />'.$error.'</span>';
             break;
 
         case 'is_sent':
-            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gwapi').'</span><br /><div class="text-ellipsis">ID: '.implode(', ',$ids).'</div>';
+            echo '<span style="color: green; font-weight: bold">'.__('SMS was successfully sent', 'gatewayapi').'</span><br /><div class="text-ellipsis">ID: '.implode(', ',$ids).'</div>';
             break;
 
         default:
-            _e('Not sent yet', 'gwapi');
+            _e('Not sent yet', 'gatewayapi');
             break;
     }
     ?>
@@ -308,7 +308,7 @@ add_action('wp_ajax_gatewayapi_validate_sms', function () {
 
     $data = [];
     parse_str($_POST['form_data'], $data);
-    $errors = _gwapi_validate_sms($data['gwapi']);
+    $errors = _gwapi_validate_sms($data['gatewayapi']);
 
     if ($errors) {
         die(json_encode(['success' => false, 'failed' => $errors]));
@@ -326,8 +326,8 @@ function _gwapi_sms_edit_save($ID)
     if (isset($call_more_than_once) && $call_more_than_once) return;
     $call_more_than_once = true;
 
-    if (!isset($_POST['gwapi']) || !$_POST['gwapi']) return;
-    $data = $_POST['gwapi'];
+    if (!isset($_POST['gatewayapi']) || !$_POST['gatewayapi']) return;
+    $data = $_POST['gatewayapi'];
 
     // sms meta data
     if (isset($data['sender']))   update_post_meta($ID, 'sender', $data['sender']);
@@ -361,10 +361,10 @@ add_action('current_screen', function ($current_screen) {
         add_filter('gettext', function ($translated_text, $text, $domain) {
             if ($domain != 'default') return $translated_text;
 
-            if ($text == 'Publish') return __('Send', 'gwapi');
-            if ($text == 'Published on: <b>%1$s</b>') return __('Sent on: <b>%1$s</b>', 'gwapi');
-            if ($text == 'Publish <b>immediately</b>') return __('Send <b>immediately</b>', 'gwapi');
-            if ($text == 'Udgiv: <b>%1$s</b>') return __('Send on<b>%1$s</b>', 'gwapi');
+            if ($text == 'Publish') return __('Send', 'gatewayapi');
+            if ($text == 'Published on: <b>%1$s</b>') return __('Sent on: <b>%1$s</b>', 'gatewayapi');
+            if ($text == 'Publish <b>immediately</b>') return __('Send <b>immediately</b>', 'gatewayapi');
+            if ($text == 'Udgiv: <b>%1$s</b>') return __('Send on<b>%1$s</b>', 'gatewayapi');
 
             return $translated_text;
         }, 20, 3);
@@ -383,9 +383,9 @@ add_action('wp_ajax_gatewayapi_sms_manual_add_recipient', function () {
     if (get_post_type($post_ID) != 'gwapi-sms') wp_die("WRONG_TYPE", "Wrong post type.");
     if (get_post_status($post_ID) == 'publish') die(json_encode(['success' => false, 'errors' => ['*' => 'This SMS has already been sent and thus it cannot be modified.']]));
 
-    $cc = $_POST['gwapi']['single_recipient']['cc'];
-    $number = $_POST['gwapi']['single_recipient']['number'];
-    $name = $_POST['gwapi']['single_recipient']['name'];
+    $cc = $_POST['gatewayapi']['single_recipient']['cc'];
+    $number = $_POST['gatewayapi']['single_recipient']['number'];
+    $name = $_POST['gatewayapi']['single_recipient']['name'];
 
     $data = ['cc' => $cc, 'number' => $number];
 

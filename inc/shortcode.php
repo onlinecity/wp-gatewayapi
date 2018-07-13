@@ -41,18 +41,18 @@ function _gwapi_shortcode_render_recipient_login_confirm($atts, $recipient)
     $msisdn = preg_replace('/\D+/', '', $cc.$number);
     ?>
     <input type="hidden" name="gwapi_action" value="update_form" />
-    <input type="hidden" name="gwapi[cc]" value="<?= $cc; ?>" />
-    <input type="hidden" name="gwapi[number]" value="<?= $number; ?>" />
+    <input type="hidden" name="gatewayapi[cc]" value="<?= $cc; ?>" />
+    <input type="hidden" name="gatewayapi[number]" value="<?= $number; ?>" />
     <?php if (isset($atts['recaptcha']) && $atts['recaptcha']): ?>
-        <input type="hidden" name="gwapi[security_check]" value="<?= get_transient('valid_recaptcha_'.$msisdn); ?>" />
+        <input type="hidden" name="gatewayapi[security_check]" value="<?= get_transient('valid_recaptcha_'.$msisdn); ?>" />
     <?php endif; ?>
 
     <?php
     gwapi_render_recipient_field([
         'type' => 'digits',
-        'name' => __('Confirmation code', 'gwapi'),
+        'name' => __('Confirmation code', 'gatewayapi'),
         'field_id' => 'sms_verify',
-        'description' => __('Please enter the code that you have just received by SMS.', 'gwapi'),
+        'description' => __('Please enter the code that you have just received by SMS.', 'gatewayapi'),
         'required' => 1
     ], $recipient);
 }
@@ -90,7 +90,7 @@ function _gwapi_shortcode_verify_captcha()
     $res = json_decode($res['body']);
     if (!$res->success) return new WP_Error('recaptcha_wrong', 'Unfortunately the reCAPTCHA failed. Please try again.');
 
-    $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+    $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
     if (!$msisdn) return new WP_Error('recaptcha_bad_data', 'Mobile number missing from request.');
 
     set_transient('valid_recaptcha_'.$msisdn, wp_generate_password(32, false), 60*60*4);
@@ -112,48 +112,48 @@ function _gwapi_shortcode_handle_signup($atts)
         case 'signup':
             echo '<input type="hidden" name="gwapi_action" value="signup_confirm_sms" />';
             _gwapi_shortcode_render_recipient_form($atts);
-            $action_text = __('Sign up', 'gwapi');
-            $action_note = __('Note: A code will be sent by SMS to the mobile number specified, to confirm the ownership.', 'gwapi');
+            $action_text = __('Sign up', 'gatewayapi');
+            $action_note = __('Note: A code will be sent by SMS to the mobile number specified, to confirm the ownership.', 'gatewayapi');
             break;
 
         // STEP 2: CONFIRM SMS
         case 'signup_confirm_sms':
             // verify the information posted
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], ltrim($_POST['gwapi']['number'], '0'));
-            $msisdn = gwapi_get_msisdn($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
-            if (!is_wp_error($recipient)) return new WP_Error('already_exists',__('You are already subscribed with the phone number specified.','gwapi'));
+            $recipient = _gwapi_get_recipient($_POST['gatewayapi']['cc'], ltrim($_POST['gatewayapi']['number'], '0'));
+            $msisdn = gwapi_get_msisdn($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
+            if (!is_wp_error($recipient)) return new WP_Error('already_exists',__('You are already subscribed with the phone number specified.','gatewayapi'));
 
             // save the information supplied by the user
-            set_transient('gwapi_subscriber_'.$msisdn, $_POST['gwapi'], 60*60*4);
+            set_transient('gwapi_subscriber_'.$msisdn, $_POST['gatewayapi'], 60*60*4);
 
             // send the verification sms
             $code = rand(100000,999999);
             set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
-            $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gwapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
-            if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gwapi'));
+            $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
+            if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gatewayapi'));
 
             // show the form
-            echo '<input type="hidden" name="gwapi[cc]" value="'.esc_attr($_POST['gwapi']['cc']).'">';
-            echo '<input type="hidden" name="gwapi[number]" value="'.esc_attr($_POST['gwapi']['number']).'">';
+            echo '<input type="hidden" name="gatewayapi[cc]" value="'.esc_attr($_POST['gatewayapi']['cc']).'">';
+            echo '<input type="hidden" name="gatewayapi[number]" value="'.esc_attr($_POST['gatewayapi']['number']).'">';
             echo '<input type="hidden" name="gwapi_action" value="signup_confirm_save">';
             gwapi_render_recipient_field([
                 'type' => 'digits',
-                'name' => __('Confirmation code', 'gwapi'),
+                'name' => __('Confirmation code', 'gatewayapi'),
                 'field_id' => 'sms_verify',
-                'description' => __('Please enter the code that you have just received by SMS.', 'gwapi'),
+                'description' => __('Please enter the code that you have just received by SMS.', 'gatewayapi'),
                 'required' => 1
             ], new WP_Post(new stdClass()));
-            $action_text = __('Confirm','gwapi');
+            $action_text = __('Confirm','gatewayapi');
 
             break;
 
         // STEP 3: SAVE
         case 'signup_confirm_save':
-            $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
-            $code = $_POST['gwapi']['sms_verify'];
+            $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
+            $code = $_POST['gatewayapi']['sms_verify'];
             $confirm = get_transient('gwapi_confirmation_code_'.$msisdn);
-            if (!$confirm || $confirm != $code) return new WP_Error('invalid_sms_code', __('It seems the SMS code you are using to authorize this update, has expired. Please start over and try again.', 'gwapi'));
+            if (!$confirm || $confirm != $code) return new WP_Error('invalid_sms_code', __('It seems the SMS code you are using to authorize this update, has expired. Please start over and try again.', 'gatewayapi'));
 
             // save the recipient
             $ID = wp_insert_post([
@@ -163,7 +163,7 @@ function _gwapi_shortcode_handle_signup($atts)
             gwapi_save_recipient($ID, get_transient('gwapi_subscriber_'.$msisdn), true);
             _gwapi_save_recipient_groups($ID, get_transient('gwapi_subscriber_'.$msisdn), $atts);
 
-            echo '<div class="alert alert-success">'.__('You have been succesfully subscribed. Thank you signing up.', 'gwapi').'</div>';
+            echo '<div class="alert alert-success">'.__('You have been succesfully subscribed. Thank you signing up.', 'gatewayapi').'</div>';
 
             // invalidate the sms code transient and subscriber post data
             delete_transient('gwapi_confirmation_code_'.$msisdn);
@@ -188,57 +188,57 @@ function _gwapi_shortcode_handle_update($atts)
         case 'update':
             echo '<input type="hidden" name="gwapi_action" value="update_login">';
             _gwapi_shortcode_render_recipient_login($atts);
-            $action_text = __('Log in','gwapi');
-            $action_note = __('Note: A code will be sent by SMS to the mobile number specified, which is used to verify your ownership.', 'gwapi');
+            $action_text = __('Log in','gatewayapi');
+            $action_note = __('Note: A code will be sent by SMS to the mobile number specified, which is used to verify your ownership.', 'gatewayapi');
             break;
 
         // STEP 2: CONFIRM SMS
         case 'update_login':
             // verify the information posted
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
+            $recipient = _gwapi_get_recipient($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
             $valid = !is_wp_error($recipient);
 
             // valid? send verification SMS and show the "verify SMS" form
             if ($valid) {
                 // send the verification sms
                 $code = rand(100000,999999);
-                $msisdn = gwapi_get_msisdn($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
+                $msisdn = gwapi_get_msisdn($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
                 set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
-                $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gwapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
-                if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gwapi'));
+                $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
+                if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gatewayapi'));
 
                 // show the form
                 echo '<input type="hidden" name="gwapi_action" value="update_form">';
                 _gwapi_shortcode_render_recipient_login_confirm($atts, $recipient);
-                $action_text = __('Continue','gwapi');
+                $action_text = __('Continue','gatewayapi');
             } else {
-                return new WP_Error('recipient_not_found', __('We could not find you in our database. Maybe you made a typo or maybe you are not subscribed with this number?', 'gwapi'));
+                return new WP_Error('recipient_not_found', __('We could not find you in our database. Maybe you made a typo or maybe you are not subscribed with this number?', 'gatewayapi'));
             }
             break;
 
         // STEP 3: THE UPDATE FORM
         case 'update_form':
 
-            $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+            $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
 
             // re-verify the CAPTCHA token
             if (isset($atts['recaptcha']) && $atts['recaptcha']) {
-                if (!get_transient('valid_recaptcha_'.$msisdn) || get_transient('valid_recaptcha_'.$msisdn) != $_POST['gwapi']['security_check']) {
-                    return new WP_Error('recaptcha_reconfirm_missing', __('Your request is missing or has invalid technical security identity information. This may happen if you have waited for more than 4 hours or has been doing other subscription related actions in other tabs/windows.', 'gwapi'));
+                if (!get_transient('valid_recaptcha_'.$msisdn) || get_transient('valid_recaptcha_'.$msisdn) != $_POST['gatewayapi']['security_check']) {
+                    return new WP_Error('recaptcha_reconfirm_missing', __('Your request is missing or has invalid technical security identity information. This may happen if you have waited for more than 4 hours or has been doing other subscription related actions in other tabs/windows.', 'gatewayapi'));
                 } else {
                     delete_transient('valid_recaptcha_'.$msisdn); // cleanup
                 }
             }
 
             // verify the SMS code
-            if (!get_transient('gwapi_confirmation_code_'.$msisdn) || get_transient('gwapi_confirmation_code_'.$msisdn) != preg_replace('/\D+/','', $_POST['gwapi']['sms_verify'])) {
-                return new WP_Error('sms_code_wrong', __('The code you entered is incorrect. Please try again.', 'gwapi'));
+            if (!get_transient('gwapi_confirmation_code_'.$msisdn) || get_transient('gwapi_confirmation_code_'.$msisdn) != preg_replace('/\D+/','', $_POST['gatewayapi']['sms_verify'])) {
+                return new WP_Error('sms_code_wrong', __('The code you entered is incorrect. Please try again.', 'gatewayapi'));
             }
 
             // show the update form
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
-            if (is_wp_error($recipient)) return new WP_Error('bad_recipient', 'The recipient could not be found.', 'gwapi');
+            $recipient = _gwapi_get_recipient($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
+            if (is_wp_error($recipient)) return new WP_Error('bad_recipient', 'The recipient could not be found.', 'gatewayapi');
 
             // make sure CC and NUMBER is read-only
             add_filter('gwapi_recipient_row_attributes', function($field) {
@@ -253,28 +253,28 @@ function _gwapi_shortcode_handle_update($atts)
             // remember the SMS code
             echo '<input type="hidden" name="gwapi_sms_code" value="'.esc_attr(get_transient('gwapi_confirmation_code_'.$msisdn)).'">';
             echo '<input type="hidden" name="gwapi_action" value="update_save">';
-            echo '<input type="hidden" name="gwapi[cc]" value="'.esc_attr($_POST['gwapi']['cc']).'">';
-            echo '<input type="hidden" name="gwapi[number]" value="'.esc_attr($_POST['gwapi']['number']).'">';
+            echo '<input type="hidden" name="gatewayapi[cc]" value="'.esc_attr($_POST['gatewayapi']['cc']).'">';
+            echo '<input type="hidden" name="gatewayapi[number]" value="'.esc_attr($_POST['gatewayapi']['number']).'">';
 
-            $action_text = __('Save changes', 'gwapi');
+            $action_text = __('Save changes', 'gatewayapi');
             break;
 
         // STEP 4: SAVE
         case 'update_save':
-            $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+            $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
             $code = $_POST['gwapi_sms_code'];
             $confirm = get_transient('gwapi_confirmation_code_'.$msisdn);
-            if (!$confirm || $confirm != $code) return new WP_Error('invalid_sms_code', __('It seems the SMS code you are using to authorize this update, has expired. Please start over and try again.', 'gwapi'));
+            if (!$confirm || $confirm != $code) return new WP_Error('invalid_sms_code', __('It seems the SMS code you are using to authorize this update, has expired. Please start over and try again.', 'gatewayapi'));
 
             // fetch recipient
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
-            if (is_wp_error($recipient)) return new WP_Error('bad_recipient', 'The recipient could not be found.', 'gwapi');
+            $recipient = _gwapi_get_recipient($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
+            if (is_wp_error($recipient)) return new WP_Error('bad_recipient', 'The recipient could not be found.', 'gatewayapi');
 
             // update the information
             do_action('save_post_gwapi-recipient', $recipient->ID);
-            _gwapi_save_recipient_groups($recipient->ID, $_POST['gwapi'], $atts);
+            _gwapi_save_recipient_groups($recipient->ID, $_POST['gatewayapi'], $atts);
 
-            echo '<div class="alert alert-success">'.__('Your changes has been saved. Thank you for keeping your subscription up-to-date.', 'gwapi').'</div>';
+            echo '<div class="alert alert-success">'.__('Your changes has been saved. Thank you for keeping your subscription up-to-date.', 'gatewayapi').'</div>';
 
             // invalidate the sms code transient
             delete_transient('gwapi_confirmation_code_'.$msisdn);
@@ -295,58 +295,58 @@ function _gwapi_shortcode_handle_unsubscribe($atts) {
         case 'unsubscribe':
             echo '<input type="hidden" name="gwapi_action" value="unsubscribe_login">';
             _gwapi_shortcode_render_recipient_login($atts);
-            $action_text = __('Unsubscribe','gwapi');
-            $action_note = __('Note: A code will be sent by SMS to the mobile number specified, which is used to verify your ownership.', 'gwapi');
+            $action_text = __('Unsubscribe','gatewayapi');
+            $action_note = __('Note: A code will be sent by SMS to the mobile number specified, which is used to verify your ownership.', 'gatewayapi');
             break;
 
         // STEP 2: CONFIRM SMS
         case 'unsubscribe_login':
             // verify the information posted
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
+            $recipient = _gwapi_get_recipient($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
             $valid = !is_wp_error($recipient);
 
             // valid? send verification SMS and show the "verify SMS" form
             if ($valid) {
                 // send the verification sms
                 $code = rand(100000,999999);
-                $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+                $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
                 set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
-                $status = gwapi_send_sms( strtr(__('Unsubscribe confirmation code: %code%', 'gwapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
-                if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gwapi'));
+                $status = gwapi_send_sms( strtr(__('Unsubscribe confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
+                if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gatewayapi'));
 
                 // show the form
                 echo '<input type="hidden" name="gwapi_action" value="unsubscribe_confirm">';
-                echo '<input type="hidden" name="gwapi[cc]" value="'.esc_attr($_POST['gwapi']['cc']).'">';
-                echo '<input type="hidden" name="gwapi[number]" value="'.esc_attr($_POST['gwapi']['number']).'">';
+                echo '<input type="hidden" name="gatewayapi[cc]" value="'.esc_attr($_POST['gatewayapi']['cc']).'">';
+                echo '<input type="hidden" name="gatewayapi[number]" value="'.esc_attr($_POST['gatewayapi']['number']).'">';
 
                 gwapi_render_recipient_field([
                     'type' => 'digits',
-                    'name' => __('Confirmation code', 'gwapi'),
+                    'name' => __('Confirmation code', 'gatewayapi'),
                     'field_id' => 'sms_verify',
-                    'description' => __('Please enter the code that you have just received by SMS.', 'gwapi'),
+                    'description' => __('Please enter the code that you have just received by SMS.', 'gatewayapi'),
                     'required' => 1
                 ], $recipient);
 
-                $action_text = __('Confirm','gwapi');
+                $action_text = __('Confirm','gatewayapi');
             } else {
-                return new WP_Error('recipient_not_found', __('We could not find you in our database. Maybe you made a typo or maybe you are not subscribed with this number?', 'gwapi'));
+                return new WP_Error('recipient_not_found', __('We could not find you in our database. Maybe you made a typo or maybe you are not subscribed with this number?', 'gatewayapi'));
             }
             break;
 
         // STEP 3: UNSUBSCRIBE
         case 'unsubscribe_confirm':
 
-            $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+            $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
 
             // verify the SMS code
-            if (!get_transient('gwapi_confirmation_code_'.$msisdn) || get_transient('gwapi_confirmation_code_'.$msisdn) != preg_replace('/\D+/','', $_POST['gwapi']['sms_verify'])) {
-                return new WP_Error('sms_code_wrong', __('The code you entered is incorrect. Please try again.', 'gwapi'));
+            if (!get_transient('gwapi_confirmation_code_'.$msisdn) || get_transient('gwapi_confirmation_code_'.$msisdn) != preg_replace('/\D+/','', $_POST['gatewayapi']['sms_verify'])) {
+                return new WP_Error('sms_code_wrong', __('The code you entered is incorrect. Please try again.', 'gatewayapi'));
             }
 
             // find recipient
-            $recipient = _gwapi_get_recipient($_POST['gwapi']['cc'], $_POST['gwapi']['number']);
-            if (is_wp_error($recipient)) return new WP_Error('bad_recipient', 'The recipient could not be found.', 'gwapi');
+            $recipient = _gwapi_get_recipient($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
+            if (is_wp_error($recipient)) return new WP_Error('bad_recipient', 'The recipient could not be found.', 'gatewayapi');
 
             // unsubscribe now
             wp_trash_post($recipient->ID);
@@ -354,7 +354,7 @@ function _gwapi_shortcode_handle_unsubscribe($atts) {
             // cleanup
             delete_transient('gwapi_confirmation_code_'.$msisdn);
 
-            echo '<div class="alert alert-success">'.__('You have been unsubscribed.', 'gwapi').'</div>';
+            echo '<div class="alert alert-success">'.__('You have been unsubscribed.', 'gatewayapi').'</div>';
 
             break;
     }
@@ -378,21 +378,21 @@ function _gwapi_shortcode_handle_send_sms($atts)
             if (isset($atts['edit-sender']) && $atts['edit-sender']) {
                 gwapi_render_recipient_field([
                     'type' => 'text',
-                    'name' => __('Sender', 'gwapi'),
+                    'name' => __('Sender', 'gatewayapi'),
                     'field_id' => 'SENDER',
-                    'description' => __('Sender of the SMS. Either up to 11 characters or up to 15 digits only.','gwapi')
+                    'description' => __('Sender of the SMS. Either up to 11 characters or up to 15 digits only.','gatewayapi')
                 ], $dummy);
             }
 
             // message
             gwapi_render_recipient_field([
                 'type' => 'textarea',
-                'name' => __('Message','gwapi'),
+                'name' => __('Message','gatewayapi'),
                 'field_id' => 'MESSAGE',
                 'required' => 1,
-                'description' => __('Please enter your message here.','gwapi')
+                'description' => __('Please enter your message here.','gatewayapi')
             ], $dummy);
-            $action_text = __('Send SMS', 'gwapi');
+            $action_text = __('Send SMS', 'gatewayapi');
 
             // groups
             if (isset($atts['edit-groups']) && $atts['edit-groups']) {
@@ -408,11 +408,11 @@ function _gwapi_shortcode_handle_send_sms($atts)
             $ID = wp_insert_post([
                 "post_type" => "gwapi-sms"
             ]);
-            update_post_meta($ID, 'message', $_POST['gwapi']['message']);
+            update_post_meta($ID, 'message', $_POST['gatewayapi']['message']);
 
             // sender
-            if (isset($atts['edit-sender']) && $atts['edit-sender'] && $_POST['gwapi']['sender']) {
-                $sender = $_POST['gwapi']['sender'];
+            if (isset($atts['edit-sender']) && $atts['edit-sender'] && $_POST['gatewayapi']['sender']) {
+                $sender = $_POST['gatewayapi']['sender'];
                 if (preg_replace('/\D+/', '', $sender) == $sender) $sender = substr($sender, 0, 15);
                 else $sender = substr($sender, 0, 11);
 
@@ -420,10 +420,10 @@ function _gwapi_shortcode_handle_send_sms($atts)
             }
 
             // groups - customizable
-            if (isset($atts['edit-groups']) && $atts['edit-groups'] && isset($_POST['gwapi']['_gwapi_recipient_groups']) && $_POST['gwapi']['_gwapi_recipient_groups']) {
+            if (isset($atts['edit-groups']) && $atts['edit-groups'] && isset($_POST['gatewayapi']['_gwapi_recipient_groups']) && $_POST['gatewayapi']['_gwapi_recipient_groups']) {
                 $groups = [];
                 $validGroups = isset($atts['groups']) ? explode(',', $atts['groups']) : false;
-                foreach($_POST['gwapi']['_gwapi_recipient_groups'] as $gID) {
+                foreach($_POST['gatewayapi']['_gwapi_recipient_groups'] as $gID) {
                     if ($validGroups === false || in_array($gID, $validGroups)) $groups[] = (int)$gID;
                 }
                 if ($groups) {
@@ -449,7 +449,7 @@ function _gwapi_shortcode_handle_send_sms($atts)
 
             switch($status_code) {
                 case 'is_sent':
-                    echo '<div class="alert alert-success">'.__('Your SMS has been queued for delivery and should arrive shortly.', 'gwapi').'</div>';
+                    echo '<div class="alert alert-success">'.__('Your SMS has been queued for delivery and should arrive shortly.', 'gatewayapi').'</div>';
                     break;
 
                 default:
@@ -463,20 +463,20 @@ function _gwapi_shortcode_handle_send_sms($atts)
     return [ $action_text, $action_note ];
 }
 
-add_shortcode('gwapi', function($atts) {
+add_shortcode('gatewayapi', function($atts) {
 
     // validate: action
     $valid_actions = ['signup', 'update', 'unsubscribe', 'send_sms'];
     $action = isset($atts['action']) && $atts['action'] ? $atts['action'] : null;
     if (!in_array($action, $valid_actions)) {
-        echo '<div class="alert alert-warning">'.strtr(__('Invalid action specified for GatewayAPI shortcode. Must be one of: %actions%.','gwapi'), ['%actions%' => implode(", ", $valid_actions)]).'</div>';
+        echo '<div class="alert alert-warning">'.strtr(__('Invalid action specified for GatewayAPI shortcode. Must be one of: %actions%.','gatewayapi'), ['%actions%' => implode(", ", $valid_actions)]).'</div>';
         return;
     }
 
     // validate: recaptcha
     if (isset($atts['recaptcha']) && $atts['recaptcha']) {
         if (!get_option('gwapi_recaptcha_site_key') || !get_option('gwapi_recaptcha_secret_key')) {
-            echo '<div class="alert alert-warning">'.__('You must enter Site key and Secret key from Google reCAPTCHA on the GatewayAPI Settings-page, or disable CAPTCHA on your GatewayAPI Form shortcode.', 'gwapi').'</div>';
+            echo '<div class="alert alert-warning">'.__('You must enter Site key and Secret key from Google reCAPTCHA on the GatewayAPI Settings-page, or disable CAPTCHA on your GatewayAPI Form shortcode.', 'gatewayapi').'</div>';
             return;
         }
     }
@@ -495,8 +495,8 @@ add_shortcode('gwapi', function($atts) {
 
     // mobile number in request? check if we have a currently non-expired captcha request
     $has_valid_recaptcha = null;
-    if (isset($_POST['gwapi']['cc']) && isset($_POST['gwapi']['number'])) {
-        $msisdn = preg_replace('/\D+/', '', $_POST['gwapi']['cc'].$_POST['gwapi']['number']);
+    if (isset($_POST['gatewayapi']['cc']) && isset($_POST['gatewayapi']['number'])) {
+        $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
         $has_valid_recaptcha = !!get_transient('valid_recaptcha_'.$msisdn);
     }
 

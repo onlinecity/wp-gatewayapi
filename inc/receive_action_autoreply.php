@@ -6,8 +6,8 @@
  */
 function _gwapi_receive_action_autoreply_edit_save($ID)
 {
-    if (!isset($_POST['gwapi']) || !$_POST['gwapi']) return;
-    $data = $_POST['gwapi'];
+    if (!isset($_POST['gatewayapi']) || !$_POST['gatewayapi']) return;
+    $data = $_POST['gatewayapi'];
 
     // update sms autoreply meta data
     if (isset($data['sender'])) update_post_meta($ID, 'sender', $data['sender']);

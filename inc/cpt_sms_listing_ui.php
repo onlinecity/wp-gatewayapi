@@ -10,9 +10,9 @@ add_filter('manage_gwapi-sms_posts_columns', function ($columns) {
     unset($columns['date']);
 
     return array_merge($columns, [
-        'message' => __('Message', 'gwapi'),
-        'sender' => __('Sender', 'gwapi'),
-        'recipients' => __('Recipients', 'gwapi'),
+        'message' => __('Message', 'gatewayapi'),
+        'sender' => __('Sender', 'gatewayapi'),
+        'recipients' => __('Recipients', 'gatewayapi'),
         'date' => $date_text
     ]);
 });
@@ -38,7 +38,7 @@ add_action('manage_posts_custom_column', function($column, $ID) {
             if ($count) {
                 echo $count;
             } else {
-                echo '<p class="description">'.__('Calculated at send', 'gwapi').'</p>';
+                echo '<p class="description">'.__('Calculated at send', 'gatewayapi').'</p>';
             }
 
             break;

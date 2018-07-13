@@ -122,7 +122,7 @@ jQuery(function($) {
                     // for the rest of the fields, update with the current value
                     $.each(res.recipient, function(key, val) {
                         var el = '';
-                        if (key.substr(0,5) == 'gwapi') {
+                        if (key.substr(0,5) == 'gatewayapi') {
                             el = $('.wpcf7-form [data-gwapi="'+key.substr(6)+'"]');
                         } else {
                             el = $('.wpcf7-form [name="'+key+'"], .wpcf7-form [name="'+key+'[]"]');

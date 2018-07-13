@@ -7,16 +7,16 @@ const _GWAPIUI_MAX_RECIPIENTS_PER_BATCH = 500;
 add_action('init', function () {
 
     $labels = array(
-        'name' => __('SMS\'es', 'gwapi'),
-        'singular_name' => __('SMS', 'gwapi'),
-        'add_new' => __('Create SMS', 'gwapi'),
-        'add_new_item' => __('Create new SMS', 'gwapi'),
-        'edit_item' => __('Edit SMS', 'gwapi'),
-        'new_item' => __('New SMS', 'gwapi'),
-        'search_items' => __('Search SMS\'es', 'gwapi'),
-        'not_found' => __('No SMS\'es found', 'gwapi'),
-        'not_found_in_trash' => __('No SMS\'es found in trash', 'gwapi'),
-        'menu_name' => __('SMS\'es', 'gwapi'),
+        'name' => __('SMS\'es', 'gatewayapi'),
+        'singular_name' => __('SMS', 'gatewayapi'),
+        'add_new' => __('Create SMS', 'gatewayapi'),
+        'add_new_item' => __('Create new SMS', 'gatewayapi'),
+        'edit_item' => __('Edit SMS', 'gatewayapi'),
+        'new_item' => __('New SMS', 'gatewayapi'),
+        'search_items' => __('Search SMS\'es', 'gatewayapi'),
+        'not_found' => __('No SMS\'es found', 'gatewayapi'),
+        'not_found_in_trash' => __('No SMS\'es found in trash', 'gatewayapi'),
+        'menu_name' => __('SMS\'es', 'gatewayapi'),
     );
 
     $args = array(
@@ -174,14 +174,14 @@ function _gwapi_prepare_sms($ID) {
         'destaddr' => $destaddr
     ])) {
         update_post_meta($ID, 'api_status', 'bail');
-        update_post_meta($ID, 'api_error', __('Validation of the SMS failed prior to sending with the following errors:', 'gwapi')."\n- ".implode("\n- ",$errors));
+        update_post_meta($ID, 'api_error', __('Validation of the SMS failed prior to sending with the following errors:', 'gatewayapi')."\n- ".implode("\n- ",$errors));
         return;
     }
 
     // missing secret etc.?
     if (!get_option('gwapi_key') || !get_option('gwapi_secret')) {
         update_post_meta($ID, 'api_status', 'bail');
-        $no_api_error = strtr(__("You have not entered your OAuth key and secret yet. Go to :link to complete the setup.", 'gwapi'), [ ':link' => '<a href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings', 'gwapi').'</a>' ]);
+        $no_api_error = strtr(__("You have not entered your OAuth key and secret yet. Go to :link to complete the setup.", 'gatewayapi'), [ ':link' => '<a href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings', 'gatewayapi').'</a>' ]);
         update_post_meta($ID, 'api_error', $no_api_error);
         return;
     }
@@ -220,10 +220,10 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch', function($can_use_remote = tr
     $ID = $post->ID;
 
     try {
-        if (get_post_type($post) != 'gwapi-sms') throw new InvalidArgumentException(__('Invalid post type.', 'gwapi'));
+        if (get_post_type($post) != 'gwapi-sms') throw new InvalidArgumentException(__('Invalid post type.', 'gatewayapi'));
         $status = get_post_meta($post->ID, 'api_status', true);
-        if ($status != 'sending') throw new \InvalidArgumentException(__('SMS is not in the right state for sending.','gwapi'));
-        if ($post->batch_is_running) throw new \InvalidArgumentException(__('Sending is already in progress','gwapi'));
+        if ($status != 'sending') throw new \InvalidArgumentException(__('SMS is not in the right state for sending.','gatewayapi'));
+        if ($post->batch_is_running) throw new \InvalidArgumentException(__('Sending is already in progress','gatewayapi'));
 
         update_post_meta($ID, 'batch_is_running', time());
 
@@ -290,6 +290,6 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch', function($can_use_remote = tr
 add_filter('gwapi_format_tag_checkbox', function($value, $def) {
     $value = unserialize($value);
 
-    if (!$value) return __('None', 'gwapi');
+    if (!$value) return __('None', 'gatewayapi');
     return implode(', ',$value);
 }, 5, 2);

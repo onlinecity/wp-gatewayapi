@@ -7,16 +7,16 @@ add_action('init', function () {
     if (!get_option('gwapi_enable_ui')) return;
 
     $labels = array(
-        'name' => __('Receive actions', 'gwapi'),
-        'singular_name' => __('Receive action', 'gwapi'),
-        'add_new' => __('Create receive action', 'gwapi'),
-        'add_new_item' => __('Create new receive action', 'gwapi'),
-        'edit_item' => __('Edit receive action', 'gwapi'),
-        'new_item' => __('New receive action', 'gwapi'),
-        'search_items' => __('Search receive actions', 'gwapi'),
-        'not_found' => __('No receive actions found', 'gwapi'),
-        'not_found_in_trash' => __('No receive actions found in trash', 'gwapi'),
-        'menu_name' => __('Receive actions', 'gwapi'),
+        'name' => __('Receive actions', 'gatewayapi'),
+        'singular_name' => __('Receive action', 'gatewayapi'),
+        'add_new' => __('Create receive action', 'gatewayapi'),
+        'add_new_item' => __('Create new receive action', 'gatewayapi'),
+        'edit_item' => __('Edit receive action', 'gatewayapi'),
+        'new_item' => __('New receive action', 'gatewayapi'),
+        'search_items' => __('Search receive actions', 'gatewayapi'),
+        'not_found' => __('No receive actions found', 'gatewayapi'),
+        'not_found_in_trash' => __('No receive actions found in trash', 'gatewayapi'),
+        'menu_name' => __('Receive actions', 'gatewayapi'),
     );
 
     $args = array(
@@ -63,12 +63,12 @@ add_action('init', function () {
      */
     add_filter('enter_title_here', function ($title, $post) {
         if (get_post_type($post) !== 'gwapi-receive-action') return $title;
-        return __('Name of receive action', 'gwapi');
+        return __('Name of receive action', 'gatewayapi');
     }, 10, 2);
 });
 
 add_action('add_meta_boxes_gwapi-receive-action', function ($post) {
-    add_meta_box('receive-action', __('Receive action', 'gwapi'), '_gwapi_receive_action_ui', 'gwapi-receive-action', 'normal', 'default');
+    add_meta_box('receive-action', __('Receive action', 'gatewayapi'), '_gwapi_receive_action_ui', 'gwapi-receive-action', 'normal', 'default');
 
     if ($action = get_post_meta($post->ID, 'action', true)) {
         $actions = apply_filters('gwapi_receive_actions', []);
@@ -84,7 +84,7 @@ function _gwapi_receive_action_ui()
         ?>
         <script>
             jQuery(function($) {
-                $('select[name="gwapi[action]"]').change(function() {
+                $('select[name="gatewayapi[action]"]').change(function() {
                     $(this).closest('form').submit();
                 });
             });
@@ -98,30 +98,30 @@ function _gwapi_receive_action_ui()
         <tbody>
         <tr>
             <th width="25%">
-                <?php _e('Phone number', 'gwapi'); ?>
+                <?php _e('Phone number', 'gatewayapi'); ?>
             </th>
             <td>
-                <input type="text" name="gwapi[receiver]" size="25" placeholder="451204"
+                <input type="text" name="gatewayapi[receiver]" size="25" placeholder="451204"
                        value="<?= esc_attr(get_post_meta($ID, 'receiver', true)); ?>">
-                <p class="description"><?php _e('Which number are SMS\'es sent to?', 'gwapi'); ?></p>
+                <p class="description"><?php _e('Which number are SMS\'es sent to?', 'gatewayapi'); ?></p>
             </td>
         </tr>
         <tr>
             <th width="25%">
-                <?php _e('Keyword', 'gwapi'); ?>
+                <?php _e('Keyword', 'gatewayapi'); ?>
             </th>
             <td>
-                <input type="text" name="gwapi[keyword]" size="25"
+                <input type="text" name="gatewayapi[keyword]" size="25"
                        value="<?= esc_attr(get_post_meta($ID, 'keyword', true)); ?>">
-                <p class="description"><?php _e('Enter the keyword which triggers this action.', 'gwapi'); ?></p>
+                <p class="description"><?php _e('Enter the keyword which triggers this action.', 'gatewayapi'); ?></p>
             </td>
         </tr>
         <tr>
             <th width="25%">
-                <?php _e('Receive action', 'gwapi'); ?>
+                <?php _e('Receive action', 'gatewayapi'); ?>
             </th>
             <td>
-                <select name="gwapi[action]" style="width: 100%">
+                <select name="gatewayapi[action]" style="width: 100%">
                     <?php if (!get_post_meta($ID, 'action', true)): ?>
                         <option value="" disabled selected></option>
                     <?php endif; ?>
@@ -132,7 +132,7 @@ function _gwapi_receive_action_ui()
                         <option value="<?= $aid ?>" <?= get_post_meta($ID, 'action', true) === $aid ? 'selected' : ''; ?>><?= $name; ?></option>
                     <?php endforeach; ?>
                 </select>
-                <p class="description"><?php _e('Pick an action describing what will happen, when this receive action is triggered.', 'gwapi'); ?></p>
+                <p class="description"><?php _e('Pick an action describing what will happen, when this receive action is triggered.', 'gatewayapi'); ?></p>
             </td>
         </tr>
         </tbody>
@@ -142,10 +142,10 @@ function _gwapi_receive_action_ui()
 
 add_action('save_post_gwapi-receive-action', function($post_ID) {
 
-    if (!isset($_POST['gwapi'])) return;
+    if (!isset($_POST['gatewayapi'])) return;
 
-    if (isset($_POST['gwapi']['action'])) update_post_meta($post_ID, 'action', $_POST['gwapi']['action']);
-    if (isset($_POST['gwapi']['keyword'])) update_post_meta($post_ID, 'keyword', $_POST['gwapi']['keyword']);
-    if (isset($_POST['gwapi']['receiver'])) update_post_meta($post_ID, 'receiver', $_POST['gwapi']['receiver'] ?: '451204');
+    if (isset($_POST['gatewayapi']['action'])) update_post_meta($post_ID, 'action', $_POST['gatewayapi']['action']);
+    if (isset($_POST['gatewayapi']['keyword'])) update_post_meta($post_ID, 'keyword', $_POST['gatewayapi']['keyword']);
+    if (isset($_POST['gatewayapi']['receiver'])) update_post_meta($post_ID, 'receiver', $_POST['gatewayapi']['receiver'] ?: '451204');
 
 }, 10);

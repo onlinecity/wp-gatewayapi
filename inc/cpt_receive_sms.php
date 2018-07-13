@@ -7,14 +7,14 @@ add_action('init', function () {
 
     $args = array(
         'labels' => array(
-            'name' => __('Inbox', 'gwapi'),
-            'singular_name' => __('Inbox', 'gwapi'),
-            'menu_name' => __('Inbox', 'gwapi'),
-            'edit' => __('Received SMS', 'gwapi'),
-            'edit_item' => __('Received SMS', 'gwapi'),
-            'search_items' => __('Search Inbox', 'gwapi'),
-            'not_found' => __('No SMS\'es found', 'gwapi'),
-            'not_found_in_trash' => __('No SMS\'es found in trash', 'gwapi'),
+            'name' => __('Inbox', 'gatewayapi'),
+            'singular_name' => __('Inbox', 'gatewayapi'),
+            'menu_name' => __('Inbox', 'gatewayapi'),
+            'edit' => __('Received SMS', 'gatewayapi'),
+            'edit_item' => __('Received SMS', 'gatewayapi'),
+            'search_items' => __('Search Inbox', 'gatewayapi'),
+            'not_found' => __('No SMS\'es found', 'gatewayapi'),
+            'not_found_in_trash' => __('No SMS\'es found in trash', 'gatewayapi'),
         ),
         'hierarchical' => false,
         'supports' => false,
@@ -48,9 +48,9 @@ add_action('init', function () {
             add_filter('gettext', function ($translated_text, $text, $domain) {
                 if ($domain != 'default') return $translated_text;
                 if ($text === 'Edit') return __('View');
-                if ($text == 'Publish') return __('Received', 'gwapi');
-                if ($text == 'Published') return __('Received', 'gwapi');
-                if ($text == 'Published on: <b>%1$s</b>') return __('Received on: <b>%1$s</b>', 'gwapi');
+                if ($text == 'Publish') return __('Received', 'gatewayapi');
+                if ($text == 'Published') return __('Received', 'gatewayapi');
+                if ($text == 'Published on: <b>%1$s</b>') return __('Received on: <b>%1$s</b>', 'gatewayapi');
                 return $translated_text;
             }, 20, 3);
         }
@@ -79,9 +79,9 @@ add_filter('manage_gwapi-receive-sms_posts_columns', function ($columns) {
     $date_text = $columns['date'];
     unset($columns['date']);
     return array_merge($columns, [
-        'msisdn' => __('Mobile number', 'gwapi'),
-        'receiver' => __('Receiver', 'gwapi'),
-        'message' => __('Message', 'gwapi'),
+        'msisdn' => __('Mobile number', 'gatewayapi'),
+        'receiver' => __('Receiver', 'gatewayapi'),
+        'message' => __('Message', 'gatewayapi'),
         'date' => $date_text
     ]);
 });
@@ -137,7 +137,7 @@ function _gwapi_receive_sms_json_handler()
         'post_name' => $sms['id'],
         'post_status' => 'publish',
         'post_type' => 'gwapi-receive-sms',
-        'post_category' => 'gwapi',
+        'post_category' => 'gatewayapi',
         'meta_input' => $sms
     ));
 

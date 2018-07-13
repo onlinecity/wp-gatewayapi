@@ -3,8 +3,8 @@ jQuery(function ($) {
     function initialize() {
         var body = $('body');
 
-        // if we find a gwapi[message] textarea we enable smsLengthCounter plugin
-        if (body.find('textarea[name="gwapi[message]"]').length) {
+        // if we find a gatewayapi[message] textarea we enable smsLengthCounter plugin
+        if (body.find('textarea[name="gatewayapi[message]"]').length) {
             smsLengthCounter();
         }
 
@@ -43,14 +43,14 @@ jQuery(function ($) {
      * Render a list of country codes into the CC-fields on the page.
      */
     function loadCountryCodes() {
-        $('select[name="gwapi[cc]"], #recipient_cc').gwapiMobileCc();
+        $('select[name="gatewayapi[cc]"], #recipient_cc').gwapiMobileCc();
     }
 
     /**
      * Count the length of the current SMS.
      */
     function smsLengthCounter() {
-        var textarea = $('textarea[name="gwapi[message]"]');
+        var textarea = $('textarea[name="gatewayapi[message]"]');
         if (!textarea.length) return;
 
         var countEl = $('<div class="sms-length-counter">').insertAfter(textarea);
@@ -168,7 +168,7 @@ jQuery(function ($) {
         );
 
         _.each(response.failed, function (msg, field) {
-            var el = $('[name="gwapi[' + field + ']"]');
+            var el = $('[name="gatewayapi[' + field + ']"]');
             if (field === '*') {
                 $('.gwapi-star-errors').empty().append(
                     $('<div class="gwapi-field-error-message">').text(msg)
@@ -252,9 +252,9 @@ jQuery(function ($) {
             var tbody = outer.find('table tbody');
             tbody.find('.empty_row').hide();
 
-            var ccEl = outer.find('select[name="gwapi[single_recipient][cc]"]');
-            var numberEl = outer.find('input[name="gwapi[single_recipient][number]"]');
-            var nameEl = outer.find('input[name="gwapi[single_recipient][name]"]');
+            var ccEl = outer.find('select[name="gatewayapi[single_recipient][cc]"]');
+            var numberEl = outer.find('input[name="gatewayapi[single_recipient][number]"]');
+            var nameEl = outer.find('input[name="gatewayapi[single_recipient][name]"]');
 
             var cc = ccEl.val();
             var number = numberEl.val();
@@ -290,7 +290,7 @@ jQuery(function ($) {
 
                 // fail :-(
                 _.each(res.errors, function (msg, field) {
-                    var el = outer.find('[name="gwapi[single_recipient][' + field + ']"]');
+                    var el = outer.find('[name="gatewayapi[single_recipient][' + field + ']"]');
                     if (field === '*') {
                         outer.find('.gwapi-star-errors').empty().append(
                             $('<div class="gwapi-field-error-message">').text(msg)

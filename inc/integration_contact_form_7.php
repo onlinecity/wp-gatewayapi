@@ -26,11 +26,11 @@ class GwapiContactForm7
     private function __construct()
     {
         $this->types = [
-            'gw_phone' => '📱 ' . __('phone', 'gwapi'),
-            'gw_country' => '📱 ' . __('countrycode', 'gwapi'),
-            'gw_groups' => '📱 ' . __('groups', 'gwapi'),
-            'gw_smstext' => '📱 ' . __('smstext', 'gwapi'),
-            'gw_action' => '📱 ' . __('action*', 'gwapi')
+            'gw_phone' => '📱 ' . __('phone', 'gatewayapi'),
+            'gw_country' => '📱 ' . __('countrycode', 'gatewayapi'),
+            'gw_groups' => '📱 ' . __('groups', 'gatewayapi'),
+            'gw_smstext' => '📱 ' . __('smstext', 'gatewayapi'),
+            'gw_action' => '📱 ' . __('action*', 'gatewayapi')
         ];
     }
 
@@ -88,7 +88,7 @@ class GwapiContactForm7
         $_this = $this;
         add_filter('wpcf7_editor_panels', function ($panels) use ($_this) {
             $sms_panel = [
-                'title' => __('SMS reply', 'gwapi'),
+                'title' => __('SMS reply', 'gatewayapi'),
                 'callback' => [$this, 'renderSmsReplyUi']
             ];
             $new_panels = [];
@@ -130,25 +130,25 @@ class GwapiContactForm7
         $opt = get_post_meta((int)$post->ID(), '_gwapi', true) ?: [];
         ?>
         <div class="contact-form-editor-box-sms-reply" id="gwapi-sms-reply">
-            <h2><?php _e('SMS reply', 'gwapi'); ?></h2>
+            <h2><?php _e('SMS reply', 'gatewayapi'); ?></h2>
 
             <p>
-                <?php _e('Please note that replying via SMS requires that the GatewayAPI phone number and country code fields has been added to the form.', 'gwapi'); ?>
+                <?php _e('Please note that replying via SMS requires that the GatewayAPI phone number and country code fields has been added to the form.', 'gatewayapi'); ?>
             </p>
 
             <fieldset>
-                <legend><?php _e('In the following fields, these tags are available:', 'gwapi'); ?><br>
+                <legend><?php _e('In the following fields, these tags are available:', 'gatewayapi'); ?><br>
                     <?= $post->suggest_mail_tags(); ?>
                 </legend>
                 <table class="form-table">
                     <tbody>
                     <tr>
                         <th scope="row">
-                            <label for="gwapi-sms-reply-enable"><?php _e('Enable?', 'gwapi'); ?></label>
+                            <label for="gwapi-sms-reply-enable"><?php _e('Enable?', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <label><input type="checkbox" name="_gwapi_form_settings[reply-enable]"
-                                          value="1" <?= isset($opt['reply-enable']) && $opt['reply-enable'] ? 'checked' : ''; ?>><?php _e('Yes, send an auto-reply to the recipients phone number, when the form has been succesfully submitted.', 'gwapi'); ?>
+                                          value="1" <?= isset($opt['reply-enable']) && $opt['reply-enable'] ? 'checked' : ''; ?>><?php _e('Yes, send an auto-reply to the recipients phone number, when the form has been succesfully submitted.', 'gatewayapi'); ?>
                             </label>
                         </td>
                     </tr>
@@ -161,13 +161,13 @@ class GwapiContactForm7
                                    class="large-text code" size="70"
                                    value="<?= isset($opt['reply-sender']) && $opt['reply-sender'] ? esc_attr($opt['reply-sender']) : ''; ?>"
                                    maxlength="15">
-                            <p class="help-block"><?php _e('Up to 11 character or 15 digits.', 'gwapi'); ?></p>
+                            <p class="help-block"><?php _e('Up to 11 character or 15 digits.', 'gatewayapi'); ?></p>
                         </td>
                     </tr>
 
                     <tr class="only-show-on-enabled-sms-reply">
                         <th scope="row">
-                            <label for="gwapi-sms-reply-body"><?php _e('Message', 'gwapi'); ?></label>
+                            <label for="gwapi-sms-reply-body"><?php _e('Message', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <textarea id="gwapi-sms-reply-body" name="_gwapi_form_settings[reply-body]" cols="100"
@@ -221,10 +221,10 @@ class GwapiContactForm7
                 $spam_trap_resolve = wp_generate_password(32, false);
                 set_transient('gwapi_spam_trap_resolve_' . $phone, $spam_trap_resolve, 60 * 5);
 
-                gwapi_send_sms(__("Your verification code:", 'gwapi') . " " . $code, $phone);
-                die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gwapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
+                gwapi_send_sms(__("Your verification code:", 'gatewayapi') . " " . $code, $phone);
+                die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
             } else {
-                die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gwapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
+                die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
             }
         }
     }
@@ -416,28 +416,28 @@ class GwapiContactForm7
                     <tbody>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input required type="text" name="name" class="tg-name oneline"
                                    id="<?php echo esc_attr($args['content'] . '-name'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php _e('Id attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php _e('Id attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="id" class="idvalue oneline option"
                                    id="<?php echo esc_attr($args['content'] . '-id'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php _e('Class attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php _e('Class attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="class" class="classvalue oneline option"
                                    id="<?php echo esc_attr($args['content'] . '-class'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-default'); ?>"><?php _e('Default value', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-default'); ?>"><?php _e('Default value', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="default" class="defaultvalue oneline option"
                                    id="<?php echo esc_attr($args['default'] . '-default'); ?>"></td>
@@ -469,44 +469,44 @@ class GwapiContactForm7
         ?>
         <div class="control-box">
             <fieldset>
-                <legend><?= esc_html(__($description, 'gwapi')) ?></legend>
+                <legend><?= esc_html(__($description, 'gatewayapi')) ?></legend>
 
                 <table class="form-table">
                     <tbody>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input required type="text" name="name" class="tg-name oneline"
                                    id="<?php echo esc_attr($args['content'] . '-name'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-groups'); ?>"><?php _e('Limit countries', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-groups'); ?>"><?php _e('Limit countries', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <input type="text" name="values" class="oneline"
                                    id="<?php echo esc_attr($args['content'] . '-onlycc'); ?>">
-                            <p class="description"><?php _e('Enter all calling codes allowed, separated by space. Leave empty to allow all. See the <a href="https://countrycode.org/" target="_blank">list of calling codes</a>.', 'gwapi'); ?></p>
+                            <p class="description"><?php _e('Enter all calling codes allowed, separated by space. Leave empty to allow all. See the <a href="https://countrycode.org/" target="_blank">list of calling codes</a>.', 'gatewayapi'); ?></p>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php _e('Id attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php _e('Id attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="id" class="idvalue oneline option"
                                    id="<?php echo esc_attr($args['content'] . '-id'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php _e('Class attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php _e('Class attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="class" class="classvalue oneline option"
                                    id="<?php echo esc_attr($args['content'] . '-class'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-default'); ?>"><?php _e('Default country code', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-default'); ?>"><?php _e('Default country code', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="default" class="defaultvalue oneline option"
                                    id="<?php echo esc_attr($args['default'] . '-default'); ?>"></td>
@@ -558,20 +558,20 @@ class GwapiContactForm7
         </script>
         <div class="control-box">
             <fieldset>
-                <legend><?= esc_html(__($description, 'gwapi')) ?></legend>
+                <legend><?= esc_html(__($description, 'gatewayapi')) ?></legend>
 
                 <table class="form-table">
                     <tbody>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input required type="text" name="name" class="tg-name oneline"
                                    id="<?php echo esc_attr($args['content'] . '-name'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-groups'); ?>"><?php _e('Pick groups', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-groups'); ?>"><?php _e('Pick groups', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <div style="width: 100%; max-height: 100px; overflow: auto;">
@@ -588,26 +588,26 @@ class GwapiContactForm7
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-allow-select'); ?>"><?php _e('Hidden field', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-allow-select'); ?>"><?php _e('Hidden field', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <label>
                                 <input type="checkbox" name="hidden" class="option"
                                        id="<?php echo esc_attr($args['content'] . '-class'); ?>"/>
-                                <?php _e('Hide this field. Recipients will be subscribed to all of the selected groups.', 'gwapi'); ?>
+                                <?php _e('Hide this field. Recipients will be subscribed to all of the selected groups.', 'gatewayapi'); ?>
                             </label>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php _e('Id attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-id'); ?>"><?php _e('Id attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="id" class="idvalue oneline option"
                                    id="<?php echo esc_attr($args['content'] . '-id'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php _e('Class attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-class'); ?>"><?php _e('Class attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input type="text" name="class" class="classvalue oneline option"
                                    id="<?php echo esc_attr($args['content'] . '-class'); ?>"></td>
@@ -644,63 +644,63 @@ class GwapiContactForm7
         ?>
         <div class="control-box">
             <fieldset>
-                <legend><?= esc_html(__($description, 'gwapi')) ?></legend>
+                <legend><?= esc_html(__($description, 'gatewayapi')) ?></legend>
 
                 <table class="form-table">
                     <tbody>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-name'); ?>"><?php _e('Name attribute', 'gatewayapi'); ?></label>
                         </th>
                         <td><input required type="text" name="name" class="tg-name oneline"
                                    id="<?php echo esc_attr($args['content'] . '-name'); ?>"></td>
                     </tr>
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-action'); ?>"><?php _e('Triggered action', 'gwapi'); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-action'); ?>"><?php _e('Triggered action', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <label><input type="radio" checked name="action" class="option" value="signup"
-                                          id="<?php echo esc_attr($args['content'] . '-action-signup'); ?>"> <?php _e('Signup', 'gwapi'); ?>
+                                          id="<?php echo esc_attr($args['content'] . '-action-signup'); ?>"> <?php _e('Signup', 'gatewayapi'); ?>
                             </label>
                             <p class="description"
-                               style="margin-top: 0; margin-bottom: 10px"><?php _e('Sign up a new subscriber. If a recipient with same phone number exists, the signup will fail.', 'gwapi'); ?></p>
+                               style="margin-top: 0; margin-bottom: 10px"><?php _e('Sign up a new subscriber. If a recipient with same phone number exists, the signup will fail.', 'gatewayapi'); ?></p>
 
                             <label><input type="radio" name="action" class="option"
-                                          value="unsubscribe"> <?php _e('Unsubscribe', 'gwapi'); ?></label>
+                                          value="unsubscribe"> <?php _e('Unsubscribe', 'gatewayapi'); ?></label>
                             <p class="description"
-                               style="margin-top: 0; margin-bottom: 10px"><?php _e('Unsubscribe a subscriber, ie. move the recipient to the trash.', 'gwapi'); ?></p>
+                               style="margin-top: 0; margin-bottom: 10px"><?php _e('Unsubscribe a subscriber, ie. move the recipient to the trash.', 'gatewayapi'); ?></p>
 
                             <label><input type="radio" name="action" class="option"
-                                          value="update"> <?php _e('Update', 'gwapi'); ?></label>
+                                          value="update"> <?php _e('Update', 'gatewayapi'); ?></label>
                             <p class="description"
-                               style="margin-top: 0;"><?php _e('Update an existing subscriber, ie. a recipient with the given phone number must already exist.', 'gwapi'); ?></p>
+                               style="margin-top: 0;"><?php _e('Update an existing subscriber, ie. a recipient with the given phone number must already exist.', 'gatewayapi'); ?></p>
 
                             <label><input type="radio" name="action" class="option"
-                                          value="sms"> <?php _e('Send SMS', 'gwapi'); ?></label>
+                                          value="sms"> <?php _e('Send SMS', 'gatewayapi'); ?></label>
                             <p class="description"
-                               style="margin-top: 0;"><?php _e('Send SMS from the frontend. <strong>Warning:</strong> anyone with access to a page with this on, can send SMS\'es on your behalf!', 'gwapi'); ?></p>
+                               style="margin-top: 0;"><?php _e('Send SMS from the frontend. <strong>Warning:</strong> anyone with access to a page with this on, can send SMS\'es on your behalf!', 'gatewayapi'); ?></p>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row">
-                            <label for="<?php echo esc_attr($args['content'] . '-verify'); ?>"><?php _e('Require verification', 'gwapi'); ?></label>
+                            <label for="<?php echo esc_attr($args['content'] . '-verify'); ?>"><?php _e('Require verification', 'gatewayapi'); ?></label>
                         </th>
                         <td>
                             <label>
                                 <input type="radio" checked name="verify" class="option"
                                        id="<?php echo esc_attr($args['content'] . '-verify'); ?>" value="yes"/>
-                                <?php _e('Yes (recommended)', 'gwapi'); ?>
+                                <?php _e('Yes (recommended)', 'gatewayapi'); ?>
                             </label>
                             <label>
                                 <input type="radio" name="verify" class="option"
                                        id="<?php echo esc_attr($args['content'] . '-verify'); ?>" value="no"/>
-                                <?php _e('No', 'gwapi'); ?>
+                                <?php _e('No', 'gatewayapi'); ?>
                             </label>
                             <p class="description">
-                                <?php _e('An SMS will be sent to confirm the ownership of the number with a one-time verification code.', 'gwapi'); ?>
+                                <?php _e('An SMS will be sent to confirm the ownership of the number with a one-time verification code.', 'gatewayapi'); ?>
                                 <br/>
-                                <?php _e('When updating, this triggers another flow: The user will have to enter mobile and country code, verify the number and only then will the rest of the form be presented.', 'gwapi'); ?>
+                                <?php _e('When updating, this triggers another flow: The user will have to enter mobile and country code, verify the number and only then will the rest of the form be presented.', 'gatewayapi'); ?>
                             </p>
                         </td>
                     </tr>
@@ -746,7 +746,7 @@ class GwapiContactForm7
 
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-values'); ?>"><?php echo esc_html(__('Placeholder', 'gwapi')); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-values'); ?>"><?php echo esc_html(__('Placeholder', 'gatewayapi')); ?></label>
                         </th>
                         <td><input type="text" name="values" class="oneline"
                                    id="<?php echo esc_attr($args['content'] . '-values'); ?>"/>
@@ -770,22 +770,22 @@ class GwapiContactForm7
 
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-counter'); ?>"><?php echo esc_html(__('Enable counter', 'gwapi')); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-counter'); ?>"><?php echo esc_html(__('Enable counter', 'gatewayapi')); ?></label>
                         </th>
                         <td>
                             <label><input type="checkbox" name="counter" class="option"
-                                          checked/> <?php echo esc_html(__('Displays how many SMS\'es this message spans as you type it.', 'gwapi')); ?>
+                                          checked/> <?php echo esc_html(__('Displays how many SMS\'es this message spans as you type it.', 'gatewayapi')); ?>
                             </label></td>
                         </td>
                     </tr>
 
                     <tr>
                         <th scope="row"><label
-                                    for="<?php echo esc_attr($args['content'] . '-tags'); ?>"><?php echo esc_html(__('Link to tags', 'gwapi')); ?></label>
+                                    for="<?php echo esc_attr($args['content'] . '-tags'); ?>"><?php echo esc_html(__('Link to tags', 'gatewayapi')); ?></label>
                         </th>
                         <td>
                             <label><input type="checkbox" name="tags" class="option"
-                                          checked/> <?php echo esc_html(__('Links to a table of possible SMS-tags (opens in popup).', 'gwapi')); ?>
+                                          checked/> <?php echo esc_html(__('Links to a table of possible SMS-tags (opens in popup).', 'gatewayapi')); ?>
                             </label></td>
                         </td>
                     </tr>
@@ -991,10 +991,10 @@ class GwapiContactForm7
         $extras_style = 'float: right; opacity: 0.8; margin-left: 20px; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em;';
 
         $counterI18N = [
-            'character' => __('character', 'gwapi'),
-            'characters' => __('characters', 'gwapi'),
-            'sms' => __('SMS', 'gwapi'),
-            'smses' => __('SMS\'es', 'gwapi')
+            'character' => __('character', 'gatewayapi'),
+            'characters' => __('characters', 'gatewayapi'),
+            'sms' => __('SMS', 'gatewayapi'),
+            'smses' => __('SMS\'es', 'gatewayapi')
         ];
 
         ob_start();
@@ -1008,7 +1008,7 @@ class GwapiContactForm7
             <?php if ($has_tags): ?>
                 <div class="gwapi-tags" style="<?= $extras_style; ?>">
                     <a href="#gwapi-tags"
-                       data-tags="<?= esc_attr(json_encode(gwapi_all_tags())); ?>"><?php _e('Show tags', 'gwapi'); ?></a>
+                       data-tags="<?= esc_attr(json_encode(gwapi_all_tags())); ?>"><?php _e('Show tags', 'gatewayapi'); ?></a>
                 </div>
             <?php endif; ?>
 
@@ -1049,12 +1049,12 @@ class GwapiContactForm7
             // iterate the posted groups - the groups posted must all be in the list of valid groups
             foreach ($groupsSelected as $groupID) {
                 if (!in_array($groupID, $groupsPossible)) {
-                    $res->invalidate($tag, __('One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gwapi'));
+                    $res->invalidate($tag, __('One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gatewayapi'));
                 }
             }
         } else { // if IS hidden: ALL groups should have been submitted
             if (count($groupsPossible) != count($groupsSelected)) {
-                $res->invalidate($tag, __('One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gwapi'));
+                $res->invalidate($tag, __('One of the selected groups is invalid/should not be selectable. This should not happen, but may occur if the editor of this site has changed the settings for this form since you opened this page.', 'gatewayapi'));
             }
         }
 
@@ -1081,7 +1081,7 @@ class GwapiContactForm7
 
         $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
         if (!$phone || !ctype_digit($phone)) {
-            $res->invalidate($tag, __('The phone number must consist of digits only.', 'gwapi'));
+            $res->invalidate($tag, __('The phone number must consist of digits only.', 'gatewayapi'));
             return $res;
         }
 
@@ -1097,12 +1097,12 @@ class GwapiContactForm7
 
         // signup: does the phone number already exist?
         if ($action && $action == 'signup' && $phone_exists === true) {
-            $res->invalidate($tag, __('You are already subscribed with this phone number.', 'gwapi'));
+            $res->invalidate($tag, __('You are already subscribed with this phone number.', 'gatewayapi'));
         }
 
         // unsubscribe or update: does the phone number already exist?
         if ($action && in_array($action, ['unsubscribe', 'update']) && $phone_exists === false) {
-            $res->invalidate($tag, __('You are not subscribed with this phone number.', 'gwapi'));
+            $res->invalidate($tag, __('You are not subscribed with this phone number.', 'gatewayapi'));
         }
 
         return $res;
@@ -1140,7 +1140,7 @@ class GwapiContactForm7
 
         // is the country code entered, within the list of valid country codes?
         if (!in_array($cc, $valid_country_codes)) {
-            $res->invalidate($tag, __('The phone country code selected, is not within the list of valid country codes.', 'gwapi'));
+            $res->invalidate($tag, __('The phone country code selected, is not within the list of valid country codes.', 'gatewayapi'));
         }
 
         return $res;
@@ -1174,7 +1174,7 @@ class GwapiContactForm7
         if ($action === 'update' && in_array('verify:yes', $tag->options)) {
             $code = get_transient('gwapi_verify_' . gwapi_get_msisdn($cc, $phone));
             if ($code != $_POST['_gwapi_token']) {
-                $res->invalidate($tag, __('It doesn\'t seem that you have verified your number by SMS, or the verification has expired. Note that you must submit the form within 30 minutes after validating.', 'gwapi'));
+                $res->invalidate($tag, __('It doesn\'t seem that you have verified your number by SMS, or the verification has expired. Note that you must submit the form within 30 minutes after validating.', 'gatewayapi'));
             }
         }
 
@@ -1184,9 +1184,9 @@ class GwapiContactForm7
             $code = get_transient("gwapi_verify_signup_" . $msisdn);
             if (isset($_POST['_gwapi_verify_signup'])) {
                 if ($code && $code != preg_replace('/\D+/', '', $_POST['_gwapi_verify_signup'])) {
-                    $res->invalidate($tag, __("The verification code that you entered, was incorrect.", 'gwapi'));
+                    $res->invalidate($tag, __("The verification code that you entered, was incorrect.", 'gatewayapi'));
                 } else if (!$code) {
-                    $res->invalidate($tag, __("The verification code has expired. You have just 5 minutes to enter the code. Please try again.", 'gwapi'));
+                    $res->invalidate($tag, __("The verification code has expired. You have just 5 minutes to enter the code. Please try again.", 'gatewayapi'));
                 }
             }
         }
@@ -1220,7 +1220,7 @@ class GwapiContactForm7
 
         $groups_field = current($wpcf7->scan_form_tags(['type' => 'gw_groups']));
         if (!$groups_field) {
-            $res->invalidate($tag, __('You must have a groups field in this form (it may be hidden) in order to select recipients.', 'gwapi'));
+            $res->invalidate($tag, __('You must have a groups field in this form (it may be hidden) in order to select recipients.', 'gatewayapi'));
             return $res;
         }
 
@@ -1228,7 +1228,7 @@ class GwapiContactForm7
         $groups = $this->getGroupIdsFromTag($groups_field);
 
         if (!$groups) {
-            $res->invalidate($tag, __('At least one group must be selected in order to send an SMS.', 'gwapi'));
+            $res->invalidate($tag, __('At least one group must be selected in order to send an SMS.', 'gatewayapi'));
             return $res;
         }
 
@@ -1248,7 +1248,7 @@ class GwapiContactForm7
             "fields" => "ids"
         ]);
         if (!$countQ->posts) {
-            $res->invalidate($tag, __('There are no recipients in the groups you have selected. The SMS cannot be sent to 0 recipients.', 'gwapi'));
+            $res->invalidate($tag, __('There are no recipients in the groups you have selected. The SMS cannot be sent to 0 recipients.', 'gatewayapi'));
         }
 
         return $res;
@@ -1296,7 +1296,7 @@ class GwapiContactForm7
 
         // valid?
         if (!isset($_POST['cc']) || !isset($_POST['number'])) {
-            die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gwapi')]));
+            die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gatewayapi')]));
         }
 
         $phone = gwapi_get_msisdn($_POST['cc'], $_POST['number']);
@@ -1313,7 +1313,7 @@ class GwapiContactForm7
         $code = rand(100000, 999999);
         set_transient('gwapi_verify_' . $phone, $code, 60 * 30);
 
-        gwapi_send_sms(__("Your verification code:", 'gwapi') . $code, $phone);
+        gwapi_send_sms(__("Your verification code:", 'gatewayapi') . $code, $phone);
 
         die(json_encode(['success' => true]));
     }
@@ -1327,18 +1327,18 @@ class GwapiContactForm7
 
         // valid?
         if (!isset($_POST['cc']) || !isset($_POST['number']) || !isset($_POST['code'])) {
-            die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gwapi')]));
+            die(json_encode(['success' => false, 'message' => __('You must supply both country code and phone number.', 'gatewayapi')]));
         }
 
         // prevent abuse
         $this_phone = get_transient('gwapi_verify1_' . $_POST['cc'] . $_POST['number']) ?: 0;
-        if ($this_phone > 10) die(json_encode(['success' => false, 'message' => __('Due to too many attempts at verifying SMS-codes within a short period of time, your request has been blocked. Try again later.', 'gwapi')]));
+        if ($this_phone > 10) die(json_encode(['success' => false, 'message' => __('Due to too many attempts at verifying SMS-codes within a short period of time, your request has been blocked. Try again later.', 'gatewayapi')]));
         set_transient('gwapi_verify1_' . $_POST['cc'] . $_POST['number'], $this_phone + 1, 60 * 60 * 4);
 
         // check if the code is valid
         $code = get_transient('gwapi_verify_' . $_POST['cc'] . $_POST['number']);
-        if (!$code) die(json_encode(['success' => false, 'message' => __('There is no verification going on for this phone number. Perhaps you waited too long? These codes expire after 30 minutes.', 'gwapi')]));
-        if ($code != $_POST['code']) die(json_encode(['success' => false, 'message' => __('The code is invalid. Please try again.', 'gwapi')]));
+        if (!$code) die(json_encode(['success' => false, 'message' => __('There is no verification going on for this phone number. Perhaps you waited too long? These codes expire after 30 minutes.', 'gatewayapi')]));
+        if ($code != $_POST['code']) die(json_encode(['success' => false, 'message' => __('The code is invalid. Please try again.', 'gatewayapi')]));
 
         // find the recipient, if there is any, and return all information
         $q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [['key' => 'cc', 'value' => $_POST['cc']], ['key' => 'number', 'value' => $_POST['number']]]]);
@@ -1369,11 +1369,11 @@ class GwapiContactForm7
 
         wp_enqueue_script('gwapi_integration_contact_form_7', _gwapi_url() . 'js/integration_contact_form_7.js', ['jquery'], 2);
         wp_localize_script('gwapi_integration_contact_form_7', 'i18n_gwapi_cf7', [
-            'country_and_cc' => __('You must supply both country code and phone number in order to continue.', 'gwapi'),
-            'verification_sms_sent' => __("We have just sent you an SMS with a verification code. Please enter it below:", 'gwapi'),
-            'no_code_entered' => __("You did not enter a code. It is not possible for you to continue.", 'gwapi'),
-            'bad_code' => __("You did not enter the code correctly. Please try again.", 'gwapi'),
-            'no_code_try_again' => __('Not entering the code will cancel the signup. Clicking OK will allow you to try and enter the code again.', 'gwapi')
+            'country_and_cc' => __('You must supply both country code and phone number in order to continue.', 'gatewayapi'),
+            'verification_sms_sent' => __("We have just sent you an SMS with a verification code. Please enter it below:", 'gatewayapi'),
+            'no_code_entered' => __("You did not enter a code. It is not possible for you to continue.", 'gatewayapi'),
+            'bad_code' => __("You did not enter the code correctly. Please try again.", 'gatewayapi'),
+            'no_code_try_again' => __('Not entering the code will cancel the signup. Clicking OK will allow you to try and enter the code again.', 'gatewayapi')
         ]);
     }
 }

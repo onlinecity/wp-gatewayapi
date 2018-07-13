@@ -9,9 +9,9 @@ add_filter('manage_gwapi-recipient_posts_columns', function ($columns) {
     unset($columns['date']);
 
     return array_merge($columns, [
-        'cc' => __('Country code', 'gwapi'),
-        'mobile' => __('Mobile number', 'gwapi'),
-        'groups' => __('Groups', 'gwapi'),
+        'cc' => __('Country code', 'gatewayapi'),
+        'mobile' => __('Mobile number', 'gatewayapi'),
+        'groups' => __('Groups', 'gatewayapi'),
         'date' => $date_text
     ]);
 });
@@ -39,7 +39,7 @@ add_action('manage_posts_custom_column', function($column, $ID) {
                 $list[] = $g->name;
             }
             echo implode(', ', $list);
-            if (!$list) echo '<em>'.__('None', 'gwapi').'</em>';
+            if (!$list) echo '<em>'.__('None', 'gatewayapi').'</em>';
             break;
     }
 

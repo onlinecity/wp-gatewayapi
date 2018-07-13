@@ -2,7 +2,7 @@
 <?php
 
 add_action('admin_menu', function () {
-    add_submenu_page('edit.php?post_type=gwapi-sms', __('Import recipients from spreadsheet', 'gwapi'), __('Import recipients', 'gwapi'), 'edit_posts', 'gwapi_import', function () {
+    add_submenu_page('edit.php?post_type=gwapi-sms', __('Import recipients from spreadsheet', 'gatewayapi'), __('Import recipients', 'gatewayapi'), 'edit_posts', 'gwapi_import', function () {
         require_once(__DIR__ . "/../tpl/import.php");
     });
 }, 20);

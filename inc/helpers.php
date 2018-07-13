@@ -24,7 +24,7 @@ function _gwapi_get_recipient($cc, $number)
     $number = preg_replace('/\D+/', '', $number);
     $cc = preg_replace('/\D+/', '', $cc);
 
-    if (!$number || !$cc) return new WP_Error(__('Missing/invalid country code or number.', 'gwapi'));
+    if (!$number || !$cc) return new WP_Error(__('Missing/invalid country code or number.', 'gatewayapi'));
 
     $q = new WP_Query([
         "post_type" => "gwapi-recipient",
@@ -40,7 +40,7 @@ function _gwapi_get_recipient($cc, $number)
         ]
     ]);
     if (!$q->have_posts()) {
-        return new WP_Error(__('Not found in database.', 'gwapi'));
+        return new WP_Error(__('Not found in database.', 'gatewayapi'));
     }
     return $q->post;
 }
@@ -243,7 +243,7 @@ if (!function_exists('bit_add_taxonomy_filter_to_cpt')) {
                 $selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
                 $info_taxonomy = get_taxonomy($taxonomy);
                 wp_dropdown_categories(array(
-                    'show_option_all' => __("Show All {$info_taxonomy->label}", 'gwapi'),
+                    'show_option_all' => __("Show All {$info_taxonomy->label}", 'gatewayapi'),
                     'taxonomy' => $taxonomy,
                     'name' => $taxonomy,
                     'orderby' => 'name',
