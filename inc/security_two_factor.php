@@ -82,7 +82,7 @@ class GwapiSecurityTwoFactor
      */
     private static function userHasValidTwofactorCookie(\WP_User $user)
     {
-        if (isset($_COOKIE['gwapi_2f_'.$user->ID]) && ($cookie_token = trim($_COOKIE['gwapi_2f_'.$user->ID])) && $user->gwapi_2f_tokens) {
+        if (isset($_COOKIE['gwapi_2f_' . $user->ID]) && ($cookie_token = trim($_COOKIE['gwapi_2f_' . $user->ID])) && $user->gwapi_2f_tokens) {
             self::refreshExpiryOfUserTwoFactorTokens($user);
             $tokens = $user->gwapi_2f_tokens;
             if (isset($tokens[$cookie_token])) return true;
@@ -115,7 +115,7 @@ class GwapiSecurityTwoFactor
      * @param WP_User $user
      * @return string
      */
-    private static function replaceLoginCookieWithTempCookie(\WP_User $user)
+    public static function replaceLoginCookieWithTempCookie(\WP_User $user)
     {
         $remember = isset($_POST['rememberme']) && $_POST['rememberme'] == 'forever';
         $redir = isset($_POST['redirect_to']) ? $_POST['redirect_to'] : get_admin_url();
@@ -149,14 +149,14 @@ class GwapiSecurityTwoFactor
      *
      * @param WP_User $user
      */
-    private static function renderTwoFactorSteps(\WP_User $user)
+    public static function renderTwoFactorSteps(\WP_User $user)
     {
         // add mobile throttle?
         $throttle = GwapiSecurityTwoFactor::checkIfThrottled($user->ID, GwapiSecurityTwoFactorAddMobile::THROTTLE_ACTION, GwapiSecurityTwoFactorAddMobile::THROTTLE_MAX_TRIES, GwapiSecurityTwoFactorAddMobile::THROTTLE_EXPIRES);
         if (is_wp_error($throttle)) wp_die($throttle);
 
         // login code throttle?
-        $throttle2 = GwapiSecurityTwoFactor::checkIfThrottled($user->ID, 'confirmlogin_'.$user->ID, GwapiSecurityTwoFactorHasMobile::THROTTLE_MAX_TRIES, GwapiSecurityTwoFactorHasMobile::THROTTLE_EXPIRES);
+        $throttle2 = GwapiSecurityTwoFactor::checkIfThrottled($user->ID, 'confirmlogin_' . $user->ID, GwapiSecurityTwoFactorHasMobile::THROTTLE_MAX_TRIES, GwapiSecurityTwoFactorHasMobile::THROTTLE_EXPIRES);
         if (is_wp_error($throttle2)) wp_die($throttle2);
 
         // let's get it on, shall we?
@@ -244,24 +244,24 @@ class GwapiSecurityTwoFactor
      */
     public static function createClientCookie($user_ID)
     {
-        $valid_cookie_lifetimes = [0,1,7,14,30];
+        $valid_cookie_lifetimes = [0, 1, 7, 14, 30];
         $cookie_lifetime = (int)get_option('gwapi_security_cookie_lifetime', 0);
         if (!in_array($cookie_lifetime, $valid_cookie_lifetimes) || !$cookie_lifetime) return; // re-auth every time
 
-        $expires_at = time() + 60*60*24*$cookie_lifetime;
+        $expires_at = time() + 60 * 60 * 24 * $cookie_lifetime;
         $user = get_user_by('ID', $user_ID);
 
         self::refreshExpiryOfUserTwoFactorTokens($user);
 
-        $tokens = $user->gwapi_2f_tokens ? : [];
-        $token_key = wp_generate_password(24,false,false);
+        $tokens = $user->gwapi_2f_tokens ?: [];
+        $token_key = wp_generate_password(24, false, false);
         $tokens[$token_key] = $expires_at;
 
         update_user_meta($user_ID, 'gwapi_2f_tokens', $tokens);
         $user->gwapi_2f_tokens = $tokens;
 
         // save cookie in request
-        self::setCookie('gwapi_2f_'.$user_ID, $token_key, $expires_at);
+        self::setCookie('gwapi_2f_' . $user_ID, $token_key, $expires_at);
     }
 
     public static function enqueueCssJs()
@@ -292,11 +292,11 @@ class GwapiSecurityTwoFactor
     {
         $bypass_code = self::getBypassCode();
         if (!isset($_GET['c']) || $_GET['c'] != $bypass_code) {
-            wp_die('<h1>'.__('Bypass code is invalid!', 'gwapi').'</h1><p>'.__('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gwapi').'</p>');
+            wp_die('<h1>' . __('Bypass code is invalid!', 'gwapi') . '</h1><p>' . __('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gwapi') . '</p>');
         }
 
         // add the extra hidden field for the bypass-code, to the login form
-        add_action('login_form', function() use ($bypass_code) {
+        add_action('login_form', function () use ($bypass_code) {
             ?>
             <input type="hidden" name="gwapi_bypass_2fa" value="<?= esc_attr($bypass_code); ?>">
             <?php
@@ -374,7 +374,7 @@ class GwapiSecurityTwoFactorAddMobile
         $status = gwapi_send_sms($message, $msisdn);
 
         // save the phone number
-        set_transient('gwapi_2f_'.$tmp_token.'_phone', [ $mcc, $mno ], 60 * 30);
+        set_transient('gwapi_2f_' . $tmp_token . '_phone', [$mcc, $mno], 60 * 30);
 
         if (is_wp_error($status)) {
             if ($status->get_error_code() == 'GWAPI_FAIL') {
@@ -431,7 +431,7 @@ class GwapiSecurityTwoFactorAddMobile
 
         // SUCCESS!
         // save the phone number on the profile
-        list($mcc, $mno) = get_transient('gwapi_2f_'.$tmp_token.'_phone');
+        list($mcc, $mno) = get_transient('gwapi_2f_' . $tmp_token . '_phone');
         update_user_meta($user_ID, 'gwapi_mcc', $mcc);
         update_user_meta($user_ID, 'gwapi_mno', $mno);
 
@@ -457,16 +457,17 @@ class GwapiSecurityTwoFactorAddMobile
 /**
  * Class for handling logins from users who does have a mobile number added to their account.
  */
-class GwapiSecurityTwoFactorHasMobile {
+class GwapiSecurityTwoFactorHasMobile
+{
     const THROTTLE_MAX_TRIES = 3;
     const THROTTLE_EXPIRES = 60 * 60;
 
     public static function handleLogin(\WP_User $user)
     {
         // send the sms
-        $mcc = preg_replace('/[^0-9]+/','', $user->gwapi_mcc);
-        $mno = preg_replace('/[^0-9]+/','', $user->gwapi_mno);
-        $msisdn = $mcc.$mno;
+        $mcc = preg_replace('/[^0-9]+/', '', $user->gwapi_mcc);
+        $mno = preg_replace('/[^0-9]+/', '', $user->gwapi_mno);
+        $msisdn = $mcc . $mno;
 
         // our current login-replacement cookie
         $info = GwapiSecurityTwoFactor::getLoginDataByTempToken(GwapiSecurityTwoFactor::$TMP_TOKEN);
@@ -482,7 +483,7 @@ class GwapiSecurityTwoFactorHasMobile {
 
         // handle errors when sending
         if (is_wp_error($status)) {
-            $main_reason = '<h1>'.__('Problem in the two-factor security module', 'gwapi').'</h1>';
+            $main_reason = '<h1>' . __('Problem in the two-factor security module', 'gwapi') . '</h1>';
 
             if ($status->get_error_code() == 'GWAPI_FAIL') {
                 $reason = $status->get_error_message();
@@ -490,13 +491,13 @@ class GwapiSecurityTwoFactorHasMobile {
                 $reason = $human . "<br /><br /><small>" . nl2br($tech) . "</small>";
 
 
-                wp_die(new WP_Error('GWAPI', $main_reason.'<p>'.strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gwapi'), [':reason' => $reason]).'</p>'));
+                wp_die(new WP_Error('GWAPI', $main_reason . '<p>' . strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gwapi'), [':reason' => $reason]) . '</p>'));
             } else {
-                wp_die(new WP_Error('GWAPI', $main_reason.'<p>'.__('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gwapi').'</p>'));
+                wp_die(new WP_Error('GWAPI', $main_reason . '<p>' . __('The SMS could not be sent due to a technical error/misconfiguration of the GatewayAPI-plugin.<br /><br />You could try again, but probably this can only be resolved by your administrator.', 'gwapi') . '</p>'));
             }
         }
 
-        (function() use ($mcc, $mno) {
+        (function () use ($mcc, $mno) {
             // anonymize the phone number
             $mno = str_repeat('·', strlen($mno) - 3) . substr($mno, -3, 3);
             $tmp_token = GwapiSecurityTwoFactor::$TMP_TOKEN;
@@ -505,12 +506,14 @@ class GwapiSecurityTwoFactorHasMobile {
             GwapiSecurityTwoFactor::enqueueCssJs();
 
             // tweak the form id, so the JS hooks in properly
-            add_filter('gwapi_confirm_phone_form_id', function($c) { return "gwapi_confirm_login_form"; });
+            add_filter('gwapi_confirm_phone_form_id', function ($c) {
+                return "gwapi_confirm_login_form";
+            });
 
             // output!
             login_header(__('Two-factor security check', 'gwapi'));
             echo '<div class="step current">';
-            include _gwapi_dir().'/tpl/wp-login-confirm-phone.php';
+            include _gwapi_dir() . '/tpl/wp-login-confirm-phone.php';
             echo '</div>';
             login_footer();
         })();
@@ -562,9 +565,99 @@ class GwapiSecurityTwoFactorHasMobile {
     }
 }
 
+/**
+ * Add a two-factor mobile number field to the users profile page and make it possible to add/update the phone number
+ * with a verification SMS as part of the flow.
+ */
+class GwapiSecurityTwoFactorUserProfile
+{
+    public static function addContactMethod($methods, $user = null)
+    {
+        if (!is_a($user, 'WP_User')) $user = get_user_by('id', $user->ID);
+        if (!GwapiSecurityTwoFactor::userNeedsTwoFactor($user)) return $methods;
+
+        // only enable this for when editing own profile
+        if ($user->ID !== wp_get_current_user()->ID) return $methods;
+
+        $methods['gwapi_msisdn'] = __('Mobile number', 'gwapi');
+
+        return $methods;
+    }
+
+    public static function enqueueJsCss()
+    {
+        $screen = get_current_screen();
+        if ($screen->base != 'profile') return;
+
+        wp_register_script('wpadmin-profile-two_factor', _gwapi_url() . '/js/wpadmin-profile-two_factor.js', ['jquery']);
+
+        $nonce = wp_create_nonce('gwapi_profile_change_phone');
+        $user = wp_get_current_user();
+
+        $i18n = [
+            'twofac_section_h1' => __('Two-factor security', 'gwapi'),
+            'twofac_section_intro' => __('For security reasons, it is mandatory to associate your account with a cellphone number. This greatly enhances the integrity of your account and this site in general.', 'gwapi'),
+            'twofac_add_number' => __('Add mobile number', 'gwapi'),
+            'twofac_update_number' => __('Change mobile number', 'gwapi'),
+            'twofac_link' => admin_url('admin-post.php?action=gwapi_profile_change_phone&_nonce='.$nonce),
+            'twofac_msisdn' => $user->gwapi_mno ? '+'.$user->gwapi_mcc.' '.$user->gwapi_mno : '',
+        ];
+
+        wp_localize_script('wpadmin-profile-two_factor', 'GWAPI_PROFILE_I18N', $i18n);
+        wp_enqueue_script('wpadmin-profile-two_factor');
+    }
+
+    public static function gotoChangeMobile()
+    {
+        // verify nonce
+        if (!wp_verify_nonce($_GET['_nonce'], 'gwapi_profile_change_phone')) {
+            wp_die(__('You have followed a link containing an expired/invalid nonce. Please go back and redirect the page - then it should work.', 'gwapi'));
+        }
+
+        $user = wp_get_current_user();
+
+        // create the temp cookie
+        $_POST['redirect_to'] = $_SERVER['HTTP_REFERER'];
+        $temp_token = GwapiSecurityTwoFactor::replaceLoginCookieWithTempCookie($user);
+
+        // remove mobile number from users profile
+        delete_user_meta($user->ID, 'gwapi_mcc');
+        delete_user_meta($user->ID, 'gwapi_mno');
+
+        // also clear the current tokens on the user
+        delete_user_meta($user->ID, 'gwapi_2f_tokens');
+
+        // redirect to login page with this cookie
+        wp_redirect(wp_login_url().'?action=gwb2fa_reset&gwapi_reset_token='.$temp_token);
+    }
+
+    public static function loginAddNewMobile()
+    {
+        // validate the reset token
+        $token = $_GET['gwapi_reset_token'];
+        $login_info = GwapiSecurityTwoFactor::getLoginDataByTempToken($token);
+        if (is_wp_error($login_info)) wp_die($login_info);
+
+        // show the form
+        $user = get_user_by('ID', $login_info['user']);
+        GwapiSecurityTwoFactor::$TMP_TOKEN = $token;
+        GwapiSecurityTwoFactor::renderTwoFactorSteps($user);
+
+        die();
+    }
+}
+
+// login flow
 add_action('wp_login', ['GwapiSecurityTwoFactor', 'handleLoginHook'], 10, 2);
 add_action('wp_ajax_nopriv_gwapi_security_add_phone', ['GwapiSecurityTwoFactorAddMobile', 'sendInitialSms']);
 add_action('wp_ajax_nopriv_gwapi_security_confirm_phone', ['GwapiSecurityTwoFactorAddMobile', 'confirmSms']);
 add_action('wp_ajax_nopriv_gwapi_security_confirm_login', ['GwapiSecurityTwoFactorHasMobile', 'confirmSms']);
 
+// bypass mode
 add_action('login_form_gwb2fa', ['GwapiSecurityTwoFactor', 'enableBypassMode']);
+
+// admin user profile
+add_filter('user_contactmethods', ['GwapiSecurityTwoFactorUserProfile', 'addContactMethod'], 10, 2);
+add_filter('admin_enqueue_scripts', ['GwapiSecurityTwoFactorUserProfile', 'enqueueJsCss']);
+add_action('admin_post_gwapi_profile_change_phone', ['GwapiSecurityTwoFactorUserProfile', 'gotoChangeMobile']);
+add_action('login_form_gwb2fa_reset', ['GwapiSecurityTwoFactorUserProfile', 'loginAddNewMobile']);
