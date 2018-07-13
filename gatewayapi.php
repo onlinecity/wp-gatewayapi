@@ -3,14 +3,16 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Send SMS'es through WordPress.
-Version:     1.4.2
+Version:     1.5.0
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
-License:     GPLv2
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Domain Path: /languages
+License:     MIT
+License URI: https://opensource.org/licenses/MIT
 Text Domain: gwapi
+Domain Path: /languages
 */
+
+if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
 function _gwapi_dir()
 {
@@ -48,9 +50,6 @@ function _gwapi_initialize_cf7_submit($form)
 add_action('init', function () {
     $D = _gwapi_dir();
 
-    // load translations
-    load_plugin_textdomain('gwapi', false, 'gatewayapi/languages');
-
     // public
     include "$D/inc/api.php";
     include "$D/inc/recipient_forms.php";
@@ -85,7 +84,12 @@ add_action('init', function () {
         }
     }
     if (get_option('gwapi_enable_ui') || (isset($_GET['page']) && $_GET['page'] == 'gatewayapi' && strpos($_SERVER['SCRIPT_NAME'], '/options-general.php') != 0)) {
-        include "$D/inc/css_js.php";
+        require_once("$D/inc/css_js.php");
+    }
+
+    if (get_option('gwapi_security_enable')) {
+        require_once("$D/inc/css_js.php");
+        include "$D/inc/security_two_factor.php";
     }
 
     // admin: editor required
@@ -107,3 +111,8 @@ add_action('init', function () {
     }
 
 }, 9);
+
+add_action('plugins_loaded', function() {
+    // load translations
+    load_plugin_textdomain('gwapi', false, 'gatewayapi/languages/');
+});
