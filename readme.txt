@@ -130,6 +130,10 @@ Theoretically it works, but it's still in the early days for this plugin and thi
 == Changelog ==
 
 = 1.4.2 =
+* Recipients:
+  * Added option to blacklist phone numbers.
+  * Added support for searching recipients list by phone number (previously only by name).
+  * Added drop down on recipients list, for filtering by group.
 * Fix: Improved handling of huge lists of recipients (ie. 1.000+ recipients in one SMS)
 
 = 1.4.1 =
