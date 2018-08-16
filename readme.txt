@@ -2,7 +2,7 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 4.9.7
+Tested up to: 4.9.8
 Stable tag: 1.5.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
