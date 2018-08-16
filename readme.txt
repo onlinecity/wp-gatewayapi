@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
 Tested up to: 4.9.7
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -124,6 +124,12 @@ Then find the `options`-table, by default `wp_options`. Search for the row where
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.5.1 =
+* Updated Danish translations (primarily the two-factor settings and frontend).
+* Fix: Our shortcode had unintentionally been renamed. We now support both `[gwapi]` and `[gatewayapi]`.
+* Fix: Two-factor-module caused fatal error on PHP 5. Also fixed general notices in two-factor module.
+* Fix: Two-factor module caused fatal error when creating new WordPress-users.
 
 = 1.5.0 =
 * New! Two-factor security upgrade to your WordPress! (optional)

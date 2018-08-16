@@ -463,7 +463,7 @@ function _gwapi_shortcode_handle_send_sms($atts)
     return [ $action_text, $action_note ];
 }
 
-add_shortcode('gatewayapi', function($atts) {
+$shortcode_fn = function($atts) {
 
     // validate: action
     $valid_actions = ['signup', 'update', 'unsubscribe', 'send_sms'];
@@ -544,4 +544,6 @@ add_shortcode('gatewayapi', function($atts) {
 
     // end form
     echo '</form>';
-});
+};
+add_shortcode('gatewayapi', $shortcode_fn);
+add_shortcode('gwapi', $shortcode_fn);

@@ -14,7 +14,7 @@ class GwapiSecurityTwoFactor
     public static function getRoles()
     {
         $roles = wp_roles()->get_names();
-        $current_roles = get_option('gwapi_security_required_roles', []);
+        $current_roles = get_option('gwapi_security_required_roles') ? : [];
 
         $out = [];
         foreach ($roles as $k => $t) {
@@ -389,13 +389,16 @@ class GwapiSecurityTwoFactorAddMobile
         }
 
         // vars for HTML
-        $html = (function () use ($mcc, $mno, $tmp_token) {
-            ob_start();
-            include _gwapi_dir() . '/tpl/wp-login-confirm-phone.php';
-            return ob_get_clean();
-        })();
+        $html = self::getHtmlLoginConfirmPhone($mcc, $mno, $tmp_token);
 
         die(json_encode(['success' => true, 'html' => $html]));
+    }
+
+    private static function getHtmlLoginConfirmPhone($mcc, $mno, $tmp_token)
+    {
+        ob_start();
+        include _gwapi_dir() . '/tpl/wp-login-confirm-phone.php';
+        return ob_get_clean();
     }
 
     /**
@@ -443,13 +446,16 @@ class GwapiSecurityTwoFactorAddMobile
 
         // then show a message of the happy success
         $redirect_to = $login_info['redirect_to'];
-        $html = (function () use ($redirect_to) {
-            ob_start();
-            include _gwapi_dir() . '/tpl/wp-login-confirmed-phone.php';
-            return ob_get_clean();
-        })();
+        $html = self::getHtmlLoginConfirmedPhone($redirect_to);
 
         die(json_encode(['success' => true, 'html' => $html]));
+    }
+
+    private static function getHtmlLoginConfirmedPhone($redirect_to)
+    {
+        ob_start();
+        include _gwapi_dir() . '/tpl/wp-login-confirmed-phone.php';
+        return ob_get_clean();
     }
 }
 
@@ -497,26 +503,29 @@ class GwapiSecurityTwoFactorHasMobile
             }
         }
 
-        (function () use ($mcc, $mno) {
-            // anonymize the phone number
-            $mno = str_repeat('·', strlen($mno) - 3) . substr($mno, -3, 3);
-            $tmp_token = GwapiSecurityTwoFactor::$TMP_TOKEN;
+        self::getHtmlLoginConfirmPhone($mcc, $mno);
+    }
 
-            // enqueue css/js
-            GwapiSecurityTwoFactor::enqueueCssJs();
+    private static function getHtmlLoginConfirmPhone($mcc, $mno)
+    {
+        // anonymize the phone number
+        $mno = str_repeat('·', strlen($mno) - 3) . substr($mno, -3, 3);
+        $tmp_token = GwapiSecurityTwoFactor::$TMP_TOKEN;
 
-            // tweak the form id, so the JS hooks in properly
-            add_filter('gwapi_confirm_phone_form_id', function ($c) {
-                return "gwapi_confirm_login_form";
-            });
+        // enqueue css/js
+        GwapiSecurityTwoFactor::enqueueCssJs();
 
-            // output!
-            login_header(__('Two-factor security check', 'gatewayapi'));
-            echo '<div class="step current">';
-            include _gwapi_dir() . '/tpl/wp-login-confirm-phone.php';
-            echo '</div>';
-            login_footer();
-        })();
+        // tweak the form id, so the JS hooks in properly
+        add_filter('gwapi_confirm_phone_form_id', function ($c) {
+            return "gwapi_confirm_login_form";
+        });
+
+        // output!
+        login_header(__('Two-factor security check', 'gatewayapi'));
+        echo '<div class="step current">';
+        include _gwapi_dir() . '/tpl/wp-login-confirm-phone.php';
+        echo '</div>';
+        login_footer();
     }
 
     /**
@@ -573,7 +582,10 @@ class GwapiSecurityTwoFactorUserProfile
 {
     public static function addContactMethod($methods, $user = null)
     {
-        if (!is_a($user, 'WP_User')) $user = get_user_by('id', $user->ID);
+        if (!is_a($user, 'WP_User')) {
+            if (is_object($user) && isset($user->ID) && is_int($user->ID)) $user = get_user_by('id', $user->ID);
+            else return $methods; // unsupported on brand new users
+        }
         if (!GwapiSecurityTwoFactor::userNeedsTwoFactor($user)) return $methods;
 
         // only enable this for when editing own profile
