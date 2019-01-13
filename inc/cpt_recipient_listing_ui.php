@@ -102,6 +102,7 @@ add_action('parse_request', function ($wp) {
 
     switch ($format) {
         case 'xlsx':
+            include_once __DIR__."/../lib/xlsxwriter.class.php";
             $writer = new \XLSXWriter();
             $headers = [];
             foreach ($metas as $metaName) {
@@ -114,7 +115,7 @@ add_action('parse_request', function ($wp) {
                 foreach ($metas as $metaID=>$metaName) {
                     $columns[] = isset($metadata[$metaID]) ? $metadata[$metaID][0] : '';
                 }
-                $writer->writeSheetRow('Sheet1', $columns);
+                @$writer->writeSheetRow('Sheet1', $columns);
 
                 $q->next_post();
             }

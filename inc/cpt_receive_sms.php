@@ -204,6 +204,7 @@ add_action('parse_request', function ($wp) {
     $q = new WP_Query($args);
     switch ($format) {
         case 'xlsx':
+            include_once __DIR__."/../lib/xlsxwriter.class.php";
             $writer = new \XLSXWriter();
             $headers = [];
             foreach ($metas as $meta) {
@@ -216,7 +217,7 @@ add_action('parse_request', function ($wp) {
                 foreach ($metas as $meta) {
                     $columns[] = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
                 }
-                $writer->writeSheetRow('Sheet1', $columns);
+                @$writer->writeSheetRow('Sheet1', $columns);
             }
             echo $writer->writeToString();
             break;

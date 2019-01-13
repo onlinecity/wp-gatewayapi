@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 4.9.8
-Stable tag: 1.5.1
+Tested up to: 5.0.3
+Stable tag: 1.5.2
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -124,6 +124,11 @@ Then find the `options`-table, by default `wp_options`. Search for the row where
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.5.2 =
+* Compable with WordPress 5.0.3.
+* Fix: Excel-export of recipients did not work unless "SMS Inbox" was enabled.
+* Fix: Notices in Excel-export.
 
 = 1.5.1 =
 * Updated Danish translations (primarily the two-factor settings and frontend).
