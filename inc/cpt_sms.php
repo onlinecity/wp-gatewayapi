@@ -200,19 +200,37 @@ function _gwapi_prepare_sms($ID) {
         return;
     }
 
-    $res = wp_remote_post(admin_url('admin-ajax.php'), [
+    // preflight
+    $preflight = wp_remote_post(admin_url('admin-ajax.php'), [
         'body' => [
-            'action' => 'gwapi_send_next_batch',
+            'action' => 'gwapi_send_next_batch_preflight',
             'post_ID' => $ID
         ],
-        'blocking' => false
+        'timeout' => 5
     ]);
 
-    if (is_wp_error($res)) {
+    // yea, we can defer to "background-process"
+    if (trim(wp_remote_retrieve_body($preflight)) === 'success') {
+        wp_remote_post(admin_url('admin-ajax.php'), [
+            'body' => [
+                'action' => 'gwapi_send_next_batch',
+                'post_ID' => $ID
+            ],
+            'timeout' => 5
+        ]);
+    } else { // we can't background it, so just do in same thread
         set_time_limit(-1);
         do_action('wp_ajax_nopriv_gwapi_send_next_batch', false);
     }
 };
+
+/**
+ * Batch-sending PREFLIGHT
+ */
+add_action('wp_ajax_nopriv_gwapi_send_next_batch_preflight', function() {
+    die('success');
+});
+
 
 /**
  * AJAX: Send next batch of SMS.
