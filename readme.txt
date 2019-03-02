@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 5.0.3
-Stable tag: 1.5.2
+Tested up to: 5.1.0
+Stable tag: 1.6.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -124,6 +124,13 @@ Then find the `options`-table, by default `wp_options`. Search for the row where
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.6.0 =
+* New! Custom encoding for SMS'es, allowing SMS'es with emojis and other special characters.
+  * UI which detects what encoding should be used, always recommending the cheapest option (ie. most characters per SMS).
+  * API-method `gwapi_send_sms` has new argument for setting encoding.
+  * Fully backwards-compatible, defaulting to standard-encoding.
+* Compatible with WordPress 5.1
 
 = 1.5.2 =
 * Compable with WordPress 5.0.3.

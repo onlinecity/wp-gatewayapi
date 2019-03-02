@@ -166,7 +166,6 @@ function _gwapi_prepare_sms($ID) {
     $sender = get_post_meta($ID, 'sender', true);
     $message = get_post_meta($ID, 'message', true);
     $destaddr = get_post_meta($ID, 'destaddr', true) ? : 'MOBILE';
-    $encoding = get_post_meta($ID, 'encoding', true) ? : 'GSM0338';
 
 
     // don't send invalid sms
