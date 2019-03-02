@@ -21,9 +21,10 @@
  * @param array|string $recipients A single recipient or a list of recipients.
  * @param string $sender Sender text (11 chars or 15 digits)
  * @param string $destaddr Type of SMS - Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored - also called a Flash SMS)
+ * @param array $encoding The $message must always be in UTF-8. Read more about the different encodings available here: https://gatewayapi.com/docs/appendix.html#term-ucs2
  * @return int|WP_Error ID of message in gatewayapi.com on success
  */
-function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
+function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $encoding='UTF8')
 {
     // PREPARE THE RECIPIENTS
     // ======================
@@ -50,7 +51,8 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
         'recipients' => [ ],
         'message' => $message,
         'destaddr' => $destaddr,
-        'tags' => $allTags
+        'tags' => $allTags,
+        'encoding' => $encoding,
     ];
     $sender = $sender ? : get_option('gwapi_default_sender');
     if ($sender) {
@@ -117,6 +119,8 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE')
             'headers' => ['Authorization' => $auth, 'Content-Type' => 'application/json'],
             'body' => json_encode($req)
         ]);
+
+        error_log(json_encode($req, JSON_PRETTY_PRINT));
 
         // not an error - hurray!
         if (!is_wp_error($res)) {

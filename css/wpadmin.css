@@ -357,3 +357,8 @@ i.info {
     overflow: auto;
     max-height: 150px;
 }
+
+.tiny-padding-table td {
+    padding: 0 10px 5px 0;
+    margin: 0;
+}

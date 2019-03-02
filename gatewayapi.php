@@ -11,8 +11,9 @@ License URI: https://opensource.org/licenses/MIT
 Text Domain: gwapi
 Domain Path: /languages
 */
-
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
+
+const GATEAYAPI_VERSION = '1.5.2';
 
 function _gwapi_dir()
 {

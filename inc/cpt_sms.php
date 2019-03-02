@@ -166,6 +166,8 @@ function _gwapi_prepare_sms($ID) {
     $sender = get_post_meta($ID, 'sender', true);
     $message = get_post_meta($ID, 'message', true);
     $destaddr = get_post_meta($ID, 'destaddr', true) ? : 'MOBILE';
+    $encoding = get_post_meta($ID, 'encoding', true) ? : 'GSM0338';
+
 
     // don't send invalid sms
     if ($errors = _gwapi_validate_sms([
@@ -237,13 +239,14 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch', function($can_use_remote = tr
         $sender = $post->sender;
         $message = $post->message;
         $destaddr = $post->destaddr ? : 'MOBILE';
+        $encoding = $post->encoding === 'UCS2' ? 'UCS2' : 'UTF8';
 
         // get all recipients
         $allTags = _gwapi_extract_tags_from_message($message);
         $allRecipients = _gwapi_create_recipients_for_sms($ID, $allTags);
         $recipients = array_slice($allRecipients, $handled_count, _GWAPIUI_MAX_RECIPIENTS_PER_BATCH, true);
 
-        $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr);
+        $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr, $encoding);
 
         if (!is_wp_error($send_req)) {
             if ($handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH >= count($allRecipients)) {
