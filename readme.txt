@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 5.1.0
-Stable tag: 1.6.0
+Tested up to: 5.2.1
+Stable tag: 1.6.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -124,6 +124,9 @@ Then find the `options`-table, by default `wp_options`. Search for the row where
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.6.1 =
+* Removed URL in two-factor SMS as it was unnecessary and caused SMS'es to be blocked by GatewayAPI's new link-scanner.
 
 = 1.6.0 =
 * New! Custom encoding for SMS'es, allowing SMS'es with emojis and other special characters.

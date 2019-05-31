@@ -481,8 +481,8 @@ class GwapiSecurityTwoFactorHasMobile
         // info for sms
         $code = $info['code'];
         $sender = get_bloginfo();
-        $home_url = url_shorten(get_home_url());
-        $message = strtr(__("Verification code: :code\nKind regards, :sender\n:home_url", 'gatewayapi'), [':code' => $code, ':sender' => $sender, ':home_url' => $home_url]);
+        $home_url = '';
+        $message = strtr(__("Verification code: :code\nKind regards, :sender", 'gatewayapi'), [':code' => $code, ':sender' => $sender]);
 
         // send sms with code
         $status = gwapi_send_sms($message, $msisdn);

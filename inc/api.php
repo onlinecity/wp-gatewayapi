@@ -73,6 +73,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
 
     // SEND THE SMS
     // ============
+    $req = apply_filters('gwapi_send_sms_request', $req);
 
     // possible URIs
     $uris = ['https://gatewayapi.com/rest/mtsms', 'https://badssl.gatewayapi.com/rest/mtsms', 'http://badssl.gatewayapi.com/rest/mtsms'];
