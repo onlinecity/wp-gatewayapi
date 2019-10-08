@@ -130,7 +130,7 @@ function _gwapi_shortcode_handle_signup($atts)
             $code = rand(100000,999999);
             set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
-            $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
+            $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn);
             if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gatewayapi'));
 
             // show the form
@@ -205,7 +205,7 @@ function _gwapi_shortcode_handle_update($atts)
                 $msisdn = gwapi_get_msisdn($_POST['gatewayapi']['cc'], $_POST['gatewayapi']['number']);
                 set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
-                $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
+                $status = gwapi_send_sms( strtr(__('Your confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn);
                 if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gatewayapi'));
 
                 // show the form
@@ -312,7 +312,7 @@ function _gwapi_shortcode_handle_unsubscribe($atts) {
                 $msisdn = preg_replace('/\D+/', '', $_POST['gatewayapi']['cc'].$_POST['gatewayapi']['number']);
                 set_transient('gwapi_confirmation_code_'.$msisdn, $code, 60*60*4);
 
-                $status = gwapi_send_sms( strtr(__('Unsubscribe confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn, '', 'DISPLAY' );
+                $status = gwapi_send_sms( strtr(__('Unsubscribe confirmation code: %code%', 'gatewayapi'), ['%code%' => substr($code,0,3)." ".substr($code,3,3)]), $msisdn);
                 if (is_wp_error($status)) return new WP_Error('sms_fail', __('Sending of the verification code by SMS failed. Please try again later or contact the website owner.', 'gatewayapi'));
 
                 // show the form

@@ -38,7 +38,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
             if (is_array($j)) {
                 $recipients_formatted[$i] = $j;
                 foreach($j as $tag => $value) {
-                    $allTags[] = $tag;
+                    $allTags[$tag] = $tag;
                 }
             } else {
                 $recipients_formatted[$j] = [];
@@ -51,7 +51,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
         'recipients' => [ ],
         'message' => $message,
         'destaddr' => $destaddr,
-        'tags' => $allTags,
+        'tags' => array_values($allTags),
         'encoding' => $encoding,
     ];
     $sender = $sender ? : get_option('gwapi_default_sender');
@@ -83,7 +83,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
         // Variables for OAuth 1.0a Signature
         $consumer_key = rawurlencode(get_option('gwapi_key'));
         $secret = rawurlencode(get_option('gwapi_secret'));
-        $nonce = rawurlencode(uniqid());
+        $nonce = rawurlencode(uniqid(false, true));
         $ts = rawurlencode($ts+$i);
 
         // OAuth 1.0a - Signature Base String
@@ -121,15 +121,14 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
             'body' => json_encode($req)
         ]);
 
-        error_log(json_encode($req, JSON_PRETTY_PRINT));
-
         // not an error - hurray!
         if (!is_wp_error($res)) {
             if ($res['response']['code'] == 200) {
                 return current(json_decode($res['body'])->ids);
             }
-            $error = json_decode($res['body']);
-            return new WP_Error('GWAPI_FAIL', $error->message."\nCode ".$error->code."\nUUID: ".$error->incident_uuid);
+            $error_raw = $res['body'];
+            $error = json_decode($error_raw);
+            return new WP_Error('GWAPI_FAIL', ($error && isset($error->message) && $error->message) ? $error->message."\nCode ".$error->code."\nUUID: ".$error->incident_uuid : $res['response']['code']."\n".$error_raw);
         }
 
         // error: BUT no reason to try another URL as this is not communications related
