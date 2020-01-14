@@ -13,7 +13,7 @@
 
     <p>
         <label for="gwapi_confirm_code"><?php _e('Confirmation code', 'gatewayapi'); ?><br>
-            <input type="number" name="code" id="gwapi_confirm_code" class="input" value="" size="20">
+            <input type="number" name="code" id="gwapi_confirm_code" class="input" value="" size="20" autocomplete="one-time-code">
         </label>
     </p>
 
