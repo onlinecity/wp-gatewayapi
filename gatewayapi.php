@@ -116,3 +116,10 @@ add_action('plugins_loaded', function() {
     // load translations
     load_plugin_textdomain('gatewayapi', false, 'gatewayapi/languages/');
 });
+
+add_filter( 'gwapi-recipient-groups_row_actions', function($actions,$tag) {
+    // Override recipient groups view action with a link to show group recipients instead of the default view
+    $group_view_url = admin_url('edit.php?' . $tag->taxonomy . '=' . $tag->slug . '&post_type=gwapi-recipient');
+    $actions['view'] = "<a href='{$group_view_url}'>" . __('View') . "</a>";
+    return $actions;
+}, 10, 2);

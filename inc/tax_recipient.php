@@ -23,7 +23,10 @@ add_action('init', function () {
         ],
         'public' => true,
         'show_ui' => true,
-        'hierarchical' => true
+        'hierarchical' => true,
+        'rewrite' => array(
+            'slug' => 'gwapi-recipient-groups'
+        )
     ]);
     bit_add_taxonomy_filter_to_cpt('gwapi-recipient', 'gwapi-recipient-groups');
 
