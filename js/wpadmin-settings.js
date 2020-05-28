@@ -250,8 +250,19 @@ jQuery(function($) {
             }
 
             // editable groups?
+            var select_all_outer = outer.find('.select-all-wrapper');
+            var select_all = select_all_outer.find('> :not(.hidden) [name=select_all]');
+
             if (outer.find('> :not(.hidden) [name=editable]').is(':checked')) {
                 ss += ' edit-groups=1';
+                select_all_outer.removeClass('hidden');
+            } else {
+                select_all_outer.addClass('hidden');
+            }
+
+            // all selected by default?
+            if (select_all.is(':checked')) {
+                ss += ' groups-selected=1';
             }
 
             // send sms?

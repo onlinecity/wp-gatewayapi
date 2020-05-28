@@ -545,6 +545,14 @@
                                    value="1"> <?php _e('Yes, show the list of selected groups and allow user to edit.', 'gatewayapi'); ?>
                         </label>
                     </div>
+
+                  <div class="select-all-wrapper hidden">
+                    <p><?php _e('Would you like to show the list of groups as selected by default.', 'gatewayapi'); ?></p>
+                    <label>
+                      <input type="checkbox" name="select_all"
+                             value="1"> <?php _e('Yes, select all groups by default.', 'gatewayapi'); ?>
+                    </label>
+                  </div>
                 </div>
                 <h2></h2>
 
