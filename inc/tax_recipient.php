@@ -31,3 +31,10 @@ add_action('init', function () {
     bit_add_taxonomy_filter_to_cpt('gwapi-recipient', 'gwapi-recipient-groups');
 
 });
+
+add_filter( 'gwapi-recipient-groups_row_actions', function($actions,$tag) {
+    // Override recipient groups view action with a link to show group recipients instead of the default view
+    $group_view_url = admin_url('edit.php?' . $tag->taxonomy . '=' . $tag->slug . '&post_type=gwapi-recipient');
+    $actions['view'] = "<a href='{$group_view_url}'>" . __('View') . "</a>";
+    return $actions;
+}, 10, 2);

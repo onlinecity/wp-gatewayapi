@@ -14,7 +14,7 @@ jQuery(function ($) {
     }
 
     var has_send_ui = body.hasClass('post-type-gwapi-sms');
-    var has_recipient_ui = body.hasClass('post-type-gwapi-recipient');
+    var has_recipient_ui = body.hasClass('gwapi-recipient-ui');
     var has_receive_sms_ui = body.hasClass('post-type-gwapi-receive-sms');
     if (!has_send_ui && !has_recipient_ui && !has_receive_sms_ui) return; // bail early
 

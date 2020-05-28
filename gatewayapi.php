@@ -117,9 +117,14 @@ add_action('plugins_loaded', function() {
     load_plugin_textdomain('gatewayapi', false, 'gatewayapi/languages/');
 });
 
-add_filter( 'gwapi-recipient-groups_row_actions', function($actions,$tag) {
-    // Override recipient groups view action with a link to show group recipients instead of the default view
-    $group_view_url = admin_url('edit.php?' . $tag->taxonomy . '=' . $tag->slug . '&post_type=gwapi-recipient');
-    $actions['view'] = "<a href='{$group_view_url}'>" . __('View') . "</a>";
-    return $actions;
-}, 10, 2);
+/**
+ * Set body class for recipients
+ * @param  String $classes Current body classes.
+ * @return String          Altered body classes.
+ */
+add_filter('admin_body_class', function($classes) {
+    $current_screen = get_current_screen();
+    $page_id = str_replace('edit-', '', $current_screen->id);
+    $classes .= " {$page_id}-ui";
+    return $classes;
+});
