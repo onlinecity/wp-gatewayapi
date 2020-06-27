@@ -251,7 +251,7 @@ jQuery(function($) {
 
             // editable groups?
             var select_all_outer = outer.find('.select-all-wrapper');
-            var select_all = select_all_outer.find('> :not(.hidden) [name=select_all]');
+            var select_all = select_all_outer.find('> :not(.hidden) [name=deselect_all]');
 
             if (outer.find('> :not(.hidden) [name=editable]').is(':checked')) {
                 ss += ' edit-groups=1';
@@ -262,7 +262,7 @@ jQuery(function($) {
 
             // all selected by default?
             if (select_all.is(':checked')) {
-                ss += ' groups-selected=1';
+                ss += ' groups-deselected=1';
             }
 
             // send sms?

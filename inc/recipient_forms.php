@@ -350,7 +350,7 @@ add_filter('gwapi_recipient_value', function($value, $recipient, $field) {
 function gwapi_render_recipient_editable_groups($atts, WP_Post $post = null) {
 
     $limit_groups = isset($atts['groups']) ? explode(",", $atts['groups']) : [];
-    $select_all = isset($atts["groups-selected"]);
+    $groups_deselected = isset($atts["groups-deselected"]);
 
     if (!$limit_groups) {
         $limit_groups = get_terms([
@@ -377,7 +377,7 @@ function gwapi_render_recipient_editable_groups($atts, WP_Post $post = null) {
     $choices = [];
     $choices_keys = [];
     foreach($groups as $group) {
-        $select_this = $select_all ? : in_array($group->term_id, $current_groups);
+        $select_this = !$groups_deselected ? : in_array($group->term_id, $current_groups);
         $choices[] = ($select_this ? '!! ' : '').$group->name;
         $choices_keys[] = $group->term_id;
     }

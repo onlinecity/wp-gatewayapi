@@ -549,8 +549,8 @@
                   <div class="select-all-wrapper hidden">
                     <p><?php _e('Would you like to show the list of groups as selected by default.', 'gatewayapi'); ?></p>
                     <label>
-                      <input type="checkbox" name="select_all"
-                             value="1"> <?php _e('Yes, select all groups by default.', 'gatewayapi'); ?>
+                      <input type="checkbox" name="deselect_all"
+                             value="1"> <?php _e('Groups should not be selected by default', 'gatewayapi'); ?>
                     </label>
                   </div>
                 </div>
