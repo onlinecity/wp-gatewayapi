@@ -117,7 +117,10 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
 
         $res = wp_remote_request($uri, $q=[
             'method' => 'POST',
-            'headers' => ['Authorization' => $auth, 'Content-Type' => 'application/json'],
+            'headers' => [
+                'Authorization' => $auth,
+                'Content-Type' => 'application/json',
+                'user-agent' => 'wp-gatewayapi'],
             'body' => json_encode($req)
         ]);
 
