@@ -125,6 +125,11 @@ Then find the `options`-table, by default `wp_options`. Search for the row where
 
 == Changelog ==
 
+= 1.6.3 =
+* Compatible with WordPress 5.4
+* New! Recipient groups can now default to unchecked when using short-code
+* Tweak: Minor updates to UI.
+
 = 1.6.2 =
 * Tweak: The frontend forms now use regular SMS instead of Display SMS for two-factor, as requested by multiple users.
 * Bugfix: When using tags, the list of tags sent to GatewayAPI could end in a situation, with the same tag-data repeated.
