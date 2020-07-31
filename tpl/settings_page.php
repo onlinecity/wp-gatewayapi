@@ -398,7 +398,7 @@
                             <th scope="row"><?php _e('Default country code', 'gatewayapi'); ?></th>
                             <td>
                                 <div style="max-width: 400px">
-                                    <select name="gwapi_user_sync_meta_default_countrycode">
+                                    <select name="gwapi_user_sync_meta_default_countrycode" data-default-cc="<?php echo esc_attr(get_option('gwapi_user_sync_meta_default_countrycode')); ?>">
                                     </select>
                                 </div>
                                 <p class="description">
@@ -580,6 +580,9 @@
                 <p>
                     <?php _e('Do you want to receive SMS messages for this installation?', 'gatewayapi'); ?>
                 </p>
+              <p>
+                <strong><?php _e('To be able to use SMS Inbox you will need to have access to a Shortcode or Virtual Number', 'gatewayapi'); ?></strong>
+              </p>
                 <p>
                     <label>
                         <input type="checkbox" name="gwapi_receive_sms_enable" value="1"

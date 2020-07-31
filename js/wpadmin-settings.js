@@ -302,7 +302,9 @@ jQuery(function($) {
         }).change();
 
         // country code
-        $('select[name="gwapi_user_sync_meta_default_countrycode"]').gwapiMobileCc();
+        let fieldDefaultCC = $('select[name="gwapi_user_sync_meta_default_countrycode"]');
+        let defaultCountryCode = fieldDefaultCC.data('default-cc') || 45;
+        $('select[name="gwapi_user_sync_meta_default_countrycode"]').gwapiMobileCc({"default_cc": defaultCountryCode });
     }
 
     function handleReceiveSms()
