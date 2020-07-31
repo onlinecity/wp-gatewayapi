@@ -118,10 +118,12 @@ class GwapiContactForm7
         foreach ($this->types as $key => $name) {
             // validation of field
             add_filter('wpcf7_validate_' . $key, [$this, 'validate' . substr($key, 3)], 10, 2);
+            add_filter('wpcf7_validate_' . "$key*", [$this, 'validate' . substr($key, 3)], 10, 2);
 
+            $code = [$key, "$key*"];
             // add shortcode
             $func = [$this, 'handle' . substr($key, 3)];
-            wpcf7_add_form_tag(array($key), $func, true);
+            wpcf7_add_form_tag($code, $func, true);
         }
     }
 
@@ -1043,6 +1045,10 @@ class GwapiContactForm7
         $groupsPossible = array_unique($groupsPossible);
         $groupsSelected = isset($_POST[$tag->name]) ? array_unique($_POST[$tag->name]) : [];
 
+        if ($this->fieldIsEmptyAndRequired($tag)) {
+            $res->invalidate($tag, wpcf7_get_message('invalid_required'));
+        }
+
         // if NOT hidden, then check:
         // are the groups selected within the list of possible groups?
         if (!in_array('hidden', $tag->options)) {
@@ -1078,8 +1084,12 @@ class GwapiContactForm7
         $local_field = current($cf->scan_form_tags(['type' => 'gw_phone']));
 
         $tag = new WPCF7_FormTag($tag);
-
-        $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
+        if ($this->fieldIsEmptyAndRequired($tag)) {
+            $res->invalidate($tag, wpcf7_get_message('invalid_required'));
+            return $res;
+        }
+        $name = $tag->name;
+        $phone =  $_POST[$name] ?? null;
         if (!$phone || !ctype_digit($phone)) {
             $res->invalidate($tag, __('The phone number must consist of digits only.', 'gatewayapi'));
             return $res;
@@ -1375,5 +1385,11 @@ class GwapiContactForm7
             'bad_code' => __("You did not enter the code correctly. Please try again.", 'gatewayapi'),
             'no_code_try_again' => __('Not entering the code will cancel the signup. Clicking OK will allow you to try and enter the code again.', 'gatewayapi')
         ]);
+    }
+
+    private function fieldIsEmptyAndRequired($tag) {
+        $name = $tag->name;
+        $empty = !isset( $_POST[$name] ) || empty( $_POST[$name] );
+        return $empty && $tag->is_required();
     }
 }
