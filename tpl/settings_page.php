@@ -614,6 +614,9 @@
                                         <?php _e('Click ADD NEW.', 'gatewayapi'); ?>
                                     </li>
                                     <li>
+                                        <?php _e('Click REST.', 'gatewayapi'); ?>
+                                    </li>
+                                    <li>
                                         <?php _e('Enter a Unique label.', 'gatewayapi'); ?>
                                     </li>
                                     <li>
