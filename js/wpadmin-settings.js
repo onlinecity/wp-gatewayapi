@@ -356,6 +356,13 @@ jQuery(function($) {
         $('input[name="gwapi_security_bypass_code"]').click(function() {
             $(this).get(0).select();
         });
+
+        $('select[name^="gwapi_security_required_roles"]').select2({
+            placeholder: "Select user roles",
+            multiple: true,
+            closeOnSelect: false,
+            allowClear: true,
+        });
     }
 
     initialize();
