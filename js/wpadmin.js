@@ -16,6 +16,7 @@ jQuery(function ($) {
     var has_send_ui = body.hasClass('post-type-gwapi-sms');
     var has_recipient_ui = body.hasClass('gwapi-recipient-ui');
     var has_receive_sms_ui = body.hasClass('post-type-gwapi-receive-sms');
+    var is_edit_sms_ui = body.hasClass('gwapi-sms-ui post-php');
     if (!has_send_ui && !has_recipient_ui && !has_receive_sms_ui) return; // bail early
 
     loadCountryCodes();
@@ -42,6 +43,9 @@ jQuery(function ($) {
       handleSmsExport();
     }
 
+    if (is_edit_sms_ui) {
+      disableEditSMS();
+    }
   }
 
   /**
@@ -504,6 +508,10 @@ jQuery(function ($) {
         handleSending();
       })
     }, 5000);
+  }
+
+  function disableEditSMS() {
+    $('form input, form select, form textarea, button').attr('disabled', 'disabled');
   }
 
   initialize();

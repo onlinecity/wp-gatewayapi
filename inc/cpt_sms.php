@@ -37,6 +37,17 @@ add_action('init', function () {
     );
 
     register_post_type('gwapi-sms', $args);
+
+    add_action('current_screen', function ($current_screen) {
+        if ($current_screen->post_type === 'gwapi-sms') {
+            // I18N: Rename texts
+            add_filter('gettext', function ($translated_text, $text, $domain) {
+                if ($domain != 'default') return $translated_text;
+                if ($text === 'Edit') return __('View');
+                return $translated_text;
+            }, 20, 3);
+        }
+    });
 });
 
 /**
