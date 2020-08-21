@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 5.4
-Stable tag: 1.6.3
+Tested up to: 5.5
+Stable tag: 1.6.4
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -11,111 +11,106 @@ Send SMS'es and enable SMS-based two-factor security.
 
 == Description ==
 
-This plugin enables you to send SMS'es straight from the WordPress backend or via the programmers API.
+This plugin enables you to send SMS messages straight from the WordPress backend or via the programmer’s API.
 
-Also included is free and really easy to use two-factor security, which really hardens the security of your site.
+Also included is a free and easy-to-use two-factor security feature, which hardens the security of your site considerably.
 
-All you need, is the plugin and a free [GatewayAPI.com](https://gatewayapi.com)-account.
+All you need is the plugin and a free [GatewayAPI.com](https://gatewayapi.com/) account.
+
 
 Main features:
 
-* **📱 Send SMS'es / texts**
-  * Add custom data to recipients, to mail merge.
-  * Import recipient lists from CSV/Excel.
-  * Group recipients.
-  * Bulk-sending.
-  * Easy programmers API.
-  * Short-codes for signup/unsubscribe/edit profile forms.
-  * Automatic integration with Contact Form 7.
+* **📱 Send SMS messages / texts**
+  *   Add custom data to recipients to mail merge.
+  *   Import recipient lists from CSV/Excel.
+  *   Group recipients.
+  *   Bulk-sending.
+  *   Easy-to-use programmer’s API.
+  *   Short-codes for signup/unsubscribe/edit profile forms.
+  *   Automatic integration with Contact Form 7.
 
 * **🔐 Two-factor security**
-  * Easy on your users: No apps needed!
-  * Easy on the admin: Tick a checkbox and it just works!
-  * Military grade security!
-  * Pick roles to enable mandatory two-factor.
-  * Re-authorize at each login or remember devices for up to 30 days.
+  *   Easy-to-use: No apps needed!
+  *   Easy for admins: Tick a checkbox and it just works!
+  *   Military grade security!
+  *   Pick roles to enable mandatory two-factor.
+  *   Re-authorise at each login or remember devices for up to 30 days.
 
-* **✊ Receive SMS'es / texts**
-  * Use your own keyword(s) or phone numbers to receive SMS'es.
-  * View incoming messages.
-  * Auto-reply to incoming SMS'es.
-  * ... or do special handling and replies.
+* **✊ Receive SMS messages  / texts**
+  *   Use your own keyword(s) or phone numbers to receive SMS messages.
+  *   View incoming messages.
+  *   Auto-reply to incoming SMS messages.
 
 **Easy to get started:**
 
-- Complete step-by-step user guide with many screenshots.
-- The plugin has helpful texts all around.
-- Live chat support and mail support from GatewayAPI.com.
+*   Complete step-by-step user guide with several screenshots.
+*   The plugin has help texts included.
+*   Live chat support and mail support from GatewayAPI.com.
 
-**Backed by high quality, low price EU-based SMS-gateway:**
+**SMS messages provided by one of the leading SMS Gateways in Europe**
 
-- GatewayAPI.com has sent 180+ million SMS'es.
-- We regularly send over 1.500 SMS'es per second.
-- Headquarters in Copenhagen, Denmark.
-- Company founded in 1999.
-- Free support, no subscription AND unbeatable prices.
-- Most SMS'es are delivered within 0,3 second.
+*   GatewayAPI.com sends hundreds of millions of SMS messages each year on behalf of Google, Visma, Pfizer and many more.
+*   Headquarters in Copenhagen, Denmark.
+*   Company founded in 1999.
+*   Free support, no subscription, AND unbeatable prices.
+*   Most SMS messages are delivered within 0,3 seconds.
 
-If you would prefer to disable the UI-features and do all the sending from code, then that's possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
+If you prefer to disable the UI-features and manage broadcasts from code instead, then that is possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
 
 
 = Getting Started =
 
-We have created a number of short tutorials, demonstrating how to get started and use the various features. Watch the following video to see how to set everything up and send your first SMS:
-
-https://vimeo.com/168035068
+We have created a number of short tutorials, demonstrating how to get started and use the various features. Watch the following video to see how to set everything up and send your first SMS message:
 
 [Click here for more videos](https://wordpress.org/plugins/gatewayapi/installation/).
 
-
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+This section describes how to install and use the plugin
 
-1. If you haven't already, then go to [GatewayAPI.com](https://gatewayapi.com) and create a free account.
+1. If you haven’t already, then go to [GatewayAPI.com](https://gatewayapi.com/) and create a free account.
 1. Install and activate the plugin.
-1. Go to "Settings » GatewayAPI Settings" and add an OAuth key and associated secret from your GatewayAPI.com account.
-1. (Optional) Enable the sending UI and then go to "SMS'es » Create SMS" and try to send an SMS to yourself, verifying that all is setup correctly.
+1. Go to “Settings » GatewayAPI Settings” and add an OAuth key and associated secret from your GatewayAPI.com account.
+1. (Optional) Enable the sending UI and then go to “SMS messages » Create SMS” and try to send an SMS to yourself, verifying that all has been set up correctly.
 
-We've also produced a number of videos to help you get started:
+We’ve also produced a number of videos to help you get started:
 
-= Getting started =
+= GETTING STARTED =
 
-This quick tutorial shows you how to get GatewayAPI Plugin for WordPress installed and configured, and goes as far as to send of an actual SMS.
+This quick tutorial shows you how to get the GatewayAPI Plugin for WordPress installed and configured and how to send an SMS.
 
 https://vimeo.com/179720894
 
-= Recipients, groups and extra fields =
+= RECIPIENTS, GROUPS AND EXTRA FIELDS =
 
-This quick tutorial shows you how to create groups, add recipients to the groups, as well as how to add custom fields to the recipients, allowing for any extra data to be stored and used in SMS'es.
+This quick tutorial shows you how to create groups, add recipients to the groups, as well as how to add custom fields to the individual recipients, which allows any extra data to be stored and used in SMS messages.
 
 https://vimeo.com/179720962
 
-= Built-in forms for sign up, update and unsubscribe =
+= BUILT-IN FORMS FOR SIGN UP, UPDATE AND UNSUBSCRIBE =
 
-This tutorial shows you how to create forms for the public, using the built-in UI for creating "shortcodes" (tiny pieces of code which can be pasted into any WordPress-page).
+This tutorial shows you how to create forms for the public, using the built-in UI for creating “shortcodes” (tiny pieces of code which can be pasted into any WordPress-page).
 
 https://vimeo.com/179721068
 
-= Importing recipients from spreadsheets =
+= IMPORTING RECIPIENTS FROM SPREADSHEETS =
 
-This tutorial shows you how to import recipients from any spreadsheet and into the recipients database of the GatewayAPI. It even shows how to overwrite and update the database, import extra fields from spreadsheets and how to add the recipients into groups. It works with any spreadsheet app (Excel, Numbers, LibreOffice, Google Docs - you name it!).
+This tutorial shows you how to import recipients from any spreadsheet and into the recipients database in GatewayAPI. It even shows how to overwrite and update the database, import extra fields from spreadsheets and how to add the recipients into groups. It works with any spreadsheet app (Excel, Numbers, LibreOffice, Google Docs – you name it!).
+
 
 https://vimeo.com/179721183
 
 
 == Frequently Asked Questions ==
 
-= How well does this plugin handle 10.000+'s of recipients =
+= How well does this plugin handle 10,000+ recipients =
 
-It works really well. We split large SMS'es into multiple smaller requests, to ease the burden on your WordPress. This also enables us to show a pretty progress bar while sending, when you are sending to more than 500 recipients at a time :-)
+It works really well. We split large SMS broadcasts into multiple smaller requests, to ease the burden on your WordPress setup. You will see a progress bar, when you are sending to more than 500 recipients at a time.
 
-= HELP! I'm administrator and I'm locked out of the two-factor system! =
+= HELP! I’m administrator and I’m locked out of the two-factor system! =
 
-If you don't have a backup of the "Emergency bypass URL" from the setup-screen, then you need to dig into the database to disable the two-factor system. Your host probably has a phpMyAdmin that you can use to access it.
-
-Then find the `options`-table, by default `wp_options`. Search for the row where the `option_name` is `gwapi_security_enable`. Simply delete the row.
-
+If you don’t have a backup of the “Emergency bypass URL” from the setup-screen, then you need to dig into the database to disable the two-factor system. Your host probably has a phpMyAdmin that you can use to access it.
+Then find the options-table, by default wp_options. Search for the row where the option_name is gwapi_security_enable. Simply delete the row.
 
 == Screenshots ==
 1. Set up your OAuth key and secret here. This settings page is available for administrators only.
@@ -124,6 +119,11 @@ Then find the `options`-table, by default `wp_options`. Search for the row where
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.6.4 =
+* Compatible with WordPress 5.5
+* Improved: Integration with Contact Form 7 now supports shortcode for mandatory fields
+* Tweak: Updated UI and descriptions.
 
 = 1.6.3 =
 * Compatible with WordPress 5.4
@@ -257,30 +257,42 @@ Bugfixes:
 
 = Most users: User Guide =
 
-Most topics are shown in a step-by-step style with numerous screenshots in our User Guide - even quite advanced topics.
+Most topics are shown in a step-by-step style with numerous screenshots in our User Guide – even quite advanced topics.
 
 [Open the User Guide](https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide)
 
 
 = Advanced: Programmers API =
 
-Send an SMS to one or multiple recipients by calling `gwapi_send_sms` with the following arguments
+Send an SMS message to one or multiple recipients by calling `gwapi_send_sms `with the following arguments
 
-- $message (string) A string containing the message to be sent.
-- $recipients (array|string) A single recipient or a list of recipients.
-- $sender (string, *optional*) Sender text (11 chars or 15 digits)
-- $destaddr (string, *optional*) Type of SMS - Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored, also knows as a Flash SMS)
+*   $message (string) A string containing the message to be sent.
+*   $recipients (array|string) A single recipient or a list of recipients.
+*   $sender (string, optional) Sender text (11 chars or 15 digits)
+*   $destaddr (string, optional) Type of SMS – Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored, also knows as a Flash SMS)
 
 Returns the GatewayAPI.com message-ID on success and a WP_Error on failure.
 
 The recipients-argument may consist of either:
 
-- An integer or string, containing an MSISDN (CC + number, digits only).
-  Example number: Country code 45. Phone number: 12 34 56 78.
-  Resulting MSISDN: "4512345678".
-- An array containing MSISDN (see above).
-- An array in which MSISDN's are keys and their values are arrays of tags.
-  Example in JSON:
-  { "4512345678": { "%NAME%": "John Doe", "%GENDER%": "Male" } }
+*   An integer or string, containing an MSISDN (CC + number, digits only).
+Example number: Country code 45. Phone number: 12 34 56 78.
+Resulting MSISDN: “4512345678”.
+*   An array containing MSISDN (see above).
+*   An array in which MSISDN’s are keys and their values are arrays of tags.
+Example in JSON:
+{ “4512345678”: { “%NAME%”: “John Doe”, “%GENDER%”: “Male” } }
 
-*Note: SMS'es sent via `gwapi_send_sms` are NOT saved in WordPress. They are however still accessible via the traffic log on GatewayAPI.com*
+Note: SMS messages sent via `gwapi_send_sms` are NOT saved in WordPress. They are however still accessible via the traffic log on GatewayAPI.com
+
+
+## **Screenshots**
+
+Set up your OAuth key and secret here. This settings page is available for administrators only.
+
+If the SMS Sending UI is enabled, this is how you can send an SMS from the backend.
+
+Contact Form 7: GatewayAPI automatically adds extra controls for supporting signup/update/unsubscribe in the Contact Form 7 form builder.
+
+Contact Form 7: Creating a "recipient groups" selection field.
+
