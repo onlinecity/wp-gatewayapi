@@ -8,6 +8,8 @@ add_action('admin_menu', function () {
 }, 20);
 
 add_action('wp_ajax_gwapi_import', function () {
+    global $wpdb;
+
     header('Content-type: application/json');
 
     $data = get_transient('gwapi_import_' . get_current_user_id());
@@ -17,7 +19,10 @@ add_action('wp_ajax_gwapi_import', function () {
     $new = 0;
     $updated = 0;
 
+
+    wp_defer_term_counting(true);
     foreach ($rows as $row) {
+        $ID = null;
         $cols = explode("\t", $row);
 
         $cc = trim(preg_replace('/\D+/','', $cols[$_POST['columns']['cc']]));
@@ -28,45 +33,50 @@ add_action('wp_ajax_gwapi_import', function () {
         }
 
         // find out if post exists
-        $q = new WP_Query([
-            "post_type" => "gwapi-recipient",
-            "meta_query" => [
-                [
-                    'key' => 'cc',
-                    'value' => $cc
-                ],
-                [
-                    'key' => 'number',
-                    'value' => $number
-                ]
-            ]
-        ]);
+        $row = $wpdb->get_row($wpdb->prepare('SELECT DISTINCT id, post_id FROM wp_oc_recipients_import
+															WHERE country_code = %d AND phone_number = %d', $cc, $number), OBJECT);
 
-        $ID = null;
-        if ($q->have_posts()) {
-            // update
-            $ID = $q->post->ID;
-            $updated++;
-        } else {
+        $row_exist = !empty($row);
+        if (!$row_exist) {
             $new++;
-        }
+            $newID = wp_insert_post([
+              "ID"          => $ID,
+              "post_title" => isset($cols[$_POST['columns']['name']]) ? $cols[$_POST['columns']['name']] : null,
+              "post_name"  =>  $number,
+              "post_type"   => "gwapi-recipient",
+              "post_status" => $ID ? get_post_status($ID) : "publish",
+            ]);
+            $ID = $newID ?: $ID;
 
-        // create the recipient
-        $newID = wp_insert_post([
-            "ID" => $ID,
-            "post_title" => isset($cols[$_POST['columns']['name']]) ? $cols[$_POST['columns']['name']] : null,
-            "post_type" => "gwapi-recipient",
-            "post_status" => $ID ? get_post_status($ID) : "publish"
-        ]);
-        $ID = $newID ?: $ID;
+            // Create the row in a indexed table for faster lookup
+            $wpdb->insert(
+              'wp_oc_recipients_import',
+              array(
+                'phone_number'     => $number,
+                'country_code'    => $cc,
+                'post_id' => (int) $newID,
+              )
+            );
+            $record_id = $wpdb->insert_id;
+        } else {
+            $updated++;
+            $ID = $row->post_id;
+            wp_update_post([
+              "ID"          => $ID,
+              "post_name"  =>  $number,
+              "post_type"   => "gwapi-recipient",
+              "post_status" => $ID ? get_post_status($ID) : "publish",
+            ]);
+        }
 
         // recipient groups
         $groups = isset($_POST['gwapi-recipient-groups']) ? $_POST['gwapi-recipient-groups'] : [];
-        foreach($groups as &$g) {
-            $g = (int)$g;
-        }
-        if ($groups) wp_set_object_terms($ID, $groups, 'gwapi-recipient-groups', true);
 
+        // Make sure groups are integers
+        $groups = array_map( 'intval', $groups );
+        $groups = array_unique( $groups );
+
+        if ($groups) wp_set_object_terms($ID, $groups, 'gwapi-recipient-groups', false);
 
         foreach($_POST['columns'] as $key=>$idx) {
             if (!strlen($idx)) continue;

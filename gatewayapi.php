@@ -14,6 +14,8 @@ Domain Path: /languages
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
 const GATEAYAPI_VERSION = '1.6.0';
+global $gatewayapi_db_version;
+$gatewayapi_db_version = '1.0';
 
 function _gwapi_dir()
 {
@@ -28,6 +30,47 @@ function _gwapi_url()
     $dir = plugin_dir_url(__FILE__);
     return $dir;
 }
+
+function gatewayapi_install() {
+    global $wpdb;
+    global $gatewayapi_db_version;
+
+    gatewayapi_recipients_create_db();
+    add_option( 'gatewayapi_db_version', $gatewayapi_db_version );
+}
+
+function gatewayapi_update_db_check() {
+    global $gatewayapi_db_version;
+    $db_version = get_site_option( 'gatewayapi_db_version' );
+    if ( get_site_option( 'gatewayapi_db_version' ) != $gatewayapi_db_version ) {
+        gatewayapi_install();
+    }
+}
+add_action( 'plugins_loaded', 'gatewayapi_update_db_check' );
+
+function gatewayapi_recipients_create_db() {
+    global $wpdb;
+    $charset_collate = $wpdb->get_charset_collate();
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
+    $table_name = $wpdb->prefix . 'oc_recipients_import';
+
+    $sql = "
+		CREATE TABLE $table_name (
+		  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+		  `phone_number` int(12) NOT NULL,
+		  `country_code` int(2) NOT NULL,
+		  `post_id` int(11) NOT NULL,
+		  PRIMARY KEY (`id`),
+		  UNIQUE KEY `wp_oc_recipients_import_phone_number_IDX` (`phone_number`) USING BTREE,
+		  KEY `wp_oc_recipients_import_country_code_IDX` (`country_code`) USING BTREE
+) $charset_collate";
+
+    dbDelta($sql);
+}
+
+
+register_activation_hook( __FILE__, 'gatewayapi_recipients_create_db' );
 
 function _gwapi_initialize_cf7_admin()
 {

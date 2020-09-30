@@ -55,6 +55,6 @@ $count = substr_count($data, "\n");
 
     <script>
         var import_columns = <?=json_encode($_POST['columns']);?>;
-        var gwapi_recipient_groups = <?= json_encode($_POST['gwapi_recipient_groups']); ?>
+        var gwapi_recipient_groups = <?= isset($_POST['gwapi_recipient_groups']) ? json_encode($_POST['gwapi_recipient_groups']) : json_encode([]) ?>;
     </script>
 <?php wp_enqueue_script('gwapi_import', _gwapi_url().'/js/wpadmin-import.js'); ?>

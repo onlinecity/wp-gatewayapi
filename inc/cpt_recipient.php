@@ -76,6 +76,11 @@ add_action('init', function () {
             bit_admin_add_search_column('gwapi-recipient', 'number');
         }
     });
+
+    add_action( 'delete_post',  function($post_id) {
+        global $wpdb;
+        $wpdb->delete('oc_recipients_import', array( 'post_id' => $post_id ));
+    });
 });
 
 // allow blacklisting of phone numbers
