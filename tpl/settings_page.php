@@ -581,7 +581,11 @@
                     <?php _e('Do you want to receive SMS messages for this installation?', 'gatewayapi'); ?>
                 </p>
               <p>
-                <strong><?php _e('To be able to use SMS Inbox you will need to have access to a Shortcode or Virtual Number', 'gatewayapi'); ?></strong>
+                <strong>
+                  <?php _e('To be able to use SMS Inbox you will need to have access to a Shortcode or Virtual Number.', 'gatewayapi'); ?> <br />
+                  <?php _e('Contact <a href="mailto:support@gatewayapi.com">support@gatewayapi.com</a> for more information.', 'gatewayapi'); ?>
+                </strong>
+
               </p>
                 <p>
                     <label>
@@ -611,10 +615,10 @@
                                         <?php _e('Visit gatewayapi.com and click Settings > Web Hooks or <a target="_blank" href="https://gatewayapi.com/app/settings/web-hooks/">follow this link</a>.', 'gatewayapi'); ?>
                                     </li>
                                     <li>
-                                        <?php _e('Click ADD NEW.', 'gatewayapi'); ?>
+                                        <?php _e('Click REST.', 'gatewayapi'); ?>
                                     </li>
                                     <li>
-                                        <?php _e('Click REST.', 'gatewayapi'); ?>
+                                        <?php _e('Click ADD NEW.', 'gatewayapi'); ?>
                                     </li>
                                     <li>
                                         <?php _e('Enter a Unique label.', 'gatewayapi'); ?>

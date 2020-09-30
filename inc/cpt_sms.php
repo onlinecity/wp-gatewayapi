@@ -11,7 +11,7 @@ add_action('init', function () {
         'singular_name' => __('SMS', 'gatewayapi'),
         'add_new' => __('Create SMS', 'gatewayapi'),
         'add_new_item' => __('Create new SMS', 'gatewayapi'),
-        'edit_item' => __('Edit SMS', 'gatewayapi'),
+        'edit_item' => __('View SMS', 'gatewayapi'),
         'new_item' => __('New SMS', 'gatewayapi'),
         'search_items' => __('Search SMS\'es', 'gatewayapi'),
         'not_found' => __('No SMS\'es found', 'gatewayapi'),
