@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
 Tested up to: 5.5
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -119,6 +119,9 @@ Then find the options-table, by default wp_options. Search for the row where the
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.6.5 =
+* Improved: Import of recipients optimized.
 
 = 1.6.4 =
 * Compatible with WordPress 5.5
