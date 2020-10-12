@@ -84,7 +84,7 @@ add_action('wp_ajax_gwapi_import', function () {
             update_post_meta($ID, $key, $cols[$idx]);
         }
     }
-
+    wp_defer_term_counting(false);
     echo json_encode(['failed' => $failed, 'new' => $new, 'updated' => $updated]);
 
     exit;
