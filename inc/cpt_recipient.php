@@ -77,11 +77,18 @@ add_action('init', function () {
         }
     });
 
-    add_action( 'delete_post',  function($post_id) {
-        global $wpdb;
-        $wpdb->delete('oc_recipients_import', array( 'post_id' => $post_id ));
-    });
+    add_action( 'delete_post', '_gwapi_recipient_sync_delete', 10 );
 });
+
+function _gwapi_recipient_sync_delete($post_id) {
+    global $wpdb;
+    $result = $wpdb->delete($wpdb->prefix . 'oc_recipients_import', array( 'post_id' => $post_id ));
+
+    if ( ! $result ) {
+        return false;
+    }
+}
+
 
 // allow blacklisting of phone numbers
 bit_register_cpt_status('block', 'gwapi-recipient', 'Blacklistet', false);
