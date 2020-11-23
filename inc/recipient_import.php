@@ -2,10 +2,23 @@
 <?php
 
 add_action('admin_menu', function () {
+    add_action( 'current_screen', '_gwapi_import_table_sync' );
     add_submenu_page('edit.php?post_type=gwapi-sms', __('Import recipients from spreadsheet', 'gatewayapi'), __('Import recipients', 'gatewayapi'), 'edit_posts', 'gwapi_import', function () {
         require_once(__DIR__ . "/../tpl/import.php");
     });
 }, 20);
+
+function _gwapi_import_table_sync($current_screen) {
+    global $wpdb;
+    $is_subpage = isset($_POST['step']);
+
+    // On the first page of import recipients - make sure we have no imported recipients
+    // in the custom table that does not have corresponding post
+    if (!$is_subpage && $current_screen->id === 'gwapi-sms_page_gwapi_import') {
+        // Remove all imported recipients if the posts was deleted and the matching row in the import table was not.
+        $result = $wpdb->query('DELETE from wp_oc_recipients_import WHERE post_id NOT IN (SELECT p.ID from wp_posts p)');
+    }
+}
 
 add_action('wp_ajax_gwapi_import', function () {
     global $wpdb;
