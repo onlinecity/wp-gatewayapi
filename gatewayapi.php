@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Manage SMS broadcasts via WordPress
-Version:     1.6.6
+Version:     1.6.7
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     MIT
@@ -13,7 +13,7 @@ Domain Path: /languages
 */
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
-const GATEAYAPI_VERSION = '1.6.6';
+const GATEAYAPI_VERSION = '1.6.7';
 global $gatewayapi_db_version;
 $gatewayapi_db_version = '1.0';
 
@@ -62,8 +62,8 @@ function gatewayapi_recipients_create_db() {
 		  `country_code` int(2) NOT NULL,
 		  `post_id` int(11) NOT NULL,
 		  PRIMARY KEY (`id`),
-		  UNIQUE KEY `wp_oc_recipients_import_phone_number_IDX` (`phone_number`) USING BTREE,
-		  KEY `wp_oc_recipients_import_country_code_IDX` (`country_code`) USING BTREE
+		  UNIQUE KEY `${table_name}_phone_number_IDX` (`phone_number`) USING BTREE,
+		  KEY `${table_name}_country_code_IDX` (`country_code`) USING BTREE
 ) $charset_collate";
 
     dbDelta($sql);

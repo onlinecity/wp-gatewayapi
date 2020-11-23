@@ -12,11 +12,19 @@ function _gwapi_import_table_sync($current_screen) {
     global $wpdb;
     $is_subpage = isset($_POST['step']);
 
+    $post_table = $wpdb->prefix . 'posts';
+    $recipients_import_table = $wpdb->prefix . 'oc_recipients_import';
+
+    // Only proceed if the recipients table already exists...
+    if ($wpdb->get_var("SHOW TABLES LIKE '$recipients_import_table'") !== $recipients_import_table) {
+        return;
+    }
+
     // On the first page of import recipients - make sure we have no imported recipients
     // in the custom table that does not have corresponding post
     if (!$is_subpage && $current_screen->id === 'gwapi-sms_page_gwapi_import') {
         // Remove all imported recipients if the posts was deleted and the matching row in the import table was not.
-        $result = $wpdb->query('DELETE from wp_oc_recipients_import WHERE post_id NOT IN (SELECT p.ID from wp_posts p)');
+        $result = $wpdb->query('DELETE from '.$recipients_import_table.' WHERE post_id NOT IN (SELECT p.ID from '.$post_table.' p)');
     }
 }
 
@@ -25,6 +33,8 @@ add_action('wp_ajax_gwapi_import', function () {
 
     header('Content-type: application/json');
 
+    $post_table = $wpdb->prefix . 'posts';
+    $recipients_import_table = $wpdb->prefix . 'oc_recipients_import';
     $data = get_transient('gwapi_import_' . get_current_user_id());
     $rows = array_slice(explode("\n", $data), (int)$_POST['page'] * (int)$_POST['per_page'] + 1, (int)$_POST['per_page']);
 
@@ -46,7 +56,7 @@ add_action('wp_ajax_gwapi_import', function () {
         }
 
         // find out if post exists
-        $row = $wpdb->get_row($wpdb->prepare('SELECT DISTINCT id, post_id FROM wp_oc_recipients_import
+        $row = $wpdb->get_row($wpdb->prepare('SELECT DISTINCT id, post_id FROM '.$recipients_import_table.'
 															WHERE country_code = %d AND phone_number = %d', $cc, $number), OBJECT);
 
         $row_exist = !empty($row);
@@ -63,7 +73,7 @@ add_action('wp_ajax_gwapi_import', function () {
 
             // Create the row in a indexed table for faster lookup
             $wpdb->insert(
-              'wp_oc_recipients_import',
+              $recipients_import_table,
               array(
                 'phone_number'     => $number,
                 'country_code'    => $cc,
