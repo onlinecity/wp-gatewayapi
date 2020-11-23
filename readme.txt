@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
 Tested up to: 5.5
-Stable tag: 1.6.7
+Stable tag: 1.6.8
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -120,8 +120,11 @@ Then find the options-table, by default wp_options. Search for the row where the
 
 == Changelog ==
 
+= 1.6.8 =
+* Bugfix: Prefix wasn't specified for all instances of db_table usages.
+
 = 1.6.7 =
-* Bugfix: = Previously imported recipients was prevented from being re-imported if they had been deleted.
+* Bugfix: Previously imported recipients was prevented from being re-imported if they had been deleted.
 
 = 1.6.6 =
 * Bugfix: While using recipients import, group recipients was not counted correctly after the import was completed.
