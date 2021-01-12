@@ -100,4 +100,35 @@ jQuery(function($) {
     $('body').find('select[data-gwapi-mobile-cc]').each(function() {
         $(this).gwapiMobileCc();
     });
+
+    $('select.trigger-default').select2({
+        placeholder: 'Select trigger',
+        templateResult: themeResult,
+        templateSelection: themeSelection
+    });
+
+    function themeResult (item) {
+        if (item.text.includes('||')) {
+
+            var r = item.text.split('||');
+
+            var $result = $(
+                '<div class="row">' +
+                '<div class="select-title">' + r[0] + '</div>' +
+                '<div class="select-descrption"><small>' + r[1] + '</small></div>' +
+                '</div>'
+            );
+            return $result;
+        }
+
+        return item.text;
+    };
+
+    function themeSelection (item) {
+        console.log(item);
+        return item.id;
+    };
+
 });
+
+

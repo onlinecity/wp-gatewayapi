@@ -65,7 +65,7 @@ jQuery(function($) {
     function handleToggleEnableUI()
     {
         var checkbox = outer.find('input[name="gwapi_enable_ui"]');
-        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"]');
+        var tabs = outer.find('a[href="#recipients-fields"], a[href="#build-shortcode"], a[href="#user-sync"], a[href="#sms-inbox"], a[href="#notifications"]');
 
         checkbox.change(function() {
             if ($(this).is(':checked')) {

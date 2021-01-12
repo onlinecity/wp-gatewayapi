@@ -97,6 +97,8 @@ add_action('init', function () {
     // public
     include "$D/inc/api.php";
     include "$D/inc/recipient_forms.php";
+    require_once "$D/src/classes/Trigger.php";
+    include "$D/inc/triggers.php";
 
     // plugin: contact form 7
     add_action('wpcf7_admin_init', "_gwapi_initialize_cf7_admin", 18);
@@ -111,6 +113,8 @@ add_action('init', function () {
         include "$D/inc/tax_recipient.php";
         include "$D/inc/cpt_recipient_ui.php";
         include "$D/inc/validation.php";
+        include "$D/inc/cpt_notification.php";
+
 
         if (!is_admin()) {
             include "$D/inc/shortcode.php";

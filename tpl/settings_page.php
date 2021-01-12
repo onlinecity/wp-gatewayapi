@@ -13,6 +13,7 @@
             <a href="#user-sync" class="nav-tab hidden"><?php _e('User synchronization', 'gatewayapi'); ?></a>
             <a href="#build-shortcode" class="nav-tab hidden"><?php _e('Build Shortcode', 'gatewayapi'); ?></a>
             <a href="#sms-inbox" class="nav-tab hidden"><?php _e('SMS Inbox', 'gatewayapi'); ?></a>
+            <a href="#notifications" class="nav-tab hidden"><?php _e('Notifcations', 'gatewayapi'); ?></a>
         </h2>
 
 
@@ -637,6 +638,73 @@
                 <?php endif; ?>
             </div>
             <!-- SMS INBOX -->
+
+
+          <!-- SECURITY (TWO FACTOR) -->
+          <div data-tab="notifications" class="tab hidden" id="notificationsTab">
+            <p>
+                <?= __('Notication tab', 'gatewayapi'); ?>
+            </p>
+
+            <table class="form-table">
+                <?php if (get_option('gwapi_notifications_enable')): ?>
+                  <tr valign="top">
+                    <th scope="row"><?php _e('Emergency bypass URL', 'gatewayapi'); ?></th>
+                      <?php
+                      $login_bypass_url = wp_login_url();
+                      $login_bypass_url .= (strpos($login_bypass_url, '?') === false) ? '?' : '&';
+                      $login_bypass_url .= 'action=gwb2fa&c='.GwapiSecurityTwoFactor::getBypassCode();
+                      ?>
+                    <td>
+                      <input type="hidden" name="gwapi_security_bypass_code" value="<?= GwapiSecurityTwoFactor::getBypassCode(); ?>" />
+                      <input type="text" size="85" readonly value="<?= $login_bypass_url; ?>" placeholder="<?php _e('New code is generated on save', 'gatewayapi'); ?>" /> <button id="gwapiSecurityBypassCodeReset" type="button" class="button button-secondary"><?php _e('Reset', 'gatewayapi'); ?></button>
+                      <p class="help-block description">
+                        <strong style="color: blue"><?php _e('This URL should be copied to a safe place!', 'gatewayapi'); ?></strong> <?php _e('Use it to bypass all two-factor security measures when logging in.', 'gatewayapi'); ?>
+                        <i class="info has-tooltip"
+                           title="<?= esc_attr(__('This could rescue you from a site lockout, in case your GatewayAPI-account ran out of credit (you should enable auto-charge to avoid this) or if you forgot to update your profile when you got a new number. You should not share this URL, but keep it as a recovery measure for you as an administrator.', 'gatewayapi')) ?>"></i>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr valign="top">
+                    <th scope="row"><?php _e('User roles with two-factor', 'gatewayapi'); ?></th>
+                    <td>
+                        <?php $roles = GwapiSecurityTwoFactor::getRoles(); ?>
+                      <select name="gwapi_security_required_roles[]" multiple size="<?= min(count($roles), 6); ?>" style="min-width: 250px;">
+                          <?php foreach($roles as $role_key => $role_opt): ?>
+                            <option value="<?= $role_key ?>" <?= $role_opt[1]?'selected':'' ?>><?= $role_opt[0]; ?></option>
+                          <?php endforeach; ?>
+                      </select>
+                      <p class="help-block description">
+                          <?php _e('All roles selected will be forced to upgrade to two-factor on their next login. We recommend that all roles above subscriber-level are selected.', 'gatewayapi'); ?>
+                        <br>
+                          <?php _e('Hold down CTRL (PC) / CMD (Mac) to select multiple roles.', 'gatewayapi'); ?>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr valign="top">
+                    <th scope="row"><?php _e('Two-factor cookie lifetime', 'gatewayapi'); ?></th>
+                    <td>
+                      <select name="gwapi_security_cookie_lifetime">
+                          <?php $options = [
+                            0 => __('Re-authorize with every login', 'gatewayapi'),
+                            1 => __('Remember for up to 1 day', 'gatewayapi'),
+                            7 => __('Remember for up to 1 week', 'gatewayapi'),
+                            14 => __('Remember for up to 2 weeks', 'gatewayapi'),
+                            30 => __('Remember for up to 1 month', 'gatewayapi')
+                          ]; ?>
+                          <?php foreach ($options as $days => $text): ?>
+                            <option <?= get_option('gwapi_security_cookie_lifetime') == $days ? 'selected' : ''; ?> value="<?= $days; ?>"><?= $text; ?></option>
+                          <?php endforeach; ?>
+                      </select>
+                      <p class="help-block description">
+                          <?php _e('How often must the user be forced to re-authorize via two-factor, when visiting from the same web browser?', 'gatewayapi'); ?>
+                      </p>
+                    </td>
+                  </tr>
+                <?php endif; ?>
+            </table>
+          </div>
+          <!-- SECURITY (TWO FACTOR) -->
 
         </div>
 
