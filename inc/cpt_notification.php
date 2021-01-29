@@ -77,136 +77,128 @@ function gwapi_cpt_notification_admin_menu() {
 */
 
 add_action( 'init', 'gwapi_cpt_notification');
-
 add_action('admin_menu', 'gwapi_cpt_notification_admin_menu');
 
 // fields on the SMS editor page
 add_action('admin_init', function () {
-    add_meta_box('notification', __('Trigger action', 'gatewayapi'), '_gwapi_notification', 'gwapi-notification', 'normal', 'default');
-//    add_meta_box('custom_fields', __('Custom fields', 'gatewayapi'), '_gwapi_notification_fields', 'gwapi-notification', 'normal', 'default');
+    add_meta_box('notification_meta_triggers',  __('Trigger', 'gatewayapi'), '_gwapi_notification_meta_triggers',   'gwapi-notification', 'normal', 'default');
+    add_meta_box('notification_meta_groups',    __('Message', 'gatewayapi'), '_gwapi_notification_meta_groups',     'gwapi-notification', 'normal', 'default');
+    add_meta_box('notification_meta_message',   __('Message', 'gatewayapi'), '_gwapi_notification_meta_message',    'gwapi-notification', 'normal', 'default');
 });
 
-function gwapi_cpt_notification_add_custom_box() {
-    $screens = [ 'post', 'gwapi-notification' ];
-    foreach ( $screens as $screen ) {
-        add_meta_box(
-          'gwapi_notification_metabox',                 // Unique ID
-          'Notification section',      // Box title
-          'gwapi_notification_metabox_html',  // Content callback, must be of type callable
-          $screen                            // Post type
-        );
-    }
-}
-add_action( 'add_meta_boxes', 'gwapi_cpt_notification_add_custom_box' );
 
-function gwapi_notification_metabox_html() {
-  ?>
+add_action('admin_enqueue_scripts', 'gwapi_notification_enqueue_scripts');
 
-    <p>Additional fields goes here...</p>
-  <?php
+function gwapi_notification_enqueue_scripts($hook) {
+
+
+    wp_enqueue_script('gwapi-wp-notification', _gwapi_url() . '/dist/main.js');
+
+
 }
+
+
 /**
- * Build the administration fields for editing a single recipient.
+ * Build the administration fields for triggers
  */
-function _gwapi_notification(WP_Post $post)
+function _gwapi_notification_meta_triggers(WP_Post $post)
 {
     $triggers = _gwapi_get_triggers_grouped();
+    _gwapi_render_template('notification/triggers');
+}
 
-    ?>
-    <div class="gwapi-star-errors"></div>
-    <table width="100%" class="form-table">
-        <tbody>
-        <tr>
-            <th width="25%">
-                <?php _e('Trigger', 'gatewayapi') ?>
-            </th>
-            <td>
-              <select id="select-trigger" class="trigger-default"  placeholder="Select trigger...">
+/**
+ * Build the administration fields recipients
+ */
+function _gwapi_notification_meta_groups(WP_Post $post)
+{
+    _gwapi_render_template('notification/groups', ['post' => $post]);
+}
 
-                <option></option>
-                <?php foreach ($triggers as $group => $subtriggers): ?>
-
-                    <optgroup label="<?php echo esc_attr( $group ); ?>">
-
-                        <?php foreach ( $subtriggers as $slug => $trigger ) : ?>
-
-
-                          <option value="<?php echo esc_attr( $slug ); ?>"
-                                  data-id="<?php echo $trigger->getId(); ?>"
-                                  data-title="<?php echo $trigger->getName(); ?>"
-                                  data-text="<?php echo $trigger->getDescription(); ?>"
-                          >
-                              <?php  echo esc_html( $trigger->getName() ); ?>
-                              <div>
-                                  <?php $description = $trigger->getDescription(); ?>
-                                  <?php if ( ! empty( $description ) ) : ?>
-                                    ||<?php echo esc_html( $description ); ?>
-                                  <?php endif ?>
-                              </div>
-
-                          </option>
-
-                        <?php endforeach; ?>
-
-                    </optgroup>
-
-                  <?php endforeach; ?>
-
-
-              </select>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <?php
+/**
+ * Build the administration fields for the message
+ */
+function _gwapi_notification_meta_message(WP_Post $post)
+{
+    _gwapi_render_template('notification/message', ['post' => $post]);
 }
 
 
-//function _gwapi_notification_triggers() {
-//    // Get hooks as JSON:
-//    $actions_file = _gwapi_dir() . '/vendor/johnbillion/wp-hooks/hooks/actions.json';
-//    $filters_file = _gwapi_dir() . '/vendor/johnbillion/wp-hooks/hooks/filters.json';
-//
-//    $actions_json = file_get_contents( $actions_file );
-//    $filters_json = file_get_contents( $filters_file );
-//
-//// Get hooks as PHP:
-//    $actions = json_decode( $actions_json, true )['hooks'];
-//    $filters = json_decode( $filters_json, true )['hooks'];
-//
-//    // Search for filters matching a string:
-//    $search = 'page';
-//    $results = array_filter( $filters, function( array $hook ) use ( $search ) {
-//        return ( false !== strpos( $hook['name'], $search ) );
-//    } );
-//
-////    var_dump( $results );
-////    die();
-//}
+
+
+// Same handler function...
+add_action('wp_ajax_my_action', 'my_action');
+
+function my_action() {
+
+
+    global $wpdb;
+    $test = 'my string is nice';
+    $whatever = intval($_POST['whatever']);
+    $whatever += 10;
+
+    $args = array(
+      'name' => 'gwapi-recipient',
+    );
+
+    $defaults = array(
+      'numberposts'      => -1,
+      'category'         => 0,
+      'orderby'          => 'date',
+      'order'            => 'DESC',
+      'include'          => array(),
+      'exclude'          => array(),
+      'meta_key'         => 'number',
+      'meta_value'       => '',
+      'post_type'        => 'gwapi-recipient',
+      'suppress_filters' => true,
+    );
 
 
 
-///**
-// * Gets all registered triggers in a grouped array
-// *
-// * @since  5.0.0
-// * @return array grouped triggers
-// */
-//function _gwapi_get_triggers_grouped() {
+//    $args = array(
+//      'post_type'  => 'gwapi-recipient',
+//      'posts_per_page'   => -1,
 //
-//    $return = array();
+//      "meta_query" => [
+//        [
+//          'key' => 'number',
+//          'value' => '21908089',
+//          'compare' => '!='
 //
-//    foreach ( _gwapi_get_triggers() as $trigger ) {
+//        ]
+//      ],
 //
-//        if ( ! isset( $return[ $trigger->get_group() ] ) ) {
-//            $return[ $trigger->get_group() ] = array();
-//        }
-//
-//        $return[ $trigger->get_group() ][ $trigger->get_slug() ] = $trigger;
-//
-//    }
-//
-//    return $return;
-//
-//}
-//
+//    );
+//    $query = new WP_Query( $args );
+
+    $recipients = [];
+    $posts = get_posts($defaults);
+
+    foreach ($posts as $post) {
+        $id = $post->ID;
+        $cc = get_post_meta($id, 'cc', true);
+        $number = get_post_meta($id, 'number', true);
+
+        if (empty($number)) {
+            continue;
+        }
+
+
+        $recipient = [
+          'id' => $id,
+          'name' => $post->post_title ?? $number,
+          'cc' =>   $cc,
+          'number' => $number,
+        ];
+
+        $recipients[] = $recipient;
+
+    }
+
+
+    echo json_encode($recipients);
+    wp_die();
+}
+
+

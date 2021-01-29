@@ -269,3 +269,29 @@ if (!function_exists('bit_add_taxonomy_filter_to_cpt')) {
         });
     }
 }
+
+/**
+ * Helper function for including a template
+ *
+ * @param $template
+ *
+ * @param  mixed  ...$args
+ *
+ * @return null
+ */
+function _gwapi_render_template($template, ...$args) {
+
+  // Split args and set dynamic variable based on key=>value of the args array
+  foreach ($args as $arg) {
+    $variable_name = key($arg);
+    ${$variable_name} = $arg[$variable_name];
+  }
+
+  $template_file = _gwapi_dir() . '/tpl/' . $template . '.php';
+
+  if (file_exists($template_file)) {
+      include _gwapi_dir() . '/tpl/' . $template . '.php';
+  }
+
+  return null;
+}

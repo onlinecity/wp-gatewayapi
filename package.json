@@ -1,0 +1,29 @@
+{
+  "name": "wp-gatewayapi",
+  "version": "1.0.0",
+  "description": "=== GatewayAPI === Contributors: onlinecity Tags: sms, two factor, security, mobile, texting Requires at least: 4.6 Tested up to: 5.5 Stable tag: 1.6.8 License: MIT License URI: https://opensource.org/licenses/MIT",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "dev": "rollup -c",
+    "build": "rollup main.js --file bundle.js --format iife",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.12.10",
+    "@rollup/plugin-node-resolve": "^11.1.0",
+    "alpinejs": "^2.8.0",
+    "rollup-plugin-filesize": "^9.1.0",
+    "rollup-plugin-progress": "^1.1.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-visualizer": "^4.2.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^5.2.2"
+  }
+}
