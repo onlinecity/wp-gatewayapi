@@ -9,7 +9,7 @@
 
 function gwapi_cpt_notification() {
 
-
+//    gwapi_callback_autocomplete_recipient();
 // Set UI labels for Custom Post Type
     $labels = array(
       'name'                => _x( 'Notifications', 'Post Type General Name', 'gatewayapi' ),
@@ -86,13 +86,31 @@ add_action('admin_init', function () {
     add_meta_box('notification_meta_message',   __('Message', 'gatewayapi'), '_gwapi_notification_meta_message',    'gwapi-notification', 'normal', 'default');
 });
 
-
 add_action('admin_enqueue_scripts', 'gwapi_notification_enqueue_scripts');
 
 function gwapi_notification_enqueue_scripts($hook) {
 
-
     wp_enqueue_script('gwapi-wp-notification', _gwapi_url() . '/dist/main.js');
+    wp_enqueue_style('gwapi-wp-notification', _gwapi_url() . '/css/gwapi-notification.css');
+
+    $transient_name = 'gwapi_notification_posts';
+
+    $cached_posts_titles = array();
+
+    // check if cached post titles are available in the transient.
+    $cached_posts = get_transient( $transient_name );
+    if ( $cached_posts ) {
+        foreach ( $cached_posts as $index => $post ) {
+            $cached_posts_titles[ $index ] = $post['title'];
+        }
+    }
+
+    $params = array(
+      'cached_post_titles' => $cached_posts_titles,
+    );
+
+//    wp_enqueue_script( 'nds_advanced_search', plugin_dir_url( __FILE__ ) . 'js/nds-advanced-search.js', array( 'jquery', 'jquery-ui-autocomplete' ), $this->version, true );
+    wp_localize_script( 'gwapi_notification', 'params', $params );
 
 
 }
@@ -127,78 +145,105 @@ function _gwapi_notification_meta_message(WP_Post $post)
 
 
 // Same handler function...
-add_action('wp_ajax_my_action', 'my_action');
+add_action('wp_ajax_gwapi_callback_autocomplete_recipient', 'gwapi_callback_autocomplete_recipient');
 
-function my_action() {
-
-
-    global $wpdb;
-    $test = 'my string is nice';
-    $whatever = intval($_POST['whatever']);
-    $whatever += 10;
-
-    $args = array(
-      'name' => 'gwapi-recipient',
-    );
-
-    $defaults = array(
-      'numberposts'      => -1,
-      'category'         => 0,
-      'orderby'          => 'date',
-      'order'            => 'DESC',
-      'include'          => array(),
-      'exclude'          => array(),
-      'meta_key'         => 'number',
-      'meta_value'       => '',
-      'post_type'        => 'gwapi-recipient',
-      'suppress_filters' => true,
-    );
-
-
-
-//    $args = array(
-//      'post_type'  => 'gwapi-recipient',
-//      'posts_per_page'   => -1,
-//
-//      "meta_query" => [
-//        [
-//          'key' => 'number',
-//          'value' => '21908089',
-//          'compare' => '!='
-//
-//        ]
-//      ],
-//
-//    );
-//    $query = new WP_Query( $args );
-
+function gwapi_callback_autocomplete_recipient() {
     $recipients = [];
-    $posts = get_posts($defaults);
+    $search_term = $_POST['search'] ?? '';
+    $transient_name = 'gwapi_notification_posts';
+
+    // retrieve the post types to search from the plugin settings.
+    $post_types = 'gwapi-recipient';
+
+// check if cached posts are available.
+    $cached_posts = get_transient( $transient_name );
+    if ( false === $cached_posts ) {
+        // retrieve posts for the specified post types by running get_posts and cache the posts as well.
+        $cached_posts = gwapi_cache_posts_in_post_types();
+    }
+
+// extract the cached post ids from the transient into an array.
+    $cached_post_ids = array_column( $cached_posts, 'id' );
+
+// run a new query against the search key and the cached post ids for the seleted post types.
+    $args = array(
+      'post_type'           => $post_types,
+      'posts_per_page'      => -1,
+      'no_found_rows'       => true, // as we don't need pagination.
+      'post__in'            => $cached_post_ids, // use post ids that were cached in the query earlier.
+      'ignore_sticky_posts' => true,
+      'meta_key'   => 'number',
+      's' => $search_term
+//      's'                   => $search_term,  // the keyword/phrase to search.
+//      'sentence'            => true, // perform a phrase search.
+    );
+
+//    $loop = new \WP_Query( $args );
+
+    $posts = get_posts($args);
 
     foreach ($posts as $post) {
-        $id = $post->ID;
-        $cc = get_post_meta($id, 'cc', true);
-        $number = get_post_meta($id, 'number', true);
+        $ID = $post->ID;
 
-        if (empty($number)) {
-            continue;
-        }
-
+        if (empty($post->post_title)) continue;
 
         $recipient = [
-          'id' => $id,
-          'name' => $post->post_title ?? $number,
-          'cc' =>   $cc,
-          'number' => $number,
+          'id' => $ID,
+          'name' => $post->post_title,
+          'cc' =>   get_post_meta($ID, 'cc', true),
+          'number' => get_post_meta($ID, 'number', true),
         ];
 
         $recipients[] = $recipient;
-
     }
-
 
     echo json_encode($recipients);
     wp_die();
 }
 
+
+/**
+ * Cache WordPress posts for post types that are specified in the
+ * plugin setting to be included in the custom search.
+ */
+function gwapi_cache_posts_in_post_types() {
+    $transient_name = 'gwapi_notification_posts';
+    $transient_expiration = 'gwapi_notification_posts_expiration';
+
+    // check the transient for existing cached data.
+    $cached_posts = get_transient( $transient_name );
+    if ( false === $cached_posts ) {
+        $args = array(
+          'post_type'           => 'gwapi-recipient',
+          'post_status'         => 'publish',
+          'posts_per_page'      => -1,
+          'no_found_rows'       => true, // true by default.
+          'suppress_filters'    => false, // true by default.
+          'ignore_sticky_posts' => true, // true by default.
+        );
+
+        // get_posts() to retrieve posts belonging to the required post types.
+        $posts_in_required_post_types = get_posts( $args );
+
+        // Check if posts were found.
+        if ( $posts_in_required_post_types ) {
+            foreach ( $posts_in_required_post_types as $key => $post ) {
+
+                // cache the post titles and post ids.
+                $cached_post = array(
+                  'id' => $post->ID,
+                  'title' => esc_html( $post->post_title ),
+                );
+                $cached_posts[] = $cached_post;
+            }
+
+            /**
+             * Save the post data in a transient.
+             * Cache only the post ids, titles instead of the entire WP Query object.
+             */
+            set_transient( $transient_name, $cached_posts, 3600 );
+        }
+    }
+    return $cached_posts;
+}
 

@@ -1,3 +1,2 @@
 import 'alpinejs'
-
-console.log('Hello world');
+import './wpadmin-notification';
