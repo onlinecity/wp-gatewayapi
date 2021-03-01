@@ -125,8 +125,10 @@ jQuery(function($) {
     };
 
     function themeSelection (item) {
-        console.log(item);
-        return item.id;
+        let $el = $(item.element);
+        let title = $el.data('title');
+
+        return title;
     };
 
 });

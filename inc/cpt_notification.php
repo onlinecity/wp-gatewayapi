@@ -60,6 +60,45 @@ function gwapi_cpt_notification() {
 
 }
 
+/**
+ * Define which columns we'll need.
+ */
+add_filter('manage_gwapi-notification_posts_columns', function ($columns) {
+    $date_text = $columns['date'];
+    unset($columns['date']);
+
+    return array_merge($columns, [
+      'trigger' => __('Trigger', 'gatewayapi'),
+//      'recipients' => __('Recipients', 'gatewayapi'),
+//      'sender' => __('Sender', 'gatewayapi'),
+      'message' => __('Message', 'gatewayapi'),
+      'date' => $date_text
+    ]);
+});
+
+/**
+ * Print the content for our custom columns.
+ */
+add_action('manage_posts_custom_column', function ($column, $id) {
+    if (get_post_type($id) !== 'gwapi-notification') return;
+    switch ($column) {
+        case 'trigger':
+            echo esc_html(get_post_meta($id, 'triggers', true));
+            break;
+//        case 'recipients':
+//            echo esc_html(get_post_meta($id, 'recipient_type', true));
+//            break;
+//        case 'sender':
+//            echo esc_html(get_post_meta($id, 'sender', true));
+            break;
+        case 'message':
+            $msg = get_post_meta($id, 'message', true) ?: '-';
+            echo esc_html(mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50) . '...' : $msg);
+            break;
+    }
+}, 10, 2);
+
+
 function gwapi_cpt_notification_admin_menu() {
     add_submenu_page('edit.php?post_type=gwapi-sms',
       __('Notifications', 'gatewayapi'),
@@ -81,8 +120,8 @@ add_action('admin_menu', 'gwapi_cpt_notification_admin_menu');
 
 // fields on the SMS editor page
 add_action('admin_init', function () {
-    add_meta_box('notification_meta_triggers',  __('Trigger', 'gatewayapi'), '_gwapi_notification_meta_triggers',   'gwapi-notification', 'normal', 'default');
-    add_meta_box('notification_meta_groups',    __('Message', 'gatewayapi'), '_gwapi_notification_meta_groups',     'gwapi-notification', 'normal', 'default');
+    add_meta_box('notification_meta_triggers',  __('Triggers', 'gatewayapi'), '_gwapi_notification_meta_triggers',   'gwapi-notification', 'normal', 'default');
+    add_meta_box('notification_meta_groups',    __('Recipients', 'gatewayapi'), '_gwapi_notification_meta_groups',     'gwapi-notification', 'normal', 'default');
     add_meta_box('notification_meta_message',   __('Message', 'gatewayapi'), '_gwapi_notification_meta_message',    'gwapi-notification', 'normal', 'default');
 });
 
@@ -122,7 +161,7 @@ function gwapi_notification_enqueue_scripts($hook) {
 function _gwapi_notification_meta_triggers(WP_Post $post)
 {
     $triggers = _gwapi_get_triggers_grouped();
-    _gwapi_render_template('notification/triggers');
+    _gwapi_render_template('notification/triggers', ['post' => $post]);
 }
 
 /**
@@ -140,6 +179,37 @@ function _gwapi_notification_meta_message(WP_Post $post)
 {
     _gwapi_render_template('notification/message', ['post' => $post]);
 }
+
+/**
+ * Save recipient meta data
+ */
+add_action('save_post_gwapi-notification', 'gwapi_save_notification');
+
+/**
+ * Save the contents of a recipients form onto the recipient behind the given ID. Takes data from $_POST['gatewayapi'] if
+ * data is not specified.
+ *
+ * @param  int  $post_id
+ * @param  \WP_Post  $post
+ * @param  bool  $update
+ */
+function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $update = false ) {
+
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+        return;
+
+
+    $data = $_POST['gatewayapi'] ?? null;
+
+    if (!$data) return;
+
+    $old = get_post_meta($post_id);
+
+    foreach ($data as $key => $value) {
+        update_post_meta($post_id, $key, $value);
+    }
+}
+
 
 
 
@@ -166,17 +236,17 @@ function gwapi_callback_autocomplete_recipient() {
     $cached_post_ids = array_column( $cached_posts, 'id' );
 
 // run a new query against the search key and the cached post ids for the seleted post types.
-    $args = array(
+    $args = [
       'post_type'           => $post_types,
       'posts_per_page'      => -1,
       'no_found_rows'       => true, // as we don't need pagination.
-      'post__in'            => $cached_post_ids, // use post ids that were cached in the query earlier.
+//      'post__in'            => $cached_post_ids, // use post ids that were cached in the query earlier.
       'ignore_sticky_posts' => true,
       'meta_key'   => 'number',
       's' => $search_term
 //      's'                   => $search_term,  // the keyword/phrase to search.
 //      'sentence'            => true, // perform a phrase search.
-    );
+    ];
 
 //    $loop = new \WP_Query( $args );
 
@@ -216,7 +286,7 @@ function gwapi_cache_posts_in_post_types() {
         $args = array(
           'post_type'           => 'gwapi-recipient',
           'post_status'         => 'publish',
-          'posts_per_page'      => -1,
+          'posts_per_page'      => 50,
           'no_found_rows'       => true, // true by default.
           'suppress_filters'    => false, // true by default.
           'ignore_sticky_posts' => true, // true by default.

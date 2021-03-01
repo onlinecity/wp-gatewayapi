@@ -95,7 +95,7 @@ $published = $post->post_status == 'publish';
           'smses' => __('SMS\'es', 'gatewayapi')
         ];
         ?>
-      <textarea <?= ($published) ? 'readonly' : ''; ?> name="gatewayapi[message]" rows="10"
+      <textarea name="gatewayapi[message]" rows="10"
                                                        style="width: 100%"
                                                        placeholder="<?= esc_attr(__('Enter your SMS message here.', 'gatewayapi')); ?>"
                                                        data-counter-i18n="<?= esc_attr(json_encode($counterI18N)); ?>"><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>

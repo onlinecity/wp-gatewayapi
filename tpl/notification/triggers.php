@@ -1,52 +1,56 @@
 <?php
 
+/** @var \WP_Post $post */
+$id = $post->ID;
 $triggers = _gwapi_get_triggers_grouped();
+$post_meta_triggers = get_post_meta($id, 'triggers');
+$selected_trigger = $post_meta_triggers ? current($post_meta_triggers) : null;
+
+
+
 
 ?>
 
 <div class="gwapi-star-errors"></div>
-<table width="100%"
-       class="form-table">
-    <tbody>
-    <tr>
-        <th width="25%">
-            <?php _e('Trigger', 'gatewayapi') ?>
-        </th>
-        <td>
-            <select id="select-trigger"
-                    class="trigger-default"
-                    placeholder="Select trigger...">
+<div>
 
-                <option></option>
-                <?php foreach ($triggers as $group => $subtriggers): ?>
+  <select id="select-trigger"
+          name="gatewayapi[triggers]"
+          class="trigger-default"
+          style="width: 100%"
+          placeholder="Select trigger...">
 
-                    <optgroup label="<?php echo esc_attr($group); ?>">
 
-                        <?php foreach ($subtriggers as $slug => $trigger) : ?>
+      <?php foreach ($triggers as $group => $subtriggers): ?>
 
-                            <option value="<?php echo esc_attr($slug); ?>"
-                                    data-id="<?php echo $trigger->getId(); ?>"
-                                    data-title="<?php echo $trigger->getName(); ?>"
-                                    data-text="<?php echo $trigger->getDescription(); ?>"
-                            >
-                                <?php echo esc_html($trigger->getName()); ?>
-                                <div>
-                                    <?php $description = $trigger->getDescription(); ?>
-                                    <?php if (!empty($description)) : ?>
-                                        ||<?php echo esc_html($description); ?>
-                                    <?php endif ?>
-                                </div>
+        <optgroup label="<?php echo esc_attr($group); ?>">
 
-                            </option>
+            <?php foreach ($subtriggers as $slug => $trigger) : ?>
 
-                        <?php endforeach; ?>
+              <option value="<?php echo $trigger->getId(); ?>"
+                      data-id="<?php echo $trigger->getId(); ?>"
+                      data-title="<?php echo $trigger->getName(); ?>"
+                      data-text="<?php echo $trigger->getDescription(); ?>"
 
-                    </optgroup>
+                      <?php if ($selected_trigger && $selected_trigger === $trigger->getId()): ?>
+                      selected="selected"
+                      <?php endif ?>
+              >
+                  <?php echo esc_html($trigger->getName()); ?>
+                <div>
+                    <?php $description = $trigger->getDescription(); ?>
+                    <?php if (!empty($description)) : ?>
+                      || <?php echo esc_html($description); ?>
+                    <?php endif ?>
+                </div>
 
-                <?php endforeach; ?>
+              </option>
 
-            </select>
-        </td>
-    </tr>
-    </tbody>
-</table>
+            <?php endforeach; ?>
+
+        </optgroup>
+
+      <?php endforeach; ?>
+
+  </select>
+</div>
