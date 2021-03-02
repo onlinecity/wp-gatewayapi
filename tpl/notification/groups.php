@@ -13,11 +13,12 @@ $groups = get_terms([
 ]);
 
 $current_groups = get_post_meta($post->ID, 'recipient_groups', true);
-
+$current_groups = !empty($current_groups) ? $current_groups : [];
 
 
 $roles = get_editable_roles();
 $current_roles = get_post_meta($post->ID, 'roles', true);
+$current_roles = !empty($current_roles) ? $current_roles : [];
 
 
 
@@ -190,7 +191,7 @@ $current_roles = get_post_meta($post->ID, 'roles', true);
                       >
                         <?= $group->name; ?>
                       <span class="number"
-                            title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?= $group->count; ?>"><?= $group->count; ?></span>
+                            title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?= $group->count; ?>">(<?= $group->count; ?>)</span>
                     </label>
                   <?php endforeach; ?>
               </div>

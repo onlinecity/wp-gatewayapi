@@ -33,6 +33,12 @@ class Trigger {
      */
     protected $description = '';
 
+    /**
+     * Action to hook
+     * @var string
+     */
+    protected $action = null;
+
 
 
     /**
@@ -78,5 +84,20 @@ class Trigger {
     }
     public function getDescription(): string {
         return $this->description;
+    }
+
+    public function hasAction() {
+        return   has_action($this->action);
+    }
+
+    public function getAction() {
+        return $this->action;
+    }
+
+    /**
+     * Execute current trigger
+     */
+    public function run() {
+        echo 'Running trigger';
     }
 }

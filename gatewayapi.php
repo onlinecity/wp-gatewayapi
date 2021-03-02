@@ -97,7 +97,6 @@ add_action('init', function () {
     // public
     include "$D/inc/api.php";
     include "$D/inc/recipient_forms.php";
-    require_once "$D/src/classes/Trigger.php";
     include "$D/inc/triggers.php";
 
     // plugin: contact form 7
@@ -154,7 +153,6 @@ add_action('init', function () {
             include "$D/inc/cpt_receive_sms_ui.php";
         }
     }
-
 }, 9);
 
 add_action('plugins_loaded', function() {
@@ -173,3 +171,4 @@ add_filter('admin_body_class', function($classes) {
     $classes .= " {$page_id}-ui";
     return $classes;
 });
+
