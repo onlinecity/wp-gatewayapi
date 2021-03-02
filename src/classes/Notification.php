@@ -72,7 +72,7 @@ class Notification
             return;
         }
 
-        if ($post->post_type === 'gwapi-notification') {
+        if ($this->suppressedPostType($post)  || $post->post_status !== 'publish') {
             return;
         }
 
@@ -120,7 +120,7 @@ class Notification
         // Prepare the recipients
         $recipients = $this->recipients();
 
-        if (!$recipients) {
+        if (empty($recipients)) {
             update_post_meta($post_id, 'api_status', 'bail');
             update_post_meta($post_id, 'api_error', 'No recipients added.');
             return;
@@ -130,8 +130,62 @@ class Notification
         gwapi_send_sms($message, $recipients);
     }
 
-    private function recipients() {
-        return ['21908089'];
+    /**
+     * @return array
+     */
+    private function recipients(): array {
+        return $this->extractRecipients();
+    }
+
+    private function extractRecipients() {
+        $recipient_type = get_post_meta($this->post->ID, 'recipient_type', true);
+
+        if ($recipient_type === 'recipient') {
+            $recipient_id = get_post_meta($this->post->ID, 'recipient_id', true);
+            return gwapi_notification_get_recipients_by_id($recipient_id);
+        }
+
+        if ($recipient_type === 'recipientGroup') {
+
+            $groups = get_post_meta($this->post->ID, 'recipient_groups', true);
+            $recipientsQ = [
+              "post_type" => "gwapi-recipient",
+              "fields" => "ids",
+              "posts_per_page" => -1
+            ];
+
+            $recipientsQ["tax_query"] = [
+              [
+                'taxonomy' => 'gwapi-recipient-groups',
+                'field' => 'term_id',
+                'terms' => $groups
+              ]
+            ];
+
+            $ids = (new \WP_Query($recipientsQ))->posts;
+            return gwapi_notification_get_recipients_by_id($ids);
+
+        }
+        if ($recipient_type === 'role') {
+            $roles = get_post_meta($this->post->ID, 'roles', true);
+
+            $args = array(
+              'role_in'    => $roles,
+              'fields'  => ['ID'],
+              'order'   => 'ASC'
+            );
+            $users = get_users( $args );
+            return gwapi_notification_get_recipients_by_id($users);
+        }
+
+        return [];
+    }
+
+    private function suppressedPostType($post) {
+        $suppressed = ['gwapi-notification', 'gwapi-recipient'];
+
+        return in_array($post->post_type, $suppressed, true);
+
     }
 
 

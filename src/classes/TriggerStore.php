@@ -29,12 +29,11 @@ class TriggerStore
     public static function listen() {
         $store = static::getInstance();
 
-        /** @TODO - Better way to disable initialization during favicon request? */
-        $isFaviconRequest = '/favicon.ico' === $_SERVER['REQUEST_URI'];
-
-        if (!$isFaviconRequest && !wp_doing_ajax()) {
-            self::initialize();
+        if (self::$listening || self::isIgnoredRequest() || wp_doing_ajax()) {
+            return;
         }
+
+        self::initialize();
     }
 
     /**
@@ -76,6 +75,19 @@ class TriggerStore
      */
     final public function __wakeup() {
         throw new \RuntimeException('Feature disabled.');
+    }
+
+    /**
+     * Check whether the Trigger initializing should be run on the current request
+     * @return bool
+     */
+    private static function isIgnoredRequest(): bool {
+        $ignoreRequest = false;
+
+        /** @TODO - Better way to disable initialization during favicon request? */
+        $ignoreRequest  = '/favicon.ico' === $_SERVER['REQUEST_URI'];
+
+        return $ignoreRequest;
     }
 
 }

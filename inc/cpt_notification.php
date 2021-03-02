@@ -75,9 +75,9 @@ add_filter('manage_gwapi-notification_posts_columns', function ($columns) {
 
     return array_merge($columns, [
       'trigger' => __('Trigger', 'gatewayapi'),
-      //      'recipients' => __('Recipients', 'gatewayapi'),
+      'recipients' => __('Recipients', 'gatewayapi'),
       //      'sender' => __('Sender', 'gatewayapi'),
-      'message' => __('Message', 'gatewayapi'),
+//      'message' => __('Message', 'gatewayapi'),
       'date'    => $date_text,
     ]);
 });
@@ -91,18 +91,33 @@ add_action('manage_posts_custom_column', function ($column, $id) {
     }
     switch ($column) {
         case 'trigger':
-            echo esc_html(get_post_meta($id, 'triggers', true));
+            $triggers = get_post_meta($id, 'triggers', true);
+            $trigger = _gwapi_get_trigger_by_id($triggers);
+            echo $trigger ? esc_html($trigger->getName()) : '-';
+
             break;
-//        case 'recipients':
-//            echo esc_html(get_post_meta($id, 'recipient_type', true));
-//            break;
+        case 'recipients':
+            $recipient_type = get_post_meta($id, 'recipient_type', true);
+            switch ($recipient_type) {
+                case 'recipient':
+                    echo esc_html('Single recipient');
+                    break;
+                case 'recipientGroup':
+                    echo esc_html('Recipient Group');
+                    break;
+                case 'role':
+                    echo esc_html('Role');
+                    break;
+            }
+
+            break;
 //        case 'sender':
 //            echo esc_html(get_post_meta($id, 'sender', true));
             break;
-        case 'message':
-            $msg = get_post_meta($id, 'message', true) ?: '-';
-            echo esc_html(mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50).'...' : $msg);
-            break;
+//        case 'message':
+//            $msg = get_post_meta($id, 'message', true) ?: '-';
+//            echo esc_html(mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50).'...' : $msg);
+//            break;
     }
 }, 10, 2);
 
@@ -333,94 +348,63 @@ function gwapi_notification_get_notifications() {
     ];
 
     // get_posts() to retrieve posts belonging to the required post types.
+    return get_posts($args);
+}
+
+function gwapi_notification_get_recipients_by_id($ids) {
+
+    if (!is_array($ids)) {
+        $ids = [$ids];
+    }
+
+    $args = [
+      'post_type'           => 'gwapi-recipient',
+      'post_status'         => 'publish',
+      'posts_per_page'      => -1,
+      'include'             => $ids,
+      'no_found_rows'       => true, // true by default.
+      'suppress_filters'    => true, // true by default.
+      'ignore_sticky_posts' => true, // true by default.
+    ];
+
+    // get_posts() to retrieve posts belonging to the required post types.
     $posts = get_posts($args);
 
-    return $posts;
+    return gwapi_notification_recipients_format($posts);
 }
 
-function gwapi_notification_execute_trigger($post_ID, $post_after, $post_before, $trigger = null) {
-
-    if ($post_after->post_type == 'gwapi-recipient' && $post_after->post_status == 'published') {
-        $meta = get_post_meta($post_ID);
 
 
-        // send the SMS now
-        update_post_meta($post_ID, 'api_status', 'about_to_send');
-        _gwapi_prepare_sms($post_ID);
-    }
-}
+function gwapi_notification_recipients_format($recipients) {
+    $response = [];
 
-/**
- * Prepare the SMS to be sent and start sending.
- */
-function _gwapi_notification_prepare_sms($ID) {
-    if (wp_is_post_revision($ID)) {
-        return;
-    } // no reason to spend any more time on a revision
+    /**
+     * @var $recipient \WP_Post
+     */
+    foreach ($recipients as $recipient) {
 
-    if (get_post_meta($ID, 'api_status', true) !== 'about_to_send') {
-        return;
-    } // got here some wrong way
-    update_post_meta($ID, 'api_status', 'sending');
+        $tags['%NAME%'] = $recipient->post_title;
 
-    $sender = get_post_meta($ID, 'sender', true);
-    $message = get_post_meta($ID, 'message', true);
-    $destaddr = get_post_meta($ID, 'destaddr', true) ?: 'MOBILE';
+        $ignored_meta = ['api_status', '_edit_lock', '_edit_last'];
+        $meta = get_post_meta($recipient->ID);
 
+        foreach ($meta as $key => $value) {
+            if (in_array($key, $ignored_meta, true)) {
+                continue;
+            }
 
-    // don't send invalid sms
-    if ($errors = _gwapi_validate_sms([
-      'sender'   => $sender,
-      'message'  => $message,
-      'destaddr' => $destaddr,
-    ])
-    ) {
-        update_post_meta($ID, 'api_status', 'bail');
-        update_post_meta($ID, 'api_error', __('Validation of the SMS failed prior to sending with the following errors:', 'gatewayapi')."\n- ".implode("\n- ", $errors));
-        return;
+            $tag = "%" . strtoupper($key) . '%';
+            $tags[$tag] = current($value);
+        }
+
+        $msisdn = current($meta['cc']) . current($meta['number']);
+
+        $response[$msisdn] = $tags;
     }
 
-    // missing secret etc.?
-    if (!get_option('gwapi_key') || !get_option('gwapi_secret')) {
-        update_post_meta($ID, 'api_status', 'bail');
-        $no_api_error = strtr(__("You have not entered your OAuth key and secret yet. Go to :link to complete the setup.", 'gatewayapi'),
-          [':link' => '<a href="options-general.php?page=gatewayapi">'.__('GatewayAPI Settings', 'gatewayapi').'</a>']);
-        update_post_meta($ID, 'api_error', $no_api_error);
-        return;
-    }
 
-    // Extract all tags
-    $allTags = _gwapi_extract_tags_from_message($message);
+    return $response;
 
-    // Prepare the recipients
-    $recipients = _gwapi_create_recipients_for_sms($ID, $allTags);
 
-    if (!$recipients) {
-        update_post_meta($ID, 'api_status', 'bail');
-        update_post_meta($ID, 'api_error', 'No recipients added.');
-        return;
-    }
 
-    // preflight
-    $preflight = wp_remote_post(admin_url('admin-ajax.php'), [
-      'body'    => [
-        'action'  => 'gwapi_send_next_batch_preflight',
-        'post_ID' => $ID,
-      ],
-      'timeout' => 5,
-    ]);
-
-    // yea, we can defer to "background-process"
-    if (trim(wp_remote_retrieve_body($preflight)) === 'success') {
-        wp_remote_post(admin_url('admin-ajax.php'), [
-          'body'    => [
-            'action'  => 'gwapi_send_next_batch',
-            'post_ID' => $ID,
-          ],
-          'timeout' => 5,
-        ]);
-    } else { // we can't background it, so just do in same thread
-        set_time_limit(-1);
-        do_action('wp_ajax_nopriv_gwapi_send_next_batch', false);
-    }
 }

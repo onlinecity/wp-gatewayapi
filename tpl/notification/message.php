@@ -54,7 +54,7 @@ $published = $post->post_status == 'publish';
             <label>
               <input type="radio" name="gatewayapi[encoding]"
                      value="GSM0338" <?= ($destaddr === 'GSM0338' || !$destaddr) ? 'checked' : ''; ?>>
-              <abbr title="<?php esc_attr_e('160 characters for 1-page SMS. 153 characters for multi-page SMS. Limited special characters, no emoji-support.', 'gatewayapi'); ?>"><?php _e('GSM 03.38', 'gatewayapi'); ?></abbr>
+              <abbr title="<?php esc_attr_e('160 characters for 1-page SMS. 153 characters for multi-page SMS. Limited special characters, no emoji-support.', 'gatewayapi'); ?>"><?php _e('Default', 'gatewayapi'); ?></abbr>
             </label>
           </td>
           <td>
@@ -70,7 +70,7 @@ $published = $post->post_status == 'publish';
             <label>
               <input type="radio" name="gatewayapi[encoding]"
                      value="UCS2" <?= ($destaddr === 'UCS2') ? 'checked' : ''; ?>>
-              <abbr title="<?php esc_attr_e('70 characters for 1-page SMS. 67 characters for multi-page SMS. Supports most special characters and emojis.', 'gatewayapi'); ?>"><?php _e('UCS2', 'gatewayapi'); ?></abbr>
+              <abbr title="<?php esc_attr_e('70 characters for 1-page SMS. 67 characters for multi-page SMS. Supports most special characters and emojis.', 'gatewayapi'); ?>"><?php _e('Special characters', 'gatewayapi'); ?></abbr>
             </label>
           </td>
           <td>
