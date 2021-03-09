@@ -133,7 +133,7 @@ class Notification
     /**
      * @return array
      */
-    private function recipients(): array {
+    private function recipients() {
         return $this->extractRecipients();
     }
 

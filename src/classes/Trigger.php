@@ -71,18 +71,18 @@ class Trigger {
     }
 
 
-    public function getId(): string {
+    public function getId() {
         return $this->id;
     }
 
-    public function getName(): string {
+    public function getName() {
         return $this->name;
     }
 
-    public function getGroup(): string {
+    public function getGroup() {
         return $this->group;
     }
-    public function getDescription(): string {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -94,10 +94,4 @@ class Trigger {
         return $this->action;
     }
 
-    /**
-     * Execute current trigger
-     */
-    public function run() {
-        echo 'Running trigger';
-    }
 }

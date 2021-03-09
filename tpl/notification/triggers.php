@@ -7,8 +7,6 @@ $post_meta_triggers = get_post_meta($id, 'triggers');
 $selected_trigger = $post_meta_triggers ? current($post_meta_triggers) : null;
 
 
-
-
 ?>
 
 <div class="gwapi-star-errors"></div>
@@ -19,7 +17,6 @@ $selected_trigger = $post_meta_triggers ? current($post_meta_triggers) : null;
           class="trigger-default"
           style="width: 100%"
           placeholder="Select trigger...">
-
 
       <?php foreach ($triggers as $group => $subtriggers): ?>
 
@@ -32,9 +29,9 @@ $selected_trigger = $post_meta_triggers ? current($post_meta_triggers) : null;
                       data-title="<?php echo $trigger->getName(); ?>"
                       data-text="<?php echo $trigger->getDescription(); ?>"
 
-                      <?php if ($selected_trigger && $selected_trigger === $trigger->getId()): ?>
-                      selected="selected"
-                      <?php endif ?>
+                <?php if ($selected_trigger && $selected_trigger === $trigger->getId()): ?>
+                  selected="selected"
+                <?php endif ?>
               >
                   <?php echo esc_html($trigger->getName()); ?>
                 <div>

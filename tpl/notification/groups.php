@@ -21,20 +21,16 @@ $current_roles = get_post_meta($post->ID, 'roles', true);
 $current_roles = !empty($current_roles) ? $current_roles : [];
 
 
-
-
 ?>
 
-
 <script>
-    (function() {
-
+    (function () {
 
 // POST Implementation
         async function postData(items = {}) {
 
             let formData = new FormData();
-            for ( let key in items ) {
+            for (let key in items) {
                 formData.append(key, items[key]);
             }
 
@@ -46,8 +42,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
             return response.json(); // parses JSON response into native JavaScript objects
         }
 
-
-        window.postRequest = function(type) {
+        window.postRequest = function (type) {
             return postData({
                 action: "my_action",
                 whatever: 12
@@ -60,19 +55,34 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
         window.notification = function notification() {
             const input = '';
 
-
             return {
                 recipients: [],
                 options: [
-                    {id: 'recipient', text: "Recipient", children: []},
-                    {id: 'recipientGroup', text: "Recipient Groups", children: []},
-                    {id: 'role', text: "Roles", children: []}
+                    {
+                        id: 'recipient',
+                        text: "Recipient",
+                        children: []
+                    },
+                    {
+                        id: 'recipientGroup',
+                        text: "Recipient Groups",
+                        children: []
+                    },
+                    {
+                        id: 'role',
+                        text: "Roles",
+                        children: []
+                    }
                 ],
                 recipientSearch: {
                     autocompleteInput: '<?php echo $selected_recipient_name; ?>',
                     isOpen: false,
-                    open() { this.isOpen = true; },
-                    close() { this.isOpen = false; },
+                    open() {
+                        this.isOpen = true;
+                    },
+                    close() {
+                        this.isOpen = false;
+                    },
                     selected: null,
                     selectedId() {
                         return this.selected ? this.selected.id : '<?php echo $selected_recipient_id; ?>';
@@ -86,7 +96,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                     this.recipientSearch.close();
                 },
                 searchRecipient() {
-                    const response =  postData({
+                    const response = postData({
                         action: "gwapi_callback_autocomplete_recipient",
                         search: this.recipientSearch.autocompleteInput
                     });
@@ -97,33 +107,37 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
             }
         }
 
-
     })();
 
 </script>
 
-
-
-
 <div class="notifications"
      x-data="notification()">
 
-  <table width="100%" class="form-table">
+  <table width="100%"
+         class="form-table">
     <tbody>
     <tr>
       <th width="25%">
-        Recipient Type            </th>
+        Recipient Type
+      </th>
       <td>
-        <select x-model="selectedOption" id="recipient-type" name="gatewayapi[recipient_type]">
-          <template x-for="option in options" :key="option.id">
-            <option :value="option.id" :selected="option.id == '<?php echo $selected_recipient_type; ?>'" x-text="option.text"></option>
+        <select x-model="selectedOption"
+                id="recipient-type"
+                name="gatewayapi[recipient_type]">
+          <template x-for="option in options"
+                    :key="option.id">
+            <option :value="option.id"
+                    :selected="option.id == '<?php echo $selected_recipient_type; ?>'"
+                    x-text="option.text"></option>
           </template>
         </select>
       </td>
     </tr>
     <tr>
       <th width="25%">
-        Recipient           </th>
+        Recipient
+      </th>
       <td>
         <div x-show="selectedOption === 'recipient'">
           <div
@@ -142,10 +156,9 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
             />
             <p class="help">Type the name of the recipient you wish to add to the Notification</p>
 
-            <input type="hidden" name="gatewayapi[recipient_id]" x-model="recipientSearch.selectedId()">
-
-
-
+            <input type="hidden"
+                   name="gatewayapi[recipient_id]"
+                   x-model="recipientSearch.selectedId()">
 
             <div class="suggestions">
               <ul
@@ -154,7 +167,8 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                 x-ref="suggestions"
               >
 
-                <template x-for="recipient in recipients" :key="recipient.id">
+                <template x-for="recipient in recipients"
+                          :key="recipient.id">
                   <li id="item-<%= index %>"
                       @click="select(recipient)"
                       class="item">
@@ -162,7 +176,6 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                   </li>
 
                 </template>
-
 
               </ul>
             </div>
@@ -187,7 +200,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                              name="gatewayapi[recipient_groups][]"
                              id="group-id-<?= $group->term_id; ?>"
                              value="<?= $group->term_id; ?>"
-                             <?php echo in_array($group->term_id, $current_groups) ? 'checked' : '' ?>
+                        <?php echo in_array($group->term_id, $current_groups) ? 'checked' : '' ?>
                       >
                         <?= $group->name; ?>
                       <span class="number"
@@ -223,7 +236,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                              name="gatewayapi[roles][]"
                              id="role-id-<?php echo $role_id ?>"
                              value="<?php echo $role_id ?>"
-                            <?php echo in_array($role_id, $current_roles) ? 'checked' : '' ?>
+                        <?php echo in_array($role_id, $current_roles) ? 'checked' : '' ?>
                       >
                         <?= $role['name']; ?>
 

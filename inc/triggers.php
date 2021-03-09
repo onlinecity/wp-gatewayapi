@@ -6,179 +6,81 @@ function _gwapi_get_triggers() {
 
     $triggers = [
       [
-        'id'          => 'post/post/added',
+        'id'          => 'post/added',
         'action'      => 'post_added',
         'name'        => 'Post added',
         'group'       => 'Post',
-        'description' => 'Post added - Fires when Post (post) is added to database. Useful when adding posts programatically or for 3rd party integration',
+        'description' => 'Post added - Fires when Post is added to database. Useful when adding posts programatically or for 3rd party integration',
       ],
       [
-        'id'          => 'post/post/drafted',
+        'id'          => 'post/drafted',
         'action'      => 'post_drafted',
         'name'        => 'Post saved',
         'group'       => 'Post',
-        'description' => 'Post saved as a draft - Fires when Post (post) is saved as a draft',
+        'description' => 'Post saved as a draft - Fires when Post is saved as a draft',
       ],
       [
-        'id'          => 'post/post/published',
+        'id'          => 'post/published',
         'action'      => 'post_published',
         'name'        => 'Post published',
         'group'       => 'Post',
-        'description' => 'Post published - Fires when Post (post) is published',
+        'description' => 'Post published - Fires when Post is published',
       ],
       [
-        'id'          => 'post/post/updated',
+        'id'          => 'post/updated',
         'action'      => 'post_updated',
         'name'        => 'Post updated',
         'group'       => 'Post',
-        'description' => 'Post updated - Fires when Post (post) is updated',
+        'description' => 'Post updated - Fires when Post is updated',
       ],
       [
-        'id'          => 'post/post/pending',
+        'id'          => 'post/pending',
         'action'      => 'post_pending',
         'name'        => 'Post sent',
         'group'       => 'Post',
-        'description' => 'Post sent for review - Fires when Post (post) is sent for review',
+        'description' => 'Post sent for review - Fires when Post is sent for review',
       ],
       [
-        'id'          => 'post/post/scheduled',
+        'id'          => 'post/scheduled',
         'action'      => 'post_scheduled',
         'name'        => 'Post scheduled',
         'group'       => 'Post',
-        'description' => 'Post scheduled - Fires when Post (post) is scheduled',
+        'description' => 'Post scheduled - Fires when Post is scheduled',
       ],
       [
-        'id'          => 'post/post/trashed',
+        'id'          => 'post/trashed',
         'action'      => 'post_trashed',
         'name'        => 'Post trashed',
         'group'       => 'Post',
-        'description' => 'Post trashed - Fires when Post (post) is moved to trash',
+        'description' => 'Post trashed - Fires when Post is moved to trash',
       ],
       [
-        'id'          => 'post/post/approved',
+        'id'          => 'post/approved',
         'action'      => 'post_approved',
         'name'        => 'Post approved',
         'group'       => 'Post',
-        'description' => 'Post approved - Fires when Post (post) is approved',
+        'description' => 'Post approved - Fires when Post is approved',
       ],
       [
-        'id'          => 'post/page/added',
-        'action'      => 'post_added',
-        'name'        => 'Page added',
-        'group'       => 'Page',
-        'description' => 'Page added - Fires when Page (page) is added to database. Useful when adding posts programatically or for 3rd party integration',
-      ],
-      [
-        'id'          => 'post/page/drafted',
-        'action'      => 'post_drafted',
-        'name'        => 'Page saved',
-        'group'       => 'Page',
-        'description' => 'Page saved as a draft - Fires when Page (page) is saved as a draft',
-      ],
-      [
-        'id'          => 'post/page/published',
-        'action'      => 'post_published',
-        'name'        => 'Page published',
-        'group'       => 'Page',
-        'description' => 'Page published - Fires when Page (page) is published',
-      ],
-      [
-        'id'          => 'post/page/updated',
-        'action'      => 'post_updated',
-        'name'        => 'Page updated',
-        'group'       => 'Page',
-        'description' => 'Page updated - Fires when Page (page) is updated',
-      ],
-      [
-        'id'          => 'post/page/pending',
-        'action'      => 'post_pending',
-        'name'        => 'Page sent',
-        'group'       => 'Page',
-        'description' => 'Page sent for review - Fires when Page (page) is sent for review',
-      ],
-      [
-        'id'          => 'post/page/scheduled',
-        'action'      => 'post_scheduled',
-        'name'        => 'Page scheduled',
-        'group'       => 'Page',
-        'description' => 'Page scheduled - Fires when Page (page) is scheduled',
-      ],
-      [
-        'id'          => 'post/page/trashed',
-        'action'      => 'post_trashed',
-        'name'        => 'Page trashed',
-        'group'       => 'Page',
-        'description' => 'Page trashed - Fires when Page (page) is moved to trash',
-      ],
-      [
-        'id'          => 'post/page/approved',
-        'action'      => 'post_approved',
-        'name'        => 'Page approved',
-        'group'       => 'Page',
-        'description' => 'Page approved - Fires when Page (page) is approved',
-      ],
-      [
-        'id'          => 'taxonomy/category/created',
+        'id'          => 'taxonomy/created',
         'action'      => 'taxonomy_created',
-        'name'        => 'Category created',
-        'group'       => 'Category',
-        'description' => 'Category term created - Fires when Category (category) is created',
+        'name'        => 'Taxonomy created',
+        'group'       => 'Taxonomy',
+        'description' => 'Taxonomy term created - Fires when Taxonomy is created',
       ],
       [
-        'id'          => 'taxonomy/category/updated',
+        'id'          => 'taxonomy/updated',
         'action'      => 'taxonomy_updated',
-        'name'        => 'Category updated',
-        'group'       => 'Category',
-        'description' => 'Category term updated - Fires when Category (category) is updated',
+        'name'        => 'Taxonomy updated',
+        'group'       => 'Taxonomy',
+        'description' => 'Taxonomy term updated - Fires when Taxonomy is updated',
       ],
       [
-        'id'          => 'taxonomy/category/deleted',
+        'id'          => 'taxonomy/deleted',
         'action'      => 'taxonomy_deleted',
-        'name'        => 'Category deleted',
-        'group'       => 'Category',
-        'description' => 'Category term deleted - Fires when Category (category) is deleted',
-      ],
-      [
-        'id'          => 'taxonomy/post_tag/created',
-        'action'      => 'taxonomy_created',
-        'name'        => 'Tag created',
-        'group'       => 'Tag',
-        'description' => 'Tag term created - Fires when Tag (post_tag) is created',
-      ],
-      [
-        'id'          => 'taxonomy/post_tag/updated',
-        'action'      => 'taxonomy_updated',
-        'name'        => 'Tag updated',
-        'group'       => 'Tag',
-        'description' => 'Tag term updated - Fires when Tag (post_tag) is updated',
-      ],
-      [
-        'id'          => 'taxonomy/post_tag/deleted',
-        'action'      => 'taxonomy_deleted',
-        'name'        => 'Tag deleted',
-        'group'       => 'Tag',
-        'description' => 'Tag term deleted - Fires when Tag (post_tag) is deleted',
-      ],
-      [
-        'id'          => 'taxonomy/gwapi-recipient-groups/created',
-        'action'      => 'taxonomy_created',
-        'name'        => 'Recipient group created',
-        'group'       => 'Recipient group',
-        'description' => 'Recipient group term created - Fires when Recipient group (gwapi-recipient-groups) is created',
-      ],
-      [
-        'id'          => 'taxonomy/gwapi-recipient-groups/updated',
-        'action'      => 'taxonomy_updated',
-        'name'        => 'Recipient group updated',
-        'group'       => 'Recipient group',
-        'description' => 'Recipient group term updated - Fires when Recipient group (gwapi-recipient-groups) is updated',
-      ],
-      [
-        'id'          => 'taxonomy/gwapi-recipient-groups/deleted',
-        'action'      => 'taxonomy_deleted',
-        'name'        => 'Recipient group deleted',
-        'group'       => 'Recipient group',
-        'description' => 'Recipient group term deleted - Fires when Recipient group (gwapi-recipient-groups) is deleted',
+        'name'        => 'Taxonomy deleted',
+        'group'       => 'Taxonomy',
+        'description' => 'Taxonomy term deleted - Fires when Taxonomy is deleted',
       ],
       [
         'id'          => 'user/login',
@@ -243,68 +145,50 @@ function _gwapi_get_triggers() {
         'group'       => 'User',
         'description' => 'User role changed - Fires when user role changes',
       ],
-      //      [
-      //        'id' => 'media/added',
-      //       'action' => 'media_added',
-      //        'group' => 'Media',
-      //        'description' => 'Media added - Fires when new attachment is added'
-      //      ],
-      //      [
-      //        'id' => 'media/updated',
-      //       'action' => 'media_updated',
-      //        'group' => 'Media',
-      //        'description' => 'Media updated - Fires when attachment is updated'
-      //      ],
-      //      [
-      //        'id' => 'media/trashed',
-      //       'action' => 'media_trashed',
-      //        'group' => 'Media',
-      //        'description' => 'Media trashed - Fires when attachment is removed'
-      //      ],
       [
-        'id'          => 'comment/comment/published',
+        'id'          => 'comment/published',
         'action'      => 'comment_published',
         'name'        => 'Comment published',
         'group'       => 'Comment',
         'description' => 'Comment published - Fires when new Comment is published on the website. Includes comment replies.',
       ],
       [
-        'id'          => 'comment/comment/added',
+        'id'          => 'comment/added',
         'action'      => 'comment_added',
         'name'        => 'Comment added',
         'group'       => 'Comment',
         'description' => 'Comment added - Fires when new Comment is added to database and awaits moderation or is published. Includes comment replies.',
       ],
       [
-        'id'          => 'comment/comment/replied',
+        'id'          => 'comment/replied',
         'action'      => 'comment_replied',
         'name'        => 'Comment replied',
         'group'       => 'Comment',
         'description' => 'Comment replied - Fires when Comment is replied and the reply is approved',
       ],
       [
-        'id'          => 'comment/comment/approved',
+        'id'          => 'comment/approved',
         'action'      => 'comment_approved',
         'name'        => 'Comment approved',
         'group'       => 'Comment',
         'description' => 'Comment approved - Fires when Comment is approved',
       ],
       [
-        'id'          => 'comment/comment/unapproved',
+        'id'          => 'comment/unapproved',
         'action'      => 'comment_unapproved',
         'name'        => 'Comment unapproved',
         'group'       => 'Comment',
         'description' => 'Comment unapproved - Fires when Comment is marked as unapproved',
       ],
       [
-        'id'          => 'comment/comment/spammed',
+        'id'          => 'comment/spammed',
         'action'      => 'comment_spammed',
         'name'        => 'Comment spammed',
         'group'       => 'Comment',
         'description' => 'Comment spammed - Fires when Comment is marked as spam',
       ],
       [
-        'id'          => 'comment/comment/trashed',
+        'id'          => 'comment/trashed',
         'action'      => 'comment_trashed',
         'name'        => 'Comment trashed',
         'group'       => 'Comment',
@@ -352,20 +236,7 @@ function _gwapi_get_triggers() {
         'group'       => 'Wordpress',
         'description' => 'Plugin removed - Fires when plugin is deleted',
       ],
-      //      [
-      //        'theme/switched',
-      //        'Theme switched - Fires when theme is switched'
-      //      ],
-      //      [
-      //        'theme/updated',
-      //        'Theme updated - Fires when theme is updated'
-      //      ],
-      //      [
-      //        'theme/installed',
-      //        'Theme installed - Fires when theme is installed'
-      //      ],
     ];
-
 
     $return = [];
 
@@ -395,11 +266,8 @@ function _gwapi_get_triggers_grouped() {
         }
 
         $return[$trigger->getGroup()][$trigger->getName()] = $trigger;
-
     }
-
     return $return;
-
 }
 
 /**
@@ -410,14 +278,11 @@ function _gwapi_get_triggers_grouped() {
  */
 function _gwapi_get_trigger_by_id($id) {
 
-
     foreach (_gwapi_get_triggers() as $trigger) {
 
         if ($trigger->getId() === $id) {
             return $trigger;
         }
-
     }
-
     return null;
 }

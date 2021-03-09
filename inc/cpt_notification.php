@@ -39,13 +39,7 @@ function gwapi_cpt_notification() {
       'label'               => __('notification', 'gatewayapi'),
       'description'         => __('SMS Notifications for actions', 'gatewayapi'),
       'labels'              => $labels,
-      // Features this CPT supports in Post Editor
       'supports'            => ['title'],
-      // You can associate this CPT with a taxonomy or custom taxonomy.
-      /* A hierarchical CPT is like Pages and can have
-      * Parent and child items. A non-hierarchical CPT
-      * is like Posts.
-      */
       'hierarchical'        => false,
       'public'              => false,
       'show_ui'             => true,
@@ -76,8 +70,6 @@ add_filter('manage_gwapi-notification_posts_columns', function ($columns) {
     return array_merge($columns, [
       'trigger' => __('Trigger', 'gatewayapi'),
       'recipients' => __('Recipients', 'gatewayapi'),
-      //      'sender' => __('Sender', 'gatewayapi'),
-//      'message' => __('Message', 'gatewayapi'),
       'date'    => $date_text,
     ]);
 });
@@ -94,7 +86,6 @@ add_action('manage_posts_custom_column', function ($column, $id) {
             $triggers = get_post_meta($id, 'triggers', true);
             $trigger = _gwapi_get_trigger_by_id($triggers);
             echo $trigger ? esc_html($trigger->getName()) : '-';
-
             break;
         case 'recipients':
             $recipient_type = get_post_meta($id, 'recipient_type', true);
@@ -109,15 +100,7 @@ add_action('manage_posts_custom_column', function ($column, $id) {
                     echo esc_html('Role');
                     break;
             }
-
             break;
-//        case 'sender':
-//            echo esc_html(get_post_meta($id, 'sender', true));
-            break;
-//        case 'message':
-//            $msg = get_post_meta($id, 'message', true) ?: '-';
-//            echo esc_html(mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50).'...' : $msg);
-//            break;
     }
 }, 10, 2);
 
@@ -152,7 +135,7 @@ add_action('admin_enqueue_scripts', 'gwapi_notification_enqueue_scripts');
 
 function gwapi_notification_enqueue_scripts($hook) {
 
-    wp_enqueue_script('gwapi-wp-notification', _gwapi_url().'/dist/main.js');
+    wp_enqueue_script('gwapi-wp-notification', _gwapi_url().'/dist/bundle.js');
     wp_enqueue_style('gwapi-wp-notification', _gwapi_url().'/css/gwapi-notification.css');
 
     $transient_name = 'gwapi_notification_posts';
@@ -171,10 +154,7 @@ function gwapi_notification_enqueue_scripts($hook) {
       'cached_post_titles' => $cached_posts_titles,
     ];
 
-//    wp_enqueue_script( 'nds_advanced_search', plugin_dir_url( __FILE__ ) . 'js/nds-advanced-search.js', array( 'jquery', 'jquery-ui-autocomplete' ), $this->version, true );
     wp_localize_script('gwapi_notification', 'params', $params);
-
-
 }
 
 
@@ -219,7 +199,6 @@ function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $updat
         return;
     }
 
-
     $data = $_POST['gatewayapi'] ?? null;
 
     if (!$data) {
@@ -243,17 +222,17 @@ function gwapi_callback_autocomplete_recipient() {
     // retrieve the post types to search from the plugin settings.
     $post_types = 'gwapi-recipient';
 
-// check if cached posts are available.
+    // check if cached posts are available.
     $cached_posts = get_transient($transient_name);
     if (false === $cached_posts) {
         // retrieve posts for the specified post types by running get_posts and cache the posts as well.
         $cached_posts = gwapi_cache_posts_in_post_types();
     }
 
-// extract the cached post ids from the transient into an array.
+    // extract the cached post ids from the transient into an array.
     $cached_post_ids = array_column($cached_posts, 'id');
 
-// run a new query against the search key and the cached post ids for the seleted post types.
+    // run a new query against the search key and the cached post ids for the seleted post types.
     $args = [
       'post_type'           => $post_types,
       'posts_per_page'      => -1,
@@ -261,12 +240,7 @@ function gwapi_callback_autocomplete_recipient() {
       //      'post__in'            => $cached_post_ids, // use post ids that were cached in the query earlier.
       'ignore_sticky_posts' => true,
       'meta_key'            => 'number',
-      's'                   => $search_term
-      //      's'                   => $search_term,  // the keyword/phrase to search.
-      //      'sentence'            => true, // perform a phrase search.
     ];
-
-//    $loop = new \WP_Query( $args );
 
     $posts = get_posts($args);
 
@@ -402,9 +376,5 @@ function gwapi_notification_recipients_format($recipients) {
         $response[$msisdn] = $tags;
     }
 
-
     return $response;
-
-
-
 }
