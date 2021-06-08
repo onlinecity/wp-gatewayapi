@@ -193,7 +193,7 @@ class GWAPI_User_Sync
             }
 
             die(json_encode([
-                'html' => sprintf(_n("%d user is being synchronized now.", "%d users are being synchronized now", $total, 'gatewayapi'), $total),
+                'html' => sprintf(_n("%d user is being synchronized now", "%d users are being synchronized now", $total, 'gatewayapi'), $total),
                 'finished' => false
             ]));
         }

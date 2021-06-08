@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
 Tested up to: 5.5
-Stable tag: 1.6.9
+Stable tag: 1.6.10
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -119,6 +119,10 @@ Then find the options-table, by default wp_options. Search for the row where the
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.6.10 =
+* New: Default country code field setting (previously all country selectors defaulted to +45/Denmark)
+* Danish translation updated
 
 = 1.6.9 =
 * New! Create Notifications to automatically notify recipients by SMS when a WP action is executed.

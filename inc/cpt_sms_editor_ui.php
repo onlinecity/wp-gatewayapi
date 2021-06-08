@@ -281,7 +281,7 @@ function _gwapi_sms_message(WP_Post $post)
                                                          data-counter-i18n="<?= esc_attr(json_encode($counterI18N)); ?>"><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>
         <br>
         <div>
-          <p><?php _e('Writing one of the following tags (including both %-signs) will result in each recipient receiving a personalized text:', 'gatewayapi'); ?></p>
+          <p><?php _e('Writing one of the following tags (including both &percnt;-signs) will result in each recipient receiving a personalized text:', 'gatewayapi'); ?></p>
           <ul>
               <?php foreach (gwapi_all_tags() as $tag => $description): ?>
                 <li>
