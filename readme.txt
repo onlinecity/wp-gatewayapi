@@ -13,7 +13,7 @@ Send SMS'es and enable SMS-based two-factor security.
 
 This plugin enables you to send SMS messages straight from the WordPress backend or via the programmer’s API.
 
-Also included is a free and easy-to-use two-factor security feature, which hardens the security of your site considerably.
+Also included is a free SMS two-factor authentication module, which hardens the security of your site considerably.
 
 All you need is the plugin and a free [GatewayAPI.com](https://gatewayapi.com/) account.
 
@@ -21,46 +21,53 @@ All you need is the plugin and a free [GatewayAPI.com](https://gatewayapi.com/) 
 Main features:
 
 * **📱 Send SMS messages / texts**
-  *   Add custom data to recipients to mail merge.
+  *   Add custom data to recipients to perform mail merge.
   *   Import recipient lists from CSV/Excel.
-  *   Group recipients.
-  *   Bulk-sending.
+  *   Manage target groups.
+  *   Manage broadcasts.
   *   Easy-to-use programmer’s API.
-  *   Short-codes for signup/unsubscribe/edit profile forms.
+  *   Short codes for signup/unsubscribe/edit profile forms.
   *   Automatic integration with Contact Form 7.
 
-* **🔐 Two-factor security**
+* **🔐 Two-factor authentication**
   *   Easy-to-use: No apps needed!
-  *   Easy for admins: Tick a checkbox and it just works!
-  *   Military grade security!
-  *   Pick roles to enable mandatory two-factor.
+  *   Easy for admins: Just tick a box and it works!
+  *   High level of security!
+  *   Pick roles to enable mandatory two-factor authentication.
   *   Re-authorise at each login or remember devices for up to 30 days.
 
-* **✊ Receive SMS messages  / texts**
+* **✊ Receive SMS messages**
   *   Use your own keyword(s) or phone numbers to receive SMS messages.
   *   View incoming messages.
   *   Auto-reply to incoming SMS messages.
 
+* 🔔 Notification module for admins
+  * Receive an SMS message when important changes occur.
+  * Choose from a long list of triggers.
+  * Receive an SMS when a new user is created, when certain pages are edited or when new pages are published.
+  * Configure which users will receive SMS messages. Can be role-based or user-based.
+
+
 **Easy to get started:**
 
-*   Complete step-by-step user guide with several screenshots.
+*   Complete step-by-step user guide with several screenshots
 *   The plugin has help texts included.
 *   Live chat support and mail support from GatewayAPI.com.
 
 **SMS messages provided by one of the leading SMS Gateways in Europe**
 
-*   GatewayAPI.com sends hundreds of millions of SMS messages each year on behalf of Google, Visma, Pfizer and many more.
-*   Headquarters in Copenhagen, Denmark.
+*   GatewayAPI.com sends hundreds of millions of SMS messages each year on behalf of tens of thousands of customers all over the globe.
+*   Offices in Copenhagen, Odense and Aalborg, Denmark.
 *   Company founded in 1999.
 *   Free support, no subscription, AND unbeatable prices.
-*   Most SMS messages are delivered within 0,3 seconds.
+*   Most SMS messages are delivered within 0.3 seconds.
 
-If you prefer to disable the UI-features and manage broadcasts from code instead, then that is possible as well. For this purpose you can use the method `gwapi_send_sms` which accepts arguments for message, recipient(s), sender-text and type of SMS.
+If you prefer to disable the UI-features and manage broadcasts from code instead, then that is also possible. For this purpose, you can use the method gwapi_send_sms. The method supports specification of content, broadcast to multiple recipients, specification of sender ID and specification of type of SMS.
 
 
 = Getting Started =
 
-We have created a number of short tutorials, demonstrating how to get started and use the various features. Watch the following video to see how to set everything up and send your first SMS message:
+We have created a number of tutorials, demonstrating how to get started and how to use the various features. Watch the following video on how to set everything up and send your first SMS message:
 
 [Click here for more videos](https://wordpress.org/plugins/gatewayapi/installation/).
 
@@ -121,8 +128,10 @@ Then find the options-table, by default wp_options. Search for the row where the
 == Changelog ==
 
 = 1.6.10 =
-* New: Default country code field setting (previously all country selectors defaulted to +45/Denmark)
-* Danish translation updated
+* New: Default country code field setting (previously all country selectors defaulted to +45/Denmark).
+* Optimization: Removed various unneeded dependencies.
+* Danish translation updated, including the notification-module.
+* Readme updated to inform about notification-module and other text improvements.
 
 = 1.6.9 =
 * New! Create Notifications to automatically notify recipients by SMS when a WP action is executed.
