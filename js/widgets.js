@@ -18,7 +18,7 @@
             // load options from element
             var el_options = {
                 only_ccs: field.data('only-ccs'),
-                default_cc: field.data('default-cc')
+                default_cc: field.data('default-cc') || window.GWAPI_DEFAULT_CC
             };
 
             // override with options from the options-object in the argument

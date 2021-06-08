@@ -18,6 +18,7 @@ add_action('admin_init', function () {
     register_setting('gatewayapi', 'gwapi_enable_ui');
     register_setting('gatewayapi', 'gwapi_recaptcha_site_key');
     register_setting('gatewayapi', 'gwapi_recaptcha_secret_key');
+    register_setting('gatewayapi', 'gwapi_default_country_code');
     register_setting('gatewayapi', 'gwapi_default_sender');
     register_setting('gatewayapi', 'gwapi_recipient_fields');
 

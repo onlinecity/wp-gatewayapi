@@ -85,6 +85,20 @@
                             </p>
                         </td>
                     </tr>
+                  <tr valign="top">
+                        <th scope="row"><?php _e('Default country code', 'gatewayapi'); ?></th>
+                        <td>
+                            <label>
+                              <div style="max-width: 300px">
+                                <select name="gwapi_default_country_code" data-gwapi-mobile-cc
+                                        style="width: 100%" class="input"></select>
+                              </div>
+                            </label>
+                            <p class="help-block description">
+                                <?php _e('When entering mobile numbers, which country should be the default?', 'gatewayapi'); ?>
+                            </p>
+                        </td>
+                    </tr>
                 </table>
 
                 <div id="enableCaptcha" <?= !get_option('gwapi_enable_ui') ? 'class="hidden"' : ''; ?>>

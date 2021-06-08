@@ -14,7 +14,7 @@
 
             <p>
                 <label for="mcc"><?php _e('Mobile country code', 'gatewayapi'); ?></label><br>
-                <select name="mcc" id="gwapi_mcc" data-gwapi-mobile-cc data-default-cc="45" style="width: 100%"
+                <select name="mcc" id="gwapi_mcc" data-gwapi-mobile-cc style="width: 100%"
                         class="input"></select>
             </p>
 
