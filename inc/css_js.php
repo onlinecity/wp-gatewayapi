@@ -10,6 +10,7 @@ function _gwapi_enqueue_uideps($only_register = false)
 
     if ($only_register) return;
 
+    wp_enqueue_script('alpinejs', _gwapi_url().'lib/alpinejs/alpine.js', [], GATEWAYAPI_VERSION, true);
     wp_enqueue_script('gwapi-widgets');
     wp_enqueue_script('punycode-js');
     wp_enqueue_style('select2-4');

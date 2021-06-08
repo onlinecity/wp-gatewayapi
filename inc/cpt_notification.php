@@ -135,7 +135,6 @@ add_action('admin_enqueue_scripts', 'gwapi_notification_enqueue_scripts');
 
 function gwapi_notification_enqueue_scripts($hook) {
 
-    wp_enqueue_script('gwapi-wp-notification', _gwapi_url().'/dist/bundle.js');
     wp_enqueue_style('gwapi-wp-notification', _gwapi_url().'/css/gwapi-notification.css');
 
     $transient_name = 'gwapi_notification_posts';

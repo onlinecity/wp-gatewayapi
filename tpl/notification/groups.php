@@ -119,7 +119,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
     <tbody>
     <tr>
       <th width="25%">
-        Recipient Type
+        <?php _e('Recipient Type', 'gatewayapi'); ?>
       </th>
       <td>
         <select x-model="selectedOption"
@@ -136,7 +136,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
     </tr>
     <tr>
       <th width="25%">
-        Recipient
+        <?php _e('Recipient', 'gatewayapi'); ?>
       </th>
       <td>
         <div x-show="selectedOption === 'recipient'">
@@ -154,7 +154,9 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
               x-model="recipientSearch.autocompleteInput"
               placeholder="Search for a recipient by name"
             />
-            <p class="help">Type the name of the recipient you wish to add to the Notification</p>
+            <p class="help">
+              <?php _e('Type the name of the recipient you wish to add to the Notification', 'gatewayapi'); ?>
+            </p>
 
             <input type="hidden"
                    name="gatewayapi[recipient_id]"
