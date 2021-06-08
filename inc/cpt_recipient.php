@@ -44,6 +44,8 @@ add_action('init', function () {
         global $menu;
         global $submenu;
 
+        if (!isset($submenu['edit.php?post_type=gwapi-recipient'])) return;
+
         $target = &$submenu['edit.php?post_type=gwapi-sms'];
         foreach($submenu['edit.php?post_type=gwapi-recipient'] as $idx => $r) {
             $target[$idx+14] = $r;
