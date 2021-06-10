@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GatewayAPI\n"
-"POT-Creation-Date: 2021-06-08 14:29+0200\n"
-"PO-Revision-Date: 2021-06-08 14:29+0200\n"
+"POT-Creation-Date: 2021-06-10 11:05+0200\n"
+"PO-Revision-Date: 2021-06-10 11:05+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: da_DK\n"
@@ -150,7 +150,7 @@ msgstr "Mobilnummer"
 msgid "Receiver"
 msgstr "Modtager"
 
-#: inc/cpt_recipient.php:11
+#: inc/cpt_recipient.php:11 tpl/notification/groups.php:139
 msgid "Recipient"
 msgstr "Modtager"
 
@@ -182,7 +182,7 @@ msgstr "Ingen modtagere fundet"
 msgid "No recipients found in trash"
 msgstr "Ingen modtagere fundet i papirkurven"
 
-#: inc/cpt_recipient.php:66
+#: inc/cpt_recipient.php:68
 msgid "Name of recipient"
 msgstr "Navn på modtager"
 
@@ -311,25 +311,25 @@ msgstr ""
 "for at benytte flere muligheder ovenfor."
 
 #: inc/cpt_sms_editor_ui.php:58 inc/tax_recipient.php:12
-#: tpl/notification/groups.php:194
+#: tpl/notification/groups.php:196
 msgid "All recipient groups"
 msgstr "Alle modtagergrupper"
 
-#: inc/cpt_sms_editor_ui.php:67 tpl/notification/groups.php:207
+#: inc/cpt_sms_editor_ui.php:67 tpl/notification/groups.php:209
 msgid "Recipients in group"
 msgstr "Modtagere i gruppe"
 
-#: inc/cpt_sms_editor_ui.php:74 tpl/notification/groups.php:214
+#: inc/cpt_sms_editor_ui.php:74 tpl/notification/groups.php:216
 msgid "Selected recipient groups"
 msgstr "Vælg modtagergrupper"
 
-#: inc/cpt_sms_editor_ui.php:81 tpl/notification/groups.php:221
+#: inc/cpt_sms_editor_ui.php:81 tpl/notification/groups.php:223
 msgid ""
 "You will be sending to all recipients who are in any of the selected groups."
 msgstr ""
 "Du vil sende til alle modtagere som er i mindst én af de valgte grupper."
 
-#: inc/cpt_sms_editor_ui.php:83 tpl/notification/groups.php:223
+#: inc/cpt_sms_editor_ui.php:83 tpl/notification/groups.php:225
 msgid "Only groups with at least one recipient are listed."
 msgstr "Kun grupper med minimum én modtger i vises i listen."
 
@@ -526,7 +526,7 @@ msgstr "Send d. <b>%1$s</b>"
 msgid "Calculated at send"
 msgstr "Udregnes ved afsendelse"
 
-#: inc/css_js.php:21
+#: inc/css_js.php:22
 msgid ""
 "Sorry, but there are errors in your input. Please attend to the highlighted "
 "fields below."
@@ -1349,6 +1349,321 @@ msgstr "Vælg fra mest brugte grupper"
 msgid "No groups found"
 msgstr "Ingen grupper fundet"
 
+#: inc/triggers.php:12
+msgid "Post added"
+msgstr "Indlæg tilføjet"
+
+#: inc/triggers.php:13 inc/triggers.php:20 inc/triggers.php:27
+#: inc/triggers.php:34 inc/triggers.php:41 inc/triggers.php:48
+#: inc/triggers.php:55 inc/triggers.php:62
+msgid "Post"
+msgstr "Indlæg"
+
+#: inc/triggers.php:14
+msgid ""
+"Post added - Fires when Post is added to database. Useful when adding posts "
+"programatically or for 3rd party integration"
+msgstr ""
+"Indlæg tilføjet - Udløses når et indlæg tilføjes til databasen. Brugbar når "
+"der tilføjes indlæg fra et program eller tredjeparts løsning"
+
+#: inc/triggers.php:19
+msgid "Post saved"
+msgstr "Indlæg gemt"
+
+#: inc/triggers.php:21
+msgid "Post saved as a draft - Fires when Post is saved as a draft"
+msgstr ""
+"Indlæg tilføjet - Udløses når et indlæg tilføjes til databasen. Brugbar når "
+"der tilføjes indlæg fra et program eller tredjeparts løsning"
+
+#: inc/triggers.php:26
+msgid "Post published"
+msgstr "Indlæg udgivet"
+
+#: inc/triggers.php:28
+msgid "Post published - Fires when Post is published"
+msgstr "Indlæg udgivet - Udløses når et indlæg udgives"
+
+#: inc/triggers.php:33
+msgid "Post updated"
+msgstr "Indlæg opdateret"
+
+#: inc/triggers.php:35
+msgid "Post updated - Fires when Post is updated"
+msgstr "Indlæg opdateret - Udløses når et indlæg opdateres"
+
+#: inc/triggers.php:40
+msgid "Post sent"
+msgstr "Indlæg sendt"
+
+#: inc/triggers.php:42
+msgid "Post sent for review - Fires when Post is sent for review"
+msgstr ""
+"Indlæg sendt til godkendelse - Udløses når et indlæg sendes til godkendelse"
+
+#: inc/triggers.php:47
+msgid "Post scheduled"
+msgstr "Indlæg planlagt"
+
+#: inc/triggers.php:49
+msgid "Post scheduled - Fires when Post is scheduled"
+msgstr ""
+"Indlæg planlagt - Udløses når et indlæg er sat til udgivelse på et senere "
+"tidspunkt"
+
+#: inc/triggers.php:54
+msgid "Post trashed"
+msgstr "Indlæg slettet"
+
+#: inc/triggers.php:56
+msgid "Post trashed - Fires when Post is moved to trash"
+msgstr "Indlæg slettet - Udløses når et indlæg smides i papirkurven"
+
+#: inc/triggers.php:61
+msgid "Post approved"
+msgstr "Indlæg godkendt"
+
+#: inc/triggers.php:63
+msgid "Post approved - Fires when Post is approved"
+msgstr "Indlæg godkendt - Udløses når et indlæg er godkendt"
+
+#: inc/triggers.php:68
+msgid "Taxonomy created"
+msgstr "Taxonomi oprettet"
+
+#: inc/triggers.php:69 inc/triggers.php:76 inc/triggers.php:83
+msgid "Taxonomy"
+msgstr "Taxonomi"
+
+#: inc/triggers.php:70
+msgid "Taxonomy term created - Fires when Taxonomy is created"
+msgstr "Taxonomi-begreb oprettet - Udløses når taxonomi oprettes"
+
+#: inc/triggers.php:75
+msgid "Taxonomy updated"
+msgstr "Taxonomi opdateret"
+
+#: inc/triggers.php:77
+msgid "Taxonomy term updated - Fires when Taxonomy is updated"
+msgstr "Taxonomi-begreb opdateret - Udløses når taxonomi opdateres"
+
+#: inc/triggers.php:82
+msgid "Taxonomy deleted"
+msgstr "Taxonomi slettet"
+
+#: inc/triggers.php:84
+msgid "Taxonomy term deleted - Fires when Taxonomy is deleted"
+msgstr "Taxonomi-begreb slettet - Udløses når taxonomi slettes"
+
+#: inc/triggers.php:89
+msgid "User login"
+msgstr "Bruger login"
+
+#: inc/triggers.php:90 inc/triggers.php:97 inc/triggers.php:104
+#: inc/triggers.php:111 inc/triggers.php:118 inc/triggers.php:125
+#: inc/triggers.php:132 inc/triggers.php:139 inc/triggers.php:146
+msgid "User"
+msgstr "Bruger"
+
+#: inc/triggers.php:91
+msgid "User login - Fires when user log into WordPress"
+msgstr "Bruger login - Udløses når en bruger logger ind i WordPress"
+
+#: inc/triggers.php:96
+msgid "User logout"
+msgstr "Bruger logger ud"
+
+#: inc/triggers.php:98
+msgid "User logout - Fires when user log out from WordPress"
+msgstr "Bruger logger ud - Udløses når en bruger logger ud af WordPress"
+
+#: inc/triggers.php:103
+msgid "User registration"
+msgstr "Brugerregistrering"
+
+#: inc/triggers.php:105
+msgid "User registration - Fires when user registers new account"
+msgstr "Brugerregistrering - Udløses når en bruger registrerer en ny konto"
+
+#: inc/triggers.php:110
+msgid "User profile updated"
+msgstr "Brugerprofil opdateret"
+
+#: inc/triggers.php:112
+msgid "User profile updated - Fires when user updates his profile"
+msgstr "Brugerprofil opdateret - Udløses når en bruger opdaterer sin profil"
+
+#: inc/triggers.php:117
+msgid "User deleted"
+msgstr "Bruger slettet"
+
+#: inc/triggers.php:119
+msgid "User deleted - Fires when user account is deleted"
+msgstr "Bruger slettet - Udløses når en bruger sletter sin konto"
+
+#: inc/triggers.php:124
+msgid "User password changed"
+msgstr "Brugers kodeord ændret"
+
+#: inc/triggers.php:126
+msgid "User password changed - Fires when user changed his password"
+msgstr "Brugers kodeord ændret - Udløses når en bruger ændrer sit kodeord"
+
+#: inc/triggers.php:131
+msgid "User password reset request"
+msgstr "Bruger ønsker ændret kodeord"
+
+#: inc/triggers.php:133
+msgid "User password reset request - Fires when user requests password change"
+msgstr ""
+"Bruger ønsker ændret kodeord - Udløses når en bruger anmoder om ændring af "
+"kodeord"
+
+#: inc/triggers.php:138
+msgid "User login failed"
+msgstr "Bruger login fejlet"
+
+#: inc/triggers.php:140
+msgid "User login failed - Fires when user login failed"
+msgstr "Bruger login fejlet - Udløses når en brugers login-forsøg fejler"
+
+#: inc/triggers.php:145
+msgid "User role changed"
+msgstr "Brugerrolle ændret"
+
+#: inc/triggers.php:147
+msgid "User role changed - Fires when user role changes"
+msgstr "Brugerrolle ændret - Udløses når en brugers rolle ændres"
+
+#: inc/triggers.php:152
+msgid "Comment published"
+msgstr "Kommentar udgivet"
+
+#: inc/triggers.php:153 inc/triggers.php:160 inc/triggers.php:167
+#: inc/triggers.php:174 inc/triggers.php:181 inc/triggers.php:188
+#: inc/triggers.php:195
+msgid "Comment"
+msgstr "Kommentar"
+
+#: inc/triggers.php:154
+msgid ""
+"Comment published - Fires when new Comment is published on the website. "
+"Includes comment replies."
+msgstr ""
+"Kommentar udgivet - Udløses når en ny kommentar udgives på hjemmesiden. "
+"Inkluderer svar på kommentarer."
+
+#: inc/triggers.php:159
+msgid "Comment added"
+msgstr "Kommentar tilføjet"
+
+#: inc/triggers.php:161
+msgid ""
+"Comment added - Fires when new Comment is added to database and awaits "
+"moderation or is published. Includes comment replies."
+msgstr ""
+"Kommentar tilføjet - Udløses når en ny kommentar tilføjes til databasen, og "
+"afventer godkendelse, eller udgives. Inkluderer svar på kommentarer."
+
+#: inc/triggers.php:166
+msgid "Comment replied"
+msgstr "Svar på kommentar"
+
+#: inc/triggers.php:168
+msgid ""
+"Comment replied - Fires when Comment is replied and the reply is approved"
+msgstr ""
+"Svar på kommentar - Udløses når der svares på en kommentar og svaret er "
+"godkendt"
+
+#: inc/triggers.php:173
+msgid "Comment approved"
+msgstr "Kommentar godkendt"
+
+#: inc/triggers.php:175
+msgid "Comment approved - Fires when Comment is approved"
+msgstr "Kommentar godkendt - Udløses når en kommentar godkendes"
+
+#: inc/triggers.php:180
+msgid "Comment unapproved"
+msgstr "Kommentar afvist"
+
+#: inc/triggers.php:182
+msgid "Comment unapproved - Fires when Comment is marked as unapproved"
+msgstr "Kommentar afvist - Udløses når en kommentar markeres som ikke godkendt"
+
+#: inc/triggers.php:187
+msgid "Comment spammed"
+msgstr "Kommentar spam-markeret"
+
+#: inc/triggers.php:189
+msgid "Comment spammed - Fires when Comment is marked as spam"
+msgstr "Kommentar spam-markeret - Udløses når en kommentar markeres som spam"
+
+#: inc/triggers.php:194
+msgid "Comment trashed"
+msgstr "Kommentar slettet"
+
+#: inc/triggers.php:196
+msgid "Comment trashed - Fires when Comment is trashed"
+msgstr "Kommentar slettet - Udløses når en kommentar smides i papirkurven"
+
+#: inc/triggers.php:201
+msgid "Updates available"
+msgstr "Opdateringer tilgængelige"
+
+#: inc/triggers.php:202 inc/triggers.php:209 inc/triggers.php:216
+#: inc/triggers.php:223 inc/triggers.php:230 inc/triggers.php:237
+msgid "Wordpress"
+msgstr "Wordpress"
+
+#: inc/triggers.php:203
+msgid "Available updates - Fires periodically when new updates are available"
+msgstr ""
+"Opdateringer tilgængelige - Udløses periodisk når nye opdateringer er "
+"tilgængelige"
+
+#: inc/triggers.php:208
+msgid "Plugin activated"
+msgstr "Plugin aktiveret"
+
+#: inc/triggers.php:210
+msgid "Plugin activated - Fires when plugin is activated"
+msgstr "Plugin aktiveret - Udløses når et plugin aktiveres"
+
+#: inc/triggers.php:215
+msgid "Plugin deactivated"
+msgstr "Plugin deaktiveret"
+
+#: inc/triggers.php:217
+msgid "Plugin deactivated - Fires when plugin is deactivated"
+msgstr "Plugin deaktiveret - Udløses når et plugin deaktiveres"
+
+#: inc/triggers.php:222
+msgid "Plugin updated"
+msgstr "Plugin opdateret"
+
+#: inc/triggers.php:224
+msgid "Plugin updated - Fires when plugin is updated"
+msgstr "Plugin opdateret - Udløses når et plugin opdateres"
+
+#: inc/triggers.php:229
+msgid "Plugin installed"
+msgstr "Plugin installeret"
+
+#: inc/triggers.php:231
+msgid "Plugin installed - Fires when plugin is installed"
+msgstr "Plugin installeret - Udløses når et plugin installeres"
+
+#: inc/triggers.php:236
+msgid "Plugin removed"
+msgstr "Plugin fjernet"
+
+#: inc/triggers.php:238
+msgid "Plugin removed - Fires when plugin is deleted"
+msgstr "Plugin fjernet - Udløses når et plugin slettes/fjernes"
+
 #: inc/user_sync.php:192
 msgid ""
 "There are no users to synchronize at this time, ie. no users which has the "
@@ -1506,7 +1821,15 @@ msgstr "Nye modtagere"
 msgid "Updated recipients"
 msgstr "Opdaterede modtagere"
 
-#: tpl/notification/groups.php:230
+#: tpl/notification/groups.php:122
+msgid "Recipient Type"
+msgstr "Modtagertype"
+
+#: tpl/notification/groups.php:158
+msgid "Type the name of the recipient you wish to add to the Notification"
+msgstr "Skriv navnet på den modtager du ønsker at tilføje på notifikationen"
+
+#: tpl/notification/groups.php:232
 msgid "All roles"
 msgstr "Alle roller"
 
