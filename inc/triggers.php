@@ -8,21 +8,21 @@ function _gwapi_get_triggers()
   $triggers = [
     [
       'id' => 'post/added',
-      'action' => 'post_added',
+      'action' => 'wp_after_insert_post',
       'name' => __('Post added', 'gatewayapi'),
       'group' => __('Post', 'gatewayapi'),
       'description' => __('Post added - Fires when Post is added to database. Useful when adding posts programatically or for 3rd party integration', 'gatewayapi')
       ],
     [
       'id' => 'post/drafted',
-      'action' => 'post_drafted',
-      'name' => __('Post saved', 'gatewayapi'),
+      'action' => 'transition_post_status',
+      'name' => __('Post saved as draft', 'gatewayapi'),
       'group' => __('Post', 'gatewayapi'),
       'description' => __('Post saved as a draft - Fires when Post is saved as a draft', 'gatewayapi')
     ],
     [
       'id' => 'post/published',
-      'action' => 'post_published',
+      'action' => 'transition_post_status',
       'name' => __('Post published', 'gatewayapi'),
       'group' => __('Post', 'gatewayapi'),
       'description' => __('Post published - Fires when Post is published', 'gatewayapi')
@@ -36,36 +36,29 @@ function _gwapi_get_triggers()
     ],
     [
       'id' => 'post/pending',
-      'action' => 'post_pending',
+      'action' => 'transition_post_status',
       'name' => __('Post sent', 'gatewayapi'),
       'group' => __('Post', 'gatewayapi'),
       'description' => __('Post sent for review - Fires when Post is sent for review', 'gatewayapi')
     ],
     [
       'id' => 'post/scheduled',
-      'action' => 'post_scheduled',
+      'action' => 'transition_post_status',
       'name' => __('Post scheduled', 'gatewayapi'),
       'group' => __('Post', 'gatewayapi'),
       'description' => __('Post scheduled - Fires when Post is scheduled', 'gatewayapi')
     ],
     [
       'id' => 'post/trashed',
-      'action' => 'post_trashed',
+      'action' => 'transition_post_status',
       'name' => __('Post trashed', 'gatewayapi'),
       'group' => __('Post', 'gatewayapi'),
       'description' => __('Post trashed - Fires when Post is moved to trash', 'gatewayapi')
     ],
     [
-      'id' => 'post/approved',
-      'action' => 'post_approved',
-      'name' => __('Post approved', 'gatewayapi'),
-      'group' => __('Post', 'gatewayapi'),
-      'description' => __('Post approved - Fires when Post is approved', 'gatewayapi')
-    ],
-    [
       'id' => 'taxonomy/created',
-      'action' => 'taxonomy_created',
-      'name' => __('Taxonomy created', 'gatewayapi'),
+      'action' => 'created_term',
+      'name' => __('Taxonomy term created', 'gatewayapi'),
       'group' => __('Taxonomy', 'gatewayapi'),
       'description' => __('Taxonomy term created - Fires when Taxonomy is created', 'gatewayapi')
     ],
@@ -204,14 +197,14 @@ function _gwapi_get_triggers()
     ],
     [
       'id' => 'plugin/activated',
-      'action' => 'plugin_activated',
+      'action' => 'activated_plugin',
       'name' => __('Plugin activated', 'gatewayapi'),
       'group' => __('Wordpress', 'gatewayapi'),
       'description' => __('Plugin activated - Fires when plugin is activated', 'gatewayapi')
     ],
     [
       'id' => 'plugin/deactivated',
-      'action' => 'plugin_deactivated',
+      'action' => 'deactivated_plugin',
       'name' => __('Plugin deactivated', 'gatewayapi'),
       'group' => __('Wordpress', 'gatewayapi'),
       'description' => __('Plugin deactivated - Fires when plugin is deactivated', 'gatewayapi')
