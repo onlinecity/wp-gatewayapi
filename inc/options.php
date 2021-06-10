@@ -36,6 +36,4 @@ add_action('admin_init', function () {
 
     register_setting('gatewayapi', 'gwapi_receive_sms_enable', 'intval');
 
-    register_setting('gatewayapi', 'gwapi_notifications_enable');
-
 });
