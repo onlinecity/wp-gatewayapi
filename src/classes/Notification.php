@@ -61,19 +61,56 @@ class Notification
     if ($trigger instanceof Trigger) {
       switch($trigger->getAction()) {
         case 'transition_post_status':
-          add_action($trigger->getAction(), [$this, 'notifyPostStatusChange'], 10, 3);
+          add_action($trigger->getAction(), [$this, 'notifyPostStatusChange'], 99, 3);
           break;
 
         case 'wp_after_insert_post':
-          add_action($trigger->getAction(), [$this, 'notifyNewPost'], 10, 2);
+          add_action($trigger->getAction(), [$this, 'notifyNewPost'], 99, 2);
           break;
 
         case 'post_updated':
-          add_action($trigger->getAction(), [$this, 'notifyPostUpdated'], 10, 1);
+          add_action($trigger->getAction(), [$this, 'notifyPostUpdated'], 99, 1);
           break;
 
         case 'created_term':
-          add_action($trigger->getAction(), [$this, 'notifyTermCreated'], 10, 1);
+          add_action($trigger->getAction(), [$this, 'notifyTermCreated'], 99, 1);
+          break;
+
+        case 'edited_term':
+          add_action($trigger->getAction(), [$this, 'notifyTermUpdated'], 99, 1);
+          break;
+
+        case 'delete_term':
+          add_action($trigger->getAction(), [$this, 'notifyTermDeleted'], 99, 5);
+          break;
+
+        case 'wp_login':
+          add_action($trigger->getAction(), [$this, 'notifyUserLoggedInSuccess'], 99, 2);
+          add_action('wp_login_2fa', [$this, 'notifyUserLoggedInSuccess'], 99, 2);
+          break;
+
+        case 'wp_logout':
+          add_action($trigger->getAction(), [$this, 'notifyUserLoggedOut'], 99, 1);
+          break;
+
+        case 'user_register':
+          add_action($trigger->getAction(), [$this, 'notifyUserRegistered'], 99, 1);
+          break;
+
+        case 'profile_update':
+          add_action($trigger->getAction(), [$this, 'notifyUserProfileUpdate'], 99, 2);
+          break;
+
+        case 'deleted_user':
+          add_action($trigger->getAction(), [$this, 'notifyUserDeleted'], 99, 3);
+          break;
+
+        case 'retrieve_password_key':
+          add_action($trigger->getAction(), [$this, 'notifyUserPasswordResetStart'], 99, 2);
+          break;
+
+        case 'password_reset':
+          add_action($trigger->getAction(), [$this, 'notifyUserPasswordResetDone'], 99, 2);
           break;
       }
     }
@@ -90,6 +127,8 @@ class Notification
 
   public function notifyPostStatusChange($new_status, $old_status, $post_id)
   {
+    if (wp_doing_ajax()) return;
+
     $post = get_post($post_id);
 
     if ($new_status === $old_status) return;
@@ -116,6 +155,42 @@ class Notification
   }
 
   public function notifyTermCreated($term_id) {
+    $this->send();
+  }
+
+  public function notifyTermUpdated($term_id) {
+    $this->send();
+  }
+
+  public function notifyTermDeleted($term, $tt_id, $taxonomy, $deleted_term, $object_ids) {
+    $this->send();
+  }
+
+  public function notifyUserLoggedInSuccess($user_login, $user) {
+    $this->send();
+  }
+
+  public function notifyUserLoggedOut($user_id) {
+    $this->send();
+  }
+
+  public function notifyUserRegistered($user_id) {
+    $this->send();
+  }
+
+  public function notifyUserProfileUpdate($user_id, $old_user_data) {
+    $this->send();
+  }
+
+  public function notifyUserDeleted($id, $reassign, $user) {
+    $this->send();
+  }
+
+  public function notifyUserPasswordResetStart($user, $new_pass) {
+    $this->send();
+  }
+
+  public function notifyUserPasswordResetDone($user, $new_pass) {
     $this->send();
   }
 

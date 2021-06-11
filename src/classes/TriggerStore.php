@@ -11,83 +11,71 @@ class TriggerStore
 {
 
 
-    /**
-     * Our single TriggerStore client instance.
-     *
-     * @var TriggerStore
-     */
-    private static $instance;
+  /**
+   * Our single TriggerStore client instance.
+   *
+   * @var TriggerStore
+   */
+  private static $instance;
 
-    private static $listening = false;
+  private static $listening = false;
 
-    /**
-     * Disable instantiation.
-     */
-    private function __construct() {
+  /**
+   * Disable instantiation.
+   */
+  private function __construct()
+  {
+  }
+
+  public static function listen()
+  {
+    $store = static::getInstance();
+    if (self::$listening) return;
+    self::initialize();
+  }
+
+  /**
+   * Create or retrieve the instance of our instance
+   *
+   * @return TriggerStore
+   */
+  public static function getInstance()
+  {
+    if (is_null(static::$instance)) {
+      static::$instance = new TriggerStore();
     }
 
-    public static function listen() {
-        $store = static::getInstance();
+    return static::$instance;
+  }
 
-        if (self::$listening || self::isIgnoredRequest() || wp_doing_ajax()) {
-            return;
-        }
+  protected static function initialize()
+  {
+    self::$listening = true;
+    $notifications = gwapi_notification_get_notifications();
 
-        self::initialize();
+    foreach ($notifications as $notification_post) {
+      $notification = new Notification($notification_post);
+      $notification->registerAction();
     }
+  }
 
-    /**
-     * Create or retrieve the instance of our instance
-     *
-     * @return TriggerStore
-     */
-    public static function getInstance() {
-        if (is_null(static::$instance)) {
-            static::$instance = new TriggerStore();
-        }
+  /**
+   * Disable the cloning of this class.
+   *
+   * @return void
+   */
+  final public function __clone()
+  {
+    throw new \RuntimeException('Feature disabled.');
+  }
 
-        return static::$instance;
-    }
-
-    protected static function initialize() {
-        self::$listening = true;
-        $notifications = gwapi_notification_get_notifications();
-
-        foreach ($notifications as $notification_post) {
-            $notification = new Notification($notification_post);
-            $notification->registerAction();
-        }
-    }
-
-    /**
-     * Disable the cloning of this class.
-     *
-     * @return void
-     */
-    final public function __clone() {
-        throw new \RuntimeException('Feature disabled.');
-    }
-
-    /**
-     * Disable the wakeup of this class.
-     *
-     * @return void
-     */
-    final public function __wakeup() {
-        throw new \RuntimeException('Feature disabled.');
-    }
-
-    /**
-     * Check whether the Trigger initializing should be run on the current request
-     * @return bool
-     */
-    private static function isIgnoredRequest(): bool {
-        $ignoreRequest = false;
-
-        /** @TODO - Better way to disable initialization during favicon request? */
-        $ignoreRequest  = '/favicon.ico' === $_SERVER['REQUEST_URI'];
-
-        return $ignoreRequest;
-    }
-
+  /**
+   * Disable the wakeup of this class.
+   *
+   * @return void
+   */
+  final public function __wakeup()
+  {
+    throw new \RuntimeException('Feature disabled.');
+  }
 }

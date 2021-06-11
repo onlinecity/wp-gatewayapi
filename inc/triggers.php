@@ -58,72 +58,72 @@ function _gwapi_get_triggers()
     [
       'id' => 'taxonomy/created',
       'action' => 'created_term',
-      'name' => __('Taxonomy term created', 'gatewayapi'),
+      'name' => __('Term created', 'gatewayapi'),
       'group' => __('Taxonomy', 'gatewayapi'),
       'description' => __('Taxonomy term created - Fires when Taxonomy is created', 'gatewayapi')
     ],
     [
       'id' => 'taxonomy/updated',
-      'action' => 'taxonomy_updated',
-      'name' => __('Taxonomy updated', 'gatewayapi'),
+      'action' => 'edited_term',
+      'name' => __('Term updated', 'gatewayapi'),
       'group' => __('Taxonomy', 'gatewayapi'),
       'description' => __('Taxonomy term updated - Fires when Taxonomy is updated', 'gatewayapi')
     ],
     [
       'id' => 'taxonomy/deleted',
-      'action' => 'taxonomy_deleted',
-      'name' => __('Taxonomy deleted', 'gatewayapi'),
+      'action' => 'delete_term',
+      'name' => __('Term deleted', 'gatewayapi'),
       'group' => __('Taxonomy', 'gatewayapi'),
       'description' => __('Taxonomy term deleted - Fires when Taxonomy is deleted', 'gatewayapi')
     ],
     [
       'id' => 'user/login',
-      'action' => 'user_login',
-      'name' => __('User login', 'gatewayapi'),
+      'action' => 'wp_login',
+      'name' => __('User login (success)', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
-      'description' => __('User login - Fires when user log into WordPress', 'gatewayapi')
+      'description' => __('User login - Fires when user has succesfully logged in into WordPress', 'gatewayapi')
     ],
     [
       'id' => 'user/logout',
-      'action' => 'user_logout',
+      'action' => 'wp_logout',
       'name' => __('User logout', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
       'description' => __('User logout - Fires when user log out from WordPress', 'gatewayapi')
     ],
     [
       'id' => 'user/registered',
-      'action' => 'user_registered',
+      'action' => 'user_register',
       'name' => __('User registration', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
       'description' => __('User registration - Fires when user registers new account', 'gatewayapi')
     ],
     [
       'id' => 'user/profile_updated',
-      'action' => 'user_profile_updated',
+      'action' => 'profile_update',
       'name' => __('User profile updated', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
       'description' => __('User profile updated - Fires when user updates his profile', 'gatewayapi')
     ],
     [
       'id' => 'user/deleted',
-      'action' => 'user_deleted',
+      'action' => 'deleted_user',
       'name' => __('User deleted', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
       'description' => __('User deleted - Fires when user account is deleted', 'gatewayapi')
     ],
     [
-      'id' => 'user/password_changed',
-      'action' => 'user_password_changed',
-      'name' => __('User password changed', 'gatewayapi'),
+      'id' => 'user/password_reset_done',
+      'action' => 'after_password_reset',
+      'name' => __('User password reset', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
-      'description' => __('User password changed - Fires when user changed his password', 'gatewayapi')
+      'description' => __('User password reset - Fires when user changed password by using "Forgot Password"', 'gatewayapi')
     ],
     [
       'id' => 'user/password_reset_request',
-      'action' => 'user_password_reset_request',
+      'action' => 'retrieve_password_key',
       'name' => __('User password reset request', 'gatewayapi'),
       'group' => __('User', 'gatewayapi'),
-      'description' => __('User password reset request - Fires when user requests password change', 'gatewayapi')
+      'description' => __('User password reset request - Fires when user uses "Forgot Password"', 'gatewayapi')
     ],
     [
       'id' => 'user/login_failed',
