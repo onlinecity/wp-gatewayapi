@@ -22,9 +22,10 @@
  * @param string $sender Sender text (11 chars or 15 digits)
  * @param string $destaddr Type of SMS - Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored - also called a Flash SMS)
  * @param array $encoding The $message must always be in UTF-8. Read more about the different encodings available here: https://gatewayapi.com/docs/appendix.html#term-ucs2
+ * @param array $additional_options Additional options, such as "label", "priority" etc.. Can be used to override any other options set by this function.
  * @return int|WP_Error ID of message in gatewayapi.com on success
  */
-function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $encoding='UTF8')
+function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $encoding='UTF8', $additional_options = [])
 {
     // PREPARE THE RECIPIENTS
     // ======================
@@ -69,6 +70,11 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
             $rec['tagvalues'][] = isset($tags[$t]) ? $tags[$t] : '';
         }
         $req['recipients'][] = $rec;
+    }
+
+    // overrides?
+    if ($additional_options && is_array($additional_options)) {
+      $req = array_merge($req, $additional_options);
     }
 
     // SEND THE SMS
