@@ -112,6 +112,41 @@ class Notification
         case 'password_reset':
           add_action($trigger->getAction(), [$this, 'notifyUserPasswordResetDone'], 99, 2);
           break;
+
+        case 'wp_login_failed':
+          add_action($trigger->getAction(), [$this, 'notifyLoginFailed'], 99, 2);
+          break;
+
+        case 'set_user_role':
+          add_action($trigger->getAction(), [$this, 'notifyUserRoleChanged'], 99, 2);
+          break;
+
+        case 'transition_comment_status_approved':
+          add_action('transition_comment_status', [$this, 'notifyCommentStatusApproved'], 99, 3);
+          add_action('comment_post', function($comment_ID, $status) {
+            if ($status) $this->notifyCommentStatusApproved('approved', null, get_comment($comment_ID));
+          }, 99, 2);
+          break;
+
+        case 'spammed_comment':
+          add_action($trigger->getAction(), [$this, 'notifyCommentSpammed'], 99, 2);
+          break;
+
+        case 'trashed_comment':
+          add_action($trigger->getAction(), [$this, 'notifyCommentTrashed'], 99, 2);
+          break;
+
+        case 'activated_plugin':
+          add_action($trigger->getAction(), [$this, 'notifyActivatedPlugin'], 99, 2);
+          break;
+
+        case 'deactivated_plugin':
+          add_action($trigger->getAction(), [$this, 'notifyDeactivatedPlugin'], 99, 2);
+          break;
+
+        case 'deleted_plugin':
+          add_action($trigger->getAction(), [$this, 'notifyDeletedPlugin'], 99, 2);
+          break;
       }
     }
   }
@@ -191,6 +226,38 @@ class Notification
   }
 
   public function notifyUserPasswordResetDone($user, $new_pass) {
+    $this->send();
+  }
+
+  public function notifyLoginFailed($username, $error) {
+    $this->send();
+  }
+
+  public function notifyUserRoleChanged($user_id, $role, $old_roles) {
+    $this->send();
+  }
+
+  public function notifyCommentStatusApproved($new_status, $old_status, $comment) {
+    if ($new_status === 'approved') $this->send();
+  }
+
+  public function notifyCommentSpammed($comment_ID, $comment) {
+    $this->send();
+  }
+
+  public function notifyCommentTrashed($comment_ID, $comment) {
+    $this->send();
+  }
+
+  public function notifyActivatedPlugin($plugin, $isNetworkWide) {
+    $this->send();
+  }
+
+  public function notifyDeactivatedPlugin($plugin, $isNetworkWide) {
+    $this->send();
+  }
+
+  public function notifyDeletedPlugin($plugin, $deleteSuccess) {
     $this->send();
   }
 
