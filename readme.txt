@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 5.5
-Stable tag: 1.6.10
+Tested up to: 5.7.2
+Stable tag: 1.7.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -41,11 +41,12 @@ Main features:
   *   View incoming messages.
   *   Auto-reply to incoming SMS messages.
 
-* 🔔 Notification module for admins
+* 🔔 Notification module for admins **(BETA)**
   * Receive an SMS message when important changes occur.
   * Choose from a long list of triggers.
   * Receive an SMS when a new user is created, when certain pages are edited or when new pages are published.
   * Configure which users will receive SMS messages. Can be role-based or user-based.
+  * **BETA**: Please write to us and let us know what you like, and what you feel is missing (or broken), so we can improve upon this new feature.
 
 
 **Easy to get started:**
@@ -127,7 +128,9 @@ Then find the options-table, by default wp_options. Search for the row where the
 
 == Changelog ==
 
-= 1.6.10 =
+= 1.7.0 =
+* New: Notification module: Receive SMS-notifications when various actions occur in WordPress
+  * BETA: Please get in touch if you have ideas/suggestions for improving this feature.
 * New: Default country code field setting (previously all country selectors defaulted to +45/Denmark).
 * Optimization: Removed various unneeded dependencies.
 * Danish translation updated, including the notification-module.

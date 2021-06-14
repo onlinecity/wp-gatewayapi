@@ -60,17 +60,17 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                 options: [
                     {
                         id: 'recipient',
-                        text: "Recipient",
+                        text: <?php echo json_encode(__('Recipient', 'gatewayapi')); ?>,
                         children: []
                     },
                     {
                         id: 'recipientGroup',
-                        text: "Recipient Groups",
+                        text:<?php echo json_encode(__('Recipient Groups', 'gatewayapi')); ?>,
                         children: []
                     },
                     {
                         id: 'role',
-                        text: "Roles",
+                        text: <?php echo json_encode(__('Roles', 'gatewayapi')); ?>,
                         children: []
                     }
                 ],
@@ -152,7 +152,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
               x-on:focus="recipientSearch.open()"
               x-on:input.debounce.500="searchRecipient()"
               x-model="recipientSearch.autocompleteInput"
-              placeholder="Search for a recipient by name"
+              placeholder="<?php esc_attr_e('Search for a recipient by name', 'gatewayapi') ?>"
             />
             <p class="help">
               <?php _e('Type the name of the recipient you wish to add to the Notification', 'gatewayapi'); ?>
@@ -197,7 +197,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
 
               <div class="inner">
                   <?php foreach ($groups as $group): ?>
-                    <label class="gwapi-checkbox">
+                    <label class="gwapi-checkbox" style="margin-right:10px">
                       <input type="checkbox"
                              name="gatewayapi[recipient_groups][]"
                              id="group-id-<?= $group->term_id; ?>"
@@ -233,15 +233,14 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
 
               <div class="inner">
                   <?php foreach ($roles as $role_id => $role): ?>
-                    <label class="gwapi-checkbox">
+                    <label class="gwapi-checkbox" style="display: block; margin-bottom: 5px">
                       <input type="checkbox"
                              name="gatewayapi[roles][]"
                              id="role-id-<?php echo $role_id ?>"
                              value="<?php echo $role_id ?>"
                         <?php echo in_array($role_id, $current_roles) ? 'checked' : '' ?>
                       >
-                        <?= $role['name']; ?>
-
+                        <?= __($role['name']); ?>
                     </label>
                   <?php endforeach; ?>
               </div>

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GatewayAPI\n"
-"POT-Creation-Date: 2021-06-14 15:10+0200\n"
-"PO-Revision-Date: 2021-06-14 15:12+0200\n"
+"POT-Creation-Date: 2021-06-14 15:37+0200\n"
+"PO-Revision-Date: 2021-06-14 15:37+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: da_DK\n"
@@ -31,8 +31,7 @@ msgctxt "Post Type Singular Name"
 msgid "Notification"
 msgstr "Notifikation"
 
-#: inc/cpt_notification.php:23 inc/cpt_notification.php:110
-#: inc/cpt_notification.php:111
+#: inc/cpt_notification.php:23 inc/cpt_notification.php:39
 msgid "Notifications"
 msgstr "Notifikationer"
 
@@ -76,10 +75,6 @@ msgstr "Ingen notifikationer fundet"
 msgid "Not found in Trash"
 msgstr "Ikke fundet i Papirkurv"
 
-#: inc/cpt_notification.php:39
-msgid "notification"
-msgstr "notifikation"
-
 #: inc/cpt_notification.php:40
 msgid "SMS Notifications for actions"
 msgstr "SMS-notifikationer for handlinger"
@@ -93,6 +88,10 @@ msgstr "Handling"
 #: inc/cpt_sms_editor_ui.php:7 inc/cpt_sms_listing_ui.php:15
 msgid "Recipients"
 msgstr "Modtagere"
+
+#: inc/cpt_notification.php:110 inc/cpt_notification.php:111
+msgid "Notifications (beta)"
+msgstr "Notifikationer (beta)"
 
 #: inc/cpt_notification.php:129
 msgid "Triggers"
@@ -150,7 +149,8 @@ msgstr "Mobilnummer"
 msgid "Receiver"
 msgstr "Modtager"
 
-#: inc/cpt_recipient.php:11 tpl/notification/groups.php:139
+#: inc/cpt_recipient.php:11 tpl/notification/groups.php:63
+#: tpl/notification/groups.php:139
 msgid "Recipient"
 msgstr "Modtager"
 
@@ -1746,9 +1746,21 @@ msgstr "Nye modtagere"
 msgid "Updated recipients"
 msgstr "Opdaterede modtagere"
 
+#: tpl/notification/groups.php:68
+msgid "Recipient Groups"
+msgstr "Modtagergrupper"
+
+#: tpl/notification/groups.php:73
+msgid "Roles"
+msgstr "Roller"
+
 #: tpl/notification/groups.php:122
 msgid "Recipient Type"
 msgstr "Modtagertype"
+
+#: tpl/notification/groups.php:155
+msgid "Search for a recipient by name"
+msgstr "Søg i modtagere efter navn"
 
 #: tpl/notification/groups.php:158
 msgid "Type the name of the recipient you wish to add to the Notification"
@@ -2494,6 +2506,13 @@ msgstr "OnlineCity ApS"
 #. Author URI of the plugin/theme
 msgid "http://onlinecity.dk"
 msgstr "http://onlinecity.dk"
+
+#~ msgctxt "Post Type General Name"
+#~ msgid "Notifications (beta)"
+#~ msgstr "Notifikationer (beta)"
+
+#~ msgid "notification"
+#~ msgstr "notifikation"
 
 #~ msgid "Post approved"
 #~ msgstr "Indlæg godkendt"

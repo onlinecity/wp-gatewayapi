@@ -36,7 +36,7 @@ function gwapi_cpt_notification() {
 // Set other options for Custom Post Type
 
     $args = [
-      'label'               => __('notification', 'gatewayapi'),
+      'label'               => __('Notifications', 'gatewayapi'),
       'description'         => __('SMS Notifications for actions', 'gatewayapi'),
       'labels'              => $labels,
       'supports'            => ['title'],
@@ -91,13 +91,13 @@ add_action('manage_posts_custom_column', function ($column, $id) {
             $recipient_type = get_post_meta($id, 'recipient_type', true);
             switch ($recipient_type) {
                 case 'recipient':
-                    echo esc_html('Single recipient');
+                    echo esc_html('Single recipient', 'gatewayapi');
                     break;
                 case 'recipientGroup':
-                    echo esc_html('Recipient Group');
+                    echo esc_html('Recipient Group', 'gatewayapi');
                     break;
                 case 'role':
-                    echo esc_html('Role');
+                    echo esc_html('Role', 'gatewayapi');
                     break;
             }
             break;
@@ -107,8 +107,8 @@ add_action('manage_posts_custom_column', function ($column, $id) {
 
 function gwapi_cpt_notification_admin_menu() {
     add_submenu_page('edit.php?post_type=gwapi-sms',
-      __('Notifications', 'gatewayapi'),
-      __('Notifications', 'gatewayapi'),
+      __('Notifications (beta)', 'gatewayapi'),
+      __('Notifications (beta)', 'gatewayapi'),
       'manage_options',
       'edit.php?post_type=gwapi-notification',
       '',
