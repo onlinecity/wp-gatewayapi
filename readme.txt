@@ -132,6 +132,8 @@ Then find the options-table, by default wp_options. Search for the row where the
 * New: Notification module: Receive SMS-notifications when various actions occur in WordPress
   * BETA: Please get in touch if you have ideas/suggestions for improving this feature.
 * New: Default country code field setting (previously all country selectors defaulted to +45/Denmark).
+* New: Programmer actions `gwapi_form_subscribe` and `gwapi_form_unsubscribe` added. The first is triggered when new recipients complete signup via
+our shortcode-forms and the latter on unsubscription via the shortcode-forms.
 * Optimization: Removed various unneeded dependencies.
 * Danish translation updated, including the notification-module.
 * Readme updated to inform about notification-module and other text improvements.
