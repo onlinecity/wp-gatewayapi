@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GatewayAPI\n"
-"POT-Creation-Date: 2021-06-10 11:05+0200\n"
-"PO-Revision-Date: 2021-06-10 11:05+0200\n"
+"POT-Creation-Date: 2021-06-14 15:10+0200\n"
+"PO-Revision-Date: 2021-06-14 15:12+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: da_DK\n"
@@ -141,8 +141,8 @@ msgid "Received on: <b>%1$s</b>"
 msgstr "Modtaget: <b>%1$s</b>"
 
 #: inc/cpt_receive_sms.php:82 inc/cpt_recipient_listing_ui.php:13
-#: inc/recipient_forms.php:22 inc/security_two_factor.php:594
-#: tpl/settings_page.php:389 tpl/wp-login-add-phone.php:22
+#: inc/recipient_forms.php:22 inc/security_two_factor.php:596
+#: tpl/settings_page.php:392 tpl/wp-login-add-phone.php:22
 msgid "Mobile number"
 msgstr "Mobilnummer"
 
@@ -193,7 +193,7 @@ msgstr "Landekode"
 
 #: inc/cpt_recipient_listing_ui.php:14 inc/recipient_forms.php:387
 #: inc/tax_recipient.php:11 tpl/import-analysis.php:53
-#: tpl/settings_page.php:437 tpl/settings_page.php:545
+#: tpl/settings_page.php:441 tpl/settings_page.php:549
 msgid "Groups"
 msgstr "Grupper"
 
@@ -248,12 +248,12 @@ msgstr "Ny SMS"
 msgid "Search SMS'es"
 msgstr "Søg i SMS'er"
 
-#: inc/cpt_sms.php:189 src/classes/Notification.php:104
+#: inc/cpt_sms.php:189
 msgid ""
 "Validation of the SMS failed prior to sending with the following errors:"
 msgstr "Kontroltjek af SMS’en fejlede før afsendelse pga. følgende fejl:"
 
-#: inc/cpt_sms.php:196 src/classes/Notification.php:111
+#: inc/cpt_sms.php:196
 msgid ""
 "You have not entered your OAuth key and secret yet. Go to :link to complete "
 "the setup."
@@ -261,8 +261,7 @@ msgstr ""
 "Du har ikke indtastet din OAuth-nøgle og hemmelighed endnu. Gå til :link for "
 "at afslutte opsættet."
 
-#: inc/cpt_sms.php:196 inc/options.php:7 src/classes/Notification.php:112
-#: tpl/settings_page.php:3
+#: inc/cpt_sms.php:196 inc/options.php:7 tpl/settings_page.php:3
 msgid "GatewayAPI Settings"
 msgstr "GatewayAPI Opsæt"
 
@@ -346,7 +345,7 @@ msgid "Manually added recipients"
 msgstr "Tilføj modtager manuelt"
 
 #: inc/cpt_sms_editor_ui.php:148 inc/integration_contact_form_7.php:743
-#: inc/recipient_forms.php:8 tpl/settings_page.php:231
+#: inc/recipient_forms.php:8 tpl/settings_page.php:234
 msgid "Name"
 msgstr "Navn"
 
@@ -672,8 +671,8 @@ msgstr ""
 "være tomt for at tillade alle lande. Se <a href=\"https://countrycode.org/\" "
 "target=\"_blank\">liste over landekoder hér</a>."
 
-#: inc/integration_contact_form_7.php:511 tpl/settings_page.php:89
-#: tpl/settings_page.php:413
+#: inc/integration_contact_form_7.php:511 tpl/settings_page.php:88
+#: tpl/settings_page.php:416
 msgid "Default country code"
 msgstr "Standard landekode"
 
@@ -728,7 +727,7 @@ msgstr ""
 "telefonnummer skal allerede eksistere."
 
 #: inc/integration_contact_form_7.php:682 inc/shortcode.php:395
-#: tpl/settings_page.php:575
+#: tpl/settings_page.php:579
 msgid "Send SMS"
 msgstr "Send SMS"
 
@@ -946,7 +945,7 @@ msgid "Full name of recipient"
 msgstr "Fuldt navn på modtager"
 
 #: inc/recipient_forms.php:15 inc/recipient_forms.php:67
-#: tpl/settings_page.php:401 tpl/wp-login-add-phone.php:16
+#: tpl/settings_page.php:404 tpl/wp-login-add-phone.php:16
 msgid "Mobile country code"
 msgstr "Mobil landekode"
 
@@ -1140,11 +1139,11 @@ msgstr "Problem med to-faktor sikkerhedsmodulet"
 msgid "Two-factor security check"
 msgstr "To-faktor sikkerhedstjek"
 
-#: inc/security_two_factor.php:610
+#: inc/security_two_factor.php:612
 msgid "Two-factor security"
 msgstr "To-faktor sikkerhed"
 
-#: inc/security_two_factor.php:611
+#: inc/security_two_factor.php:613
 msgid ""
 "For security reasons, it is mandatory to associate your account with a "
 "cellphone number. This greatly enhances the integrity of your account and "
@@ -1153,15 +1152,15 @@ msgstr ""
 "Af sikkerhedsmæssige årsager er det obligatorisk at tilknytte et mobilnummer "
 "med din brugerprofil. Dette er for at øge din kontos samt sidens sikkerhed."
 
-#: inc/security_two_factor.php:612
+#: inc/security_two_factor.php:614
 msgid "Add mobile number"
 msgstr "Tilføj mobilnummer"
 
-#: inc/security_two_factor.php:613
+#: inc/security_two_factor.php:615
 msgid "Change mobile number"
 msgstr "Skift mobilnummer"
 
-#: inc/security_two_factor.php:626
+#: inc/security_two_factor.php:628
 msgid ""
 "You have followed a link containing an expired/invalid nonce. Please go back "
 "and redirect the page - then it should work."
@@ -1355,7 +1354,7 @@ msgstr "Indlæg tilføjet"
 
 #: inc/triggers.php:13 inc/triggers.php:20 inc/triggers.php:27
 #: inc/triggers.php:34 inc/triggers.php:41 inc/triggers.php:48
-#: inc/triggers.php:55 inc/triggers.php:62
+#: inc/triggers.php:55
 msgid "Post"
 msgstr "Indlæg"
 
@@ -1368,8 +1367,8 @@ msgstr ""
 "der tilføjes indlæg fra et program eller tredjeparts løsning"
 
 #: inc/triggers.php:19
-msgid "Post saved"
-msgstr "Indlæg gemt"
+msgid "Post saved as draft"
+msgstr "Indlæg gemt som kladde"
 
 #: inc/triggers.php:21
 msgid "Post saved as a draft - Fires when Post is saved as a draft"
@@ -1421,246 +1420,172 @@ msgid "Post trashed - Fires when Post is moved to trash"
 msgstr "Indlæg slettet - Udløses når et indlæg smides i papirkurven"
 
 #: inc/triggers.php:61
-msgid "Post approved"
-msgstr "Indlæg godkendt"
-
-#: inc/triggers.php:63
-msgid "Post approved - Fires when Post is approved"
-msgstr "Indlæg godkendt - Udløses når et indlæg er godkendt"
-
-#: inc/triggers.php:68
-msgid "Taxonomy created"
+msgid "Term created"
 msgstr "Taxonomi oprettet"
 
-#: inc/triggers.php:69 inc/triggers.php:76 inc/triggers.php:83
+#: inc/triggers.php:62 inc/triggers.php:69 inc/triggers.php:76
 msgid "Taxonomy"
 msgstr "Taxonomi"
 
-#: inc/triggers.php:70
+#: inc/triggers.php:63
 msgid "Taxonomy term created - Fires when Taxonomy is created"
 msgstr "Taxonomi-begreb oprettet - Udløses når taxonomi oprettes"
 
-#: inc/triggers.php:75
-msgid "Taxonomy updated"
+#: inc/triggers.php:68
+msgid "Term updated"
 msgstr "Taxonomi opdateret"
 
-#: inc/triggers.php:77
+#: inc/triggers.php:70
 msgid "Taxonomy term updated - Fires when Taxonomy is updated"
 msgstr "Taxonomi-begreb opdateret - Udløses når taxonomi opdateres"
 
-#: inc/triggers.php:82
-msgid "Taxonomy deleted"
+#: inc/triggers.php:75
+msgid "Term deleted"
 msgstr "Taxonomi slettet"
 
-#: inc/triggers.php:84
+#: inc/triggers.php:77
 msgid "Taxonomy term deleted - Fires when Taxonomy is deleted"
 msgstr "Taxonomi-begreb slettet - Udløses når taxonomi slettes"
 
-#: inc/triggers.php:89
-msgid "User login"
-msgstr "Bruger login"
+#: inc/triggers.php:82
+msgid "User login (success)"
+msgstr "Bruger login (succes)"
 
-#: inc/triggers.php:90 inc/triggers.php:97 inc/triggers.php:104
-#: inc/triggers.php:111 inc/triggers.php:118 inc/triggers.php:125
-#: inc/triggers.php:132 inc/triggers.php:139 inc/triggers.php:146
+#: inc/triggers.php:83 inc/triggers.php:90 inc/triggers.php:97
+#: inc/triggers.php:104 inc/triggers.php:111 inc/triggers.php:118
+#: inc/triggers.php:125 inc/triggers.php:132 inc/triggers.php:139
 msgid "User"
 msgstr "Bruger"
 
-#: inc/triggers.php:91
-msgid "User login - Fires when user log into WordPress"
+#: inc/triggers.php:84
+msgid "User login - Fires when user has succesfully logged in into WordPress"
 msgstr "Bruger login - Udløses når en bruger logger ind i WordPress"
 
-#: inc/triggers.php:96
+#: inc/triggers.php:89
 msgid "User logout"
 msgstr "Bruger logger ud"
 
-#: inc/triggers.php:98
+#: inc/triggers.php:91
 msgid "User logout - Fires when user log out from WordPress"
 msgstr "Bruger logger ud - Udløses når en bruger logger ud af WordPress"
 
-#: inc/triggers.php:103
+#: inc/triggers.php:96
 msgid "User registration"
 msgstr "Brugerregistrering"
 
-#: inc/triggers.php:105
+#: inc/triggers.php:98
 msgid "User registration - Fires when user registers new account"
 msgstr "Brugerregistrering - Udløses når en bruger registrerer en ny konto"
 
-#: inc/triggers.php:110
+#: inc/triggers.php:103
 msgid "User profile updated"
 msgstr "Brugerprofil opdateret"
 
-#: inc/triggers.php:112
+#: inc/triggers.php:105
 msgid "User profile updated - Fires when user updates his profile"
 msgstr "Brugerprofil opdateret - Udløses når en bruger opdaterer sin profil"
 
-#: inc/triggers.php:117
+#: inc/triggers.php:110
 msgid "User deleted"
 msgstr "Bruger slettet"
 
-#: inc/triggers.php:119
+#: inc/triggers.php:112
 msgid "User deleted - Fires when user account is deleted"
 msgstr "Bruger slettet - Udløses når en bruger sletter sin konto"
 
-#: inc/triggers.php:124
-msgid "User password changed"
-msgstr "Brugers kodeord ændret"
-
-#: inc/triggers.php:126
-msgid "User password changed - Fires when user changed his password"
-msgstr "Brugers kodeord ændret - Udløses når en bruger ændrer sit kodeord"
-
-#: inc/triggers.php:131
+#: inc/triggers.php:117
 msgid "User password reset request"
 msgstr "Bruger ønsker ændret kodeord"
 
-#: inc/triggers.php:133
-msgid "User password reset request - Fires when user requests password change"
+#: inc/triggers.php:119
+msgid "User password reset request - Fires when user uses \"Forgot Password\""
 msgstr ""
 "Bruger ønsker ændret kodeord - Udløses når en bruger anmoder om ændring af "
 "kodeord"
 
-#: inc/triggers.php:138
+#: inc/triggers.php:124
+msgid "User password reset complete"
+msgstr "Brugers nulstilling af kodeord er gennemført"
+
+#: inc/triggers.php:126
+msgid ""
+"User password reset - Fires when user changed password by using \"Forgot "
+"Password\""
+msgstr "Brugers kodeord ændret - Udløses når en bruger ændrer sit kodeord"
+
+#: inc/triggers.php:131
 msgid "User login failed"
 msgstr "Bruger login fejlet"
 
-#: inc/triggers.php:140
+#: inc/triggers.php:133
 msgid "User login failed - Fires when user login failed"
 msgstr "Bruger login fejlet - Udløses når en brugers login-forsøg fejler"
 
-#: inc/triggers.php:145
+#: inc/triggers.php:138
 msgid "User role changed"
 msgstr "Brugerrolle ændret"
 
-#: inc/triggers.php:147
+#: inc/triggers.php:140
 msgid "User role changed - Fires when user role changes"
 msgstr "Brugerrolle ændret - Udløses når en brugers rolle ændres"
 
-#: inc/triggers.php:152
-msgid "Comment published"
-msgstr "Kommentar udgivet"
+#: inc/triggers.php:145
+msgid "Comment published/approved"
+msgstr "Kommentar udgivet/godkendt"
 
-#: inc/triggers.php:153 inc/triggers.php:160 inc/triggers.php:167
-#: inc/triggers.php:174 inc/triggers.php:181 inc/triggers.php:188
-#: inc/triggers.php:195
+#: inc/triggers.php:146 inc/triggers.php:153 inc/triggers.php:160
 msgid "Comment"
 msgstr "Kommentar"
 
-#: inc/triggers.php:154
+#: inc/triggers.php:147
 msgid ""
-"Comment published - Fires when new Comment is published on the website. "
-"Includes comment replies."
+"Comment published/approved - Fires when new Comment is published on the "
+"website. Includes comment replies."
 msgstr ""
 "Kommentar udgivet - Udløses når en ny kommentar udgives på hjemmesiden. "
 "Inkluderer svar på kommentarer."
 
-#: inc/triggers.php:159
-msgid "Comment added"
-msgstr "Kommentar tilføjet"
-
-#: inc/triggers.php:161
-msgid ""
-"Comment added - Fires when new Comment is added to database and awaits "
-"moderation or is published. Includes comment replies."
-msgstr ""
-"Kommentar tilføjet - Udløses når en ny kommentar tilføjes til databasen, og "
-"afventer godkendelse, eller udgives. Inkluderer svar på kommentarer."
-
-#: inc/triggers.php:166
-msgid "Comment replied"
-msgstr "Svar på kommentar"
-
-#: inc/triggers.php:168
-msgid ""
-"Comment replied - Fires when Comment is replied and the reply is approved"
-msgstr ""
-"Svar på kommentar - Udløses når der svares på en kommentar og svaret er "
-"godkendt"
-
-#: inc/triggers.php:173
-msgid "Comment approved"
-msgstr "Kommentar godkendt"
-
-#: inc/triggers.php:175
-msgid "Comment approved - Fires when Comment is approved"
-msgstr "Kommentar godkendt - Udløses når en kommentar godkendes"
-
-#: inc/triggers.php:180
-msgid "Comment unapproved"
-msgstr "Kommentar afvist"
-
-#: inc/triggers.php:182
-msgid "Comment unapproved - Fires when Comment is marked as unapproved"
-msgstr "Kommentar afvist - Udløses når en kommentar markeres som ikke godkendt"
-
-#: inc/triggers.php:187
+#: inc/triggers.php:152
 msgid "Comment spammed"
 msgstr "Kommentar spam-markeret"
 
-#: inc/triggers.php:189
+#: inc/triggers.php:154
 msgid "Comment spammed - Fires when Comment is marked as spam"
 msgstr "Kommentar spam-markeret - Udløses når en kommentar markeres som spam"
 
-#: inc/triggers.php:194
+#: inc/triggers.php:159
 msgid "Comment trashed"
 msgstr "Kommentar slettet"
 
-#: inc/triggers.php:196
+#: inc/triggers.php:161
 msgid "Comment trashed - Fires when Comment is trashed"
 msgstr "Kommentar slettet - Udløses når en kommentar smides i papirkurven"
 
-#: inc/triggers.php:201
-msgid "Updates available"
-msgstr "Opdateringer tilgængelige"
-
-#: inc/triggers.php:202 inc/triggers.php:209 inc/triggers.php:216
-#: inc/triggers.php:223 inc/triggers.php:230 inc/triggers.php:237
-msgid "Wordpress"
-msgstr "Wordpress"
-
-#: inc/triggers.php:203
-msgid "Available updates - Fires periodically when new updates are available"
-msgstr ""
-"Opdateringer tilgængelige - Udløses periodisk når nye opdateringer er "
-"tilgængelige"
-
-#: inc/triggers.php:208
+#: inc/triggers.php:166
 msgid "Plugin activated"
 msgstr "Plugin aktiveret"
 
-#: inc/triggers.php:210
+#: inc/triggers.php:167 inc/triggers.php:174 inc/triggers.php:181
+msgid "Wordpress"
+msgstr "Wordpress"
+
+#: inc/triggers.php:168
 msgid "Plugin activated - Fires when plugin is activated"
 msgstr "Plugin aktiveret - Udløses når et plugin aktiveres"
 
-#: inc/triggers.php:215
+#: inc/triggers.php:173
 msgid "Plugin deactivated"
 msgstr "Plugin deaktiveret"
 
-#: inc/triggers.php:217
+#: inc/triggers.php:175
 msgid "Plugin deactivated - Fires when plugin is deactivated"
 msgstr "Plugin deaktiveret - Udløses når et plugin deaktiveres"
 
-#: inc/triggers.php:222
-msgid "Plugin updated"
-msgstr "Plugin opdateret"
-
-#: inc/triggers.php:224
-msgid "Plugin updated - Fires when plugin is updated"
-msgstr "Plugin opdateret - Udløses når et plugin opdateres"
-
-#: inc/triggers.php:229
-msgid "Plugin installed"
-msgstr "Plugin installeret"
-
-#: inc/triggers.php:231
-msgid "Plugin installed - Fires when plugin is installed"
-msgstr "Plugin installeret - Udløses når et plugin installeres"
-
-#: inc/triggers.php:236
+#: inc/triggers.php:180
 msgid "Plugin removed"
 msgstr "Plugin fjernet"
 
-#: inc/triggers.php:238
+#: inc/triggers.php:182
 msgid "Plugin removed - Fires when plugin is deleted"
 msgstr "Plugin fjernet - Udløses når et plugin slettes/fjernes"
 
@@ -1865,11 +1790,7 @@ msgstr "Byg Shortcode"
 msgid "SMS Inbox"
 msgstr "SMS-indbakke"
 
-#: tpl/settings_page.php:16
-msgid "Notifcations"
-msgstr "Notifikationer"
-
-#: tpl/settings_page.php:26
+#: tpl/settings_page.php:25
 msgid ""
 "Need help with the plugin? We highly recommend that you check out the <a "
 "href=\"https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide\" target="
@@ -1879,7 +1800,7 @@ msgstr ""
 "onlinecity/wp-gatewayapi/wiki/User-Guide\" target=\"_blank\"><strong>Bruger-"
 "guide</strong></a> ud."
 
-#: tpl/settings_page.php:31
+#: tpl/settings_page.php:30
 msgid ""
 "Please enter your OAuth Key and OAuth Secret below. You find this "
 "information by logging into :link and then navigate to <strong>Settings » "
@@ -1889,23 +1810,23 @@ msgstr ""
 "oplysninger ved at logge ind i :link og derefter navigerer til "
 "<strong>Settings » API Keys</strong>."
 
-#: tpl/settings_page.php:36
+#: tpl/settings_page.php:35
 msgid "OAuth Key"
 msgstr "OAuth Nøgle"
 
-#: tpl/settings_page.php:42
+#: tpl/settings_page.php:41
 msgid "OAuth Secret"
 msgstr "OAuth Hemmelighed"
 
-#: tpl/settings_page.php:47
+#: tpl/settings_page.php:46
 msgid "Enable sending UI"
 msgstr "Aktivér afsend-brugerflade"
 
-#: tpl/settings_page.php:52
+#: tpl/settings_page.php:51
 msgid "Yes, enable the SMS sending UI"
 msgstr "Ja, aktivér SMS-afsendelsesbrugerfladerne"
 
-#: tpl/settings_page.php:55
+#: tpl/settings_page.php:54
 msgid ""
 "Enabling this adds a new menu for sending SMS'es and listing sent SMS'es, as "
 "well as managing an address book."
@@ -1913,21 +1834,21 @@ msgstr ""
 "Når du aktiverer dette, tilføjes en ny menu hvor du kan afsende SMS’er, se "
 "afsendte SMS’er, samt opbygge et adressekartotek."
 
-#: tpl/settings_page.php:60
+#: tpl/settings_page.php:59
 msgid "Enable security-tab"
 msgstr "Aktivér sikkerheds-tab"
 
-#: tpl/settings_page.php:67
+#: tpl/settings_page.php:66
 msgid "Yes, enable the security settings tab"
 msgstr "Ja, slå sikkerheds-tab'en til"
 
-#: tpl/settings_page.php:70
+#: tpl/settings_page.php:69
 msgid ""
 "Used to enable two-factor security for logging into your WordPress backend."
 msgstr ""
 "Bruges til at slå to-faktor-sikkerhed til ved login til WordPress-backendet."
 
-#: tpl/settings_page.php:72
+#: tpl/settings_page.php:71
 msgid ""
 "Enabling two-factor forces users with certain roles, to connect their "
 "cellphone with their user account. Afterwards an additional step is added "
@@ -1943,23 +1864,23 @@ msgstr ""
 "en enhed i lang tid, så brugeren ikke skal gen-bekræfte via SMS ved hvert "
 "login."
 
-#: tpl/settings_page.php:77
+#: tpl/settings_page.php:76
 msgid "Default sender"
 msgstr "Standardafsender"
 
-#: tpl/settings_page.php:84
+#: tpl/settings_page.php:83
 msgid "Must consist of either 11 characters or 15 digits."
 msgstr "Skal bestå af 11 tegn eller 15 tal."
 
-#: tpl/settings_page.php:98
+#: tpl/settings_page.php:97
 msgid "When entering mobile numbers, which country should be the default?"
 msgstr "Når du indtaster mobilnumre, hvilket land skal så være standard?"
 
-#: tpl/settings_page.php:105
+#: tpl/settings_page.php:104
 msgid "Captcha for public forms"
 msgstr "CAPTCHA i offentlige formularer"
 
-#: tpl/settings_page.php:106
+#: tpl/settings_page.php:105
 msgid ""
 "reCAPTCHA is a free service from Google, which greatly reduces spam and "
 "abuse from your public forms."
@@ -1967,7 +1888,7 @@ msgstr ""
 "reCAPTCHA er en gratis tjeneste fra Google, som er bygget til at reducere "
 "spam-indtastninger og misbrug af dine offentlige formularer."
 
-#: tpl/settings_page.php:107
+#: tpl/settings_page.php:106
 msgid ""
 "If you would like to use reCAPTCHA on the public GatewayAPI forms (signup, "
 "unsubscribe etc.), then please enter your site key and secret key below."
@@ -1976,7 +1897,7 @@ msgstr ""
 "formularer (tilmeld, afmeld osv.), så indtast venligst din “site key” og "
 "“secret key” nedenfor."
 
-#: tpl/settings_page.php:108
+#: tpl/settings_page.php:107
 msgid ""
 "<a href=\"%url%\" target=\"_blank\"><strong>Click here</strong></a> to read "
 "more about reCAPTCHA and signup."
@@ -1984,15 +1905,15 @@ msgstr ""
 "<a href=\"%url%\" target=\"_blank\"><strong>Klik her</strong></a> for at "
 "lære mere om reCAPTCHA og for at tilmelde dig."
 
-#: tpl/settings_page.php:112
+#: tpl/settings_page.php:111
 msgid "ReCAPTCHA Site Key"
 msgstr "ReCAPTCHA “Site key”"
 
-#: tpl/settings_page.php:122
+#: tpl/settings_page.php:121
 msgid "ReCAPTCHA Secret key"
 msgstr "ReCAPTCHA “Secret key”"
 
-#: tpl/settings_page.php:140
+#: tpl/settings_page.php:139
 msgid ""
 "The two-factor login system is based solely on SMS'es, so your users will "
 "not need any apps, thus making it compatible with any mobile phone. All you "
@@ -2004,28 +1925,28 @@ msgstr ""
 "omkostningerne forbundet med at sende SMS'er i login-processen. Og til "
 "gengæld øger du din sides sikkerhed ganske dramatisk."
 
-#: tpl/settings_page.php:146 tpl/settings_page.php:666
+#: tpl/settings_page.php:145
 msgid "Emergency bypass URL"
 msgstr "Nødadgangs URL"
 
-#: tpl/settings_page.php:154 tpl/settings_page.php:674
+#: tpl/settings_page.php:154
 msgid "New code is generated on save"
 msgstr "Ny kode laves når du gemmer"
 
-#: tpl/settings_page.php:154 tpl/settings_page.php:674
+#: tpl/settings_page.php:155
 msgid "Reset"
 msgstr "Nulstil"
 
-#: tpl/settings_page.php:156 tpl/settings_page.php:676
+#: tpl/settings_page.php:158
 msgid "This URL should be copied to a safe place!"
 msgstr "URL'en bør kopieres til et sikkert sted!"
 
-#: tpl/settings_page.php:156 tpl/settings_page.php:676
+#: tpl/settings_page.php:158
 msgid "Use it to bypass all two-factor security measures when logging in."
 msgstr ""
 "Brug den til at omgå alle to-faktor sikkerhedsforanstaltninger ved log ind."
 
-#: tpl/settings_page.php:158 tpl/settings_page.php:678
+#: tpl/settings_page.php:160
 msgid ""
 "This could rescue you from a site lockout, in case your GatewayAPI-account "
 "ran out of credit (you should enable auto-charge to avoid this) or if you "
@@ -2039,11 +1960,11 @@ msgstr ""
 "med et skift af mobilnummer. Du bør ikke dele denne URL, men blot gemme den "
 "et sikkert sted."
 
-#: tpl/settings_page.php:163 tpl/settings_page.php:683
+#: tpl/settings_page.php:165
 msgid "User roles with two-factor"
 msgstr "Brugerroller med to-faktor"
 
-#: tpl/settings_page.php:172 tpl/settings_page.php:692
+#: tpl/settings_page.php:174
 msgid ""
 "All roles selected will be forced to upgrade to two-factor on their next "
 "login. We recommend that all roles above subscriber-level are selected."
@@ -2052,35 +1973,35 @@ msgstr ""
 "ved deres næstkommende login. Vi anbefaler at alle roller over \"Abonnent\"-"
 "rollen vælges."
 
-#: tpl/settings_page.php:174 tpl/settings_page.php:694
+#: tpl/settings_page.php:176
 msgid "Hold down CTRL (PC) / CMD (Mac) to select multiple roles."
 msgstr "Hold CTRL (PC) / CMD (Mac) nede for at vælge flere roller."
 
-#: tpl/settings_page.php:179 tpl/settings_page.php:699
+#: tpl/settings_page.php:181
 msgid "Two-factor cookie lifetime"
 msgstr "To-faktor-cookies udløb"
 
-#: tpl/settings_page.php:183 tpl/settings_page.php:703
+#: tpl/settings_page.php:185
 msgid "Re-authorize with every login"
 msgstr "Gen-bekræft ved hvert login"
 
-#: tpl/settings_page.php:184 tpl/settings_page.php:704
+#: tpl/settings_page.php:186
 msgid "Remember for up to 1 day"
 msgstr "Husk i op til 1 dag"
 
-#: tpl/settings_page.php:185 tpl/settings_page.php:705
+#: tpl/settings_page.php:187
 msgid "Remember for up to 1 week"
 msgstr "Husk i op til 1 uge"
 
-#: tpl/settings_page.php:186 tpl/settings_page.php:706
+#: tpl/settings_page.php:188
 msgid "Remember for up to 2 weeks"
 msgstr "Husk i op til 2 uger"
 
-#: tpl/settings_page.php:187 tpl/settings_page.php:707
+#: tpl/settings_page.php:189
 msgid "Remember for up to 1 month"
 msgstr "Husk i op til 1 måned"
 
-#: tpl/settings_page.php:194 tpl/settings_page.php:714
+#: tpl/settings_page.php:197
 msgid ""
 "How often must the user be forced to re-authorize via two-factor, when "
 "visiting from the same web browser?"
@@ -2088,7 +2009,7 @@ msgstr ""
 "Hvor ofte skal brugerne gen-bekræfte via to-faktor, når de besøger fra samme "
 "webbrowser?"
 
-#: tpl/settings_page.php:212
+#: tpl/settings_page.php:215
 msgid ""
 "The fields below are available when sending SMS'es, as well as when the "
 "users signs up or updates their recipient."
@@ -2096,7 +2017,7 @@ msgstr ""
 "Felterne nedenfor er tilgængelige når man sender SMS’er, såvel som når "
 "brugeren tilmelder sig eller opdaterer deres modtager."
 
-#: tpl/settings_page.php:215
+#: tpl/settings_page.php:218
 msgid ""
 "Use the \"Build Shortcode\"-tab to get the shortcodes required to embed a "
 "signup form, update a recipient, unsubscribe or simply send an SMS."
@@ -2105,15 +2026,15 @@ msgstr ""
 "tilmeldingsformular, opdaterér tilmelding, afmeld eller til simpel SMS-"
 "afsendelse."
 
-#: tpl/settings_page.php:233
+#: tpl/settings_page.php:236
 msgid "Shown in all pulic forms which uses this field."
 msgstr "Vises i alle offentlige formularer som benytter dette felt."
 
-#: tpl/settings_page.php:243
+#: tpl/settings_page.php:246
 msgid "Field ID"
 msgstr "Felt-ID"
 
-#: tpl/settings_page.php:245
+#: tpl/settings_page.php:248
 msgid ""
 "This is used as the tag when sending SMS'es, in shortcodes and is used as "
 "the meta key."
@@ -2121,22 +2042,22 @@ msgstr ""
 "Dette er brugt som tag når SMS’er afsendes, i shortcodes samt er brugt som "
 "nøgle for metafelt."
 
-#: tpl/settings_page.php:261
+#: tpl/settings_page.php:264
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: tpl/settings_page.php:263
+#: tpl/settings_page.php:266
 msgid ""
 "A helpful description of what input the user is expected to put in the field."
 msgstr ""
 "En forklarende beskrivelse af hvad der forventes af brugeren ift. "
 "indtastningen."
 
-#: tpl/settings_page.php:273
+#: tpl/settings_page.php:276
 msgid "Required field?"
 msgstr "Påkrævet felt?"
 
-#: tpl/settings_page.php:275
+#: tpl/settings_page.php:278
 msgid ""
 "Required fields must be filled when adding recipients. For multiple choice "
 "field types, at least one value must be picked."
@@ -2144,19 +2065,19 @@ msgstr ""
 "Påkrævede felter skal udfyldes når man tilmelder en modtager. For “Flere "
 "valg” felt-typer betyder påkrævet, at minimum én af mulighederne skal vælges."
 
-#: tpl/settings_page.php:282
+#: tpl/settings_page.php:285
 msgid "Yes, this is a required field."
 msgstr "Ja, dette er et påkrævet felt."
 
-#: tpl/settings_page.php:294
+#: tpl/settings_page.php:297
 msgid "Type"
 msgstr "Type"
 
-#: tpl/settings_page.php:321
+#: tpl/settings_page.php:324
 msgid "Country limitation"
 msgstr "Landebegrænsning"
 
-#: tpl/settings_page.php:323
+#: tpl/settings_page.php:326
 msgid ""
 "If you wish to limit the countries available, please enter the country "
 "calling codes below (one per line, no “+”-prefix)."
@@ -2164,15 +2085,15 @@ msgstr ""
 "Hvis du ønsker at begrænse de mulige lande, så indtast deres landekoder "
 "nedenfor (én landekode pr. linje, ikke foranstillet med +)."
 
-#: tpl/settings_page.php:326
+#: tpl/settings_page.php:329
 msgid "List of country calling codes"
 msgstr "Liste over telefon-landekode"
 
-#: tpl/settings_page.php:336
+#: tpl/settings_page.php:339
 msgid "Choices"
 msgstr "Muligheder"
 
-#: tpl/settings_page.php:338
+#: tpl/settings_page.php:341
 msgid ""
 "Enter a single choice per line. Prefix the line with two exclamation marks "
 "(!!), to make an option selected by default."
@@ -2180,19 +2101,19 @@ msgstr ""
 "Indtast en enkelt valgmulighed pr. linje. Foranstil to udråbstegn (!!) på en "
 "linje, for at forhåndsvælge muligheden."
 
-#: tpl/settings_page.php:350
+#: tpl/settings_page.php:353
 msgid "Are you sure that you want to delete this field?"
 msgstr "Er du sikker på at du ønsker at slette dette felt?"
 
-#: tpl/settings_page.php:350
+#: tpl/settings_page.php:353
 msgid "Delete this field"
 msgstr "Slet dette felt"
 
-#: tpl/settings_page.php:361
+#: tpl/settings_page.php:364
 msgid "Add another field"
 msgstr "Tilføj endnu et felt"
 
-#: tpl/settings_page.php:363
+#: tpl/settings_page.php:366
 msgid ""
 "Are you sure that you want to reset to default? All your field "
 "configurations above will be lost immediately with no way of recovery."
@@ -2200,11 +2121,11 @@ msgstr ""
 "Er du sikker på at du ønsker at nulstille til fabriksopsæt? Alle dine "
 "feltindstillinger ovenfor går tabt med det samme og vil ikke kunne genskabes."
 
-#: tpl/settings_page.php:363
+#: tpl/settings_page.php:366
 msgid "Reset to default"
 msgstr "Nulstil til fabriksopsæt"
 
-#: tpl/settings_page.php:372
+#: tpl/settings_page.php:375
 msgid ""
 "It is possible to create recipients and keep them up-to-date automatically. "
 "As soon as the minimum required information on a user in the WordPress user "
@@ -2214,7 +2135,7 @@ msgstr ""
 "Så snart de påkrævede oplysninger er oprettet på en WordPress bruger, vil "
 "modtageren blive oprettet automatisk."
 
-#: tpl/settings_page.php:375
+#: tpl/settings_page.php:378
 msgid ""
 "If any information changes on the WordPress user or the user is deleted, the "
 "recipient is updated or deleted as well. In other words, the recipient works "
@@ -2225,7 +2146,7 @@ msgstr ""
 "vil modtageren altid være up-to-date og spejlet med oplysningerne fra "
 "brugeren."
 
-#: tpl/settings_page.php:378
+#: tpl/settings_page.php:381
 msgid ""
 "Please note: It is <strong>your responsibility</strong> to ensure that the "
 "information on a user is valid and that mobile numbers are unique. If a user "
@@ -2239,19 +2160,19 @@ msgstr ""
 "mangler mobilnummer eller andre værdier er ugyldige, eller fordi nummeret er "
 "tilknyttet en anden modtager."
 
-#: tpl/settings_page.php:383
+#: tpl/settings_page.php:386
 msgid "Enable user synchronization"
 msgstr "Slå brugersynkronisering til"
 
-#: tpl/settings_page.php:395
+#: tpl/settings_page.php:398
 msgid "Which user meta key contains the mobile number?"
 msgstr "Hvilken metanøgle indeholder mobilnummeret?"
 
-#: tpl/settings_page.php:407
+#: tpl/settings_page.php:410
 msgid "Which user meta key contains the country code for the mobile number?"
 msgstr "Hvilken metanøgle på brugeren indeholder landekoden for mobilnummeret?"
 
-#: tpl/settings_page.php:420
+#: tpl/settings_page.php:424
 msgid ""
 "If only the mobile number, but not the country code, is specified on a user, "
 "then this value will be assumed."
@@ -2259,15 +2180,15 @@ msgstr ""
 "Hvis kun mobilnummer, men ikke landekode, er tilknyttet en bruger, så vil "
 "denne værdi blive brugt."
 
-#: tpl/settings_page.php:426
+#: tpl/settings_page.php:430
 msgid "Other fields"
 msgstr "Andre felter"
 
-#: tpl/settings_page.php:429
+#: tpl/settings_page.php:433
 msgid "Meta Key : Recipient Field Key"
 msgstr "Bruger metanøgle : Modtagerfelt"
 
-#: tpl/settings_page.php:431
+#: tpl/settings_page.php:435
 msgid ""
 "If you want to map other fields from the user and to the meta fields on the "
 "recipient, then please list them below. Enter a user meta key, add a colon "
@@ -2279,7 +2200,7 @@ msgstr ""
 "skriv et kolon (:) samt skriv nøglen for modtageren. For at tilføje flere "
 "felter, opdel med linjeskift."
 
-#: tpl/settings_page.php:440
+#: tpl/settings_page.php:444
 msgid ""
 "If you wish to automatically subscribe recipients to specific groups, then "
 "please tell which groups a user should be assigned to, when a specific user "
@@ -2291,23 +2212,23 @@ msgstr ""
 "metaværdi er til stede på brugeren. Denne metaværdi skal blot eksistere og "
 "indeholde en værdi som ikke er “0”, “false” samt må ikke være tom."
 
-#: tpl/settings_page.php:446
+#: tpl/settings_page.php:450
 msgid "Group name"
 msgstr "Gruppenavn"
 
-#: tpl/settings_page.php:448
+#: tpl/settings_page.php:452
 msgid "User meta field"
 msgstr "Bruger metafelt"
 
-#: tpl/settings_page.php:477
+#: tpl/settings_page.php:481
 msgid "Synchronize now"
 msgstr "Synkronisér nu"
 
-#: tpl/settings_page.php:481
+#: tpl/settings_page.php:485
 msgid "Synchronize all existing users on submit."
 msgstr "Synkronisér alle brugere når indstillingerne gemmes."
 
-#: tpl/settings_page.php:484
+#: tpl/settings_page.php:488
 msgid ""
 "Enabling this will force a one-time synchronization of all users, when you "
 "save these settings. This is useful when initially setting this plugin up "
@@ -2321,7 +2242,7 @@ msgstr ""
 "f.eks. er foretaget på databaseniveau og de nødvendige automatiske "
 "handlinger derfor ikke er kørt."
 
-#: tpl/settings_page.php:497
+#: tpl/settings_page.php:501
 msgid ""
 "Use the options below to build a shortcode ready for use anywhere you would "
 "like."
@@ -2329,7 +2250,7 @@ msgstr ""
 "Brug mulighederne nedenfor for at bygge en shortcode som kan benyttes i alle "
 "indholdsfelter."
 
-#: tpl/settings_page.php:500
+#: tpl/settings_page.php:504
 msgid ""
 "Note: If any fields below are missing or out-of-date, then please click "
 "\"Save changes\", as this is based on the last saved version."
@@ -2337,35 +2258,35 @@ msgstr ""
 "Bemærk: Hvis nogen af felterne mangler eller er forældede, så tryk venligst "
 "på “Gem ændringer”, da denne brugerflade baserer sig på senest gemte version."
 
-#: tpl/settings_page.php:504
+#: tpl/settings_page.php:508
 msgid "Action of form"
 msgstr "Handling i formular"
 
-#: tpl/settings_page.php:505
+#: tpl/settings_page.php:509
 msgid "What should happen when the form is successfully submitted?"
 msgstr "Hvad skal der ske når formularen er fuldt og gyldigt udfyldt?"
 
-#: tpl/settings_page.php:509
+#: tpl/settings_page.php:513
 msgid "User is signed up (recipient is created)"
 msgstr "Bruger er tilmeldt (modtager er oprettet)"
 
-#: tpl/settings_page.php:515
+#: tpl/settings_page.php:519
 msgid "User is updated (existing recipient is updated)"
 msgstr "Bruger er opdateret (eksisterende modtager er opdateret)"
 
-#: tpl/settings_page.php:521
+#: tpl/settings_page.php:525
 msgid "User is unsubscribed (existing recipient is deleted)"
 msgstr "Bruger er afmeldt (eksisterende modtager er slettet)"
 
-#: tpl/settings_page.php:526
+#: tpl/settings_page.php:530
 msgid "Send an SMS"
 msgstr "Send en SMS"
 
-#: tpl/settings_page.php:532
+#: tpl/settings_page.php:536
 msgid "Require CAPTCHA"
 msgstr "Kræv CAPTCHA"
 
-#: tpl/settings_page.php:534
+#: tpl/settings_page.php:538
 msgid ""
 "Would you like to use Google's free reCAPTCHA-service to protect the form "
 "against spam bots and abuse?"
@@ -2373,11 +2294,11 @@ msgstr ""
 "Ønsker du har benytte Google’s gratis reCAPTCHA-service til at beskytte "
 "formularen imod spam-bots og andet misbrug?"
 
-#: tpl/settings_page.php:539
+#: tpl/settings_page.php:543
 msgid "Yes, I would like to enable reCAPTCHA on this form."
 msgstr "Ja, jeg ønsker at aktivere reCAPTCHA på denne formular."
 
-#: tpl/settings_page.php:547
+#: tpl/settings_page.php:551
 msgid ""
 "Which group(s) should be affected? If action is signup or update, the user "
 "will be added to the selected groups. With action \"Send SMS\", this is the "
@@ -2387,7 +2308,7 @@ msgstr ""
 "vil brugeren blive tilmeldt til de valgte grupper. Er handlingen “Send SMS” "
 "så vil dette være grupperne som modtager SMS’en."
 
-#: tpl/settings_page.php:554
+#: tpl/settings_page.php:558
 msgid ""
 "Select multiple groups by holding down CTRL (Windows) / CMD (Mac) while "
 "clicking."
@@ -2395,7 +2316,7 @@ msgstr ""
 "Vælg flere grupper ved at holde CTRL nede (Windows) / CMD (Mac) imens du "
 "klikker til og fra."
 
-#: tpl/settings_page.php:556
+#: tpl/settings_page.php:560
 msgid ""
 "Would you also like to show the list of groups (containing only the above "
 "selected gorups) and allow the user to pick amongst these groups? All will "
@@ -2405,23 +2326,23 @@ msgstr ""
 "valgte grupper) samt tillade at brugeren vælger iblandt disse grupper? Alle "
 "vil være valgt som standard."
 
-#: tpl/settings_page.php:560
+#: tpl/settings_page.php:564
 msgid "Yes, show the list of selected groups and allow user to edit."
 msgstr "Ja, vis listen med de udvalgte grupper og tillad at vælge til og fra."
 
-#: tpl/settings_page.php:565
+#: tpl/settings_page.php:569
 msgid "Would you like to show the list of groups as selected by default."
 msgstr "Ønsker du at vise listen af grupper, som er valgt som standard."
 
-#: tpl/settings_page.php:568
+#: tpl/settings_page.php:572
 msgid "Groups should not be selected by default"
 msgstr "Grupper bør ikke være valgt som standard"
 
-#: tpl/settings_page.php:577
+#: tpl/settings_page.php:582
 msgid "Warning:"
 msgstr "Advarsel:"
 
-#: tpl/settings_page.php:577
+#: tpl/settings_page.php:582
 msgid ""
 "Please consider that embedding this into a public part of your website "
 "enables any visitor to send SMS'es to the selected groups. This is rarely a "
@@ -2433,19 +2354,19 @@ msgstr ""
 "valgte grupper. Dette er meget sjældent en god idé. Sider som benytter denne "
 "shortcode bør som minimum kodeordsbeskytte eller sikre på andre måder."
 
-#: tpl/settings_page.php:582
+#: tpl/settings_page.php:587
 msgid "Allow the sender name to be changed."
 msgstr "Tilad at afsendernavn ændres."
 
-#: tpl/settings_page.php:587
+#: tpl/settings_page.php:592
 msgid "Your shortcode"
 msgstr "Din shortcode"
 
-#: tpl/settings_page.php:596
+#: tpl/settings_page.php:601
 msgid "Do you want to receive SMS messages for this installation?"
 msgstr "Ønsker du at kunne modtage SMS-beskeder med denne installation?"
 
-#: tpl/settings_page.php:600
+#: tpl/settings_page.php:605
 msgid ""
 "To be able to use SMS Inbox you will need to have access to a Shortcode or "
 "Virtual Number."
@@ -2453,7 +2374,7 @@ msgstr ""
 "For at kunne benytte SMS-indbakke skal du have adgang til en shortcode eller "
 "et virtuelt nummer."
 
-#: tpl/settings_page.php:601
+#: tpl/settings_page.php:606
 msgid ""
 "Contact <a href=\"mailto:support@gatewayapi.com\">support@gatewayapi.com</a> "
 "for more information."
@@ -2461,15 +2382,15 @@ msgstr ""
 "Kontakt <a href=\"mailto:support@gatewayapi.com\">support@gatewayapi.com</a> "
 "for mere information."
 
-#: tpl/settings_page.php:608
+#: tpl/settings_page.php:613
 msgid "Yes please, I would like to receive SMS messages."
 msgstr "Ja, jeg vil gerne kunne modtage SMS-beskeder."
 
-#: tpl/settings_page.php:617
+#: tpl/settings_page.php:622
 msgid "Configuration"
 msgstr "Opsætning"
 
-#: tpl/settings_page.php:623
+#: tpl/settings_page.php:628
 msgid ""
 "Before your installation is capable of receiving SMS messages you must "
 "configure GatewayAPI."
@@ -2477,11 +2398,11 @@ msgstr ""
 "Før din installation er i stand til at modtage SMS-beskeder, så skal du "
 "først lave en kobling med GatewayAPI."
 
-#: tpl/settings_page.php:626
+#: tpl/settings_page.php:631
 msgid "Please follow these simple steps:"
 msgstr "Følg venligst disse simple instrukser:"
 
-#: tpl/settings_page.php:630
+#: tpl/settings_page.php:635
 msgid ""
 "Visit gatewayapi.com and click Settings > Web Hooks or <a target=\"_blank\" "
 "href=\"https://gatewayapi.com/app/settings/web-hooks/\">follow this link</a>."
@@ -2490,25 +2411,21 @@ msgstr ""
 "\"_blank\" href=\"https://gatewayapi.com/app/settings/web-hooks/\">klik her</"
 "a>."
 
-#: tpl/settings_page.php:633
+#: tpl/settings_page.php:638
 msgid "Click REST."
 msgstr "Klik REST."
 
-#: tpl/settings_page.php:636
+#: tpl/settings_page.php:641
 msgid "Click ADD NEW."
 msgstr "Tryk \"ADD NEW\"."
 
-#: tpl/settings_page.php:639
+#: tpl/settings_page.php:644
 msgid "Enter a Unique label."
 msgstr "Indtast et unikt navn i \"Unique label\"."
 
-#: tpl/settings_page.php:642
+#: tpl/settings_page.php:647
 msgid "Paste the following URL into the Web hook URL input field."
 msgstr "Indtast den følgende URL ind i Web hook URL input-feltet."
-
-#: tpl/settings_page.php:660
-msgid "Notication tab"
-msgstr "Notifikationstab"
 
 #: tpl/wp-login-add-phone.php:2
 msgid "Register mobile phone number"
@@ -2577,6 +2494,77 @@ msgstr "OnlineCity ApS"
 #. Author URI of the plugin/theme
 msgid "http://onlinecity.dk"
 msgstr "http://onlinecity.dk"
+
+#~ msgid "Post approved"
+#~ msgstr "Indlæg godkendt"
+
+#~ msgid "Post approved - Fires when Post is approved"
+#~ msgstr "Indlæg godkendt - Udløses når et indlæg er godkendt"
+
+#~ msgid "Taxonomy deleted"
+#~ msgstr "Taxonomi slettet"
+
+#~ msgid "User password changed"
+#~ msgstr "Brugers kodeord ændret"
+
+#~ msgid "Comment added"
+#~ msgstr "Kommentar tilføjet"
+
+#~ msgid ""
+#~ "Comment added - Fires when new Comment is added to database and awaits "
+#~ "moderation or is published. Includes comment replies."
+#~ msgstr ""
+#~ "Kommentar tilføjet - Udløses når en ny kommentar tilføjes til databasen, "
+#~ "og afventer godkendelse, eller udgives. Inkluderer svar på kommentarer."
+
+#~ msgid "Comment replied"
+#~ msgstr "Svar på kommentar"
+
+#~ msgid ""
+#~ "Comment replied - Fires when Comment is replied and the reply is approved"
+#~ msgstr ""
+#~ "Svar på kommentar - Udløses når der svares på en kommentar og svaret er "
+#~ "godkendt"
+
+#~ msgid "Comment approved"
+#~ msgstr "Kommentar godkendt"
+
+#~ msgid "Comment approved - Fires when Comment is approved"
+#~ msgstr "Kommentar godkendt - Udløses når en kommentar godkendes"
+
+#~ msgid "Comment unapproved"
+#~ msgstr "Kommentar afvist"
+
+#~ msgid "Comment unapproved - Fires when Comment is marked as unapproved"
+#~ msgstr ""
+#~ "Kommentar afvist - Udløses når en kommentar markeres som ikke godkendt"
+
+#~ msgid "Updates available"
+#~ msgstr "Opdateringer tilgængelige"
+
+#~ msgid ""
+#~ "Available updates - Fires periodically when new updates are available"
+#~ msgstr ""
+#~ "Opdateringer tilgængelige - Udløses periodisk når nye opdateringer er "
+#~ "tilgængelige"
+
+#~ msgid "Plugin updated"
+#~ msgstr "Plugin opdateret"
+
+#~ msgid "Plugin updated - Fires when plugin is updated"
+#~ msgstr "Plugin opdateret - Udløses når et plugin opdateres"
+
+#~ msgid "Plugin installed"
+#~ msgstr "Plugin installeret"
+
+#~ msgid "Plugin installed - Fires when plugin is installed"
+#~ msgstr "Plugin installeret - Udløses når et plugin installeres"
+
+#~ msgid "Notifcations"
+#~ msgstr "Notifikationer"
+
+#~ msgid "Notication tab"
+#~ msgstr "Notifikationstab"
 
 #~ msgid ""
 #~ "Pick an action describing what will happen, when this receive action is "
