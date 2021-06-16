@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
 Tested up to: 5.7.2
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -127,6 +127,9 @@ Then find the options-table, by default wp_options. Search for the row where the
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.7.1 =
+* Bugfix: Notifications were not sent.
 
 = 1.7.0 =
 * New: Notification module: Receive SMS-notifications when various actions occur in WordPress
