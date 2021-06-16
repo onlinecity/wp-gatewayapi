@@ -286,11 +286,7 @@ class Notification
     // Prepare the recipients
     $recipients = $this->recipients();
 
-    error_log('---');
-    error_log('SENDING: '.$message);
-    error_log('TO: '.json_encode($recipients));
-    error_log('---');
-    //gwapi_send_sms($message, $recipients);
+    gwapi_send_sms($message, $recipients);
   }
 
   /**
