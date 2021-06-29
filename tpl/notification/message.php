@@ -1,8 +1,4 @@
-<?php if (!defined('ABSPATH')) {
-    die('Cannot be accessed directly!');
-} ?>
-
-<?php
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
 $ID = $post->ID;
 $published = $post->post_status == 'publish';

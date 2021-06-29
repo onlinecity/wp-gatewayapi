@@ -4,12 +4,12 @@
  * SMS Editor
  */
 add_action('admin_init', function () {
-    add_meta_box('sms-recipients', __('Recipients', 'gatewayapi'), '_gwapi_sms_recipients', 'gwapi-sms', 'normal', 'default');
-    add_meta_box('sms-recipient-groups', __('Recipient groups', 'gatewayapi'), '_gwapi_sms_recipient_groups', 'gwapi-sms', 'normal', 'default');
-    add_meta_box('sms-recipient-manual', __('Enter mobiles manually', 'gatewayapi'), '_gwapi_sms_recipient_manual', 'gwapi-sms', 'normal', 'default');
-    add_meta_box('sms-message', __('Message', 'gatewayapi'), '_gwapi_sms_message', 'gwapi-sms', 'normal', 'default');
+  add_meta_box('sms-recipients', __('Recipients', 'gatewayapi'), '_gwapi_sms_recipients', 'gwapi-sms', 'normal', 'default');
+  add_meta_box('sms-recipient-groups', __('Recipient groups', 'gatewayapi'), '_gwapi_sms_recipient_groups', 'gwapi-sms', 'normal', 'default');
+  add_meta_box('sms-recipient-manual', __('Enter mobiles manually', 'gatewayapi'), '_gwapi_sms_recipient_manual', 'gwapi-sms', 'normal', 'default');
+  add_meta_box('sms-message', __('Message', 'gatewayapi'), '_gwapi_sms_message', 'gwapi-sms', 'normal', 'default');
 
-    add_meta_box('sms-status', __('Status', 'gatewayapi'), '_gwapi_sms_status', 'gwapi-sms', 'side', 'default');
+  add_meta_box('sms-status', __('Status', 'gatewayapi'), '_gwapi_sms_status', 'gwapi-sms', 'side', 'default');
 });
 
 /**
@@ -17,8 +17,8 @@ add_action('admin_init', function () {
  */
 function _gwapi_sms_recipients(WP_Post $post)
 {
-    $current_types = get_post_meta($post->ID, 'recipients', true);
-    ?>
+  $current_types = get_post_meta($post->ID, 'recipients', true);
+  ?>
   <p><?php _e('How would you like to select recipients for this SMS?', 'gatewayapi'); ?></p>
 
   <div class="recipient-types"
@@ -26,19 +26,19 @@ function _gwapi_sms_recipients(WP_Post $post)
     <label class="gwapi-checkbox">
       <input type="checkbox" name="gatewayapi[recipients][]" value="groups"
              data-group="sms-recipient-groups">
-        <?php _e('Use recipient groups', 'gatewayapi'); ?>
+      <?php _e('Use recipient groups', 'gatewayapi'); ?>
     </label>
 
     <label class="gwapi-checkbox">
       <input type="checkbox" name="gatewayapi[recipients][]" value="manual"
              data-group="sms-recipient-manual">
-        <?php _e('Enter mobile numbers manually', 'gatewayapi'); ?>
+      <?php _e('Enter mobile numbers manually', 'gatewayapi'); ?>
     </label>
   </div>
 
   <p
     class="description"><?php _e('Only one message will be sent per mobile number per SMS. So don\'t be afraid to mix and match the above.', 'gatewayapi'); ?></p>
-    <?php
+  <?php
 }
 
 /**
@@ -46,11 +46,11 @@ function _gwapi_sms_recipients(WP_Post $post)
  */
 function _gwapi_sms_recipient_groups(WP_Post $post)
 {
-    $groups = get_terms([
-        'taxonomy' => 'gwapi-recipient-groups'
-    ]);
-    $current_groups = get_post_meta($post->ID, 'recipient_groups', true);
-    ?>
+  $groups = get_terms([
+    'taxonomy' => 'gwapi-recipient-groups'
+  ]);
+  $current_groups = get_post_meta($post->ID, 'recipient_groups', true);
+  ?>
 
   <div class="gwapi-row recipient-groups"
        data-selected_groups="<?= $current_groups ? esc_attr(json_encode($current_groups)) : ''; ?>">
@@ -58,15 +58,15 @@ function _gwapi_sms_recipient_groups(WP_Post $post)
       <h4><?php _e('All recipient groups', 'gatewayapi'); ?></h4>
 
       <div class="inner">
-          <?php foreach ($groups as $group): ?>
-            <label class="gwapi-checkbox">
-              <input type="checkbox" name="gatewayapi[recipient_groups][]" id=""
-                     value="<?= $group->term_id; ?>">
-                <?= $group->name; ?>
-              <span class="number"
-                    title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?= $group->count; ?>"><?= $group->count; ?></span>
-            </label>
-          <?php endforeach; ?>
+        <?php foreach ($groups as $group): ?>
+          <label class="gwapi-checkbox">
+            <input type="checkbox" name="gatewayapi[recipient_groups][]" id=""
+                   value="<?= $group->term_id; ?>">
+            <?= $group->name; ?>
+            <span class="number"
+                  title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?= $group->count; ?>"><?= $group->count; ?></span>
+          </label>
+        <?php endforeach; ?>
       </div>
     </div>
 
@@ -83,7 +83,7 @@ function _gwapi_sms_recipient_groups(WP_Post $post)
       class="description"><?php _e('Only groups with at least one recipient are listed.', 'gatewayapi'); ?></p>
   </div>
 
-    <?php
+  <?php
 }
 
 
@@ -92,19 +92,19 @@ function _gwapi_sms_recipient_groups(WP_Post $post)
  */
 function _gwapi_sms_recipient_manual(WP_Post $post)
 {
-    $ID = $post->ID;
-    $published = $post->post_status == 'publish';
+  $ID = $post->ID;
+  $published = $post->post_status == 'publish';
 
-    // get the manual recipients
-    global $wpdb;
-    /** @var $wpdb wpdb */
-    $recipients_raw = $wpdb->get_results($wpdb->prepare("SELECT meta_id, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = 'single_recipient'", $ID));
-    $recipients = [];
+  // get the manual recipients
+  global $wpdb;
+  /** @var $wpdb wpdb */
+  $recipients_raw = $wpdb->get_results($wpdb->prepare("SELECT meta_id, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = 'single_recipient'", $ID));
+  $recipients = [];
 
-    foreach ($recipients_raw as $r) {
-        $recipients[$r->meta_id] = maybe_unserialize($r->meta_value);
-    }
-    ?>
+  foreach ($recipients_raw as $r) {
+    $recipients[$r->meta_id] = maybe_unserialize($r->meta_value);
+  }
+  ?>
 
   <div class="gwapi-row">
     <div class="col-40">
@@ -119,7 +119,7 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
 
       <div class="field-group">
         <label for="recipient_number" class="control-label">
-            <?php _e('Phone number', 'gatewayapi') ?>
+          <?php _e('Phone number', 'gatewayapi') ?>
         </label>
 
         <input type="number" name="gatewayapi[single_recipient][number]"
@@ -133,14 +133,16 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
         <input type="text" name="gatewayapi[single_recipient][name]" id="recipient_name">
       </div>
 
-      <button type="button"
-              class="button add_single_recipient"><?php _e('Add recipient', 'gatewayapi'); ?></button>
+      <button type="button" class="button add_single_recipient"
+              data-nonce="<?php echo esc_attr(wp_create_nonce('gatewayapi_sms_manual_add_recipient')); ?>">
+        <?php _e('Add recipient', 'gatewayapi'); ?>
+      </button>
 
     </div>
     <div class="col-60">
       <h4><?php _e('Manually added recipients', 'gatewayapi'); ?></h4>
       <div class="inner">
-        <table class="widefat">
+        <table class="widefat" data-delete-nonce="<?php echo esc_attr(wp_create_nonce('gatewayapi_sms_manual_delete_recipient')); ?>">
           <thead>
           <tr>
             <th width="10%"><a class="delete-btn"></a></th>
@@ -160,10 +162,10 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
               <td><a href="#delete" class="delete-btn"></a></td>
               <td>
                 +<?= $r['cc'] ?>
-                  <?= $r['number'] ?>
+                <?= $r['number'] ?>
               </td>
               <td>
-                  <?= esc_html($r['name']); ?>
+                <?= esc_html($r['name']); ?>
               </td>
             </tr>
           <?php endforeach; ?>
@@ -173,7 +175,7 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
     </div>
   </div>
 
-    <?php
+  <?php
 }
 
 
@@ -182,16 +184,16 @@ function _gwapi_sms_recipient_manual(WP_Post $post)
  */
 function _gwapi_sms_message(WP_Post $post)
 {
-    $ID = $post->ID;
-    $published = $post->post_status == 'publish';
+  $ID = $post->ID;
+  $published = $post->post_status == 'publish';
 
-    ?>
+  ?>
   <div class="gwapi-star-errors"></div>
   <table width="100%" class="form-table">
     <tbody>
     <tr>
       <th width="25%">
-          <?php _e('Sender', 'gatewayapi'); ?>
+        <?php _e('Sender', 'gatewayapi'); ?>
       </th>
       <td>
         <input type="text" name="gatewayapi[sender]" size="15"
@@ -202,14 +204,14 @@ function _gwapi_sms_message(WP_Post $post)
     </tr>
     <tr>
       <th width="25%" class="vtop-5">
-          <?php _e('Type of SMS', 'gatewayapi'); ?>
+        <?php _e('Type of SMS', 'gatewayapi'); ?>
       </th>
       <td>
-          <?php $destaddr = get_post_meta($ID, 'destaddr', true); ?>
+        <?php $destaddr = get_post_meta($ID, 'destaddr', true); ?>
         <label>
           <input type="radio" name="gatewayapi[destaddr]"
                  value="MOBILE" <?= ($destaddr == 'MOBILE' || !$destaddr) ? 'checked' : ''; ?>>
-            <?php _e('Regular SMS', 'gatewayapi'); ?>
+          <?php _e('Regular SMS', 'gatewayapi'); ?>
         </label>
         <br/>
         <label>
@@ -222,8 +224,8 @@ function _gwapi_sms_message(WP_Post $post)
     </tr>
     <tr>
       <th width="25%" class="vtop-5">
-          <?php _e('Encoding', 'gatewayapi'); ?><br />
-        <a href="https://gatewayapi.com/docs/appendix.html#term-mcc"><small><?= _e('More information', 'gatewayapi');?></small></a>
+        <?php _e('Encoding', 'gatewayapi'); ?><br/>
+        <a href="https://gatewayapi.com/docs/appendix.html#term-mcc"><small><?= _e('More information', 'gatewayapi'); ?></small></a>
       </th>
       <td>
         <?php $destaddr = get_post_meta($ID, 'encoding', true); ?>
@@ -234,15 +236,19 @@ function _gwapi_sms_message(WP_Post $post)
               <label>
                 <input type="radio" name="gatewayapi[encoding]"
                        value="GSM0338" <?= ($destaddr === 'GSM0338' || !$destaddr) ? 'checked' : ''; ?>>
-                <abbr title="<?php esc_attr_e('160 characters for 1-page SMS. 153 characters for multi-page SMS. Limited special characters, no emoji-support.', 'gatewayapi'); ?>"><?php _e('GSM 03.38', 'gatewayapi'); ?></abbr>
+                <abbr
+                  title="<?php esc_attr_e('160 characters for 1-page SMS. 153 characters for multi-page SMS. Limited special characters, no emoji-support.', 'gatewayapi'); ?>"><?php _e('GSM 03.38', 'gatewayapi'); ?></abbr>
               </label>
             </td>
             <td>
-              <span class="GSM0338-recommended" title="<?php esc_attr_e('All characters in the message are within GSM 03.38.', 'gatewayapi'); ?> <?php esc_attr_e('You should use GSM 03.38, as it roughly doubles the characters available per page over UCS2.', 'gatewayapi'); ?>">✅</span>
-              <span class="UCS2-recommended hidden" title="<?php esc_attr_e('There are characters beyond GSM 03.38. These will not be properly displayed.', 'gatewayapi'); ?>">🛑</span>
+              <span class="GSM0338-recommended"
+                    title="<?php esc_attr_e('All characters in the message are within GSM 03.38.', 'gatewayapi'); ?> <?php esc_attr_e('You should use GSM 03.38, as it roughly doubles the characters available per page over UCS2.', 'gatewayapi'); ?>">✅</span>
+              <span class="UCS2-recommended hidden"
+                    title="<?php esc_attr_e('There are characters beyond GSM 03.38. These will not be properly displayed.', 'gatewayapi'); ?>">🛑</span>
             </td>
             <td>
-              <a class="UCS2-recommended hidden" href="#gwapi-show-invalid-chars" data-pretext="<?= esc_attr_e('The following characters are not valid GSM 03.38 characters:', 'gatewayapi'); ?>"><?php _e('Show invalid characters', 'gatewayapi'); ?></a>
+              <a class="UCS2-recommended hidden" href="#gwapi-show-invalid-chars"
+                 data-pretext="<?= esc_attr_e('The following characters are not valid GSM 03.38 characters:', 'gatewayapi'); ?>"><?php _e('Show invalid characters', 'gatewayapi'); ?></a>
             </td>
           </tr>
           <tr data-encoding="UCS2">
@@ -250,12 +256,15 @@ function _gwapi_sms_message(WP_Post $post)
               <label>
                 <input type="radio" name="gatewayapi[encoding]"
                        value="UCS2" <?= ($destaddr === 'UCS2') ? 'checked' : ''; ?>>
-                <abbr title="<?php esc_attr_e('70 characters for 1-page SMS. 67 characters for multi-page SMS. Supports most special characters and emojis.', 'gatewayapi'); ?>"><?php _e('UCS2', 'gatewayapi'); ?></abbr>
+                <abbr
+                  title="<?php esc_attr_e('70 characters for 1-page SMS. 67 characters for multi-page SMS. Supports most special characters and emojis.', 'gatewayapi'); ?>"><?php _e('UCS2', 'gatewayapi'); ?></abbr>
               </label>
             </td>
             <td>
-              <span class="UCS2-recommended hidden" title="<?php esc_attr_e('Some special characters used require this encoding to be displayed properly.', 'gatewayapi'); ?>">✅</span>
-              <span class="GSM0338-recommended" title="<?php esc_attr_e('All characters in SMS are within GSM 03.38.', 'gatewayapi'); ?> <?php esc_attr_e('You should use GSM 03.38, as it roughly doubles the characters available per page over UCS2.', 'gatewayapi'); ?>">🛑</span>
+              <span class="UCS2-recommended hidden"
+                    title="<?php esc_attr_e('Some special characters used require this encoding to be displayed properly.', 'gatewayapi'); ?>">✅</span>
+              <span class="GSM0338-recommended"
+                    title="<?php esc_attr_e('All characters in SMS are within GSM 03.38.', 'gatewayapi'); ?> <?php esc_attr_e('You should use GSM 03.38, as it roughly doubles the characters available per page over UCS2.', 'gatewayapi'); ?>">🛑</span>
             </td>
             <td></td>
           </tr>
@@ -264,17 +273,17 @@ function _gwapi_sms_message(WP_Post $post)
     </tr>
     <tr>
       <th>
-          <?php _e('Message', 'gatewayapi') ?>
+        <?php _e('Message', 'gatewayapi') ?>
       </th>
       <td>
-          <?php
-          $counterI18N = [
-              'character' => __('character', 'gatewayapi'),
-              'characters' => __('characters', 'gatewayapi'),
-              'sms' => __('SMS', 'gatewayapi'),
-              'smses' => __('SMS\'es', 'gatewayapi')
-          ];
-          ?>
+        <?php
+        $counterI18N = [
+          'character' => __('character', 'gatewayapi'),
+          'characters' => __('characters', 'gatewayapi'),
+          'sms' => __('SMS', 'gatewayapi'),
+          'smses' => __('SMS\'es', 'gatewayapi')
+        ];
+        ?>
         <textarea <?= ($published) ? 'readonly' : ''; ?> name="gatewayapi[message]" rows="10"
                                                          style="width: 100%"
                                                          placeholder="<?= esc_attr(__('Enter your SMS message here.', 'gatewayapi')); ?>"
@@ -283,77 +292,80 @@ function _gwapi_sms_message(WP_Post $post)
         <div>
           <p><?php _e('Writing one of the following tags (including both &percnt;-signs) will result in each recipient receiving a personalized text:', 'gatewayapi'); ?></p>
           <ul>
-              <?php foreach (gwapi_all_tags() as $tag => $description): ?>
-                <li>
-                  <strong><?= esc_html($tag); ?></strong> - <?= esc_html($description); ?>
-                </li>
-              <?php endforeach; ?>
+            <?php foreach (gwapi_all_tags() as $tag => $description): ?>
+              <li>
+                <strong><?= esc_html($tag); ?></strong> - <?= esc_html($description); ?>
+              </li>
+            <?php endforeach; ?>
           </ul>
         </div>
       </td>
     </tr>
     </tbody>
   </table>
-    <?php
+  <?php
 }
 
 function _gwapi_sms_status(WP_Post $post)
 {
-    $status = get_post_meta($post->ID, 'api_status', true);
-    $ids = get_post_meta($post->ID, 'api_ids', true);
-    $error = get_post_meta($post->ID, 'api_error', true);
-    ?>
+  $status = get_post_meta($post->ID, 'api_status', true);
+  $ids = get_post_meta($post->ID, 'api_ids', true);
+  $error = get_post_meta($post->ID, 'api_error', true);
+  ?>
   <p><?php _e('The current status of the SMS is:', 'gatewayapi'); ?></p>
   <p>
-      <?php
-      switch ($status) {
-          case 'about_to_send':
-              echo __('About to send', 'gatewayapi');
-              break;
-
-          case 'sending':
-              $is_sending = $post->batch_is_running;
-
-              echo '<strong style="color: blue" data-is-sending>' . __('Sending...', 'gatewayapi') . '</strong>';
-              break;
-
-          case 'bail':
-              echo '<span style="color: red"><strong>' . __('Failed before sending:', 'gatewayapi') . '</strong><br />' . $error . '</span>';
-              break;
-
-          case 'tech_error':
-              $error_json = json_decode(json_decode(substr($error, 1, -1)));
-              if ($error_json && isset($error_json->message)) {
-                  $error = $error_json->message;
-              }
-              echo '<span style="color: red"><strong>' . __('Technical error:', 'gatewayapi') . '</strong><br />' . $error . '</span>';
-              break;
-
-          case 'is_sent':
-              echo '<span style="color: green; font-weight: bold">' . __('SMS was successfully sent', 'gatewayapi') . '</span><br /><div class="text-ellipsis">ID: ' . implode(', ', $ids) . '</div>';
-              break;
-
-          default:
-              _e('Not sent yet', 'gatewayapi');
-              break;
-      }
-      ?>
-  </p>
     <?php
+    switch ($status) {
+      case 'about_to_send':
+        echo __('About to send', 'gatewayapi');
+        break;
 
-    if ($status == 'sending') _gwapi_get_sent_status_progress($post);
+      case 'sending':
+        $is_sending = $post->batch_is_running;
+
+        echo '<strong style="color: blue" data-is-sending>' . __('Sending...', 'gatewayapi') . '</strong>';
+        break;
+
+      case 'bail':
+        echo '<span style="color: red"><strong>' . __('Failed before sending:', 'gatewayapi') . '</strong><br />' . $error . '</span>';
+        break;
+
+      case 'tech_error':
+        $error_json = json_decode(json_decode(substr($error, 1, -1)));
+        if ($error_json && isset($error_json->message)) {
+          $error = $error_json->message;
+        }
+        echo '<span style="color: red"><strong>' . __('Technical error:', 'gatewayapi') . '</strong><br />' . $error . '</span>';
+        break;
+
+      case 'is_sent':
+        echo '<span style="color: green; font-weight: bold">' . __('SMS was successfully sent', 'gatewayapi') . '</span><br /><div class="text-ellipsis">ID: ' . implode(', ', $ids) . '</div>';
+        break;
+
+      default:
+        _e('Not sent yet', 'gatewayapi');
+        break;
+    }
+    ?>
+  </p>
+  <script>
+    const _gatewayapi_validate_recipient_nonce = <?php echo json_encode(wp_create_nonce('gatewayapi_validate_recipient')); ?>;
+  </script>
+  <?php
+
+  if ($status == 'sending') _gwapi_get_sent_status_progress($post);
 }
 
 function _gwapi_get_sent_status_progress(WP_Post $post)
 {
-    $recipients_total = (int)get_post_meta($post->ID, 'recipients_count', true);
-    $recipients_handled = (int)(get_post_meta($post->ID, 'recipients_handled', true) ?: 0);
-    ?>
+  $recipients_total = (int)get_post_meta($post->ID, 'recipients_count', true);
+  $recipients_handled = (int)(get_post_meta($post->ID, 'recipients_handled', true) ?: 0);
+  ?>
   <div class="progress">
     <div class="completed"
          style="width: <?= $recipients_handled / $recipients_total * 100; ?>%"></div>
   </div>
-    <?php
+  <?php
 }
 
 
@@ -361,17 +373,17 @@ function _gwapi_get_sent_status_progress(WP_Post $post)
  * Pre-flight an SMS-message.
  */
 add_action('wp_ajax_gatewayapi_validate_sms', function () {
-    header("Content-type: application/json");
+  header("Content-type: application/json");
 
-    $data = [];
-    parse_str($_POST['form_data'], $data);
-    $errors = _gwapi_validate_sms($data['gatewayapi']);
+  $data = [];
+  parse_str($_POST['form_data'], $data);
+  $errors = _gwapi_validate_sms($data['gatewayapi']);
 
-    if ($errors) {
-        die(json_encode(['success' => false, 'failed' => $errors]));
-    } else {
-        die(json_encode(['success' => true]));
-    }
+  if ($errors) {
+    die(json_encode(['success' => false, 'failed' => $errors]));
+  } else {
+    die(json_encode(['success' => true]));
+  }
 });
 
 /**
@@ -379,33 +391,33 @@ add_action('wp_ajax_gatewayapi_validate_sms', function () {
  */
 function _gwapi_sms_edit_save($ID)
 {
-    static $call_more_than_once;
-    if (isset($call_more_than_once) && $call_more_than_once) return;
-    $call_more_than_once = true;
+  static $call_more_than_once;
+  if (isset($call_more_than_once) && $call_more_than_once) return;
+  $call_more_than_once = true;
 
-    if (!isset($_POST['gatewayapi']) || !$_POST['gatewayapi']) return;
-    $data = $_POST['gatewayapi'];
+  $data = $_POST['gatewayapi'] ?? [];
+  if (!$data || !is_array($data)) return;
 
-    // sms meta data
-    if (isset($data['sender'])) update_post_meta($ID, 'sender', $data['sender']);
-    if (isset($data['message'])) update_post_meta($ID, 'message', $data['message']);
-    if (isset($data['destaddr'])) update_post_meta($ID, 'destaddr', $data['destaddr']);
-    if (isset($data['encoding'])) update_post_meta($ID, 'encoding', $data['encoding']);
+  // sms meta data
+  if (isset($data['sender'])) update_post_meta($ID, 'sender', sanitize_text_field($data['sender']));
+  if (isset($data['message'])) update_post_meta($ID, 'message', sanitize_textarea_field($data['message']));
+  if (isset($data['destaddr'])) update_post_meta($ID, 'destaddr', sanitize_text_field($data['destaddr']));
+  if (isset($data['encoding'])) update_post_meta($ID, 'encoding', sanitize_text_field($data['encoding']));
 
-    // sources for recipients
-    if (!isset($data['recipients'])) $data['recipients'] = [];
-    update_post_meta($ID, 'recipients', $data['recipients']);
+  // sources for recipients
+  if (!isset($data['recipients'])) $data['recipients'] = [];
+  update_post_meta($ID, 'recipients', $data['recipients']);
 
-    // recipient groups
-    if (in_array('groups', $data['recipients'])) {
-        if (!isset($data['recipient_groups'])) $data['recipient_groups'] = [];
-        foreach ($data['recipient_groups'] as &$id) {
-            $id = (int)$id;
-        }
-        update_post_meta($ID, 'recipient_groups', $data['recipient_groups']);
-    } else {
-        delete_post_meta($ID, 'recipient_groups');
+  // recipient groups
+  if (in_array('groups', $data['recipients'])) {
+    if (!isset($data['recipient_groups'])) $data['recipient_groups'] = [];
+    foreach ($data['recipient_groups'] as &$id) {
+      $id = (int)$id;
     }
+    update_post_meta($ID, 'recipient_groups', $data['recipient_groups']);
+  } else {
+    delete_post_meta($ID, 'recipient_groups');
+  }
 }
 
 add_action('save_post_gwapi-sms', '_gwapi_sms_edit_save');
@@ -416,79 +428,116 @@ add_action('publish_gwapi-sms', '_gwapi_sms_edit_save', 9);
  * I18N: Rename "publish" to "send".
  */
 add_action('current_screen', function ($current_screen) {
-    if ($current_screen->post_type === 'gwapi-sms') {
-        add_filter('gettext', function ($translated_text, $text, $domain) {
-            if ($domain != 'default') return $translated_text;
+  if ($current_screen->post_type === 'gwapi-sms') {
+    add_filter('gettext', function ($translated_text, $text, $domain) {
+      if ($domain != 'default') return $translated_text;
 
-            if ($text == 'Publish') return __('Send', 'gatewayapi');
-            if ($text == 'Published on: <b>%1$s</b>') return __('Sent on: <b>%1$s</b>', 'gatewayapi');
-            if ($text == 'Publish <b>immediately</b>') return __('Send <b>immediately</b>', 'gatewayapi');
-            if ($text == 'Udgiv: <b>%1$s</b>') return __('Send on<b>%1$s</b>', 'gatewayapi');
+      if ($text == 'Publish') return __('Send', 'gatewayapi');
+      if ($text == 'Published on: <b>%1$s</b>') return __('Sent on: <b>%1$s</b>', 'gatewayapi');
+      if ($text == 'Publish <b>immediately</b>') return __('Send <b>immediately</b>', 'gatewayapi');
+      if ($text == 'Udgiv: <b>%1$s</b>') return __('Send on<b>%1$s</b>', 'gatewayapi');
 
-            return $translated_text;
-        }, 20, 3);
-    }
+      return $translated_text;
+    }, 20, 3);
+  }
 });
 
 /**
  * AJAX: Add a single recipient to an SMS.
  */
 add_action('wp_ajax_gatewayapi_sms_manual_add_recipient', function () {
-    header("Content-type: application/json");
+  header("Content-type: application/json");
 
-    $post_ID = (int)$_POST['post_ID'];
-    $post = get_post($post_ID);
+  // verify nonce
+  if (!wp_verify_nonce(isset($_GET['nonce']) ? $_GET['nonce'] : '', 'gatewayapi_sms_manual_add_recipient')) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid nonce, please reload the page.']]));
 
-    if (get_post_type($post_ID) != 'gwapi-sms') wp_die("WRONG_TYPE", "Wrong post type.");
-    if (get_post_status($post_ID) == 'publish') die(json_encode(['success' => false, 'errors' => ['*' => 'This SMS has already been sent and thus it cannot be modified.']]));
+  // editor or above required
+  if (!current_user_can('edit_others_posts')) die(json_encode(['success' => false, 'errors' => ['*' => 'You do not have the privileges to use this method.']]));
 
-    $cc = $_POST['gatewayapi']['single_recipient']['cc'];
-    $number = $_POST['gatewayapi']['single_recipient']['number'];
-    $name = $_POST['gatewayapi']['single_recipient']['name'];
+  $post_ID = $_POST['post_ID'] ?? null;
+  if (!$post_ID || !ctype_digit($post_ID)) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid post ID.']]));
+  $post_ID = (int)$post_ID;
+  $post = get_post($post_ID);
 
-    $data = ['cc' => $cc, 'number' => $number];
+  if (get_post_type($post_ID) != 'gwapi-sms') wp_die("WRONG_TYPE", "Wrong post type.");
+  if (get_post_status($post_ID) == 'publish') die(json_encode(['success' => false, 'errors' => ['*' => 'This SMS has already been sent and thus it cannot be modified.']]));
 
-    $errors = [];
-    $errors = _gwapi_validate_recipient_basic($errors, $data, $post);
+  $data = $_POST['gatewayapi'] ?? [];
+  $recipient = $data['single_recipient'] ?? [];
+  $cc = $recipient['cc'] ?? null;
+  $number = $recipient['number'] ?? null;
+  $name = $recipient['name'] ?? '';
+  $name = sanitize_text_field($name);
 
-    if ($errors) {
-        die(json_encode(['success' => false, 'errors' => $errors]));
+  if (!ctype_digit($cc)) die(json_encode(['success' => false, 'errors' => ['*' => 'The country code must contain digits only']]));
+  if (!ctype_digit($number)) die(json_encode(['success' => false, 'errors' => ['*' => 'The phone number must contain digits only.']]));
+
+  $data = ['cc' => $cc, 'number' => $number];
+
+  $errors = [];
+  $errors = _gwapi_validate_recipient_basic($errors, $data, $post);
+
+  if ($errors) {
+    die(json_encode(['success' => false, 'errors' => $errors]));
+  }
+
+  // is this recipient already added to this sms?
+  foreach (get_post_meta($post_ID, 'single_recipient') as $sr) {
+    if ($sr['cc'] == $cc && $sr['number'] == $number) {
+      die(json_encode(['success' => false, 'errors' => ['*' => 'The same recipient (country code + phone number) has already been added to this SMS.']]));
     }
+  };
 
-    // is this recipient already added to this sms?
-    foreach (get_post_meta($post_ID, 'single_recipient') as $sr) {
-        if ($sr['cc'] == $cc && $sr['number'] == $number) {
-            die(json_encode(['success' => false, 'errors' => ['*' => 'The same recipient (country code + phone number) has already been added to this SMS.']]));
-        }
-    };
+  // save the recipient on the SMS
+  $metaID = add_post_meta($post_ID, 'single_recipient', ['cc' => $cc, 'number' => $number, 'name' => $name]);
 
-    // save the recipient on the SMS
-    $metaID = add_post_meta($post_ID, 'single_recipient', ['cc' => $cc, 'number' => $number, 'name' => $name]);
-
-    die(json_encode(['success' => true, 'ID' => $metaID]));
+  die(json_encode(['success' => true, 'ID' => $metaID]));
 });
 
 /**
  * AJAX: Remove single recipient from SMS.
  */
 add_action('wp_ajax_gatewayapi_sms_manual_delete_recipient', function () {
-    header("Content-type: application/json");
+  header("Content-type: application/json");
 
-    $post_ID = (int)$_POST['post_ID'];
-    $post = get_post($post_ID);
+  // verify nonce
+  if (!wp_verify_nonce($_GET['nonce'] ?? '', 'gatewayapi_sms_manual_delete_recipient')) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid nonce, please reload the page.']]));
 
-    if (get_post_type($post_ID) != 'gwapi-sms') die(json_encode(['success' => false, 'message' => "Wrong post type."]));
-    if (get_post_status($post_ID) == 'publish') die(json_encode(['success' => false, 'message' => 'This SMS has already been sent and thus it cannot be modified.']));
+  // editor or above required
+  if (!current_user_can('edit_others_posts')) die(json_encode(['success' => false, 'errors' => ['*' => 'You do not have the privileges to use this method.']]));
 
-    global $wpdb;
-    /** @var $wpdb wpdb */
-    $wpdb->query($q = $wpdb->prepare("DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_id = %d AND meta_key = 'single_recipient';", $post_ID, $_POST['meta_ID']));
+  $post_ID = $_POST['post_ID'] ?? null;
+  if (!ctype_digit($post_ID)) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid post ID.']]));
+  $post_ID = (int)$post_ID;
 
-    die(json_encode(['success' => true, $q]));
+  if (get_post_type($post_ID) != 'gwapi-sms') die(json_encode(['success' => false, 'message' => "Wrong post type."]));
+  if (get_post_status($post_ID) == 'publish') die(json_encode(['success' => false, 'message' => 'This SMS has already been sent and thus it cannot be modified.']));
+
+  global $wpdb;
+  /** @var $wpdb wpdb */
+  $meta_ID = $_POST['meta_ID'] ?? null;
+  if (!$meta_ID && !ctype_digit($meta_ID)) die(json_encode(['success' => false, 'message' => "Bad meta ID."]));
+  $meta_ID = (int)$meta_ID;
+
+  $wpdb->query($wpdb->prepare(
+    "DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_id = %d AND meta_key = 'single_recipient';", $post_ID, $meta_ID)
+  );
+
+  die(json_encode(['success' => true ]));
 });
 
 add_action('wp_ajax_gwapi_get_html_status', function () {
-    header("Content-type: text/html");
-    _gwapi_sms_status(get_post($_GET['ID']));
-    die();
+  header("Content-type: text/html");
+
+  // editor or above required
+  if (!current_user_can('edit_others_posts')) die();
+
+  $ID = $_GET['ID'] ?? null;
+  if (!ctype_digit($ID)) die('<strong style="color: red">SMS ID invalid.</strong>');
+
+  $post = get_post($ID);
+  if (!$post || $post->post_type !== 'gwapi-sms') die('<strong style="color: red">Trying to load status on an invalid SMS-post.</strong>');
+
+  _gwapi_sms_status($post);
+  die();
 });

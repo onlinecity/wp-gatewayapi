@@ -2,6 +2,8 @@
 
 use OnlineCity\GatewayAPI\Trigger;
 
+if (!defined('ABSPATH')) die('Cannot be accessed directly!');
+
 function _gwapi_get_triggers()
 {
 

@@ -1805,11 +1805,11 @@ msgstr "SMS-indbakke"
 #: tpl/settings_page.php:25
 msgid ""
 "Need help with the plugin? We highly recommend that you check out the <a "
-"href=\"https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide\" target="
+"href=\"https://github.com/onlinecity/gatewayapi/wiki/User-Guide\" target="
 "\"_blank\"><strong>User Guide</strong></a>."
 msgstr ""
 "Hjælp til pluginet? Tjek endelig vores <a href=\"https://github.com/"
-"onlinecity/wp-gatewayapi/wiki/User-Guide\" target=\"_blank\"><strong>Bruger-"
+"onlinecity/gatewayapi/wiki/User-Guide\" target=\"_blank\"><strong>Bruger-"
 "guide</strong></a> ud."
 
 #: tpl/settings_page.php:30

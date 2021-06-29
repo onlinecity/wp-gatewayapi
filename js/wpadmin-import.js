@@ -20,7 +20,8 @@ jQuery(function($) {
             'columns': import_columns,
             'gwapi-recipient-groups': gwapi_recipient_groups,
             'page': page-1,
-            'per_page': per_load
+            'per_page': per_load,
+            'nonce': _gwapi_import_nonce
         }).success(function(res) {
             updateStatus(res);
 

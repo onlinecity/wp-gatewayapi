@@ -3,58 +3,58 @@
 
 add_action('init', function () {
 
-    if (!get_option('gwapi_enable_ui')) return;
+  if (!get_option('gwapi_enable_ui')) return;
 
-    $args = array(
-        'labels' => array(
-            'name' => __('Inbox', 'gatewayapi'),
-            'singular_name' => __('Inbox', 'gatewayapi'),
-            'menu_name' => __('Inbox', 'gatewayapi'),
-            'edit' => __('Received SMS', 'gatewayapi'),
-            'edit_item' => __('Received SMS', 'gatewayapi'),
-            'search_items' => __('Search Inbox', 'gatewayapi'),
-            'not_found' => __('No SMS\'es found', 'gatewayapi'),
-            'not_found_in_trash' => __('No SMS\'es found in trash', 'gatewayapi'),
-        ),
-        'hierarchical' => false,
-        'supports' => false,
-        'public' => false,
-        'show_ui' => get_option('gwapi_enable_ui'),
-        'show_in_menu' => 'edit.php?post_type=gwapi-sms',
-        'menu_position' => 10,
-        'show_in_nav_menus' => true,
-        'publicly_queryable' => false,
-        'exclude_from_search' => true,
-        'has_archive' => false,
-        'query_var' => false,
-        'map_meta_cap' => true,
-        'delete_with_user' => false,
-        'capability_type' => 'post'
-    );
+  $args = array(
+    'labels' => array(
+      'name' => __('Inbox', 'gatewayapi'),
+      'singular_name' => __('Inbox', 'gatewayapi'),
+      'menu_name' => __('Inbox', 'gatewayapi'),
+      'edit' => __('Received SMS', 'gatewayapi'),
+      'edit_item' => __('Received SMS', 'gatewayapi'),
+      'search_items' => __('Search Inbox', 'gatewayapi'),
+      'not_found' => __('No SMS\'es found', 'gatewayapi'),
+      'not_found_in_trash' => __('No SMS\'es found in trash', 'gatewayapi'),
+    ),
+    'hierarchical' => false,
+    'supports' => false,
+    'public' => false,
+    'show_ui' => get_option('gwapi_enable_ui'),
+    'show_in_menu' => 'edit.php?post_type=gwapi-sms',
+    'menu_position' => 10,
+    'show_in_nav_menus' => true,
+    'publicly_queryable' => false,
+    'exclude_from_search' => true,
+    'has_archive' => false,
+    'query_var' => false,
+    'map_meta_cap' => true,
+    'delete_with_user' => false,
+    'capability_type' => 'post'
+  );
 
-    register_post_type('gwapi-receive-sms', $args);
+  register_post_type('gwapi-receive-sms', $args);
 
-    add_action('current_screen', function ($current_screen) {
-        if ($current_screen->post_type === 'gwapi-receive-sms') {
+  add_action('current_screen', function ($current_screen) {
+    if ($current_screen->post_type === 'gwapi-receive-sms') {
 
-            // add support for searching meta data
-            bit_admin_add_search_column('gwapi-receive-sms', 'id');
-            bit_admin_add_search_column('gwapi-receive-sms', 'msisdn');
-            bit_admin_add_search_column('gwapi-receive-sms', 'receiver');
-            bit_admin_add_search_column('gwapi-receive-sms', 'sender');
-            bit_admin_add_search_column('gwapi-receive-sms', 'message');
+      // add support for searching meta data
+      bit_admin_add_search_column('gwapi-receive-sms', 'id');
+      bit_admin_add_search_column('gwapi-receive-sms', 'msisdn');
+      bit_admin_add_search_column('gwapi-receive-sms', 'receiver');
+      bit_admin_add_search_column('gwapi-receive-sms', 'sender');
+      bit_admin_add_search_column('gwapi-receive-sms', 'message');
 
-            // I18N: Rename texts
-            add_filter('gettext', function ($translated_text, $text, $domain) {
-                if ($domain != 'default') return $translated_text;
-                if ($text === 'Edit') return __('View');
-                if ($text == 'Publish') return __('Received', 'gatewayapi');
-                if ($text == 'Published') return __('Received', 'gatewayapi');
-                if ($text == 'Published on: <b>%1$s</b>') return __('Received on: <b>%1$s</b>', 'gatewayapi');
-                return $translated_text;
-            }, 20, 3);
-        }
-    });
+      // I18N: Rename texts
+      add_filter('gettext', function ($translated_text, $text, $domain) {
+        if ($domain != 'default') return $translated_text;
+        if ($text === 'Edit') return __('View');
+        if ($text == 'Publish') return __('Received', 'gatewayapi');
+        if ($text == 'Published') return __('Received', 'gatewayapi');
+        if ($text == 'Published on: <b>%1$s</b>') return __('Received on: <b>%1$s</b>', 'gatewayapi');
+        return $translated_text;
+      }, 20, 3);
+    }
+  });
 
 });
 
@@ -63,11 +63,11 @@ add_action('init', function () {
  * Remove QuickEdit from the post rows
  */
 add_filter('post_row_actions', function ($actions, $post) {
-    global $current_screen;
-    if ($current_screen->post_type != 'gwapi-receive-sms') return $actions;
-    unset($actions['inline']);
-    unset($actions['inline hide-if-no-js']);
-    return $actions;
+  global $current_screen;
+  if ($current_screen->post_type != 'gwapi-receive-sms') return $actions;
+  unset($actions['inline']);
+  unset($actions['inline hide-if-no-js']);
+  return $actions;
 }, 10, 2);
 
 
@@ -75,34 +75,34 @@ add_filter('post_row_actions', function ($actions, $post) {
  * Define which columns we'll need.
  */
 add_filter('manage_gwapi-receive-sms_posts_columns', function ($columns) {
-    unset($columns['title']);
-    $date_text = $columns['date'];
-    unset($columns['date']);
-    return array_merge($columns, [
-        'msisdn' => __('Mobile number', 'gatewayapi'),
-        'receiver' => __('Receiver', 'gatewayapi'),
-        'message' => __('Message', 'gatewayapi'),
-        'date' => $date_text
-    ]);
+  unset($columns['title']);
+  $date_text = $columns['date'];
+  unset($columns['date']);
+  return array_merge($columns, [
+    'msisdn' => __('Mobile number', 'gatewayapi'),
+    'receiver' => __('Receiver', 'gatewayapi'),
+    'message' => __('Message', 'gatewayapi'),
+    'date' => $date_text
+  ]);
 });
 
 /**
  * Print the content for our custom columns.
  */
 add_action('manage_posts_custom_column', function ($column, $id) {
-    if (get_post_type($id) != 'gwapi-receive-sms') return;
-    switch ($column) {
-        case 'msisdn':
-            echo esc_html(get_post_meta($id, 'msisdn', true));
-            break;
-        case 'receiver':
-            echo esc_html(get_post_meta($id, 'receiver', true));
-            break;
-        case 'message':
-            $msg = get_post_meta($id, 'message', true) ?: '-';
-            echo esc_html(mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50) . '...' : $msg);
-            break;
-    }
+  if (get_post_type($id) != 'gwapi-receive-sms') return;
+  switch ($column) {
+    case 'msisdn':
+      echo esc_html(get_post_meta($id, 'msisdn', true));
+      break;
+    case 'receiver':
+      echo esc_html(get_post_meta($id, 'receiver', true));
+      break;
+    case 'message':
+      $msg = get_post_meta($id, 'message', true) ?: '-';
+      echo esc_html(mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50) . '...' : $msg);
+      break;
+  }
 }, 10, 2);
 
 /**
@@ -128,129 +128,139 @@ add_action('manage_posts_custom_column', function ($column, $id) {
  */
 function _gwapi_receive_sms_json_handler()
 {
-    if (!(isset($_GET['token']) && $_GET['token'] === _gwapi_receive_sms_token())) {
-        header('Content-type: application/json', true, 400);
-        die(json_encode(['success' => false, 'error' => 'Invalid token']));
-    }
-    $sms = json_decode(file_get_contents('php://input'), true);
-    $ID = wp_insert_post(array(
-        'post_name' => $sms['id'],
-        'post_status' => 'publish',
-        'post_type' => 'gwapi-receive-sms',
-        'post_category' => 'gatewayapi',
-        'meta_input' => $sms
-    ));
+  if (!(isset($_GET['token']) && $_GET['token'] === _gwapi_receive_sms_token())) {
+    header('Content-type: application/json', true, 400);
+    die(json_encode(['success' => false, 'error' => 'Invalid token']));
+  }
+  $sms = json_decode(file_get_contents('php://input'), true);
+  $ID = wp_insert_post(array(
+    'post_name' => $sms['id'],
+    'post_status' => 'publish',
+    'post_type' => 'gwapi-receive-sms',
+    'post_category' => 'gatewayapi',
+    'meta_input' => $sms
+  ));
 
-    header('Content-type: application/json');
-    echo json_encode(['success' => true]);
+  header('Content-type: application/json');
+  echo json_encode(['success' => true]);
 
-    // try to get data pushed to gatewayapi now, in case handling of incoming SMS somehow fails
-    if (function_exists('fastcgi_finish_request')) @fastcgi_finish_request();
-    @ob_flush();
-    @flush();
+  // try to get data pushed to gatewayapi now, in case handling of incoming SMS somehow fails
+  if (function_exists('fastcgi_finish_request')) @fastcgi_finish_request();
+  @ob_flush();
+  @flush();
 
-    // handle incoming SMS
-    do_action('gwapi_sms_received', $ID);
+  // handle incoming SMS
+  do_action('gwapi_sms_received', $ID);
 }
 
 add_action('wp_ajax_priv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
 add_action('wp_ajax_nopriv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
 
 add_action('parse_request', function ($wp) {
-    global $current_screen;
-    if (!is_object($current_screen)) return;
-    if ($current_screen->post_type != 'gwapi-receive-sms') return;
-    if (!isset($_POST['gwapi_receive_sms_export_format'])) return;
-    switch ($_POST['gwapi_receive_sms_export_format']) {
-        case 'xlsx':
-            $format = 'xlsx';
-            $filename = 'inbox.xlsx';
-            break;
-        default:
-            $format = 'csv';
-            $filename = 'inbox.csv';
-            break;
-    }
-    $metas = [
-        'id',
-        'msisdn',
-        'receiver',
-        'message',
-        'senttime',
-        'webhook_label',
-        'sender',
-        'mcc',
-        'mnc',
-        'validity_period',
-        'encoding',
-        'udh',
-        'payload'
-    ];
-    $args = $wp->query_vars;
-    $args['posts_per_page'] = -1;
-    $args['fields'] = 'ids';
-    unset($args['paged']);
+  global $current_screen;
 
-    header('Pragma: public');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-    header('Cache-Control: private', false);
-    header('Content-Type: application/octet-stream');
-    header('Content-Description: File Transfer');
-    header('Content-Disposition: attachment; filename="' . $filename . '";');
-    header('Content-Transfer-Encoding: binary');
+  // admin: editor required
+  if (!current_user_can('edit_others_posts')) return;
+
+  // nonce
+  if (!wp_verify_nonce($_POST['gwapi_receive_sms_export_nonce'], 'gwapi_receive_sms_export')) return;
+
+  if (!is_object($current_screen)) return;
+  if ($current_screen->post_type != 'gwapi-receive-sms') return;
+  $export_format = $_POST['gwapi_receive_sms_export_format'] ?? null;
+  if (!$export_format) return;
+
+  switch ($export_format) {
+    case 'xlsx':
+      $format = 'xlsx';
+      $filename = 'inbox.xlsx';
+      break;
+    default:
+      $format = 'csv';
+      $filename = 'inbox.csv';
+      break;
+  }
+  $metas = [
+    'id',
+    'msisdn',
+    'receiver',
+    'message',
+    'senttime',
+    'webhook_label',
+    'sender',
+    'mcc',
+    'mnc',
+    'validity_period',
+    'encoding',
+    'udh',
+    'payload'
+  ];
+  $args = $wp->query_vars;
+  $args['posts_per_page'] = -1;
+  $args['fields'] = 'ids';
+  unset($args['paged']);
+
+  header('Pragma: public');
+  header('Expires: 0');
+  header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+  header('Cache-Control: private', false);
+  header('Content-Type: application/octet-stream');
+  header('Content-Description: File Transfer');
+  header('Content-Disposition: attachment; filename="' . $filename . '";');
+  header('Content-Transfer-Encoding: binary');
 
 
-    $q = new WP_Query($args);
-    switch ($format) {
-        case 'xlsx':
-            include_once __DIR__."/../lib/xlsxwriter.class.php";
-            $writer = new \XLSXWriter();
-            $headers = [];
-            foreach ($metas as $meta) {
-                $headers[$meta] = 'string';
-            }
-            $writer->writeSheetHeader('Sheet1', $headers);
-            foreach($q->posts as $ID) {
-                $metadata = get_post_meta($ID);
-                $columns = [];
-                foreach ($metas as $meta) {
-                    $columns[] = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
-                }
-                @$writer->writeSheetRow('Sheet1', $columns);
-            }
-            echo $writer->writeToString();
-            break;
-        default:
-            $out = fopen('php://output', 'w');
-            fputcsv($out, $metas);
+  $q = new WP_Query($args);
+  switch ($format) {
+    case 'xlsx':
+      include_once __DIR__ . "/../lib/xlsxwriter.class.php";
+      $writer = new \XLSXWriter();
+      $headers = [];
+      foreach ($metas as $meta) {
+        $headers[$meta] = 'string';
+      }
+      $writer->writeSheetHeader('Sheet1', $headers);
+      foreach ($q->posts as $ID) {
+        $metadata = get_post_meta($ID);
+        $columns = [];
+        foreach ($metas as $meta) {
+          $columns[] = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
+        }
+        @$writer->writeSheetRow('Sheet1', $columns);
+      }
+      echo $writer->writeToString();
+      break;
+    default:
+      $out = fopen('php://output', 'w');
+      fputcsv($out, $metas);
 
-            foreach($q->posts as $ID) {
-                $metadata = get_post_meta($ID);
-                $row = [];
-                foreach ($metas as $meta) {
-                    $value = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
-                    $row[] = $value;
-                }
-                fputcsv($out, $row);
-            }
+      foreach ($q->posts as $ID) {
+        $metadata = get_post_meta($ID);
+        $row = [];
+        foreach ($metas as $meta) {
+          $value = isset($metadata[$meta]) ? $metadata[$meta][0] : '';
+          $row[] = $value;
+        }
+        fputcsv($out, $row);
+      }
 
-            fclose($out);
-            break;
-    }
-    wp_reset_query();
-    die();
+      fclose($out);
+      break;
+  }
+  wp_reset_query();
+  die();
 });
 
 add_action('admin_footer', function () {
-    global $query_string;
-    global $current_screen;
-    if ($current_screen->post_type != 'gwapi-receive-sms') return;
-    ?>
-    <form id="gwapiReceiveSmsExportForm" method="post" action="edit.php?<?php echo $query_string; ?>">
-        <input type="hidden" name="gwapi_receive_sms_export_format" value="">
-    </form>
-    <?php
+  global $query_string;
+  global $current_screen;
+  if ($current_screen->post_type != 'gwapi-receive-sms') return;
+  ?>
+  <form id="gwapiReceiveSmsExportForm" method="post" action="edit.php?<?php echo $query_string; ?>">
+    <input type="hidden" name="gwapi_receive_sms_export_format" value="">
+    <input type="hidden" name="gwapi_receive_sms_export_nonce" value="<?php echo esc_attr(wp_create_nonce('gwapi_receive_sms_export')); ?>">
+  </form>
+  <?php
 });
 
 
@@ -259,28 +269,28 @@ add_action('admin_footer', function () {
  */
 add_action('gwapi_sms_received', function ($post_ID) {
 
-    list($keyword) = explode(' ', trim(get_post_meta($post_ID, 'message', true)), 2);
+  list($keyword) = explode(' ', trim(get_post_meta($post_ID, 'message', true)), 2);
 
-    $actions = new WP_Query([
-        "post_type" => "gwapi-receive-action",
-        "posts_per_page" => -1,
-        "orderby" => "menu_order",
-        "order" => "ASC",
-        "meta_query" => [
-            [
-                'key' => 'receiver',
-                'value' => get_post_meta($post_ID, 'receiver', true)
-            ],
-            [
-                'key' => 'keyword',
-                'value' => $keyword
-            ]
-        ]
-    ]);
+  $actions = new WP_Query([
+    "post_type" => "gwapi-receive-action",
+    "posts_per_page" => -1,
+    "orderby" => "menu_order",
+    "order" => "ASC",
+    "meta_query" => [
+      [
+        'key' => 'receiver',
+        'value' => get_post_meta($post_ID, 'receiver', true)
+      ],
+      [
+        'key' => 'keyword',
+        'value' => $keyword
+      ]
+    ]
+  ]);
 
-    while ($actions->have_posts()) {
-        $actions->the_post();
-        do_action('gwapi_received_action_' . get_post_meta(get_the_ID(), 'action', true), [$post_ID, get_the_ID()]);
-    }
+  while ($actions->have_posts()) {
+    $actions->the_post();
+    do_action('gwapi_received_action_' . get_post_meta(get_the_ID(), 'action', true), [$post_ID, get_the_ID()]);
+  }
 
 }, 5);

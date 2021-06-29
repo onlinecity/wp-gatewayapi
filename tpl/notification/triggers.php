@@ -1,4 +1,4 @@
-<?php
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
 /** @var \WP_Post $post */
 $id = $post->ID;

@@ -126,7 +126,7 @@ function gwapi_send_sms($message, $recipients, $sender='', $destaddr='MOBILE', $
             'headers' => [
                 'Authorization' => $auth,
                 'Content-Type' => 'application/json',
-                'user-agent' => 'wp-gatewayapi'],
+                'user-agent' => 'gatewayapi'],
             'body' => json_encode($req)
         ]);
 

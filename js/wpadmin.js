@@ -114,14 +114,13 @@ jQuery(function ($) {
   /**
    * If user clicks the "show invalid characters" link, show an alert with the invalid characters in it.
    */
-  function handleShowInvalidCharsPopup()
-  {
+  function handleShowInvalidCharsPopup() {
     var textarea = $('textarea[name="gatewayapi[message]"]');
 
-    $('a[href="#gwapi-show-invalid-chars"]').click(function(ev) {
+    $('a[href="#gwapi-show-invalid-chars"]').click(function (ev) {
       ev.preventDefault();
-      console.log(failedGSM0338Chars( textarea.val() ));
-      window.alert($(this).data('pretext')+'\n\n'+failedGSM0338Chars( textarea.val() ).join(' '));
+      console.log(failedGSM0338Chars(textarea.val()));
+      window.alert($(this).data('pretext') + '\n\n' + failedGSM0338Chars(textarea.val()).join(' '));
     });
   }
 
@@ -134,7 +133,7 @@ jQuery(function ($) {
     var chars = punycode.ucs2.decode(message);
 
     var failed_chars = [];
-    _.each(chars, function(char_hex) {
+    _.each(chars, function (char_hex) {
       var char = punycode.ucs2.encode([char_hex]);
       if (!_.contains(lookup, char)) failed_chars.push(char);
     });
@@ -147,18 +146,17 @@ jQuery(function ($) {
    *
    * @param message
    */
-  function messageCountGsm0338(message)
-  {
+  function messageCountGsm0338(message) {
     var chars = punycode.ucs2.decode(message);
     var lookup2 = GSM_CHARS_TWO.split('');
 
     var chars_count = 0;
 
-    _.each(chars, function(char_hex) {
+    _.each(chars, function (char_hex) {
       var char = punycode.ucs2.encode([char_hex]);
 
       chars_count++;
-      if (_.contains(lookup2, char)) chars_count ++;
+      if (_.contains(lookup2, char)) chars_count++;
     });
 
     return {
@@ -172,8 +170,7 @@ jQuery(function ($) {
    *
    * @param message
    */
-  function messageCountUcs2(message)
-  {
+  function messageCountUcs2(message) {
     var chars = punycode.ucs2.decode(message);
     console.log(chars);
 
@@ -243,7 +240,8 @@ jQuery(function ($) {
       var form_data = $('#post').serialize();
       var data = {
         action: 'gatewayapi_validate_recipient',
-        form_data: form_data
+        form_data: form_data,
+        nonce: _gatewayapi_validate_recipient_nonce
       };
       $.post(ajaxurl, data, function (response) {
         jQuery('#ajax-loading').hide();
@@ -385,7 +383,7 @@ jQuery(function ($) {
       var data = $('#sms-recipient-manual input, #sms-recipient-manual select, #post_ID').serialize();
 
       // send via ajax
-      $.post(ajaxurl + '?action=gatewayapi_sms_manual_add_recipient', data, function (res) {
+      $.post(ajaxurl + '?action=gatewayapi_sms_manual_add_recipient&nonce=' + $(this).data('nonce'), data, function (res) {
 
         if (res.success) {
           return doAddTheSingleRecipient(res.ID);
@@ -418,7 +416,7 @@ jQuery(function ($) {
       var tr = $(this).parents('tr');
       var metaID = tr.data('meta_id');
       tr.addClass('deleting');
-      $.post(ajaxurl + '?action=gatewayapi_sms_manual_delete_recipient', {
+      $.post(ajaxurl + '?action=gatewayapi_sms_manual_delete_recipient&nonce='+$(this).closest('[data-delete-nonce]').data('delete-nonce'), {
         post_ID: $('#post_ID').val(),
         'meta_ID': metaID
       }, function (res) {
@@ -446,9 +444,9 @@ jQuery(function ($) {
   function addFormFieldTooltips() {
     $('#custom_fields').find('.info.hidden').each(function () {
       if (!$.trim($(this).text())) return;
-      var i = $('<i class="info has-tooltip">').attr({ 'title': $(this).text() });
+      var i = $('<i class="info has-tooltip">').attr({'title': $(this).text()});
       i.insertAfter($(this));
-      i.tooltip({ show: false, hide: false });
+      i.tooltip({show: false, hide: false});
     });
   }
 

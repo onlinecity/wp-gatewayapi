@@ -2,6 +2,8 @@
 
 namespace OnlineCity\GatewayAPI;
 
+if (!defined('ABSPATH')) die('Cannot be accessed directly!');
+
 class Trigger {
 
     /**

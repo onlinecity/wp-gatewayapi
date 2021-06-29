@@ -78,14 +78,21 @@ function _gwapi_shortcode_render_submit($action_text)
  */
 function _gwapi_shortcode_verify_captcha()
 {
+  $cc = ctype_digit($_POST['gatewayapi']['cc']) ? $_POST['gatewayapi']['cc'] : null;
+
+  $captcha_res = $_POST['g-recaptcha-response'];
+  $captcha_res_valid = preg_match('/^[a-zA-Z0-9\-_]+$/', $_POST['g-recaptcha-response']);
+  if (!$captcha_res_valid) return new WP_Error('recaptcha_wrong', 'Unfortunately the reCAPTCHA failed. Please try again. X '.print_r($captcha_res, true));
+
   $res = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
     'body' => [
       'secret' => get_option('gwapi_recaptcha_secret_key'),
-      'response' => $_POST['g-recaptcha-response'],
+      'response' => $captcha_res,
       'remoteip' => $_SERVER['REMOTE_ADDR']
     ]
   ]);
-  if (is_wp_error($res)) return new WP_Error('recaptcha_communication_error', 'Error while communicating with reCAPTCHA.' . $res->get_error_message());
+  if (is_wp_error($res)) return new WP_Error('recaptcha_communication_error', 'Error while communicating with reCAPTCHA.' .
+    esc_html($res->get_error_message()));
 
   $res = json_decode($res['body']);
   if (!$res->success) return new WP_Error('recaptcha_wrong', 'Unfortunately the reCAPTCHA failed. Please try again.');
@@ -106,7 +113,9 @@ function _gwapi_shortcode_handle_signup($atts)
   $action_text = "";
   $action_note = "";
 
-  $action = isset($_POST['gwapi_action']) ? $_POST['gwapi_action'] : 'signup';
+  $action = $_POST['gwapi_action'] ?? 'signup';
+  if (!in_array($action, ['signup', 'signup_confirm_sms', 'signup_confirm_save'])) wp_die('Invalid gwapi_action');
+
   switch ($action) {
     // STEP 1: ENTER MOBILE
     case 'signup':
@@ -470,20 +479,21 @@ function _gwapi_shortcode_handle_send_sms($atts)
 }
 
 $shortcode_fn = function ($atts) {
+  ob_start();
 
   // validate: action
   $valid_actions = ['signup', 'update', 'unsubscribe', 'send_sms'];
   $action = isset($atts['action']) && $atts['action'] ? $atts['action'] : null;
   if (!in_array($action, $valid_actions)) {
     echo '<div class="alert alert-warning">' . strtr(__('Invalid action specified for GatewayAPI shortcode. Must be one of: %actions%.', 'gatewayapi'), ['%actions%' => implode(", ", $valid_actions)]) . '</div>';
-    return;
+    return ob_get_clean();
   }
 
   // validate: recaptcha
   if (isset($atts['recaptcha']) && $atts['recaptcha']) {
     if (!get_option('gwapi_recaptcha_site_key') || !get_option('gwapi_recaptcha_secret_key')) {
       echo '<div class="alert alert-warning">' . __('You must enter Site key and Secret key from Google reCAPTCHA on the GatewayAPI Settings-page, or disable CAPTCHA on your GatewayAPI Form shortcode.', 'gatewayapi') . '</div>';
-      return;
+      return ob_get_clean();
     }
   }
 
@@ -494,8 +504,8 @@ $shortcode_fn = function ($atts) {
   if (isset($_POST['g-recaptcha-response'])) {
     $verify = _gwapi_shortcode_verify_captcha();
     if (is_wp_error($verify)) {
-      echo '<div class="alert alert-warning">' . $verify->get_error_message() . '</div>';
-      return;
+      echo '<div class="alert alert-warning">' . esc_html($verify->get_error_message()) . '</div>';
+      return ob_get_clean();
     }
   }
 
@@ -532,8 +542,8 @@ $shortcode_fn = function ($atts) {
 
   if (!is_wp_error($action_res)) list($action_text, $action_note) = $action_res;
   else {
-    echo '<div class="alert alert-warning">' . $action_res->get_error_message() . '</div>';
-    return;
+    echo '<div class="alert alert-warning">' . esc_html($action_res->get_error_message()) . '</div>';
+    return ob_get_clean();
   }
 
   // render the recaptcha and submit button
@@ -544,12 +554,15 @@ $shortcode_fn = function ($atts) {
 
     _gwapi_shortcode_render_submit($action_text);
     if ($action_note) {
-      echo '<div class="help-block description">' . $action_note . '</div>';
+      echo '<div class="help-block description">' . esc_html($action_note) . '</div>';
     }
   }
 
   // end form
   echo '</form>';
+
+  return ob_get_clean();
 };
+
 add_shortcode('gatewayapi', $shortcode_fn);
 add_shortcode('gwapi', $shortcode_fn);

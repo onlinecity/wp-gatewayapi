@@ -22,7 +22,7 @@
       <!-- BASE SETTINGS -->
       <div data-tab="base" class="tab hidden" id="baseTab">
         <p class="gwapi-about-help">
-          <?php _e('Need help with the plugin? We highly recommend that you check out the <a href="https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide" target="_blank"><strong>User Guide</strong></a>.', 'gatewayapi'); ?>
+          <?php _e('Need help with the plugin? We highly recommend that you check out the <a href="https://github.com/onlinecity/gatewayapi/wiki/User-Guide" target="_blank"><strong>User Guide</strong></a>.', 'gatewayapi'); ?>
         </p>
 
         <p>

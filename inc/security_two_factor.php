@@ -123,7 +123,7 @@ class GwapiSecurityTwoFactor
 
     wp_clear_auth_cookie();
 
-    $temp_token = $user->ID . '_' . wp_generate_password(12, false, false);
+    $temp_token = sanitize_key($user->ID . '_' . wp_generate_password(12, false, false));
     set_transient('gwapi_2f_' . $temp_token, ['user' => $user->ID, 'remember' => $remember, 'redirect_to' => $redir, 'code' => $code], 60 * 30);
     self::$TMP_TOKEN = $temp_token;
 
@@ -175,7 +175,7 @@ class GwapiSecurityTwoFactor
    */
   public static function getLoginDataByTempToken($temp_token)
   {
-    $parts = explode('-', $temp_token, 2);;
+    $parts = explode('-', $temp_token, 2);
     if (!count($parts) == 2) return new WP_Error('INVALID_TOKEN', __('Error: The format of the temporary token is invalid.', 'gatewayapi'));
 
     $token_data = get_transient('gwapi_2f_' . $temp_token);
@@ -291,7 +291,7 @@ class GwapiSecurityTwoFactor
   public static function enableBypassMode()
   {
     $bypass_code = self::getBypassCode();
-    if (!isset($_GET['c']) || $_GET['c'] != $bypass_code) {
+    if (!isset($_GET['c']) || $_GET['c'] !== $bypass_code) {
       wp_die('<h1>' . __('Bypass code is invalid!', 'gatewayapi') . '</h1><p>' . __('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gatewayapi') . '</p>');
     }
 
@@ -350,7 +350,7 @@ class GwapiSecurityTwoFactorAddMobile
     header("Content-type: application/json");
 
     // token
-    $tmp_token = trim($_POST['gwapi_2f_tmp']);
+    $tmp_token = sanitize_key(trim($_POST['gwapi_2f_tmp']));
 
     // phone number
     $mcc = preg_replace('/[^0-9]+/', '', $_POST['mcc']);
@@ -380,7 +380,7 @@ class GwapiSecurityTwoFactorAddMobile
       if ($status->get_error_code() == 'GWAPI_FAIL') {
         $reason = $status->get_error_message();
         list ($human, $tech) = explode("\n", $reason, 2);
-        $reason = $human . "<br /><br /><small>" . nl2br($tech) . "</small>";
+        $reason = esc_html($human) . "<br /><br /><small>" . nl2br(esc_html($tech)) . "</small>";
 
         GwapiSecurityTwoFactor::jsonFail(new WP_Error('gatewayapi', strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gatewayapi'), [':reason' => $reason])));
       } else {
@@ -409,7 +409,7 @@ class GwapiSecurityTwoFactorAddMobile
     header("Content-type: application/json");
 
     // token
-    $tmp_token = trim($_POST['gwapi_2f_tmp']);
+    $tmp_token = sanitize_key(trim($_POST['gwapi_2f_tmp']));
 
     // validate the token
     $login_info = GwapiSecurityTwoFactor::getLoginDataByTempToken($tmp_token);
@@ -426,7 +426,7 @@ class GwapiSecurityTwoFactorAddMobile
     }
 
     // is the code correct?
-    $user_code = preg_replace('/[^0-9]+/', '', $_POST['code']);
+    $user_code = preg_replace('/[^0-9]+/', '', $_POST['code'] ?? '');
     $correct_code = $login_info['code'];
     if ($user_code != $correct_code) {
       GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gatewayapi')));
@@ -494,7 +494,7 @@ class GwapiSecurityTwoFactorHasMobile
       if ($status->get_error_code() == 'GWAPI_FAIL') {
         $reason = $status->get_error_message();
         list ($human, $tech) = explode("\n", $reason, 2);
-        $reason = $human . "<br /><br /><small>" . nl2br($tech) . "</small>";
+        $reason = esc_html($human) . "<br /><br /><small>" . nl2br(esc_html($tech)) . "</small>";
 
 
         wp_die(new WP_Error('gatewayapi', $main_reason . '<p>' . strtr(__('The SMS could not be sent, due to the SMS-service rejecting to send the message.<br><br>Technical reason:<br />- :reason', 'gatewayapi'), [':reason' => $reason]) . '</p>'));
@@ -537,7 +537,7 @@ class GwapiSecurityTwoFactorHasMobile
     header("Content-type: application/json");
 
     // token
-    $tmp_token = trim($_POST['gwapi_2f_tmp']);
+    $tmp_token = sanitize_key(trim($_POST['gwapi_2f_tmp']));
 
     // validate the token
     $login_info = GwapiSecurityTwoFactor::getLoginDataByTempToken($tmp_token);
@@ -648,7 +648,7 @@ class GwapiSecurityTwoFactorUserProfile
   public static function loginAddNewMobile()
   {
     // validate the reset token
-    $token = $_GET['gwapi_reset_token'];
+    $token = $_GET['gwapi_reset_token'] ?? '';
     $login_info = GwapiSecurityTwoFactor::getLoginDataByTempToken($token);
     if (is_wp_error($login_info)) wp_die($login_info);
 

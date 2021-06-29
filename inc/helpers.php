@@ -240,7 +240,7 @@ if (!function_exists('bit_add_taxonomy_filter_to_cpt')) {
         add_action('restrict_manage_posts', function () use ($cpt, $taxonomy) {
             global $typenow;
             if ($typenow == $cpt) {
-                $selected = isset($_GET[$taxonomy]) ? $_GET[$taxonomy] : '';
+                $selected = $_GET[$taxonomy] ?? '';
                 $info_taxonomy = get_taxonomy($taxonomy);
                 wp_dropdown_categories(array(
                     'show_option_all' => __("Show All {$info_taxonomy->label}", 'gatewayapi'),
