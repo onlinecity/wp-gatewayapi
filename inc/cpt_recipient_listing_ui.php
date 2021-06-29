@@ -68,16 +68,16 @@ add_action('admin_footer', function () {
 add_action('parse_request', function ($wp) {
   global $current_screen;
 
+  if (!is_object($current_screen)) return;
+  if ($current_screen->post_type != 'gwapi-recipient') return;
+  $export_format = $_POST['gwapi_recipient_export_format'] ?? null;
+  if (!$export_format) return;
+
   // admin: editor required
   if (!current_user_can('edit_others_posts')) return;
 
   // nonce
   if (!wp_verify_nonce($_POST['gwapi_recipient_export_nonce'], 'gwapi_recipient_export')) return;
-
-  if (!is_object($current_screen)) return;
-  if ($current_screen->post_type != 'gwapi-recipient') return;
-  $export_format = $_POST['gwapi_recipient_export_format'] ?? null;
-  if (!$export_format) return;
 
   switch ($export_format) {
     case 'xlsx':
