@@ -5,13 +5,13 @@ add_action('admin_menu', function () {
   // editor or above required
   if (!current_user_can('edit_others_posts')) die(json_encode(['success' => false, 'errors' => ['*' => 'You do not have the privileges to use this method.']]));
 
-  add_action('current_screen', '_gwapi_import_table_sync');
+  add_action('current_screen', 'gatewayapi__import_table_sync');
   add_submenu_page('edit.php?post_type=gwapi-sms', __('Import recipients from spreadsheet', 'gatewayapi'), __('Import recipients', 'gatewayapi'), 'edit_posts', 'gwapi_import', function () {
     require_once(__DIR__ . "/../tpl/import.php");
   });
 }, 20);
 
-function _gwapi_import_table_sync($current_screen)
+function gatewayapi__import_table_sync($current_screen)
 {
   global $wpdb;
   $is_subpage = isset($_POST['step']);
@@ -26,20 +26,20 @@ function _gwapi_import_table_sync($current_screen)
 
   // On the first page of import recipients - make sure we have no imported recipients
   // in the custom table that does not have corresponding post
-  if (!$is_subpage && $current_screen->id === 'gwapi-sms_page_gwapi_import') {
+  if (!$is_subpage && $current_screen->id === 'gwapi-sms_page_gatewayapi_import') {
     // Remove all imported recipients if the posts was deleted and the matching row in the import table was not.
     $result = $wpdb->query('DELETE from ' . $recipients_import_table . ' WHERE post_id NOT IN (SELECT p.ID from ' . $post_table . ' p)');
   }
 }
 
-add_action('wp_ajax_gwapi_import', function () {
+add_action('wp_ajax_gatewayapi_import', function () {
   global $wpdb;
 
   // editor required
   if (!current_user_can('edit_others_posts')) return;
 
   // nonce validate
-  if (!wp_verify_nonce($_POST['nonce'], 'gwapi_import')) {
+  if (!wp_verify_nonce(sanitize_key($_POST['nonce']), 'gwapi_import')) {
     http_response_code(400);
     die('Bad nonce');
   }
@@ -49,8 +49,11 @@ add_action('wp_ajax_gwapi_import', function () {
   $post_table = $wpdb->prefix . 'posts';
   $recipients_import_table = $wpdb->prefix . 'oc_recipients_import';
   $data = get_transient('gwapi_import_' . get_current_user_id());
-  $page = (int)$_POST['page'];
-  $per_page = (int)$_POST['per_page'];
+  $page = (int)sanitize_key($_POST['page']);
+  $per_page = (int)sanitize_key($_POST['per_page']);
+  $ccCol = sanitize_key($_POST['columns']['cc']);
+  $noCol = sanitize_key($_POST['columns']['number']);
+  $nameCol = sanitize_key($_POST['columns']['name']);
 
   $rows = array_slice(explode("\n", $data), $page * $per_page + 1, $per_page);
 
@@ -63,8 +66,8 @@ add_action('wp_ajax_gwapi_import', function () {
     $ID = null;
     $cols = explode("\t", $row);
 
-    $cc = trim(preg_replace('/\D+/', '', $cols[$_POST['columns']['cc']]));
-    $number = trim(preg_replace('/\D+/', '', $cols[$_POST['columns']['number']]));
+    $cc = trim(preg_replace('/\D+/', '', $cols[$ccCol]));
+    $number = trim(preg_replace('/\D+/', '', $cols[$noCol]));
     if (!$cc || !$number) {
       $failed++;
       continue;
@@ -80,7 +83,7 @@ add_action('wp_ajax_gwapi_import', function () {
       $new++;
       $newID = wp_insert_post([
         "ID" => $ID,
-        "post_title" => isset($cols[$_POST['columns']['name']]) ? $cols[$_POST['columns']['name']] : null,
+        "post_title" => sanitize_text_field($cols[$nameCol] ?? null),
         "post_name" => $number,
         "post_type" => "gwapi-recipient",
         "post_status" => $ID ? get_post_status($ID) : "publish",

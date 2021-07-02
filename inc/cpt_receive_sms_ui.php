@@ -5,13 +5,13 @@
  * Receive SMS UI
  */
 add_action('admin_init', function () {
-    add_meta_box('receive-sms-meta', __('Received SMS', 'gatewayapi'), '_gwapi_receive_sms_box', 'gwapi-receive-sms', 'normal', 'default');
+    add_meta_box('receive-sms-meta', __('Received SMS', 'gatewayapi'), 'gatewayapi__receive_sms_box', 'gwapi-receive-sms', 'normal', 'default');
 });
 
 /**
  * Receive SMS UI Block: Show meta information for the received sms
  */
-function _gwapi_receive_sms_box(WP_Post $post)
+function gatewayapi__receive_sms_box(\WP_Post $post)
 {
     $metas = [
         'id' => 'The ID of the MO SMS',
@@ -34,7 +34,7 @@ function _gwapi_receive_sms_box(WP_Post $post)
         <?php foreach ($metas as $key => $description): ?>
             <tr>
                 <th width="25%">
-                    <abbr title="<?php echo esc_attr(__($description, 'gatewayapi')); ?>"><?php echo $key; ?></abbr>
+                    <abbr title="<?php esc_attr_e($description, 'gatewayapi'); ?>"><?php echo esc_html($key); ?></abbr>
                 </th>
                 <td>
                     <?php

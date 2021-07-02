@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <?php
 
-const _GWAPIUI_MAX_RECIPIENTS_PER_BATCH = 500;
+const GATEWAYAPI__UI_MAX_RECIPIENTS_PER_BATCH = 500;
 
 // post type SMS'es
 add_action('init', function () {
@@ -59,7 +59,7 @@ add_action('publish_gwapi-sms', function ($ID) {
 
   // send the SMS now
   update_post_meta($ID, 'api_status', 'about_to_send');
-  _gwapi_prepare_sms($ID);
+  gatewayapi__prepare_sms($ID);
 });
 
 /**
@@ -68,7 +68,7 @@ add_action('publish_gwapi-sms', function ($ID) {
  *
  * @internal
  */
-function _gwapi_create_recipients_for_sms($ID, $tags)
+function gatewayapi__create_recipients_for_sms($ID, $tags)
 {
   $sources = get_post_meta($ID, 'recipients', true);
 
@@ -107,7 +107,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
     };
     foreach ($tmp as $recID => $row) {
       if (!$row['cc'] || !$row['number']) continue;
-      $msisdn = gwapi_get_msisdn($row['cc'], $row['number']);
+      $msisdn = gatewayapi__get_msisdn($row['cc'], $row['number']);
       $recipientsByNumber[$msisdn] = [];
       $recipientsByID[$recID] = $msisdn;
     }
@@ -136,7 +136,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
       foreach ($wpdb->get_results($q = "SELECT post_ID, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_ID IN ($recipientIDs) AND meta_key IN ('" . implode("','", $meta_keys_safe) . "')") as $row) {
         $msisdn = $recipientsByID[$row->post_ID];
         $tag = '%' . strtoupper($row->meta_key) . '%';
-        $tag_def = gwapi_get_tag_specification($tag);
+        $tag_def = gatewayapi__get_tag_specification($tag);
         $recipientsByNumber[$msisdn][$tag] = apply_filters('gwapi_format_tag_' . $tag_def['type'], $row->meta_value, $tag_def);
       }
     }
@@ -144,7 +144,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
 
   // manually added
   foreach (get_post_meta($ID, 'single_recipient') as $sr) {
-    $msisdn = gwapi_get_msisdn($sr['cc'], $sr['number']);
+    $msisdn = gatewayapi__get_msisdn($sr['cc'], $sr['number']);
     if (isset($recipientsByNumber[$msisdn])) continue;
 
     $recipientsByNumber[$msisdn] = [];
@@ -172,7 +172,7 @@ function _gwapi_create_recipients_for_sms($ID, $tags)
 /**
  * Prepare the SMS to be sent and start sending.
  */
-function _gwapi_prepare_sms($ID)
+function gatewayapi__prepare_sms($ID)
 {
   if (wp_is_post_revision($ID)) return; // no reason to spend any more time on a revision
   if (get_post_meta($ID, 'api_status', true) != 'about_to_send') return; // got here some wrong way
@@ -184,7 +184,7 @@ function _gwapi_prepare_sms($ID)
 
 
   // don't send invalid sms
-  if ($errors = _gwapi_validate_sms([
+  if ($errors = gatewayapi__validate_sms([
     'sender' => $sender,
     'message' => $message,
     'destaddr' => $destaddr
@@ -203,10 +203,10 @@ function _gwapi_prepare_sms($ID)
   }
 
   // Extract all tags
-  $allTags = _gwapi_extract_tags_from_message($message);
+  $allTags = gatewayapi__extract_tags_from_message($message);
 
   // Prepare the recipients
-  $recipients = _gwapi_create_recipients_for_sms($ID, $allTags);
+  $recipients = gatewayapi__create_recipients_for_sms($ID, $allTags);
 
   if (!$recipients) {
     update_post_meta($ID, 'api_status', 'bail');
@@ -234,7 +234,7 @@ function _gwapi_prepare_sms($ID)
     ]);
   } else { // we can't background it, so just do in same thread
     set_time_limit(-1);
-    do_action('wp_ajax_nopriv_gwapi_send_next_batch', false);
+    do_action('wp_ajax_nopriv_gatewayapi_send_next_batch', false, $ID);
   }
 }
 
@@ -243,7 +243,7 @@ function _gwapi_prepare_sms($ID)
 /**
  * Batch-sending PREFLIGHT
  */
-add_action('wp_ajax_nopriv_gwapi_send_next_batch_preflight', function () {
+add_action('wp_ajax_nopriv_gatewayapi_send_next_batch_preflight', function () {
   die('success');
 });
 
@@ -251,12 +251,16 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch_preflight', function () {
 /**
  * AJAX: Send next batch of SMS.
  */
-add_action('wp_ajax_nopriv_gwapi_send_next_batch', function ($can_use_remote = true) {
-  $post_ID = $_POST['post_ID'] ?? null;
-  if (!ctype_digit($post_ID)) throw new \InvalidArgumentException('Invalid post ID.');
+add_action('wp_ajax_nopriv_gatewayapi_send_next_batch', function ($can_use_remote = true, $post_ID = false) {
+  if ($post_ID === false) {
+    $post_ID = (int)preg_replace('/\D+/', '', sanitize_key($_POST['post_ID'] ?? 0));
+  }
+  if (!$post_ID) throw new \InvalidArgumentException('Invalid post ID.');
 
   $post = get_post($post_ID);
-  if (!$post) throw new \InvalidArgumentException('Invalid post ID.');
+  if (!$post) {
+    throw new \InvalidArgumentException('Invalid post ID.');
+  }
 
   $ID = $post->ID;
 
@@ -272,7 +276,7 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch', function ($can_use_remote = t
     $handled_count = (int)$post->recipients_handled ?: 0;
 
     // ensure we don't try to send the same batch multiple times
-    update_post_meta($ID, 'recipients_handled', $handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH);
+    update_post_meta($ID, 'recipients_handled', $handled_count + GATEWAYAPI__UI_MAX_RECIPIENTS_PER_BATCH);
 
     // base information for SMS
     $sender = $post->sender;
@@ -281,14 +285,14 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch', function ($can_use_remote = t
     $encoding = $post->encoding === 'UCS2' ? 'UCS2' : 'UTF8';
 
     // get all recipients
-    $allTags = _gwapi_extract_tags_from_message($message);
-    $allRecipients = _gwapi_create_recipients_for_sms($ID, $allTags);
-    $recipients = array_slice($allRecipients, $handled_count, _GWAPIUI_MAX_RECIPIENTS_PER_BATCH, true);
+    $allTags = gatewayapi__extract_tags_from_message($message);
+    $allRecipients = gatewayapi__create_recipients_for_sms($ID, $allTags);
+    $recipients = array_slice($allRecipients, $handled_count, GATEWAYAPI__UI_MAX_RECIPIENTS_PER_BATCH, true);
 
-    $send_req = gwapi_send_sms($message, $recipients, $sender, $destaddr, $encoding);
+    $send_req = gatewayapi_send_sms($message, $recipients, $sender, $destaddr, $encoding);
 
     if (!is_wp_error($send_req)) {
-      if ($handled_count + _GWAPIUI_MAX_RECIPIENTS_PER_BATCH >= count($allRecipients)) {
+      if ($handled_count + GATEWAYAPI__UI_MAX_RECIPIENTS_PER_BATCH >= count($allRecipients)) {
         update_post_meta($ID, 'api_status', 'is_sent');
       }
 
@@ -321,10 +325,10 @@ add_action('wp_ajax_nopriv_gwapi_send_next_batch', function ($can_use_remote = t
       'blocking' => false
     ]);
   } else {
-    do_action('wp_ajax_nopriv_gwapi_send_next_batch', false);
+    do_action('wp_ajax_nopriv_gatewayapi_send_next_batch', false, $ID);
   }
 
-});
+}, 10, 2);
 
 /**
  * Checkbox-tag: Unserialize the raw database value and comma-separate the list.

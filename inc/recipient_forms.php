@@ -1,7 +1,7 @@
 <?php if (!defined('ABSPATH')) die('Cannot be accessed directly!'); ?>
 <?php
 
-function _gwapi_all_recipient_fields () {
+function gatewayapi__all_recipient_fields () {
     $default_fields = [
         [
             'is_builtin' => true,
@@ -47,7 +47,7 @@ function _gwapi_all_recipient_fields () {
 }
 
 
-function _gwapi_all_recipient_field_types($grouped = false)
+function gatewayapi__all_recipient_field_types($grouped = false)
 {
     $types = [
         __('Text', 'gatewayapi') => [
@@ -85,7 +85,7 @@ function _gwapi_all_recipient_field_types($grouped = false)
 /**
  * Prepare the data for serialization, if necessary.
  */
-add_filter('pre_update_option_gwapi_recipient_fields', function($new_value) {
+add_filter('pre_update_option_gatewayapi_recipient_fields', function($new_value) {
     // do we need to do anything about it?
     if (!isset($new_value['name'])) return $new_value;
 
@@ -99,7 +99,7 @@ add_filter('pre_update_option_gwapi_recipient_fields', function($new_value) {
     return $serialized;
 });
 
-function gwapi_render_recipient_field($row, WP_Post $recipient)
+function gatewayapi__render_recipient_field($row, WP_Post $recipient)
 {
     $render_hidden = apply_filters('gwapi_recipient_render_hidden', is_admin());
     $style = apply_filters('gwapi_recipient_field_style', is_admin() ? 'table' : 'div');
@@ -347,7 +347,7 @@ add_filter('gwapi_recipient_value', function($value, $recipient, $field) {
     return $value;
 }, 10, 3);
 
-function gwapi_render_recipient_editable_groups($atts, WP_Post $post = null) {
+function gatewayapi__render_recipient_editable_groups($atts, WP_Post $post = null) {
 
     $limit_groups = isset($atts['groups']) ? explode(",", $atts['groups']) : [];
     $groups_deselected = isset($atts["groups-deselected"]);
@@ -382,12 +382,12 @@ function gwapi_render_recipient_editable_groups($atts, WP_Post $post = null) {
         $choices_keys[] = $group->term_id;
     }
 
-    gwapi_render_recipient_field([
+    gatewayapi__render_recipient_field([
         'type' => 'checkbox',
         'name' => __('Groups', 'gatewayapi'),
         'description' => $atts['action'] == 'send_sms' ? __('Select the groups you would like to send to. If none is selected, the SMS will be sent to everyone.', 'gatewayapi') : __('Select the groups with has the content that you would like to receive.', 'gatewayapi'),
         'choices' => implode("\n", $choices),
         'choices_keys' => $choices_keys,
-        'field_id' => '_gwapi_recipient_groups'
+        'field_id' => '_gatewayapi_recipient_groups'
     ], $post?:new WP_Post(new stdClass()));
 }

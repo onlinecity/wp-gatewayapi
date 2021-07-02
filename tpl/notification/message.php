@@ -16,7 +16,7 @@ $published = $post->post_status == 'publish';
       <input type="text"
              name="gatewayapi[sender]"
              size="15"
-             value="<?= esc_attr(get_post_meta($ID, 'sender', true)); ?>">
+             value="<?php echo esc_attr(get_post_meta($ID, 'sender', true)); ?>">
       <p
         class="description"><?php _e('The sender can be either 11 characters or 15 digits in total.', 'gatewayapi'); ?></p>
     </td>
@@ -31,17 +31,17 @@ $published = $post->post_status == 'publish';
       <label>
         <input type="radio"
                name="gatewayapi[destaddr]"
-               value="MOBILE" <?= ($destaddr == 'MOBILE' || !$destaddr) ? 'checked' : ''; ?>>
+               value="MOBILE" <?php echo ($destaddr == 'MOBILE' || !$destaddr) ? 'checked' : ''; ?>>
           <?php _e('Regular SMS', 'gatewayapi'); ?>
       </label>
       <br/>
       <label>
         <input type="radio"
                name="gatewayapi[destaddr]"
-               value="DISPLAY"<?= $destaddr == 'DISPLAY' ? 'checked' : ''; ?>>
+               value="DISPLAY"<?php echo $destaddr == 'DISPLAY' ? 'checked' : ''; ?>>
         <abbr
-          title="<?php esc_attr_e('Message is displayed immediately and usually not saved in the normal message inbox. Also knows as a Flash SMS.', 'gatewayapi'); ?>"><?php _e('Display SMS',
-              'gatewayapi'); ?></abbr>
+          title="<?php esc_attr_e('Message is displayed immediately and usually not saved in the normal message inbox. Also knows as a Flash SMS.', 'gatewayapi'); ?>">
+          <?php _e('Display SMS', 'gatewayapi'); ?></abbr>
       </label>
     </td>
   </tr>
@@ -49,7 +49,7 @@ $published = $post->post_status == 'publish';
     <th width="25%"
         class="vtop-5">
         <?php _e('Encoding', 'gatewayapi'); ?><br/>
-      <a href="https://gatewayapi.com/docs/appendix.html#term-mcc"><small><?= _e('More information', 'gatewayapi'); ?></small></a>
+      <a href="https://gatewayapi.com/docs/appendix.html#term-mcc"><small><?php _e('More information', 'gatewayapi'); ?></small></a>
     </th>
     <td>
         <?php $destaddr = get_post_meta($ID, 'encoding', true); ?>
@@ -63,7 +63,7 @@ $published = $post->post_status == 'publish';
             <label>
               <input type="radio"
                      name="gatewayapi[encoding]"
-                     value="GSM0338" <?= ($destaddr === 'GSM0338' || !$destaddr) ? 'checked' : ''; ?>>
+                     value="GSM0338" <?php echo ($destaddr === 'GSM0338' || !$destaddr) ? 'checked' : ''; ?>>
               <abbr title="<?php esc_attr_e('160 characters for 1-page SMS. 153 characters for multi-page SMS. Limited special characters, no emoji-support.', 'gatewayapi'); ?>"><?php _e('Default',
                     'gatewayapi'); ?></abbr>
             </label>
@@ -78,7 +78,7 @@ $published = $post->post_status == 'publish';
           <td>
             <a class="UCS2-recommended hidden"
                href="#gwapi-show-invalid-chars"
-               data-pretext="<?= esc_attr_e('The following characters are not valid GSM 03.38 characters:', 'gatewayapi'); ?>"><?php _e('Show invalid characters', 'gatewayapi'); ?></a>
+               data-pretext="<?php esc_attr_e('The following characters are not valid GSM 03.38 characters:', 'gatewayapi'); ?>"><?php _e('Show invalid characters', 'gatewayapi'); ?></a>
           </td>
         </tr>
         <tr data-encoding="UCS2">
@@ -86,7 +86,7 @@ $published = $post->post_status == 'publish';
             <label>
               <input type="radio"
                      name="gatewayapi[encoding]"
-                     value="UCS2" <?= ($destaddr === 'UCS2') ? 'checked' : ''; ?>>
+                     value="UCS2" <?php echo ($destaddr === 'UCS2') ? 'checked' : ''; ?>>
               <abbr title="<?php esc_attr_e('70 characters for 1-page SMS. 67 characters for multi-page SMS. Supports most special characters and emojis.',
                 'gatewayapi'); ?>"><?php _e('Special characters', 'gatewayapi'); ?></abbr>
             </label>
@@ -119,15 +119,16 @@ $published = $post->post_status == 'publish';
       <textarea name="gatewayapi[message]"
                 rows="10"
                 style="width: 100%"
-                placeholder="<?= esc_attr(__('Enter your SMS message here.', 'gatewayapi')); ?>"
-                data-counter-i18n="<?= esc_attr(json_encode($counterI18N)); ?>"><?= esc_attr(get_post_meta($ID, 'message', true)); ?></textarea>
+                placeholder="<?php esc_attr_e(__('Enter your SMS message here.', 'gatewayapi')); ?>"
+                data-counter-i18n="<?php echo esc_attr(json_encode($counterI18N)); ?>"><?php echo esc_attr(get_post_meta($ID, 'message', true));
+                ?></textarea>
       <br>
       <div>
         <p><?php _e('Writing one of the following tags (including both &percnt;-signs) will result in each recipient receiving a personalized text:', 'gatewayapi'); ?></p>
         <ul>
-            <?php foreach (gwapi_all_tags() as $tag => $description): ?>
+            <?php foreach (gatewayapi__all_tags() as $tag => $description): ?>
               <li>
-                <strong><?= esc_html($tag); ?></strong> - <?= esc_html($description); ?>
+                <strong><?php echo esc_html($tag); ?></strong> - <?php echo esc_html($description); ?>
               </li>
             <?php endforeach; ?>
         </ul>

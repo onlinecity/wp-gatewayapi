@@ -76,7 +76,7 @@ jQuery(function($) {
             var submit_btn = $(this).find('input[type=submit]');
             submit_btn.btnloading(true);
 
-            $.post(GWAPI_ADMINURL+'admin-ajax.php?action=gwapi_security_add_phone', $(this).serialize(), function(res) {
+            $.post(GATEWAYAPI_ADMINURL+'admin-ajax.php?action=gatewayapi_security_add_phone', $(this).serialize(), function(res) {
                 if (!res.success) return handleAjaxFailure(res.code && res.message ? res : null);
 
                 $('.step.current').html(res.html);
@@ -94,7 +94,7 @@ jQuery(function($) {
             var submit_btn = $(this).find('input[type=submit]');
             submit_btn.btnloading(true);
 
-            $.post(GWAPI_ADMINURL+'admin-ajax.php?action=gwapi_security_confirm_phone', $(this).serialize(), function(res) {
+            $.post(GATEWAYAPI_ADMINURL+'admin-ajax.php?action=gatewayapi_security_confirm_phone', $(this).serialize(), function(res) {
                 $('.step.current').html(res.html);
             }).fail(handleAjaxFailure);
         });
@@ -110,7 +110,7 @@ jQuery(function($) {
             var submit_btn = $(this).find('input[type=submit]');
             submit_btn.btnloading(true);
 
-            $.post(GWAPI_ADMINURL+'admin-ajax.php?action=gwapi_security_confirm_login', $(this).serialize(), function(res) {
+            $.post(GATEWAYAPI_ADMINURL+'admin-ajax.php?action=gatewayapi_security_confirm_login', $(this).serialize(), function(res) {
                 window.location = res.redirect_to;
             }).fail(handleAjaxFailure);
         });

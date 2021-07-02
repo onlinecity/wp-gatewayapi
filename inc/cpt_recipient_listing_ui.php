@@ -29,14 +29,14 @@ add_action('manage_posts_custom_column', function ($column, $ID) {
       break;
 
     case 'mobile':
-      echo wp_trim_words(esc_html(get_post_meta($ID, 'number', true) ?: '-'), 8);
+      echo esc_html(wp_trim_words(get_post_meta($ID, 'number', true), 8) ? : '-');
       break;
 
     case 'groups':
       $groups = wp_get_object_terms($ID, 'gwapi-recipient-groups');
       $list = [];
       foreach ($groups as $g) {
-        $list[] = $g->name;
+        $list[] = esc_html($g->name);
       }
       echo implode(', ', $list);
       if (!$list) echo '<em>' . __('None', 'gatewayapi') . '</em>';
@@ -54,7 +54,7 @@ add_action('admin_footer', function () {
   global $current_screen;
   if ($current_screen->post_type != 'gwapi-recipient') return;
   ?>
-  <form id="gwapiRecipientExportForm" method="post" action="edit.php?<?php echo $query_string; ?>">
+  <form id="gwapiRecipientExportForm" method="post" action="edit.php?<?php echo esc_attr($query_string); ?>">
     <input type="hidden" name="gwapi_recipient_export_format" value="">
     <input type="hidden" name="gwapi_recipient_export_nonce" value="<?php echo esc_attr(wp_create_nonce('gwapi_recipient_export')); ?>">
   </form>
@@ -70,14 +70,14 @@ add_action('parse_request', function ($wp) {
 
   if (!is_object($current_screen)) return;
   if ($current_screen->post_type != 'gwapi-recipient') return;
-  $export_format = $_POST['gwapi_recipient_export_format'] ?? null;
+  $export_format = sanitize_key($_POST['gwapi_recipient_export_format'] ?? null);
   if (!$export_format) return;
 
   // admin: editor required
   if (!current_user_can('edit_others_posts')) return;
 
   // nonce
-  if (!wp_verify_nonce($_POST['gwapi_recipient_export_nonce'], 'gwapi_recipient_export')) return;
+  if (!wp_verify_nonce(sanitize_key($_POST['gwapi_recipient_export_nonce']), 'gwapi_recipient_export')) return;
 
   switch ($export_format) {
     case 'xlsx':

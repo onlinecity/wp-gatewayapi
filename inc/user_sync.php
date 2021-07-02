@@ -88,7 +88,7 @@ class GWAPI_User_Sync
       $user = get_user_by('id', $userID);
 
       // does the user have a recipient?
-      $recipient_ID = get_user_meta($userID, '_gwapi_recipient_id', true);
+      $recipient_ID = get_user_meta($userID, '_gatewayapi_recipient_id', true);
       $recipientPost = get_post($recipient_ID);
       if (!$recipientPost) {
         $recipient_ID = null;
@@ -162,7 +162,7 @@ class GWAPI_User_Sync
 
       // save the recipient ID on the user
       if ($recipient_ID !== $new_recipient_ID) {
-        update_user_meta($userID, '_gwapi_recipient_id', $new_recipient_ID);
+        update_user_meta($userID, '_gatewayapi_recipient_id', $new_recipient_ID);
       }
     }
   }
@@ -239,12 +239,12 @@ add_action('update_user_meta', function ($meta_ID, $user_ID, $key, $value) {
  * On delete user, also delete the associated recipient.
  */
 add_action('delete_user', function ($user_ID) {
-  if ($recID = get_user_meta($user_ID, '_gwapi_recipient_id', true)) {
+  if ($recID = get_user_meta($user_ID, '_gatewayapi_recipient_id', true)) {
     wp_delete_post($recID);
   }
 });
 
-add_action('wp_ajax_gwapi_user_sync', function () {
+add_action('wp_ajax_gatewayapi_user_sync', function () {
   // editor required
   if (!current_user_can('edit_others_posts')) return;
 

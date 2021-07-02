@@ -126,9 +126,9 @@ add_action('manage_posts_custom_column', function ($column, $id) {
  * 'udh', // (string) – User data header of the received SMS. Optional.
  * 'payload', // (string) – Binary payload of the received SMS. Optional.
  */
-function _gwapi_receive_sms_json_handler()
+function gatewayapi__receive_sms_json_handler()
 {
-  if (!(isset($_GET['token']) && $_GET['token'] === _gwapi_receive_sms_token())) {
+  if (!(isset($_GET['token']) && $_GET['token'] === gatewayapi__receive_sms_token())) {
     header('Content-type: application/json', true, 400);
     die(json_encode(['success' => false, 'error' => 'Invalid token']));
   }
@@ -153,22 +153,22 @@ function _gwapi_receive_sms_json_handler()
   do_action('gwapi_sms_received', $ID);
 }
 
-add_action('wp_ajax_priv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
-add_action('wp_ajax_nopriv_gwapi_receive_sms', '_gwapi_receive_sms_json_handler');
+add_action('wp_ajax_nopriv_gatewayapi_receive_sms', 'gatewayapi__receive_sms_json_handler');
+add_action('wp_ajax_nopriv_gwapi_receive_sms', 'gatewayapi__receive_sms_json_handler'); // @deprecated!
 
 add_action('parse_request', function ($wp) {
   global $current_screen;
   if (!is_object($current_screen)) return;
   if ($current_screen->post_type != 'gwapi-receive-sms') return;
 
-  $export_format = $_POST['gwapi_receive_sms_export_format'] ?? null;
+  $export_format = sanitize_key($_POST['gwapi_receive_sms_export_format'] ?? '');
   if (!$export_format) return;
 
   // admin: editor required
   if (!current_user_can('edit_others_posts')) return;
 
   // nonce
-  if (!wp_verify_nonce($_POST['gwapi_receive_sms_export_nonce'], 'gwapi_receive_sms_export')) return;
+  if (!wp_verify_nonce(sanitize_key($_POST['gwapi_receive_sms_export_nonce']??''), 'gwapi_receive_sms_export')) return;
 
   switch ($export_format) {
     case 'xlsx':
@@ -256,7 +256,7 @@ add_action('admin_footer', function () {
   global $current_screen;
   if ($current_screen->post_type != 'gwapi-receive-sms') return;
   ?>
-  <form id="gwapiReceiveSmsExportForm" method="post" action="edit.php?<?php echo $query_string; ?>">
+  <form id="gwapiReceiveSmsExportForm" method="post" action="edit.php?<?php echo esc_attr($query_string); ?>">
     <input type="hidden" name="gwapi_receive_sms_export_format" value="">
     <input type="hidden" name="gwapi_receive_sms_export_nonce" value="<?php echo esc_attr(wp_create_nonce('gwapi_receive_sms_export')); ?>">
   </form>

@@ -270,7 +270,7 @@ jQuery(function ($) {
    */
   function handleValidationError(response) {
     $('#poststuff').prepend(
-      $('<div class="gwapi-notice error"><p>' + GWAPI_I18N_DEFAULT_ERROR + '</p></div>')
+      $('<div class="gwapi-notice error"><p>' + GATEWAYAPI_I18N_DEFAULT_ERROR + '</p></div>')
     );
 
     _.each(response.failed, function (msg, field) {
@@ -501,7 +501,7 @@ jQuery(function ($) {
     if (!$('#sms-status [data-is-sending]').length) return;
 
     setTimeout(function () {
-      $.get(ajaxurl + '?action=gwapi_get_html_status&ID=' + $('#post_ID').val(), function (ret) {
+      $.get(ajaxurl + '?action=gatewayapi_get_html_status&ID=' + $('#post_ID').val(), function (ret) {
         $('#sms-status .inside').html(ret);
         handleSending();
       })

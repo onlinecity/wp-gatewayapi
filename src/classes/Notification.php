@@ -158,7 +158,7 @@ class Notification
   public function getTrigger()
   {
     $trigger_id = current($this->triggers);
-    return _gwapi_get_trigger_by_id($trigger_id);
+    return gatewayapi__get_trigger_by_id($trigger_id);
   }
 
   public function notifyPostStatusChange($new_status, $old_status, $post_id)
@@ -271,7 +271,7 @@ class Notification
 
 
     // don't send invalid sms
-    if ($errors = _gwapi_validate_sms([
+    if ($errors = gatewayapi__validate_sms([
       'sender' => $sender,
       'message' => $message,
       'destaddr' => $destaddr,
@@ -282,12 +282,12 @@ class Notification
     if (!get_option('gwapi_key') || !get_option('gwapi_secret')) { return; }
 
     // Extract all tags
-    $allTags = _gwapi_extract_tags_from_message($message);
+    $allTags = gatewayapi__extract_tags_from_message($message);
 
     // Prepare the recipients
     $recipients = $this->recipients();
 
-    gwapi_send_sms($message, $recipients);
+    gatewayapi_send_sms($message, $recipients);
   }
 
   /**
@@ -304,7 +304,7 @@ class Notification
 
     if ($recipient_type === 'recipient') {
       $recipient_id = get_post_meta($this->post->ID, 'recipient_id', true);
-      return gwapi_notification_get_recipients_by_id($recipient_id);
+      return gatewayapi__notification_get_recipients_by_id($recipient_id);
     }
 
     if ($recipient_type === 'recipientGroup') {
@@ -325,7 +325,7 @@ class Notification
       ];
 
       $ids = (new \WP_Query($recipientsQ))->posts;
-      return gwapi_notification_get_recipients_by_id($ids);
+      return gatewayapi__notification_get_recipients_by_id($ids);
 
     }
     if ($recipient_type === 'role') {
@@ -337,7 +337,7 @@ class Notification
         'order' => 'ASC'
       );
       $users = get_users($args);
-      return gwapi_notification_get_recipients_by_id($users);
+      return gatewayapi__notification_get_recipients_by_id($users);
     }
 
     return [];

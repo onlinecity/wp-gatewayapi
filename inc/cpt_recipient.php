@@ -79,10 +79,10 @@ add_action('init', function () {
         }
     });
 
-    add_action( 'delete_post', '_gwapi_recipient_sync_delete', 10 );
+    add_action( 'delete_post', 'gatewayapi__recipient_sync_delete', 10 );
 });
 
-function _gwapi_recipient_sync_delete($post_id) {
+function gatewayapi__recipient_sync_delete($post_id) {
     global $wpdb;
     $result = $wpdb->delete($wpdb->prefix . 'oc_recipients_import', array( 'post_id' => $post_id ));
 

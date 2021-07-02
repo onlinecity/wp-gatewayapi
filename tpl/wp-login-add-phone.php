@@ -10,7 +10,7 @@
 
         <form method="post" id="gwapi_add_phone_form">
 
-            <input type="hidden" name="gwapi_2f_tmp" value="<?= esc_attr(GwapiSecurityTwoFactor::$TMP_TOKEN); ?>">
+            <input type="hidden" name="gwapi_2f_tmp" value="<?php echo esc_attr(GwapiSecurityTwoFactor::$TMP_TOKEN); ?>">
 
             <p>
                 <label for="mcc"><?php _e('Mobile country code', 'gatewayapi'); ?></label><br>
@@ -26,7 +26,7 @@
 
             <p class="submit">
                 <input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large"
-                       value="<?php esc_attr_e('Verify phone', 'gatewayapi'); ?>" data-loading="<?= esc_attr_e('Sending SMS...', 'gatewayapi'); ?>">
+                       value="<?php esc_attr_e('Verify phone', 'gatewayapi'); ?>" data-loading="<?php esc_attr_e('Sending SMS...', 'gatewayapi'); ?>">
             </p>
         </form>
     </div>

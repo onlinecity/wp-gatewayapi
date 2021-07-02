@@ -316,13 +316,13 @@ jQuery(function ($) {
 
       $('<div class="notice notice-info"><p id="isSyncingStatus"></p></div>').insertBefore($('#userSyncEnabled'));
 
-      $.post(ajaxurl + '?action=gwapi_user_sync', function (res) {
+      $.post(ajaxurl + '?action=gatewayapi_user_sync', function (res) {
         $('#isSyncingStatus').prepend(res.html);
         if (res.finished) return finishUserSync();
 
         var offset = 1;
         var updateFn = function () {
-          $.post(ajaxurl + '?action=gwapi_user_sync&page=' + (offset++), function (res) {
+          $.post(ajaxurl + '?action=gatewayapi_user_sync&page=' + (offset++), function (res) {
             $('#isSyncingStatus').html(res.html);
             if (!res.finished) updateFn();
             else finishUserSync();

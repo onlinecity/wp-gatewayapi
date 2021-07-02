@@ -4,18 +4,18 @@ use OnlineCity\GatewayAPI\TriggerStore;
 
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
-define('PLUGIN_DIRECTORY', _gwapi_dir());
+$plugin_dir = gatewayapi__dir();
 
-require_once PLUGIN_DIRECTORY . "/src/classes/Notification.php";
-require_once PLUGIN_DIRECTORY . "/src/classes/Trigger.php";
-require_once PLUGIN_DIRECTORY . "/src/classes/TriggerStore.php";
+require_once "$plugin_dir/src/classes/Notification.php";
+require_once "$plugin_dir/src/classes/Trigger.php";
+require_once "$plugin_dir/src/classes/TriggerStore.php";
 
 // Hooking up our function to theme setup
 /*
 * Creating a function to create our CPT
 */
 
-function gwapi_cpt_notification()
+function gatewayapi__cpt_notification()
 {
 
 //    gwapi_callback_autocomplete_recipient();
@@ -87,20 +87,20 @@ add_action('manage_posts_custom_column', function ($column, $id) {
   switch ($column) {
     case 'trigger':
       $triggers = get_post_meta($id, 'triggers', true);
-      $trigger = _gwapi_get_trigger_by_id($triggers);
-      echo $trigger ? esc_html($trigger->getName()) : '-';
+      $trigger = gatewayapi__get_trigger_by_id($triggers);
+      echo esc_html($trigger ? $trigger->getName() : '-');
       break;
     case 'recipients':
       $recipient_type = get_post_meta($id, 'recipient_type', true);
       switch ($recipient_type) {
         case 'recipient':
-          echo esc_html('Single recipient', 'gatewayapi');
+          esc_html_e('Single recipient', 'gatewayapi');
           break;
         case 'recipientGroup':
-          echo esc_html('Recipient Group', 'gatewayapi');
+          esc_html_e('Recipient Group', 'gatewayapi');
           break;
         case 'role':
-          echo esc_html('Role', 'gatewayapi');
+          esc_html_e('Role', 'gatewayapi');
           break;
       }
       break;
@@ -108,7 +108,7 @@ add_action('manage_posts_custom_column', function ($column, $id) {
 }, 10, 2);
 
 
-function gwapi_cpt_notification_admin_menu()
+function gatewayapi__cpt_notification_admin_menu()
 {
   add_submenu_page('edit.php?post_type=gwapi-sms',
     __('Notifications (beta)', 'gatewayapi'),
@@ -125,22 +125,22 @@ function gwapi_cpt_notification_admin_menu()
 * unnecessarily executed.
 */
 
-add_action('init', 'gwapi_cpt_notification');
-add_action('admin_menu', 'gwapi_cpt_notification_admin_menu');
+add_action('init', 'gatewayapi__cpt_notification');
+add_action('admin_menu', 'gatewayapi__cpt_notification_admin_menu');
 
 // fields on the SMS editor page
 add_action('admin_init', function () {
-  add_meta_box('notification_meta_triggers', __('Triggers', 'gatewayapi'), '_gwapi_notification_meta_triggers', 'gwapi-notification', 'normal', 'default');
-  add_meta_box('notification_meta_groups', __('Recipients', 'gatewayapi'), '_gwapi_notification_meta_groups', 'gwapi-notification', 'normal', 'default');
-  add_meta_box('notification_meta_message', __('Message', 'gatewayapi'), '_gwapi_notification_meta_message', 'gwapi-notification', 'normal', 'default');
+  add_meta_box('notification_meta_triggers', __('Triggers', 'gatewayapi'), 'gatewayapi__notification_meta_triggers', 'gwapi-notification', 'normal', 'default');
+  add_meta_box('notification_meta_groups', __('Recipients', 'gatewayapi'), 'gatewayapi__notification_meta_groups', 'gwapi-notification', 'normal', 'default');
+  add_meta_box('notification_meta_message', __('Message', 'gatewayapi'), 'gatewayapi__notification_meta_message', 'gwapi-notification', 'normal', 'default');
 });
 
-add_action('admin_enqueue_scripts', 'gwapi_notification_enqueue_scripts');
+add_action('admin_enqueue_scripts', 'gatewayapi__notification_enqueue_scripts');
 
-function gwapi_notification_enqueue_scripts($hook)
+function gatewayapi__notification_enqueue_scripts($hook)
 {
 
-  wp_enqueue_style('gwapi-wp-notification', _gwapi_url() . '/css/gwapi-notification.css');
+  wp_enqueue_style('gwapi-wp-notification', gatewayapi__url() . '/css/gwapi-notification.css');
 
   $transient_name = 'gwapi_notification_posts';
 
@@ -165,32 +165,32 @@ function gwapi_notification_enqueue_scripts($hook)
 /**
  * Build the administration fields for triggers
  */
-function _gwapi_notification_meta_triggers(WP_Post $post)
+function gatewayapi__notification_meta_triggers(\WP_Post $post)
 {
-  $triggers = _gwapi_get_triggers_grouped();
-  _gwapi_render_template('notification/triggers', ['post' => $post]);
+  $triggers = gatewayapi__get_triggers_grouped();
+  gatewayapi__render_template('notification/triggers', ['post' => $post]);
 }
 
 /**
  * Build the administration fields recipients
  */
-function _gwapi_notification_meta_groups(WP_Post $post)
+function gatewayapi__notification_meta_groups(\WP_Post $post)
 {
-  _gwapi_render_template('notification/groups', ['post' => $post]);
+  gatewayapi__render_template('notification/groups', ['post' => $post]);
 }
 
 /**
  * Build the administration fields for the message
  */
-function _gwapi_notification_meta_message(WP_Post $post)
+function gatewayapi__notification_meta_message(\WP_Post $post)
 {
-  _gwapi_render_template('notification/message', ['post' => $post]);
+  gatewayapi__render_template('notification/message', ['post' => $post]);
 }
 
 /**
  * Save recipient meta data
  */
-add_action('save_post_gwapi-notification', 'gwapi_save_notification');
+add_action('save_post_gwapi-notification', 'gatewayapi__save_notification');
 
 /**
  * Save the contents of a recipients form onto the recipient behind the given ID. Takes data from $_POST['gatewayapi'] if
@@ -200,7 +200,7 @@ add_action('save_post_gwapi-notification', 'gwapi_save_notification');
  * @param \WP_Post $post
  * @param bool $update
  */
-function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $update = false)
+function gatewayapi__save_notification(int $post_id, WP_Post $post = null, bool $update = false)
 {
   if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
 
@@ -220,6 +220,7 @@ function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $updat
   }
 
   $recipient_id = $recipient_type === 'recipient' ? $data['recipient_id'] : null;
+  $recipient_name = $recipient_type === 'recipient' ? sanitize_text_field($data['recipient_name']) : null;
   $recipient_groups = $recipient_type === 'recipientGroup' ? $data['recipient_groups'] : null;
   $recipient_roles = $recipient_type === 'role' ? $data['roles'] : null;
 
@@ -229,7 +230,9 @@ function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $updat
 
   if ($recipient_groups) {
     foreach($recipient_groups as &$g) {
-      wp_die('Could not save notification: Recipient group ID is invalid (should be digits only): '.esc_html($g));
+      if (!ctype_digit($g)) {
+        wp_die('Could not save notification: Recipient group ID is invalid (should be digits only): '.esc_html($g));
+      }
     }
   }
 
@@ -251,6 +254,7 @@ function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $updat
   update_post_meta($post_id, 'triggers', $triggers);
   update_post_meta($post_id, 'recipient_type', $recipient_type);
   update_post_meta($post_id, 'recipient_id', $recipient_id);
+  update_post_meta($post_id, 'recipient_name', $recipient_name);
   update_post_meta($post_id, 'recipient_groups', $recipient_groups);
   update_post_meta($post_id, 'roles', $recipient_roles);
   update_post_meta($post_id, 'sender', $sender);
@@ -261,15 +265,15 @@ function gwapi_save_notification(int $post_id, WP_Post $post = null, bool $updat
 
 
 // Same handler function...
-add_action('wp_ajax_gwapi_callback_autocomplete_recipient', 'gwapi_callback_autocomplete_recipient');
+add_action('wp_ajax_gatewayapi_callback_autocomplete_recipient', 'gatewayapi__callback_autocomplete_recipient');
 
-function gwapi_callback_autocomplete_recipient()
+function gatewayapi__callback_autocomplete_recipient()
 {
   // admin: editor required
   if (!current_user_can('edit_others_posts')) return;
 
   // only accept with proper nonce
-  if (!wp_verify_nonce($_POST['nonce']??'', 'gwapi_callback_autocomplete_recipient')) return;
+  if (!wp_verify_nonce(sanitize_key($_POST['nonce']??''), 'gwapi_callback_autocomplete_recipient')) return;
 
   $recipients = [];
 
@@ -309,53 +313,7 @@ function gwapi_callback_autocomplete_recipient()
 }
 
 
-/**
- * Cache WordPress posts for post types that are specified in the
- * plugin setting to be included in the custom search.
- */
-function gwapi_cache_posts_in_post_types()
-{
-  $transient_name = 'gwapi_notification_posts';
-  $transient_expiration = 'gwapi_notification_posts_expiration';
-
-  // check the transient for existing cached data.
-  $cached_posts = get_transient($transient_name);
-  if (false === $cached_posts) {
-    $args = [
-      'post_type' => 'gwapi-recipient',
-      'post_status' => 'publish',
-      'posts_per_page' => 50,
-      'no_found_rows' => true, // true by default.
-      'suppress_filters' => false, // true by default.
-      'ignore_sticky_posts' => true, // true by default.
-    ];
-
-    // get_posts() to retrieve posts belonging to the required post types.
-    $posts_in_required_post_types = get_posts($args);
-
-    // Check if posts were found.
-    if ($posts_in_required_post_types) {
-      foreach ($posts_in_required_post_types as $key => $post) {
-
-        // cache the post titles and post ids.
-        $cached_post = [
-          'id' => $post->ID,
-          'title' => esc_html($post->post_title),
-        ];
-        $cached_posts[] = $cached_post;
-      }
-
-      /**
-       * Save the post data in a transient.
-       * Cache only the post ids, titles instead of the entire WP Query object.
-       */
-      set_transient($transient_name, $cached_posts, 3600);
-    }
-  }
-  return $cached_posts;
-}
-
-function gwapi_notification_get_notifications()
+function gatewayapi__notification_get_notifications()
 {
   $args = [
     'post_type' => 'gwapi-notification',
@@ -370,7 +328,7 @@ function gwapi_notification_get_notifications()
   return get_posts($args);
 }
 
-function gwapi_notification_get_recipients_by_id($ids)
+function gatewayapi__notification_get_recipients_by_id($ids)
 {
 
   if (!is_array($ids)) {
@@ -390,11 +348,11 @@ function gwapi_notification_get_recipients_by_id($ids)
   // get_posts() to retrieve posts belonging to the required post types.
   $posts = get_posts($args);
 
-  return gwapi_notification_recipients_format($posts);
+  return gatewayapi__notification_recipients_format($posts);
 }
 
 
-function gwapi_notification_recipients_format($recipients)
+function gatewayapi__notification_recipients_format($recipients)
 {
   $response = [];
 

@@ -52,7 +52,7 @@ class TriggerStore
   protected static function initialize()
   {
     self::$listening = true;
-    $notifications = gwapi_notification_get_notifications();
+    $notifications = gatewayapi__notification_get_notifications();
 
     foreach ($notifications as $notification_post) {
       $notification = new Notification($notification_post);

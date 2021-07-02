@@ -5,10 +5,10 @@ add_action('admin_menu', function () {
     if (!current_user_can('activate_plugins')) return;
 
     add_submenu_page('options-general.php', __('GatewayAPI Settings', 'gatewayapi'), __('GatewayAPI Settings', 'gatewayapi'), 'administrator', 'gatewayapi', function () {
-        wp_enqueue_script('gwapi-settings', _gwapi_url() . '/js/wpadmin-settings.js');
+        wp_enqueue_script('gwapi-settings', gatewayapi__url() . '/js/wpadmin-settings.js');
         wp_enqueue_script('jquery-ui-tooltip');
         wp_enqueue_script('jquery-ui-sortable');
-        include _gwapi_dir() . "/tpl/settings_page.php";
+        include gatewayapi__dir() . "/tpl/settings_page.php";
     });
 });
 

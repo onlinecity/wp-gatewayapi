@@ -30,13 +30,13 @@ add_action('manage_posts_custom_column', function($column, $ID) {
             break;
 
         case 'message':
-            echo wp_trim_words(esc_html(get_post_meta($ID, 'message', true) ? : '-'), 8);
+            echo esc_html(wp_trim_words(get_post_meta($ID, 'message', true) ? : '-', 8));
             break;
 
         case 'recipients':
             $count = get_post_meta($ID, 'recipients_count', true);
             if ($count) {
-                echo $count;
+                echo esc_html($count);
             } else {
                 echo '<p class="description">'.__('Calculated at send', 'gatewayapi').'</p>';
             }

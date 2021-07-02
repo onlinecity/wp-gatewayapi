@@ -132,12 +132,14 @@ Then find the options-table, by default wp_options. Search for the row where the
 
 This release strengthens the overall security, thanks to input from an external security audit.
 
-We highly recommend upgrading to this version, as it hardens the security of our plugin, especially on WordPress-installation with multiple users.
+We highly recommend upgrading to this version, as it hardens the security of our plugin, especially on WordPress-installation with multiple users
+which may have users of lower roles than editor.
 
-* Using nonce's in AJAX requests, to prevent CSRF and prevent privilege escalation.
-* Ensures proper roles for various actions to prevent privilege escalation.
-* Improved sanitizing of input.
+* Consistent use of nonce's in AJAX requests, to prevent CSRF and prevent privilege escalation.
+* Enforce correct roles for various actions, preventing potential privilege escalation.
+* Improved sanitizing, validation and escaping of input and output.
 * All PHP-files are now secured from direct access.
+* Refactored function prefixes from `gwapi_`, `_gwapi_` and `_gatewayapi_` to `gatewayapi_` only.
 
 = 1.7.1 =
 * Bugfix: Notifications were not sent.

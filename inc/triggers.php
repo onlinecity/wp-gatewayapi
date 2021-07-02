@@ -4,7 +4,7 @@ use OnlineCity\GatewayAPI\Trigger;
 
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
-function _gwapi_get_triggers()
+function gatewayapi__get_triggers()
 {
 
   $triggers = [
@@ -202,12 +202,12 @@ function _gwapi_get_triggers()
  * @return array grouped triggers
  * @since  5.0.0
  */
-function _gwapi_get_triggers_grouped()
+function gatewayapi__get_triggers_grouped()
 {
 
   $return = [];
 
-  foreach (_gwapi_get_triggers() as $trigger) {
+  foreach (gatewayapi__get_triggers() as $trigger) {
 
     if (!isset($return[$trigger->getGroup()])) {
       $return[$trigger->getGroup()] = [];
@@ -224,10 +224,10 @@ function _gwapi_get_triggers_grouped()
  * @return Trigger|null
  * @since  5.0.0
  */
-function _gwapi_get_trigger_by_id($id)
+function gatewayapi__get_trigger_by_id($id)
 {
 
-  foreach (_gwapi_get_triggers() as $trigger) {
+  foreach (gatewayapi__get_triggers() as $trigger) {
 
     if ($trigger->getId() === $id) {
       return $trigger;

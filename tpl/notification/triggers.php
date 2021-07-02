@@ -2,7 +2,7 @@
 
 /** @var \WP_Post $post */
 $id = $post->ID;
-$triggers = _gwapi_get_triggers_grouped();
+$triggers = gatewayapi__get_triggers_grouped();
 $post_meta_triggers = get_post_meta($id, 'triggers');
 $selected_trigger = $post_meta_triggers ? current($post_meta_triggers) : null;
 
@@ -24,10 +24,10 @@ $selected_trigger = $post_meta_triggers ? current($post_meta_triggers) : null;
 
             <?php foreach ($subtriggers as $slug => $trigger) : ?>
 
-              <option value="<?php echo $trigger->getId(); ?>"
-                      data-id="<?php echo $trigger->getId(); ?>"
-                      data-title="<?php echo $trigger->getName(); ?>"
-                      data-text="<?php echo $trigger->getDescription(); ?>"
+              <option value="<?php echo esc_attr($trigger->getId()); ?>"
+                      data-id="<?php echo esc_attr($trigger->getId()); ?>"
+                      data-title="<?php echo esc_attr($trigger->getName()); ?>"
+                      data-text="<?php echo esc_attr($trigger->getDescription()); ?>"
 
                 <?php if ($selected_trigger && $selected_trigger === $trigger->getId()): ?>
                   selected="selected"

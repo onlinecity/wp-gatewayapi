@@ -3,14 +3,14 @@
 
 // fields on the SMS editor page
 add_action('admin_init', function () {
-  add_meta_box('recipient', __('Contact information', 'gatewayapi'), '_gwapi_recipient', 'gwapi-recipient', 'normal', 'default');
-  add_meta_box('custom_fields', __('Custom fields', 'gatewayapi'), '_gwapi_recipient_fields', 'gwapi-recipient', 'normal', 'default');
+  add_meta_box('recipient', __('Contact information', 'gatewayapi'), 'gatewayapi__recipient', 'gwapi-recipient', 'normal', 'default');
+  add_meta_box('custom_fields', __('Custom fields', 'gatewayapi'), 'gatewayapi__recipient_fields', 'gwapi-recipient', 'normal', 'default');
 });
 
 /**
  * Build the administration fields for editing a single recipient.
  */
-function _gwapi_recipient(WP_Post $post)
+function gatewayapi__recipient(\WP_Post $post)
 {
   $ID = $post->ID;
   $cc = get_post_meta($ID, 'cc', true);
@@ -25,8 +25,13 @@ function _gwapi_recipient(WP_Post $post)
         <?php _e('Country code', 'gatewayapi') ?>
       </th>
       <td>
-        <select
-          name="gatewayapi[cc]"><?= $cc ? '<option value="' . trim($cc) . '">' . $cc . '</option>' : '' ?></select>
+        <select name="gatewayapi[cc]">
+          <?php if ($cc): ?>
+          <option value="<?php echo esc_attr(trim($cc)); ?>">
+            <?php echo esc_html($cc); ?>
+          </option>
+        </select>
+        <?php endif; ?>
       </td>
     </tr>
     <tr>
@@ -35,8 +40,8 @@ function _gwapi_recipient(WP_Post $post)
       </th>
       <td>
         <input type="number" name="gatewayapi[number]"
-               placeholder="<?= esc_attr(__('Phone number - digits only', 'gatewayapi')) ?>"
-               value="<?= $number ? esc_attr(trim($number)) : '' ?>"
+               placeholder="<?php esc_attr_e('Phone number - digits only', 'gatewayapi') ?>"
+               value="<?php echo esc_attr(trim($number ?? '')); ?>"
                style="width: 250px">
       </td>
     </tr>
@@ -49,7 +54,7 @@ function _gwapi_recipient(WP_Post $post)
 /**
  * Render all the custom added form fields for a single recipient.
  */
-function _gwapi_recipient_fields(WP_Post $post)
+function gatewayapi__recipient_fields(\WP_Post $post)
 {
   $ID = $post->ID;
   $fields = get_option('gwapi_recipient_fields');
@@ -59,7 +64,7 @@ function _gwapi_recipient_fields(WP_Post $post)
     <tbody>
     <?php foreach ($fields as $row): ?>
       <?php if (in_array($row['field_id'], ['CC', 'NUMBER', 'NAME'])) continue; ?>
-      <?php gwapi_render_recipient_field($row, $post); ?>
+      <?php gatewayapi__render_recipient_field($row, $post); ?>
     <?php endforeach; ?>
     </tbody>
   </table>
@@ -76,7 +81,7 @@ add_action('wp_ajax_gatewayapi_validate_recipient', function () {
   if (!current_user_can('edit_others_posts')) die(['success' => false, 'failed' => ['You do not have sufficient permissions']]);
 
   // validate nonce
-  if (!wp_verify_nonce($_POST['nonce'] ?? null, 'gatewayapi_validate_recipient')) return;
+  if (!wp_verify_nonce(sanitize_key($_POST['nonce'] ?? null), 'gatewayapi_validate_recipient')) return;
 
   $data = [];
   parse_str($_POST['form_data'] ?? '', $data);
@@ -96,13 +101,13 @@ add_action('wp_ajax_gatewayapi_validate_recipient', function () {
 /**
  * Save recipient meta data
  */
-add_action('save_post_gwapi-recipient', 'gwapi_save_recipient');
+add_action('save_post_gwapi-recipient', 'gatewayapi__save_recipient');
 
 /**
  * Save the contents of a recipients form onto the recipient behind the given ID. Takes data from $_POST['gatewayapi'] if
  * data is not specified.
  */
-function gwapi_save_recipient($ID, $data = null, $force_update = false)
+function gatewayapi__save_recipient($ID, $data = null, $force_update = false)
 {
   if (!$force_update) {
     static $only_save_once;
@@ -118,7 +123,7 @@ function gwapi_save_recipient($ID, $data = null, $force_update = false)
   }
 
   // get the possible fields
-  foreach (_gwapi_all_recipient_fields() as $field) {
+  foreach (gatewayapi__all_recipient_fields() as $field) {
     $meta_key = strtolower($field['field_id']);
 
     // special case: name
@@ -136,7 +141,7 @@ function gwapi_save_recipient($ID, $data = null, $force_update = false)
   }
 }
 
-function _gwapi_save_recipient_groups($ID, $data, $atts)
+function gatewayapi__save_recipient_groups($ID, $data, $atts)
 {
   $valid_groups = isset($atts['groups']) ? explode(",", $atts['groups']) : false;
   $editable = isset($atts['edit-groups']) ? !!$atts['edit-groups'] : false;
@@ -146,8 +151,8 @@ function _gwapi_save_recipient_groups($ID, $data, $atts)
   $add_groups = $editable ? [] : $valid_groups;
 
   // selected groups
-  if ($editable && isset($data['_gwapi_recipient_groups'])) {
-    foreach ($data['_gwapi_recipient_groups'] as $group_id) {
+  if ($editable && isset($data['_gatewayapi_recipient_groups'])) {
+    foreach ($data['_gatewayapi_recipient_groups'] as $group_id) {
       if (!in_array($group_id, $valid_groups)) continue;
       $add_groups[] = $group_id;
     }

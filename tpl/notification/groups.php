@@ -26,7 +26,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
 <script>
   (function () {
 
-// POST Implementation
+    // POST Implementation
     async function postData(items = {}) {
 
       let formData = new FormData();
@@ -42,17 +42,10 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
       return response.json(); // parses JSON response into native JavaScript objects
     }
 
-    window.postRequest = function (type) {
-      return postData({
-        action: "my_action",
-        whatever: 12
-      });
-    }
-
     // we add a global autocomplete function
     // which will handle our client-side logic.
     // we extend this later on...
-    window.notification = function notification() {
+    window.gatewayapi_notification = function gatewayapi_notification() {
       const input = '';
 
       return {
@@ -75,7 +68,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
           }
         ],
         recipientSearch: {
-          autocompleteInput: '<?php echo $selected_recipient_name; ?>',
+          autocompleteInput: <?php echo json_encode($selected_recipient_name); ?>,
           isOpen: false,
           open() {
             this.isOpen = true;
@@ -85,11 +78,11 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
           },
           selected: null,
           selectedId() {
-            return this.selected ? this.selected.id : '<?php echo $selected_recipient_id; ?>';
+            return this.selected ? this.selected.id : <?php echo json_encode((int)$selected_recipient_id); ?>;
           }
 
         },
-        selectedOption: '<?php echo $selected_recipient_type ?>',
+        selectedOption: <?php echo json_encode($selected_recipient_type); ?>,
         select(recipient) {
           this.recipientSearch.selected = recipient;
           this.recipientSearch.autocompleteInput = recipient.name;
@@ -97,7 +90,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
         },
         searchRecipient() {
           const response = postData({
-            action: "gwapi_callback_autocomplete_recipient",
+            action: "gatewayapi_callback_autocomplete_recipient",
             search: this.recipientSearch.autocompleteInput,
             nonce: <?php echo json_encode(wp_create_nonce('gwapi_callback_autocomplete_recipient')); ?>
           });
@@ -112,7 +105,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
 </script>
 
 <div class="notifications"
-     x-data="notification()">
+     x-data="gatewayapi_notification()">
 
   <table width="100%"
          class="form-table">
@@ -128,7 +121,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
           <template x-for="option in options"
                     :key="option.id">
             <option :value="option.id"
-                    :selected="option.id == '<?php echo $selected_recipient_type; ?>'"
+                    :selected="option.id == '<?php echo esc_attr($selected_recipient_type); ?>'"
                     x-text="option.text"></option>
           </template>
         </select>
@@ -140,9 +133,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
       </th>
       <td>
         <div x-show="selectedOption === 'recipient'">
-          <div
-            class="autocomplete"
-          >
+          <div class="autocomplete">
 
             <input
               id="search-input"
@@ -158,25 +149,19 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
               <?php _e('Type the name of the recipient you wish to add to the Notification', 'gatewayapi'); ?>
             </p>
 
-            <input type="hidden"
-                   name="gatewayapi[recipient_id]"
-                   x-model="recipientSearch.selectedId()">
+            <input type="hidden" name="gatewayapi[recipient_id]" x-model="recipientSearch.selectedId()">
 
             <div class="suggestions">
-              <ul
-                id="autocomplete-suggestions"
-                x-show="recipientSearch.isOpen"
-                x-ref="suggestions"
-              >
+              <ul id="autocomplete-suggestions"
+                  x-show="recipientSearch.isOpen"
+                  x-ref="suggestions">
 
-                <template x-for="recipient in recipients"
-                          :key="recipient.id">
+                <template x-for="recipient in recipients" :key="recipient.id">
                   <li id="item-<%= index %>"
                       @click="select(recipient)"
                       class="item">
                     <span x-html="recipient.name"></span>
                   </li>
-
                 </template>
 
               </ul>
@@ -191,7 +176,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
         <div x-show="selectedOption === 'recipientGroup'">
 
           <div class="gwapi-row recipient-groups"
-               data-selected_groups="<?= $current_groups ? esc_attr(json_encode($current_groups)) : ''; ?>">
+               data-selected_groups="<?php echo esc_attr($current_groups ? json_encode($current_groups) : ''); ?>">
             <div class="all-groups col-50">
               <h4><?php _e('All recipient groups', 'gatewayapi'); ?></h4>
 
@@ -200,13 +185,15 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                   <label class="gwapi-checkbox" style="margin-right:10px">
                     <input type="checkbox"
                            name="gatewayapi[recipient_groups][]"
-                           id="group-id-<?= $group->term_id; ?>"
-                           value="<?= $group->term_id; ?>"
+                           id="group-id-<?php echo esc_html($group->term_id); ?>"
+                           value="<?php echo esc_html($group->term_id); ?>"
                       <?php echo in_array($group->term_id, $current_groups) ? 'checked' : '' ?>
                     >
-                    <?= $group->name; ?>
+                    <?php echo esc_html($group->name); ?>
                     <span class="number"
-                          title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?= $group->count; ?>">(<?= $group->count; ?>)</span>
+                          title="<?php esc_attr_e('Recipients in group', 'gatewayapi') ?>: <?php echo esc_attr($group->count); ?>">
+                      (<?php echo esc_html($group->count); ?>)
+                    </span>
                   </label>
                 <?php endforeach; ?>
               </div>
@@ -227,7 +214,7 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
         </div>
         <div x-show="selectedOption === 'role'">
           <div class="gwapi-row recipient-groups-role"
-               data-selected_groups="<?= $current_roles ? esc_attr(json_encode($current_roles)) : ''; ?>">
+               data-selected_groups="<?php echo esc_attr(json_encode($current_roles ?? '')); ?>">
             <div class="all-groups col-50">
               <h4><?php _e('All roles', 'gatewayapi'); ?></h4>
 
@@ -236,11 +223,11 @@ $current_roles = !empty($current_roles) ? $current_roles : [];
                   <label class="gwapi-checkbox" style="display: block; margin-bottom: 5px">
                     <input type="checkbox"
                            name="gatewayapi[roles][]"
-                           id="role-id-<?php echo $role_id ?>"
-                           value="<?php echo $role_id ?>"
+                           id="role-id-<?php echo esc_attr($role_id) ?>"
+                           value="<?php echo esc_attr($role_id) ?>"
                       <?php echo in_array($role_id, $current_roles) ? 'checked' : '' ?>
                     >
-                    <?= __($role['name']); ?>
+                    <?php _e($role['name']); ?>
                   </label>
                 <?php endforeach; ?>
               </div>

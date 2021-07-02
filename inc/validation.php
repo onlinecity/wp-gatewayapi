@@ -4,11 +4,11 @@
 /**
  * Validation logic when adding/editing recipients.
  */
-add_filter('gwapi_validate_recipient', '_gwapi_validate_recipient_basic', 10, 3);
-add_filter('gwapi_validate_recipient', '_gwapi_validate_recipient_unique', 10, 3);
+add_filter('gwapi_validate_recipient', 'gatewayapi__validate_recipient_basic', 10, 3);
+add_filter('gwapi_validate_recipient', 'gatewayapi__validate_recipient_unique', 10, 3);
 
 
-function _gwapi_validate_recipient_basic($errors, $data, WP_Post $post)
+function gatewayapi__validate_recipient_basic($errors, $data, WP_Post $post)
 {
   // validate cc
   if (!$data['cc']) $errors['cc'] = __('No country code entered.', 'gatewayapi');
@@ -25,7 +25,7 @@ function _gwapi_validate_recipient_basic($errors, $data, WP_Post $post)
   return $errors;
 }
 
-function _gwapi_validate_recipient_unique($errors, $data, WP_Post $post)
+function gatewayapi__validate_recipient_unique($errors, $data, WP_Post $post)
 {
   // check for duplicates
   $dupCheck = new WP_Query([
@@ -47,7 +47,7 @@ function _gwapi_validate_recipient_unique($errors, $data, WP_Post $post)
   return $errors;
 }
 
-function _gwapi_validate_sms($data)
+function gatewayapi__validate_sms($data)
 {
   $errors = [];
 
