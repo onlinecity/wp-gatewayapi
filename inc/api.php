@@ -126,7 +126,8 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
       'headers' => [
         'Authorization' => $auth,
         'Content-Type' => 'application/json',
-        'user-agent' => 'gatewayapi'],
+        'user-agent' => 'wp-gatewayapi'
+      ],
       'body' => json_encode($req)
     ]);
 
