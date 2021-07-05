@@ -184,10 +184,10 @@ class GWAPI_User_Sync
       ]
     ];
 
-    $page = $_GET['page'] ?? null;
+    $page = sanitize_key($_GET['page'] ?? '');
 
     // initializing - just show status, ie. how many users are applicable for syncing
-    if (is_null($page)) {
+    if ($page === '') {
       $q = new WP_User_Query($userQ);
       $total = $q->get_total();
       if (!$total) {
@@ -200,6 +200,7 @@ class GWAPI_User_Sync
       ]));
     }
     if (!ctype_digit($page)) die(json_encode(['html' => 'Bad request.', 'finished' => true]));
+
     $page = (int)$page;
 
     // synchronize 100 at a time

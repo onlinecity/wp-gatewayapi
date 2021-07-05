@@ -81,7 +81,7 @@ add_action('wp_ajax_gatewayapi_validate_recipient', function () {
   if (!current_user_can('edit_others_posts')) die(['success' => false, 'failed' => ['You do not have sufficient permissions']]);
 
   // validate nonce
-  if (!wp_verify_nonce(sanitize_key($_POST['nonce'] ?? null), 'gatewayapi_validate_recipient')) return;
+  if (!wp_verify_nonce(sanitize_key($_POST['nonce'] ?? ''), 'gatewayapi_validate_recipient')) return;
 
   $data = [];
   parse_str($_POST['form_data'] ?? '', $data);
@@ -116,12 +116,6 @@ function gatewayapi__save_recipient($ID, $data = null, $force_update = false)
     $only_save_once[] = $ID;
   }
 
-  if (!is_array($data)) {
-    // do we have data at all?
-    $data = $_POST['gatewayapi'] ?? [];
-    if (!$data) return;
-  }
-
   // get the possible fields
   foreach (gatewayapi__all_recipient_fields() as $field) {
     $meta_key = strtolower($field['field_id']);
@@ -141,7 +135,7 @@ function gatewayapi__save_recipient($ID, $data = null, $force_update = false)
   }
 }
 
-function gatewayapi__save_recipient_groups($ID, $data, $atts)
+function gatewayapi__save_recipient_groups($ID, $recipient_groups, $atts)
 {
   $valid_groups = isset($atts['groups']) ? explode(",", $atts['groups']) : false;
   $editable = isset($atts['edit-groups']) ? !!$atts['edit-groups'] : false;
@@ -151,8 +145,8 @@ function gatewayapi__save_recipient_groups($ID, $data, $atts)
   $add_groups = $editable ? [] : $valid_groups;
 
   // selected groups
-  if ($editable && isset($data['_gatewayapi_recipient_groups'])) {
-    foreach ($data['_gatewayapi_recipient_groups'] as $group_id) {
+  if ($editable && $recipient_groups) {
+    foreach ($recipient_groups as $group_id) {
       if (!in_array($group_id, $valid_groups)) continue;
       $add_groups[] = $group_id;
     }

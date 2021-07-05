@@ -36,9 +36,9 @@ add_action('manage_posts_custom_column', function ($column, $ID) {
       $groups = wp_get_object_terms($ID, 'gwapi-recipient-groups');
       $list = [];
       foreach ($groups as $g) {
-        $list[] = esc_html($g->name);
+        $list[] = $g->name;
       }
-      echo implode(', ', $list);
+      echo esc_html(implode(', ', $list));
       if (!$list) echo '<em>' . __('None', 'gatewayapi') . '</em>';
       break;
   }
@@ -129,7 +129,7 @@ add_action('parse_request', function ($wp) {
 
         $q->next_post();
       }
-      echo $writer->writeToString();
+      $writer->writeToStdOut();
       break;
     default:
       $out = fopen('php://output', 'w');

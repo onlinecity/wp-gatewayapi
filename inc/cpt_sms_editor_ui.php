@@ -451,12 +451,13 @@ add_action('wp_ajax_gatewayapi_sms_manual_add_recipient', function () {
   header("Content-type: application/json");
 
   // verify nonce
-  if (!wp_verify_nonce(isset($_GET['nonce']) ? $_GET['nonce'] : '', 'gatewayapi_sms_manual_add_recipient')) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid nonce, please reload the page.']]));
+  if (!wp_verify_nonce(sanitize_key($_GET['nonce'] ?? ''), 'gatewayapi_sms_manual_add_recipient')) die(json_encode(['success' =>
+    false, 'errors' => ['*' => 'Invalid nonce, please reload the page.']]));
 
   // editor or above required
   if (!current_user_can('edit_others_posts')) die(json_encode(['success' => false, 'errors' => ['*' => 'You do not have the privileges to use this method.']]));
 
-  $post_ID = sanitize_key($_POST['post_ID'] ?? 0);
+  $post_ID = sanitize_key($_POST['post_ID'] ?? '');
   if (!$post_ID || !ctype_digit($post_ID)) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid post ID.']]));
   $post_ID = (int)$post_ID;
   $post = get_post($post_ID);
@@ -502,12 +503,13 @@ add_action('wp_ajax_gatewayapi_sms_manual_delete_recipient', function () {
   header("Content-type: application/json");
 
   // verify nonce
-  if (!wp_verify_nonce($_GET['nonce'] ?? '', 'gatewayapi_sms_manual_delete_recipient')) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid nonce, please reload the page.']]));
+  if (!wp_verify_nonce(sanitize_key($_GET['nonce'] ?? ''), 'gatewayapi_sms_manual_delete_recipient')) die(json_encode(['success' => false, 'errors'
+  => ['*' => 'Invalid nonce, please reload the page.']]));
 
   // editor or above required
   if (!current_user_can('edit_others_posts')) die(json_encode(['success' => false, 'errors' => ['*' => 'You do not have the privileges to use this method.']]));
 
-  $post_ID = sanitize_key($_POST['post_ID'] ?? null);
+  $post_ID = sanitize_key($_POST['post_ID'] ?? '');
   if (!ctype_digit($post_ID)) die(json_encode(['success' => false, 'errors' => ['*' => 'Invalid post ID.']]));
   $post_ID = (int)$post_ID;
 
@@ -516,7 +518,7 @@ add_action('wp_ajax_gatewayapi_sms_manual_delete_recipient', function () {
 
   global $wpdb;
   /** @var $wpdb wpdb */
-  $meta_ID = sanitize_key($_POST['meta_ID'] ?? null);
+  $meta_ID = sanitize_key($_POST['meta_ID'] ?? '');
   if (!$meta_ID && !ctype_digit($meta_ID)) die(json_encode(['success' => false, 'message' => "Bad meta ID."]));
   $meta_ID = (int)$meta_ID;
 
@@ -533,8 +535,8 @@ add_action('wp_ajax_gatewayapi_get_html_status', function () {
   // editor or above required
   if (!current_user_can('edit_others_posts')) die();
 
-  $ID = $_GET['ID'] ?? null;
-  if (!ctype_digit($ID)) die('<strong style="color: red">SMS ID invalid.</strong>');
+  $ID = (int)sanitize_key($_GET['ID'] ?? '');
+  if (!$ID) die('<strong style="color: red">SMS ID invalid.</strong>');
 
   $post = get_post($ID);
   if (!$post || $post->post_type !== 'gwapi-sms') die('<strong style="color: red">Trying to load status on an invalid SMS-post.</strong>');

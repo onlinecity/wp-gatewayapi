@@ -3,7 +3,7 @@
 
 // save raw data transient
 delete_transient('gwapi_import_' . get_current_user_id());
-$data = trim($_POST['database']);
+$data = sanitize_textarea_field(trim($_POST['database']));
 set_transient('gwapi_import_' . get_current_user_id(), $data, 60 * 60 * 2);
 
 $fields = [];

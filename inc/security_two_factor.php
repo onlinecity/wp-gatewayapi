@@ -117,7 +117,7 @@ class GwapiSecurityTwoFactor
    */
   public static function replaceLoginCookieWithTempCookie(\WP_User $user, $redirect_to = null)
   {
-    $remember = isset($_POST['rememberme']) && $_POST['rememberme'] == 'forever';
+    $remember = ($_POST['rememberme'] ?? '') == 'forever';
     $redir = $redirect_to ?? get_admin_url();
     $code = rand(100000, 999999);
 
@@ -291,7 +291,8 @@ class GwapiSecurityTwoFactor
   public static function enableBypassMode()
   {
     $bypass_code = self::getBypassCode();
-    if (!isset($_GET['c']) || $_GET['c'] !== $bypass_code) {
+    $reqBypassCode = sanitize_text_field($_GET['c'] ?? '');
+    if (!$reqBypassCode || ($reqBypassCode !== $bypass_code)) {
       wp_die('<h1>' . __('Bypass code is invalid!', 'gatewayapi') . '</h1><p>' . __('Your two-factor bypass code in the URL, is invalid. Two-factor security is still enabled.', 'gatewayapi') . '</p>');
     }
 
@@ -317,7 +318,8 @@ class GwapiSecurityTwoFactor
    */
   public static function bypassModeEnabled()
   {
-    return (isset($_POST['gwapi_bypass_2fa']) && $_POST['gwapi_bypass_2fa'] == self::getBypassCode());
+    $bypass2fa = sanitize_text_field($_POST['gwapi_bypass_2fa'] ?? '');
+    return $bypass2fa && $bypass2fa == self::getBypassCode();
   }
 }
 
@@ -350,12 +352,12 @@ class GwapiSecurityTwoFactorAddMobile
     header("Content-type: application/json");
 
     // token
-    $tmp_token = sanitize_key(trim($_POST['gwapi_2f_tmp']));
+    $tmp_token = sanitize_key(trim($_POST['gwapi_2f_tmp']??''));
 
     // phone number
-    $mcc = preg_replace('/[^0-9]+/', '', $_POST['mcc']);
-    $mno = preg_replace('/[^0-9]+/', '', $_POST['mno']);
-    $msisdn = preg_replace('/[^0-9]+/', '', $mcc . $mno);
+    $mcc = preg_replace('/\D+/', '', sanitize_key($_POST['mcc']));
+    $mno = preg_replace('/\D+/', '', sanitize_key($_POST['mno']));
+    $msisdn = gatewayapi__get_msisdn($mcc, $mno);
 
     // validate the token
     $login_info = GwapiSecurityTwoFactor::getLoginDataByTempToken($tmp_token);
@@ -426,7 +428,7 @@ class GwapiSecurityTwoFactorAddMobile
     }
 
     // is the code correct?
-    $user_code = preg_replace('/[^0-9]+/', '', $_POST['code'] ?? '');
+    $user_code = preg_replace('/\D+/', '', $_POST['code'] ?? '');
     $correct_code = $login_info['code'];
     if ($user_code != $correct_code) {
       GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gatewayapi')));
@@ -554,7 +556,7 @@ class GwapiSecurityTwoFactorHasMobile
     }
 
     // is the code correct?
-    $user_code = preg_replace('/[^0-9]+/', '', $_POST['code']);
+    $user_code = preg_replace('/\D+/', '', $_POST['code']);
     $correct_code = $login_info['code'];
     if ($user_code != $correct_code) {
       GwapiSecurityTwoFactor::jsonFail(new WP_Error('BAD_CODE', __('The code you have entered, is invalid. Please double check the SMS we sent you and try again.', 'gatewayapi')));
@@ -624,7 +626,7 @@ class GwapiSecurityTwoFactorUserProfile
   public static function gotoChangeMobile()
   {
     // verify nonce
-    if (!wp_verify_nonce($_GET['_nonce'], 'gwapi_profile_change_phone')) {
+    if (!wp_verify_nonce(sanitize_key($_GET['_nonce']), 'gwapi_profile_change_phone')) {
       wp_die(__('You have followed a link containing an expired/invalid nonce. Please go back and redirect the page - then it should work.', 'gatewayapi'));
     }
 

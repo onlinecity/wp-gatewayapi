@@ -62,11 +62,13 @@ class GwapiContactForm7
    */
   private function resolveCF7SpamTrap()
   {
-    if (!isset($_POST['gwapi_spam_trap_resolve']) || !$_POST['gwapi_spam_trap_resolve']) return;
+    if (!($_POST['gwapi_spam_trap_resolve'] ?? '')) return;
     $user_token = sanitize_key($_POST['gwapi_spam_trap_resolve']);
 
+    $cc = sanitize_key($_POST['gwapi_country'] ?? '');
+    $number = sanitize_key(sanitize_key($_POST['gwapi_phone']) ?? '');
     $resolve_token = get_transient(
-      'gwapi_spam_trap_resolve_' . gatewayapi__get_msisdn(sanitize_key($_POST['gwapi_country']), sanitize_key($_POST['gwapi_phone']))
+      'gwapi_spam_trap_resolve_' . gatewayapi__get_msisdn($cc, $number)
     );
     if ($resolve_token !== $user_token) return; // fail regularly, somethings wrong with the token
 
@@ -87,8 +89,7 @@ class GwapiContactForm7
 
   private function addSmsReplyUi()
   {
-    $_this = $this;
-    add_filter('wpcf7_editor_panels', function ($panels) use ($_this) {
+    add_filter('wpcf7_editor_panels', function ($panels) {
       $sms_panel = [
         'title' => __('SMS reply', 'gatewayapi'),
         'callback' => [$this, 'renderSmsReplyUi']
@@ -105,10 +106,16 @@ class GwapiContactForm7
       return $new_panels;
     }, 10, 1);
 
-    // handle save
-    if (isset($_POST['_gatewayapi_form_settings'])) {
-      update_post_meta($_POST['post_ID'], '_gwapi', $_POST['_gatewayapi_form_settings']);
-    }
+    add_action('save_post', function ($post_ID) {
+      // handle save
+      if (isset($_POST['_gatewayapi_form_settings'])) {
+        update_post_meta($post_ID, '_gwapi', [
+          'reply_enable' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply-enable'] ?? ''),
+          'reply_sender' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply_sender'] ?? ''),
+          'reply_body' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply_body'] ?? '')
+        ]);
+      }
+    });
   }
 
   private function addShortcodes()
@@ -142,7 +149,7 @@ class GwapiContactForm7
 
       <fieldset>
         <legend><?php _e('In the following fields, these tags are available:', 'gatewayapi'); ?><br>
-          <?php echo $post->suggest_mail_tags(); ?>
+          <?php $post->suggest_mail_tags(); ?>
         </legend>
         <table class="form-table">
           <tbody>
@@ -209,27 +216,27 @@ class GwapiContactForm7
     // must have phone and country code
     if (!$phone_field || !$country_code_field) return;
 
-    $cc = $_POST[$country_code_field['name']] ?? null;
-    $local = $_POST[$phone_field['name']] ?? null;
+    $cc = preg_replace('/\D+/','', sanitize_key($_POST[$country_code_field['name']] ?? ''));
+    $local = preg_replace('/\D+/', '', sanitize_key($_POST[$phone_field['name']] ?? ''));
     if (!$cc || !$local || !ctype_digit($cc) || !ctype_digit($local)) die();
 
     // has the user entered a verification pin code?
-    if (!isset($_POST['_gatewayapi_verify_signup'])) {
-      $phone = gatewayapi__get_msisdn($cc, $local);
-      $code = get_transient("gwapi_verify_signup_" . $phone);
+    if (isset($_POST['_gatewayapi_verify_signup'])) return;
 
-      header("Content-type: application/json");
-      if (!$code) {
-        set_transient('gwapi_verify_signup_' . $phone, $code = rand(100000, 999999), 60 * 5);
+    $phone = gatewayapi__get_msisdn($cc, $local);
+    $code = get_transient("gwapi_verify_signup_" . $phone);
 
-        $spam_trap_resolve = sanitize_key(wp_generate_password(32, false));
-        set_transient('gwapi_spam_trap_resolve_' . $phone, $spam_trap_resolve, 60 * 5);
+    header("Content-type: application/json");
+    if (!$code) {
+      set_transient('gwapi_verify_signup_' . $phone, $code = rand(100000, 999999), 60 * 5);
 
-        gatewayapi_send_sms(__("Your verification code:", 'gatewayapi') . " " . $code, $phone);
-        die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
-      } else {
-        die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
-      }
+      $spam_trap_resolve = sanitize_key(wp_generate_password(32, false));
+      set_transient('gwapi_spam_trap_resolve_' . $phone, $spam_trap_resolve, 60 * 5);
+
+      gatewayapi_send_sms(__("Your verification code:", 'gatewayapi') . " " . $code, $phone);
+      die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
+    } else {
+      die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
     }
   }
 
@@ -294,8 +301,8 @@ class GwapiContactForm7
     }
     if (!$action) $action = substr($o['name'], 7);
 
-    $cc = isset($_POST[$country_code_field['name']]) ? $_POST[$country_code_field['name']] : null;
-    $local = isset($_POST[$phone_field['name']]) ? $_POST[$phone_field['name']] : null;
+    $cc = (int)sanitize_key($_POST[$country_code_field['name']] ?? '');
+    $local = preg_replace('/\D+/', '', sanitize_text_field($_POST[$phone_field['name']] ?? ''));
 
     $data = $submission->get_posted_data();
 
@@ -312,10 +319,10 @@ class GwapiContactForm7
       $title = '';
       $name_fields = ['name', 'full_name'];
       foreach ($name_fields as $nf) {
-        if (isset($_POST[$nf])) $title = $_POST[$nf];
+        if (isset($_POST[$nf])) $title = sanitize_text_field($_POST[$nf]);
       }
       if (!$title) {
-        if (isset($_POST['first_name'])) $title = sanitize_text_field($_POST['first_name']);
+        $title = sanitize_text_field($_POST['first_name'] ?? '');
         if (isset($_POST['last_name'])) $title .= " " . sanitize_text_field($_POST['last_name']);
       }
       if (!$title) $title = '+' . $cc . ' ' . $local;
@@ -359,10 +366,7 @@ class GwapiContactForm7
             if (!in_array($gID, $possible_groups)) $append_groups[] = $gID;
           }
 
-          $groupIDs = isset($_POST[$groups_field['name']]) ? $_POST[$groups_field['name']] : [];
-          foreach ($groupIDs as &$gID) {
-            $gID = (int)$gID;
-          }
+          $groupIDs = array_map('intval', $_POST[$groups_field['name']]??[]);
 
           wp_set_object_terms($curID, array_merge($groupIDs, $append_groups), 'gwapi-recipient-groups');
         }
@@ -373,7 +377,7 @@ class GwapiContactForm7
         $smstext_field = current($wpcf7->scan_form_tags(['type' => 'gw_smstext']));
         if (!($smstext_field['name'] ?? null)) break;
 
-        $smstext = $_POST[$smstext_field['name']];
+        $smstext = sanitize_text_field($_POST[$smstext_field['name']] ?? '');
 
         $args = [
           'post_type' => 'gwapi-sms',
@@ -404,7 +408,7 @@ class GwapiContactForm7
     $body = trim(wpcf7_mail_replace_tags($sms['reply-body']));
     $from = trim(wpcf7_mail_replace_tags($sms['reply-sender'])) ?: null;
 
-    $phone = gatewayapi__get_msisdn($_POST[$country_code_field['name']], $_POST[$phone_field['name']]);
+    $phone = gatewayapi__get_msisdn(sanitize_key($_POST[$country_code_field['name']]??''), sanitize_key($_POST[$phone_field['name']]??''));
     gatewayapi_send_sms($body, $phone, $from);
   }
 
@@ -905,13 +909,13 @@ class GwapiContactForm7
         return $val;
       }
     } elseif ('get' == $opt && isset($_GET[$name])) {
-      $val = $_GET[$name] ?? null;
+      $val = sanitize_text_field($_GET[$name] ?? '');
 
       if (strlen($val)) {
         return $val;
       }
     } elseif ('post' == $opt && isset($_POST[$name])) {
-      $val = isset($_POST[$name]) ? $_POST[$name] : null;
+      $val = sanitize_text_field($_POST[$name] ?? '');
 
       if (strlen($val)) {
         return $val;
@@ -1112,7 +1116,7 @@ class GwapiContactForm7
     $tag = new WPCF7_FormTag($tag);
     $groupsPossible = $this->getGroupIdsFromTag($tag);
     $groupsPossible = array_unique($groupsPossible);
-    $groupsSelected = isset($_POST[$tag->name]) ? array_unique($_POST[$tag->name]) : [];
+    $groupsSelected = array_map('intval', $_POST[$tag->name] ?? []);
 
     if ($this->fieldIsEmptyAndRequired($tag)) {
       $res->invalidate($tag, wpcf7_get_message('invalid_required'));
@@ -1158,7 +1162,7 @@ class GwapiContactForm7
       return $res;
     }
     $name = $tag->name;
-    $phone = $_POST[$name] ?? null;
+    $phone = sanitize_text_field($_POST[$name] ?? '');
     if (!$phone || !ctype_digit($phone)) {
       $res->invalidate($tag, __('The phone number must consist of digits only.', 'gatewayapi'));
       return $res;
@@ -1166,11 +1170,11 @@ class GwapiContactForm7
 
     // invalid: this form has no gwapi action, so nothing should occur
     if (!($action_field['name'] ?? null)) return $res;
-    $action = $_POST[$action_field['name']] ?? null;
+    $action = sanitize_text_field($_POST[$action_field['name']] ?? '');
     if (!$action) return $res;
 
     $phone_exists = null;
-    $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
+    $cc = sanitize_text_field($_POST[$cc_field['name']] ?? '');
     if ($cc) {
       $q = new WP_Query(["post_type" => "gwapi-recipient", "meta_query" => [['key' => 'cc', 'value' => $cc], ['key' => 'number', 'value' => $phone]]]);
       $phone_exists = $q->have_posts();
@@ -1205,7 +1209,7 @@ class GwapiContactForm7
 
     $tag = new WPCF7_FormTag($tag);
 
-    $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
+    $cc = sanitize_text_field($_POST[$cc_field['name']] ?? '');
 
     // do we have a list of country codes to limit from?
     $valid_country_codes = explode(' ', str_replace(',', ' ', $tag->values[0]));
@@ -1243,18 +1247,19 @@ class GwapiContactForm7
     $cc_field = current($cf->scan_form_tags(['type' => 'gw_country']));
     $local_field = current($cf->scan_form_tags(['type' => 'gw_phone']));
 
-    $phone = isset($_POST[$local_field['name']]) ? $_POST[$local_field['name']] : null;
-    $cc = isset($_POST[$cc_field['name']]) ? $_POST[$cc_field['name']] : null;
+    $phone = sanitize_text_field($_POST[$local_field['name']] ?? '');
+    $cc = sanitize_text_field($_POST[$cc_field['name']] ?? '');
 
     $tag = new WPCF7_FormTag($tag);
 
     // the action selected must be within the list of valid actions
-    $action = isset($_POST[$action_field['name']]) ? $_POST[$action_field['name']] : '';
+    $action = sanitize_text_field($_POST[$action_field['name']] ?? '');
 
     // update action + verification
     if ($action === 'update' && in_array('verify:yes', $tag->options)) {
       $code = get_transient('gwapi_verify_' . gatewayapi__get_msisdn($cc, $phone));
-      if ($code != $_POST['_gatewayapi_token']) {
+      $req_token = sanitize_text_field($_POST['_gatewayapi_token']);
+      if ($code !== $req_token) {
         $res->invalidate($tag, __('It doesn\'t seem that you have verified your number by SMS, or the verification has expired. Note that you must submit the form within 30 minutes after validating.', 'gatewayapi'));
       }
     }
@@ -1263,8 +1268,9 @@ class GwapiContactForm7
     if ($action === 'signup' && in_array('verify:yes', $tag->options)) {
       $msisdn = gatewayapi__get_msisdn($cc, $phone);
       $code = get_transient("gwapi_verify_signup_" . $msisdn);
-      if (isset($_POST['_gatewayapi_verify_signup'])) {
-        if ($code && $code != preg_replace('/\D+/', '', $_POST['_gatewayapi_verify_signup'])) {
+      $reqCode = preg_replace('/\D+/', '',$_POST['_gatewayapi_verify_signup'] ?? '');
+      if ($reqCode) {
+        if ($code && $code != $reqCode) {
           $res->invalidate($tag, __("The verification code that you entered, was incorrect.", 'gatewayapi'));
         } else if (!$code) {
           $res->invalidate($tag, __("The verification code has expired. You have just 5 minutes to enter the code. Please try again.", 'gatewayapi'));
@@ -1378,8 +1384,8 @@ class GwapiContactForm7
   {
     header("Content-type: application/json");
 
-    $cc = $_POST['cc'] ?? null;
-    $number = $_POST['number'] ?? null;
+    $cc = sanitize_key($_POST['cc'] ?? '');
+    $number = preg_replace('/\D+/', '', sanitize_key($_POST['number'] ?? ''));
     if (!$cc || !$number || !ctype_digit($cc) || !ctype_digit($number)) die(json_encode(['success' => false, 'message' => 'You must supply both country code and phone number.']));
 
     $phone = gatewayapi__get_msisdn($cc, $number);
@@ -1408,11 +1414,11 @@ class GwapiContactForm7
   {
     header("Content-type: application/json");
 
-    $cc = $_POST['cc'] ?? null;
-    $number = $_POST['number'] ?? null;
+    $cc = sanitize_text_field($_POST['cc'] ?? '');
+    $number = preg_replace('/\D+/', '', sanitize_key($_POST['number'] ?? ''));
     if (!$cc || !$number || !ctype_digit($cc) || !ctype_digit($number)) die(json_encode(['success' => false, 'message' => 'You must supply both country code and phone number.']));
 
-    $postCode = $_POST['code'] ?? null;
+    $postCode = sanitize_key($_POST['code'] ?? '');
 
     // valid?
     if (!$postCode) {

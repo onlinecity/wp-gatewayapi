@@ -111,11 +111,8 @@ add_action('wp_ajax_gatewayapi_import', function () {
       ]);
     }
 
-    // recipient groups
-    $groups = isset($_POST['gwapi-recipient-groups']) ? $_POST['gwapi-recipient-groups'] : [];
-
     // Make sure groups are integers
-    $groups = array_map('intval', $groups);
+    $groups = array_map('intval', $_POST['gwapi-recipient-groups'] ?? []);
     $groups = array_unique($groups);
 
     if ($groups) wp_set_object_terms($ID, $groups, 'gwapi-recipient-groups', false);
@@ -123,7 +120,7 @@ add_action('wp_ajax_gatewayapi_import', function () {
     foreach ($_POST['columns'] as $key => $idx) {
       if (!strlen($idx)) continue;
       if ($key == 'name') continue;
-      update_post_meta($ID, $key, $cols[$idx]);
+      update_post_meta($ID, sanitize_key($key), sanitize_text_field($cols[$idx]));
     }
   }
   wp_defer_term_counting(false);

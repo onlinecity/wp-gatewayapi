@@ -5,7 +5,7 @@
     <h1><?php _e('Import recipients', 'gatewayapi'); ?></h1>
 
     <?php
-    switch (isset($_POST['step']) ? $_POST['step'] : 1) {
+    switch (sanitize_key($_POST['step']) ?? 1) {
       case 1:
         include gatewayapi__dir() . '/tpl/import-data.php';
         break;
