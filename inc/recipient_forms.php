@@ -102,7 +102,6 @@ add_filter('pre_update_option_gwapi_recipient_fields', function ($new_value) {
 
 function gatewayapi__render_recipient_field($row, WP_Post $recipient)
 {
-  $render_hidden = apply_filters('gwapi_recipient_render_hidden', is_admin());
   $style = apply_filters('gwapi_recipient_field_style', is_admin() ? 'table' : 'div');
 
   $base_html = apply_filters('gwapi_recipient_fields_base_' . $style . '_html', '', $style);

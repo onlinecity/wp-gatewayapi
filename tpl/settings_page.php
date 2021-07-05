@@ -336,8 +336,8 @@
                   </label>
                   <div class="form-control">
                     <textarea name="gwapi_recipient_fields[mobile_cc_countries][]" rows="5"
-                              placeholder="Leave blank to allow all countries">
-                      <?php echo esc_attr(isset($af['mobile_cc_countries']) ? $af['mobile_cc_countries'] : ''); ?></textarea>
+                              placeholder="Leave blank to allow all countries"
+                    ><?php echo esc_html($af['mobile_cc_countries'] ?? ''); ?></textarea>
                   </div>
                 </div>
 
@@ -476,7 +476,7 @@
                     /** @var $g WP_Term */
                     ?>
                     <tr>
-                      <td style="padding: 5px 10px 0 0"><?php echo esc_attr($g->name); ?></td>
+                      <td style="padding: 5px 10px 0 0"><?php echo esc_html($g->name); ?></td>
                       <td style="padding: 5px 10px 0 0">
                         <input type="text"
                                name="gwapi_user_sync_group_map[<?php echo esc_attr($g->term_id) ?>]"

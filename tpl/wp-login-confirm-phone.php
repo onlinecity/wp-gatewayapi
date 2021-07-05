@@ -2,7 +2,7 @@
 <p class="message">
     <?php echo strtr(
         __('We have just sent you a SMS, to the number <strong>+:mcc :mno</strong>. Please enter the confirmation code from it, in the field below.', 'gatewayapi'),
-        [':mcc' => $mcc, ':mno' => $mno]
+        [':mcc' => esc_html($mcc), ':mno' => esc_html($mno)]
     ); ?>
     <br/>
 </p>

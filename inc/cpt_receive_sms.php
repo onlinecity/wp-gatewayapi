@@ -228,7 +228,7 @@ add_action('parse_request', function ($wp) {
         }
         @$writer->writeSheetRow('Sheet1', $columns);
       }
-      echo $writer->writeToString();
+      $writer->writeToStdOut();
       break;
     default:
       $out = fopen('php://output', 'w');
