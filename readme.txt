@@ -128,6 +128,13 @@ Then find the options-table, by default wp_options. Search for the row where the
 
 == Changelog ==
 
+= 1.7.3 =
+
+Bugfix release.
+
+* Bugfix: Saving recipient details using the UI and via Excel-importer, works properly again.
+* Bugfix: SMS Reply-feature works again.
+
 = 1.7.2 =
 
 This release strengthens the overall security, thanks to input from an external security audit.

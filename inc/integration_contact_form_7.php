@@ -110,9 +110,9 @@ class GwapiContactForm7
       // handle save
       if (isset($_POST['_gatewayapi_form_settings'])) {
         update_post_meta($post_ID, '_gwapi', [
-          'reply_enable' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply-enable'] ?? ''),
-          'reply_sender' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply_sender'] ?? ''),
-          'reply_body' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply_body'] ?? '')
+          'reply-enable' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply-enable'] ?? ''),
+          'reply-sender' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply-sender'] ?? ''),
+          'reply-body' => sanitize_text_field($_POST['_gatewayapi_form_settings']['reply-body'] ?? '')
         ]);
       }
     });

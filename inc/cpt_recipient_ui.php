@@ -48,6 +48,14 @@ function gatewayapi__recipient(\WP_Post $post)
     </tbody>
   </table>
   <?php
+
+  add_action('admin_print_footer_scripts', function() {
+    ?>
+    <script>
+      const _gatewayapi_validate_recipient_nonce = <?php echo json_encode(wp_create_nonce('gatewayapi_validate_recipient')); ?>;
+    </script>
+    <?php
+  });
 }
 
 
@@ -101,7 +109,13 @@ add_action('wp_ajax_gatewayapi_validate_recipient', function () {
 /**
  * Save recipient meta data
  */
-add_action('save_post_gwapi-recipient', 'gatewayapi__save_recipient');
+add_action('save_post_gwapi-recipient', function($ID) {
+  $data = [];
+  foreach($_POST['gatewayapi'] ?? [] as $k => $v) {
+    $data[sanitize_key($k)] = sanitize_text_field($v);
+  }
+  gatewayapi__save_recipient($ID, $data);
+});
 
 /**
  * Save the contents of a recipients form onto the recipient behind the given ID. Takes data from $_POST['gatewayapi'] if

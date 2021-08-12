@@ -55,7 +55,7 @@ $count = substr_count($data, "\n");
 
   <script>
     var import_columns = <?php echo json_encode($_POST['columns']);?>;
-    var gwapi_recipient_groups = <?php echo json_enocde($_POST['gwapi_recipient_groups'] ?? []); ?>;
+    var gwapi_recipient_groups = <?php echo json_encode($_POST['gwapi_recipient_groups'] ?? []); ?>;
     const _gatewayapi_import_nonce = <?php echo json_encode(wp_create_nonce('gwapi_import')); ?>;
   </script>
-<?php wp_enqueue_script('gwapi_import', gatewayapi__url() . '/js/wpadmin-import.js'); ?>
+<?php wp_enqueue_script('gwapi_import', gatewayapi__url() . '/js/wpadmin-import.js', [], GATEWAYAPI_VERSION, true); ?>
