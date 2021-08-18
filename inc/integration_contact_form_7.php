@@ -204,14 +204,13 @@ class GwapiContactForm7
 
     $isSignup = in_array('action:signup', $actions_field['options']);
     if (!$isSignup) $isSignup = $actions_field['name'] == 'action:signup'; // legacy way of detecting that this is a signup!
-
     if (!$isSignup) return;
 
     // must contain a verify:yes requirement
-    if (!$actions_field['options'] || $actions_field['options'][0] != 'verify:yes') return;
+    if (!$actions_field['options'] || !in_array('verify:yes', $actions_field['options'])) return;
 
-    $phone_field = $wpcf7->scan_form_tags(['type' => 'gw_phone']);
-    $country_code_field = $wpcf7->scan_form_tags(['type' => 'gw_country']);
+    $phone_field = current($wpcf7->scan_form_tags(['type' => 'gw_phone']) ? : []);
+    $country_code_field = current($wpcf7->scan_form_tags(['type' => 'gw_country']) ? : []);
 
     // must have phone and country code
     if (!$phone_field || !$country_code_field) return;
@@ -234,9 +233,9 @@ class GwapiContactForm7
       set_transient('gwapi_spam_trap_resolve_' . $phone, $spam_trap_resolve, 60 * 5);
 
       gatewayapi_send_sms(__("Your verification code:", 'gatewayapi') . " " . $code, $phone);
-      die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
+      die(json_encode(['gwapi_verify' => true, 'gwapi_prompt' => __("We have just sent an SMS to your mobile. Please enter the code here in order to verify the phone number.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve, 'status' => 'validation_failed']));
     } else {
-      die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gatewayapi'), 'spam_trap_resolve' => $spam_trap_resolve]));
+      die(json_encode(['gwapi_verify' => true, 'gwapi_error' => __("You have tried verifying this phone number very recently, but did not complete the required steps. To prevent abuse, please wait 5 minutes before trying again.", 'gatewayapi'), 'spam_trap_resolve' => '', 'status' => 'mail_failed']));
     }
   }
 
@@ -458,7 +457,7 @@ class GwapiContactForm7
               </label>
             </th>
             <td>
-              <input type="text" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr($args['default'] . '-default'); ?>">
+              <input type="text" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr(($args['default']??'') . '-default'); ?>">
             </td>
           </tr>
           </tbody>
@@ -542,7 +541,7 @@ class GwapiContactForm7
               </label>
             </th>
             <td>
-              <input type="text" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr($args['default'] . '-default'); ?>">
+              <input type="text" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr(($args['default']??'') . '-default'); ?>">
             </td>
           </tr>
           </tbody>
@@ -1369,7 +1368,7 @@ class GwapiContactForm7
       $this->enqueueContactform7Js();
       ?>
       <script>
-        var gwapi_admin_ajax = <?php json_encode(admin_url('admin-ajax.php')); ?>;
+        var gwapi_admin_ajax = <?php echo json_encode(admin_url('admin-ajax.php')); ?>;
       </script>
       <?php
     }
