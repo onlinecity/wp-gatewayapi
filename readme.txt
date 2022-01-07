@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
 Tested up to: 5.8.1
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -127,6 +127,10 @@ Then find the options-table, by default wp_options. Search for the row where the
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.7.6 =
+
+* Bugfix: Fixing that GatewayAPI Shortcode for signup had stopped saving some meta-fields since 1.7.2.
 
 = 1.7.5 =
 

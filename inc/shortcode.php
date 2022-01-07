@@ -134,7 +134,12 @@ function gatewayapi__shortcode_handle_signup($atts)
       if (!is_wp_error($recipient)) return new WP_Error('already_exists', __('You are already subscribed with the phone number specified.', 'gatewayapi'));
 
       // save the information supplied by the user
-      set_transient('gwapi_subscriber_' . $msisdn, ['cc' => $cc, 'number' => $no], 60 * 60 * 4);
+      $data = ['cc' => $cc, 'number' => $no];
+      foreach(gatewayapi__all_recipient_fields() as $f) {
+        if (!isset($data[strtolower($f['field_id'])]) && isset($_POST['gatewayapi'][strtolower($f['field_id'])]))
+          $data[strtolower($f['field_id'])] = sanitize_text_field($_POST['gatewayapi'][strtolower($f['field_id'])]);
+      }
+      set_transient('gwapi_subscriber_' . $msisdn, $data, 60 * 60 * 4);
 
       // send the verification sms
       $code = rand(100000, 999999);
