@@ -15,6 +15,7 @@ add_action('admin_menu', function () {
 add_action('admin_init', function () {
     register_setting('gatewayapi', 'gwapi_key');
     register_setting('gatewayapi', 'gwapi_secret');
+    register_setting('gatewayapi', 'gwapi_setup');
     register_setting('gatewayapi', 'gwapi_enable_ui');
     register_setting('gatewayapi', 'gwapi_recaptcha_site_key');
     register_setting('gatewayapi', 'gwapi_recaptcha_secret_key');

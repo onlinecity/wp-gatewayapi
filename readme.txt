@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 5.8.1
-Stable tag: 1.7.6
+Tested up to: 6.1
+Stable tag: 1.8.0
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -127,6 +127,11 @@ Then find the options-table, by default wp_options. Search for the row where the
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.8.0 =
+
+* Support for using our GatewayAPI.eu-setup!
+* Bugfix: 2FA login security could fail on PHP 7.4+.
 
 = 1.7.6 =
 

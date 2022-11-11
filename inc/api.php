@@ -82,9 +82,14 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
   $req = apply_filters('gwapi_send_sms_request', $req);
 
   // possible URIs
-  $uris = ['https://gatewayapi.com/rest/mtsms', 'https://badssl.gatewayapi.com/rest/mtsms', 'http://badssl.gatewayapi.com/rest/mtsms'];
+  $uriBySetup = [
+      'com' => ['https://gatewayapi.com/rest/mtsms', 'https://badssl.gatewayapi.com/rest/mtsms', 'http://badssl.gatewayapi.com/rest/mtsms'],
+      'eu' => ['https://gatewayapi.eu/rest/mtsms']
+  ];
 
   $ts = time() - 3;
+  $uris = $uriBySetup[get_option('gwapi_setup') ? : 'com'];
+
   foreach ($uris as $i => $uri) {
     // Variables for OAuth 1.0a Signature
     $consumer_key = rawurlencode(get_option('gwapi_key'));

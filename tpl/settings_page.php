@@ -44,6 +44,27 @@
               <input type="text" name="gwapi_secret" value="<?php echo esc_attr(get_option('gwapi_secret')); ?>" size="64"/>
             </td>
           </tr>
+
+          <tr valign="top">
+            <th scope="row"><?php _e('GatewayAPI Setup', 'gatewayapi'); ?></th>
+            <td>
+              <select name="gwapi_setup">
+                  <?php $options = [
+                      'com' => __('GatewayAPI.com', 'gatewayapi'),
+                      'eu' => __('GatewayAPI.eu', 'gatewayapi'),
+                  ]; ?>
+                  <?php foreach ($options as $setup => $text): ?>
+                    <option <?php echo get_option('gwapi_setup') == $setup ? 'selected' : ''; ?> value="<?php echo esc_attr($setup); ?>">
+                        <?php echo esc_html($text); ?>
+                    </option>
+                  <?php endforeach; ?>
+              </select>
+              <p class="help-block description">
+                  <?php _e('Please pick the setup on which you have your account. Not sure which? Then you are likely on GatewayAPI.com.', 'gatewayapi'); ?>
+              </p>
+            </td>
+          </tr>
+
           <tr valign="top">
             <th scope="row"><?php _e('Enable sending UI', 'gatewayapi'); ?></th>
             <td>

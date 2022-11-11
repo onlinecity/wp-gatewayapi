@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Manage SMS broadcasts via WordPress
-Version:     1.7.6
+Version:     1.8.0
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     MIT
@@ -13,7 +13,7 @@ Domain Path: /languages
 */
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
-const GATEWAYAPI_VERSION = '1.7.6';
+const GATEWAYAPI_VERSION = '1.8.0';
 global $gatewayapi_db_version;
 $gatewayapi_db_version = '1.0';
 
@@ -102,6 +102,7 @@ add_action('init', function () {
   require_once("$D/inc/api.php");
   require_once("$D/inc/recipient_forms.php");
   require_once("$D/inc/triggers.php");
+  require_once("$D/inc/helpers.php");
 
   // plugin: contact form 7
   add_action('wpcf7_admin_init', "gatewayapi__initialize_cf7_admin", 18);
@@ -109,8 +110,6 @@ add_action('init', function () {
   add_action("wpcf7_before_send_mail", "gatewayapi__initialize_cf7_submit");
 
   if (get_option('gwapi_enable_ui')) {
-
-    require_once("$D/inc/helpers.php");
     require_once("$D/inc/cpt_sms.php");
     require_once("$D/inc/cpt_recipient.php");
     require_once("$D/inc/tax_recipient.php");

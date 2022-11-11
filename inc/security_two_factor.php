@@ -102,7 +102,7 @@ class GwapiSecurityTwoFactor
     foreach ($user->gwapi_2f_tokens ?: [] as $token => $expiry) {
       if (time() < $expiry) $new_tokens[$token] = $expiry;
     }
-    if (count($new_tokens) !== count($user->gwapi_2f_tokens)) {
+    if (count($new_tokens) !== count($user->gwapi_2f_tokens ?: [])) {
       update_user_meta($user->ID, 'gwapi_2f_tokens', $new_tokens);
       $user->gwapi_2f_tokens = $new_tokens;
     }
