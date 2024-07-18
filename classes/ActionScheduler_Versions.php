@@ -10,17 +10,27 @@ class ActionScheduler_Versions {
 	private static $instance = NULL;
 
 	private $versions = array();
+	private $sources  = array();
 
 	public function register( $version_string, $initialization_callback ) {
 		if ( isset($this->versions[$version_string]) ) {
 			return FALSE;
 		}
+
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+		$source    = $backtrace[0]['file'];
+
 		$this->versions[$version_string] = $initialization_callback;
+		$this->sources[$source] = $version_string;
 		return TRUE;
 	}
 
 	public function get_versions() {
 		return $this->versions;
+	}
+
+	public function get_sources() {
+		return $this->sources;
 	}
 
 	public function latest_version() {
@@ -59,4 +69,3 @@ class ActionScheduler_Versions {
 		call_user_func($self->latest_version_callback());
 	}
 }
- 

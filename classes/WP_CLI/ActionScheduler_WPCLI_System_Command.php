@@ -51,6 +51,7 @@ class ActionScheduler_WPCLI_System_Command {
 	 * @return void
 	 */
 	public function status( array $args, array $assoc_args ) {
+		$format = get_flag_value( $this->assoc_args, 'group', '' );
 		/**
 		 * Get runner status.
 		 *
@@ -110,7 +111,7 @@ class ActionScheduler_WPCLI_System_Command {
 				);
 			}
 
-			ksort( $rows, SORT_NUMERIC );
+			uksort( $rows, 'version_compare' );
 
 			$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'version', 'callback' ) );
 			$formatter->display_items( $rows );
@@ -119,6 +120,35 @@ class ActionScheduler_WPCLI_System_Command {
 		}
 
 		echo $this->get_latest_version( $instance );
+	}
+
+	/**
+	 * Get all system sources.
+	 *
+	 * @param array $args       Positional args.
+	 * @param array $assoc_args Keyed args.
+	 * @uses \ActionScheduler_Versions::get_sources()
+	 * @uses \WP_CLI\Formatter::display_items()
+	 * @uses $this->get_latest_version()
+	 * @return void
+	 */
+	public function sources( array $args, array $assoc_args ) {
+		$instance = \ActionScheduler_Versions::instance();
+		$sources  = $instance->get_sources();
+
+		$rows = array();
+
+		foreach ( $sources as $source => $version ) {
+			$rows[ $source ] = array(
+				'source'  => str_replace( ABSPATH, '', $source ),
+				'version' => $version,
+			);
+		}
+
+		ksort( $rows );
+
+		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'source', 'version' ) );
+		$formatter->display_items( $rows );
 	}
 
 	/**
