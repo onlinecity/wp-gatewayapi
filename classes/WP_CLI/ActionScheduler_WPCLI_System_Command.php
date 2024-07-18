@@ -51,7 +51,6 @@ class ActionScheduler_WPCLI_System_Command {
 	 * @return void
 	 */
 	public function status( array $args, array $assoc_args ) {
-		$format = get_flag_value( $this->assoc_args, 'group', '' );
 		/**
 		 * Get runner status.
 		 *
