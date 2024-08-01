@@ -183,7 +183,7 @@ class ActionScheduler_WPCLI_Action_Command extends WP_CLI_Command {
 	 * : Instead of returning the whole action, returns the value of a single field.
 	 *
 	 * [--fields=<fields>]
-	 * : Limit the output to specific fields. Defaults to all fields.
+	 * : Limit the output to specific fields (comma-separated). Defaults to all fields.
 	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
@@ -275,8 +275,7 @@ class ActionScheduler_WPCLI_Action_Command extends WP_CLI_Command {
 	 * default: 0
 	 * ---
 	 *
-	 * @param array $args       Positional arguments.
-	 * @param array $assoc_args Keyed arguments.
+	 * @param array $args Positional arguments.
 	 * @return void
 	 */
 	public function logs( array $args ) {

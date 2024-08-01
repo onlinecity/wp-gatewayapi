@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaping output is not necessary in WP CLI.
+
 /**
  * WP-CLI command: action-scheduler action list
  */
@@ -45,15 +47,8 @@ class ActionScheduler_WPCLI_Action_List_Command extends ActionScheduler_WPCLI_Co
 			$fields = $this->assoc_args['fields'];
 		}
 
-		$formatter = new \WP_CLI\Formatter( $this->assoc_args, $fields );
-
-		$query_args = array_filter(
-			$this->assoc_args,
-			static function ( $key ) {
-				return in_array( $key, static::PARAMETERS, true );
-			},
-			ARRAY_FILTER_USE_KEY
-		);
+		$formatter  = new \WP_CLI\Formatter( $this->assoc_args, $fields );
+		$query_args = $this->assoc_args;
 
 		/**
 		 * The `claimed` parameter expects a boolean or integer:
@@ -65,10 +60,11 @@ class ActionScheduler_WPCLI_Action_List_Command extends ActionScheduler_WPCLI_Co
 
 		$return_format = 'OBJECT';
 
-		if ( in_array( $formatter->format, array( 'ids', 'count' ) ) ) {
+		if ( in_array( $formatter->format, array( 'ids', 'count' ), true ) ) {
 			$return_format = '\'ids\'';
 		}
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
 		$params = var_export( $query_args, true );
 
 		if ( empty( $query_args ) ) {

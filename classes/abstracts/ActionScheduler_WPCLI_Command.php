@@ -22,7 +22,7 @@ abstract class ActionScheduler_WPCLI_Command extends \WP_CLI_Command {
 	public function __construct( array $args, array $assoc_args ) {
 		if ( ! defined( 'WP_CLI' ) || ! constant( 'WP_CLI' ) ) {
 			/* translators: %s php class name */
-			throw new Exception( sprintf( __( 'The %s class can only be run within WP CLI.', 'action-scheduler' ), __CLASS__ ) );
+			throw new Exception( sprintf( __( 'The %s class can only be run within WP CLI.', 'action-scheduler' ), get_class( $this ) ) );
 		}
 
 		$this->args       = $args;
@@ -57,34 +57,10 @@ abstract class ActionScheduler_WPCLI_Command extends \WP_CLI_Command {
 	}
 
 	/**
-	 * Returns the recurrence of an action or 'Non-repeating'. The output is human readable.
-	 *
-	 * @see \ActionScheduler_ListTable::get_recurrence()
-	 * @param ActionScheduler_Action $action Action.
-	 *
-	 * @return string
-	 */
-	protected function get_recurrence( $action ) {
-		$schedule = $action->get_schedule();
-		if ( $schedule->is_recurring() ) {
-			$recurrence = $schedule->get_recurrence();
-
-			if ( is_numeric( $recurrence ) ) {
-				/* translators: %s: time interval */
-				return sprintf( __( 'Every %s', 'action-scheduler' ), self::human_interval( $recurrence ) );
-			} else {
-				return $recurrence;
-			}
-		}
-
-		return __( 'Non-repeating', 'action-scheduler' );
-	}
-
-	/**
 	 * Transforms arguments with '__' from CSV into expected arrays.
 	 *
 	 * @see \WP_CLI\CommandWithDBObject::process_csv_arguments_to_arrays()
-	 * @link https://github.com/wp-cli/entity-command/blob/6e0e77a297eefa3329b94bec16c15cf7528d343f/src/WP_CLI/CommandWithDBObject.php
+	 * @link https://github.com/wp-cli/entity-command/blob/c270cc9a2367cb8f5845f26a6b5e203397c91392/src/WP_CLI/CommandWithDBObject.php#L99
 	 * @return void
 	 */
 	protected function process_csv_arguments_to_arrays() {

@@ -12,12 +12,6 @@ class ActionScheduler_WPCLI_Action_Create_Command extends ActionScheduler_WPCLI_
 	/**
 	 * Execute command.
 	 *
-	 * @uses as_schedule_single_action()
-	 * @uses as_enqueue_async_action()
-	 * @uses as_schedule_recurring_action()
-	 * @uses as_schedule_cron_action()
-	 * @uses $this->print_error()
-	 * @uses $this->print_success()
 	 * @return void
 	 */
 	public function execute() {
@@ -51,7 +45,7 @@ class ActionScheduler_WPCLI_Action_Create_Command extends ActionScheduler_WPCLI_
 				$schedule_start         = as_get_datetime_object( $schedule_start );
 				$function_args['start'] = $schedule_start->format( 'U' );
 			}
-		} catch( \Exception $e ) {
+		} catch ( \Exception $e ) {
 			\WP_CLI::error( $e->getMessage() );
 		}
 
@@ -70,7 +64,7 @@ class ActionScheduler_WPCLI_Action_Create_Command extends ActionScheduler_WPCLI_
 				},
 				ARRAY_FILTER_USE_KEY
 			);
-		} else if ( ! empty( $cron ) ) { // Creating cron action.
+		} elseif ( ! empty( $cron ) ) { // Creating cron action.
 			$action_type = 'cron';
 			$function    = 'as_schedule_cron_action';
 
@@ -81,7 +75,7 @@ class ActionScheduler_WPCLI_Action_Create_Command extends ActionScheduler_WPCLI_
 				},
 				ARRAY_FILTER_USE_KEY
 			);
-		} else if ( in_array( $function_args['start'], static::ASYNC_OPTS ) ) { // Enqueue async action.
+		} elseif ( in_array( $function_args['start'], static::ASYNC_OPTS, true ) ) { // Enqueue async action.
 			$action_type = 'async';
 			$function    = 'as_enqueue_async_action';
 
@@ -141,9 +135,7 @@ class ActionScheduler_WPCLI_Action_Create_Command extends ActionScheduler_WPCLI_
 	 * Convert an exception into a WP CLI error.
 	 *
 	 * @param \Exception $e The error object.
-	 *
-	 * @throws \WP_CLI\ExitException
-	 *
+	 * @throws \WP_CLI\ExitException When an error occurs.
 	 * @return void
 	 */
 	protected function print_error( \Exception $e ) {

@@ -1,11 +1,20 @@
 <?php
 
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaping output is not necessary in WP CLI.
+
 use function \WP_CLI\Utils\get_flag_value;
 
 /**
  * System info WP-CLI commands for Action Scheduler.
  */
 class ActionScheduler_WPCLI_System_Command {
+
+	/**
+	 * Data store for querying actions
+	 *
+	 * @var ActionScheduler_Store
+	 */
+	protected $store;
 
 	/**
 	 * Construct.
@@ -19,7 +28,6 @@ class ActionScheduler_WPCLI_System_Command {
 	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Keyed args.
-	 * @uses $this->get_current_datastore()
 	 * @return void
 	 *
 	 * @subcommand data-store
@@ -33,7 +41,6 @@ class ActionScheduler_WPCLI_System_Command {
 	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Keyed args.
-	 * @uses $this->get_current_runner()
 	 * @return void
 	 */
 	public function runner( array $args, array $assoc_args ) {
@@ -45,9 +52,6 @@ class ActionScheduler_WPCLI_System_Command {
 	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Keyed args.
-	 * @uses $this->get_current_datastore()
-	 * @uses $this->get_latest_version()
-	 * @uses $this->print_statuses()
 	 * @return void
 	 */
 	public function status( array $args, array $assoc_args ) {
@@ -80,23 +84,21 @@ class ActionScheduler_WPCLI_System_Command {
 	}
 
 	/**
-	 * Get latest or all system versions.
+	 * Display the active version, or all registered versions.
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--all]
-	 * : Get all system versions.
+	 * : List all registered versions.
 	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Keyed args.
-	 * @uses \ActionScheduler_Versions::get_versions()
-	 * @uses \WP_CLI\Formatter::display_items()
-	 * @uses $this->get_latest_version()
 	 * @return void
 	 */
 	public function version( array $args, array $assoc_args ) {
 		$all      = (bool) get_flag_value( $assoc_args, 'all' );
 		$instance = \ActionScheduler_Versions::instance();
+		$latest   = $this->get_latest_version( $instance );
 
 		if ( $all ) {
 			$versions = $instance->get_versions();
@@ -104,21 +106,28 @@ class ActionScheduler_WPCLI_System_Command {
 			$rows = array();
 
 			foreach ( $versions as $version => $callback ) {
+				$active = 'no';
+
+				if ( $version === $latest ) {
+					$active = 'yes';
+				}
+
 				$rows[ $version ] = array(
 					'version'  => $version,
 					'callback' => $callback,
+					'active'   => $active,
 				);
 			}
 
 			uksort( $rows, 'version_compare' );
 
-			$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'version', 'callback' ) );
+			$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'version', 'callback', 'active' ) );
 			$formatter->display_items( $rows );
 
 			return;
 		}
 
-		echo $this->get_latest_version( $instance );
+		echo $latest;
 	}
 
 	/**
@@ -163,7 +172,6 @@ class ActionScheduler_WPCLI_System_Command {
 	 * Get latest version.
 	 *
 	 * @param null|\ActionScheduler_Versions $instance Versions.
-	 * @uses \ActionScheduler_Versions::latest_version()
 	 * @return string
 	 */
 	protected function get_latest_version( $instance = null ) {
@@ -177,7 +185,6 @@ class ActionScheduler_WPCLI_System_Command {
 	/**
 	 * Get current runner.
 	 *
-	 * @uses \ActionScheduler::runner()
 	 * @return string
 	 */
 	protected function get_current_runner() {
