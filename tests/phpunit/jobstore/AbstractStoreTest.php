@@ -136,11 +136,9 @@ abstract class AbstractStoreTest extends ActionScheduler_UnitTestCase {
 
 			$store->save_action( $action );
 		}
-
 		$this->assertTrue( $store->has_pending_actions_due() );
 
 		$runner->run();
-
 		$this->assertFalse( $store->has_pending_actions_due() );
 	}
 
@@ -160,7 +158,6 @@ abstract class AbstractStoreTest extends ActionScheduler_UnitTestCase {
 
 			$store->save_action( $action );
 		}
-
 		$this->assertFalse( $store->has_pending_actions_due() );
 	}
 }
