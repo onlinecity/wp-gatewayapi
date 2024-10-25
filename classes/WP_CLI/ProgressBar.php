@@ -84,8 +84,6 @@ class ProgressBar {
 		$this->progress_bar->tick();
 		$this->total_ticks++;
 
-		// TODO: add version.
-		do_action_deprecated( 'action_scheduler/progress_tick', $this->total_ticks, '', 'action_scheduler_progress_tick' ); // phpcs:ignore WordPress.NamingConvetions.ValidHookName.UseUnderscores
 		do_action( 'action_scheduler_progress_tick', $this->total_ticks );
 	}
 
