@@ -16,6 +16,8 @@ jobs:
         exclude:
           # WordPress 6.6+ requires PHP 7.2+
           - php: 7.0
+            wp: 6.6
+          - php: 7.0
             wp: latest
           - php: 7.0
             wp: nightly
