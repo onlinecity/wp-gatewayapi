@@ -27,7 +27,7 @@ class LogMigrator_Test extends ActionScheduler_UnitTestCase {
 		for ( $i = 0; $i < 3; $i++ ) {
 			for ( $j = 0; $j < 5; $j++ ) {
 				$logs[ $i ][ $j ] = md5( wp_rand() );
-				if ( 1 === absint( $i ) ) {
+				if ( 1 === $i ) {
 					$source->log( $source_action_id, $logs[ $i ][ $j ] );
 				}
 			}
