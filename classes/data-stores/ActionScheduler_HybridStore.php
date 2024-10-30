@@ -38,7 +38,7 @@ class ActionScheduler_HybridStore extends Store {
 
 	/**
 	 * The dividing line between IDs of actions created
-	 *          by the primary and secondary stores.
+	 * by the primary and secondary stores.
 	 *
 	 * @var int
 	 *
