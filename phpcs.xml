@@ -44,10 +44,6 @@
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
 
-	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid">
-
-	</rule>
-
 	<rule ref="PEAR.NamingConventions.ValidClassName">
 		<exclude-pattern>classes/ActionScheduler_wcSystemStatus.php</exclude-pattern>
 		<exclude-pattern>classes/data-stores/ActionScheduler_wpCommentLogger.php</exclude-pattern>
