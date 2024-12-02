@@ -98,42 +98,44 @@ class System_Command {
 	 * @return void
 	 */
 	public function version( array $args, array $assoc_args ) {
-		$all      = (bool) get_flag_value( $assoc_args, 'all' );
-		$instance = \ActionScheduler_Versions::instance();
-		$latest   = $this->get_latest_version( $instance );
+		$all    = (bool) get_flag_value( $assoc_args, 'all' );
+		$latest = $this->get_latest_version( $instance );
 
-		if ( $all ) {
-			$versions = $instance->get_versions();
-
-			$rows = array();
-
-			foreach ( $versions as $version => $callback ) {
-				$active = 'no';
-
-				if ( $version === $latest ) {
-					$active = 'yes';
-				}
-
-				$rows[ $version ] = array(
-					'version'  => $version,
-					'callback' => $callback,
-					'active'   => $active,
-				);
-			}
-
-			uksort( $rows, 'version_compare' );
-
-			$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'version', 'callback', 'active' ) );
-			$formatter->display_items( $rows );
-
-			return;
+		if ( ! $all ) {
+			echo $latest;
+			\WP_CLI::halt( 0 );
 		}
 
-		echo $latest;
+		$instance = \ActionScheduler_Versions::instance();
+		$versions = $instance->get_versions();
+		$rows     = array();
+
+		foreach ( $versions as $version => $callback ) {
+			$active = $version === $latest;
+
+			$rows[ $version ] = array(
+				'version'  => $version,
+				'callback' => $callback,
+				'active'   => $active ? 'yes' : 'no',
+			);
+		}
+
+		uksort( $rows, 'version_compare' );
+
+		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'version', 'callback', 'active' ) );
+		$formatter->display_items( $rows );
 	}
 
 	/**
-	 * Get all system sources.
+	 * Display the current source, or all registered sources.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--all]
+	 * : List all registered sources.
+	 *
+	 * [--fullpath]
+	 * : List full path of source(s).
 	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Keyed args.
@@ -142,22 +144,43 @@ class System_Command {
 	 * @uses $this->get_latest_version()
 	 * @return void
 	 */
-	public function sources( array $args, array $assoc_args ) {
+	public function source( array $args, array $assoc_args ) {
+		$all      = (bool) get_flag_value( $assoc_args, 'all' );
+		$fullpath = (bool) get_flag_value( $assoc_args, 'fullpath' );
+		$source   = dirname( __DIR__, 2 );
+		$path     = $source;
+
+		if ( ! $fullpath ) {
+			$path = str_replace( ABSPATH, '', $path );
+		}
+
+		if ( ! $all ) {
+			echo $path;
+			\WP_CLI::halt( 0 );
+		}
+
 		$instance = \ActionScheduler_Versions::instance();
 		$sources  = $instance->get_sources();
+		$rows     = array();
 
-		$rows = array();
+		foreach ( $sources as $check_source => $version ) {
+			$active = dirname( $check_source ) === $source;
+			$path   = $source;
 
-		foreach ( $sources as $source => $version ) {
+			if ( ! $fullpath ) {
+				$path = str_replace( ABSPATH, '', $path );
+			}
+
 			$rows[ $source ] = array(
-				'source'  => str_replace( ABSPATH, '', $source ),
+				'source'  => $path,
 				'version' => $version,
+				'active'  => $active ? 'yes' : 'no',
 			);
 		}
 
 		ksort( $rows );
 
-		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'source', 'version' ) );
+		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'source', 'version', 'active' ) );
 		$formatter->display_items( $rows );
 	}
 
