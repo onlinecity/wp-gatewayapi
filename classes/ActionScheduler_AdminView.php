@@ -251,6 +251,8 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 		}
 
 		$as_version = ActionScheduler_Versions::instance()->latest_version();
+		$as_source  = ActionScheduler_Versions::instance()->active_source();
+
 		$screen->add_help_tab(
 			array(
 				'id'      => 'action_scheduler_about',
@@ -261,6 +263,11 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 					'<p>' .
 						__( 'Action Scheduler is a scalable, traceable job queue for background processing large sets of actions. Action Scheduler works by triggering an action hook to run at some time in the future. Scheduled actions can also be scheduled to run on a recurring schedule.', 'action-scheduler' ) .
 					'</p>' .
+					'<h3>' . esc_html__( 'Source', 'action-scheduler' ) . '</h3>' .
+					'<p>' .
+						esc_html__( 'Because Action Scheduler can be included as a library in plugins and themes, the code block below indicates from where Action Scheduler is being loaded.', 'action-scheduler' ) .
+					'</p>' .
+					'<p><code>' . $as_source . '</code></p>' .
 					'<h3>' . esc_html__( 'WP CLI', 'action-scheduler' ) . '</h3>' .
 					'<p>' .
 						sprintf(
