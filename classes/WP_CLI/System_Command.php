@@ -165,13 +165,13 @@ class System_Command {
 
 		foreach ( $sources as $check_source => $version ) {
 			$active = dirname( $check_source ) === $source;
-			$path   = $source;
+			$path   = $check_source;
 
 			if ( ! $fullpath ) {
 				$path = str_replace( ABSPATH, '', $path );
 			}
 
-			$rows[ $source ] = array(
+			$rows[ $check_source ] = array(
 				'source'  => $path,
 				'version' => $version,
 				'active'  => $active ? 'yes' : 'no',
