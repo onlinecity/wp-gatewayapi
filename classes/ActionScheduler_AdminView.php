@@ -265,7 +265,7 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 					'</p>' .
 					'<h3>' . esc_html__( 'Source', 'action-scheduler' ) . '</h3>' .
 					'<p>' .
-						esc_html__( 'Because Action Scheduler can be included as a library in plugins and themes, the code block below indicates from where Action Scheduler is being loaded.', 'action-scheduler' ) .
+						esc_html__( 'Action Scheduler is currently being loaded from the following location. This can be useful when debugging, or if requested by the support team.', 'action-scheduler' ) .
 					'</p>' .
 					'<p><code>' . $as_source . '</code></p>' .
 					'<h3>' . esc_html__( 'WP CLI', 'action-scheduler' ) . '</h3>' .
