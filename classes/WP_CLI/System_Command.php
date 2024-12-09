@@ -137,6 +137,9 @@ class System_Command {
 	 * [--fullpath]
 	 * : List full path of source(s).
 	 *
+	 * [--skip-notice]
+	 * : Skip notice about registered sources.
+	 *
 	 * @param array $args       Positional args.
 	 * @param array $assoc_args Keyed args.
 	 * @uses \ActionScheduler_Versions::get_sources()
@@ -147,7 +150,9 @@ class System_Command {
 	public function source( array $args, array $assoc_args ) {
 		$all      = (bool) get_flag_value( $assoc_args, 'all' );
 		$fullpath = (bool) get_flag_value( $assoc_args, 'fullpath' );
-		$source   = dirname( __DIR__, 2 );
+		$skipnote = (bool) get_flag_value( $assoc_args, 'skip-notice' );
+		$versions = \ActionScheduler_Versions::instance();
+		$source   = $versions->active_source();
 		$path     = $source;
 
 		if ( ! $fullpath ) {
@@ -159,9 +164,8 @@ class System_Command {
 			\WP_CLI::halt( 0 );
 		}
 
-		$instance = \ActionScheduler_Versions::instance();
-		$sources  = $instance->get_sources();
-		$rows     = array();
+		$sources = $versions->get_sources();
+		$rows    = array();
 
 		foreach ( $sources as $check_source => $version ) {
 			$active = dirname( $check_source ) === $source;
@@ -179,6 +183,10 @@ class System_Command {
 		}
 
 		ksort( $rows );
+
+		if ( ! $skipnote ) {
+			\WP_CLI::line( PHP_EOL . 'Please note there can only be one unique registered instance of Action Scheduler per ' . PHP_EOL . 'version number, so this list may not include all the currently present copies of ' . PHP_EOL . 'Action Scheduler.' . PHP_EOL );
+		}
 
 		$formatter = new \WP_CLI\Formatter( $assoc_args, array( 'source', 'version', 'active' ) );
 		$formatter->display_items( $rows );
