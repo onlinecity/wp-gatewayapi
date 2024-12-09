@@ -267,7 +267,7 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 					'<p>' .
 						esc_html__( 'Action Scheduler is currently being loaded from the following location. This can be useful when debugging, or if requested by the support team.', 'action-scheduler' ) .
 					'</p>' .
-					'<p><code>' . $as_source . '</code></p>' .
+					'<p><code>' . esc_html( $as_source ) . '</code></p>' .
 					'<h3>' . esc_html__( 'WP CLI', 'action-scheduler' ) . '</h3>' .
 					'<p>' .
 						sprintf(
