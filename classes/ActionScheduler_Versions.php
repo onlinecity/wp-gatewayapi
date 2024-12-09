@@ -17,7 +17,13 @@ class ActionScheduler_Versions {
 	 * @var array<string, callable>
 	 */
 	private $versions = array();
-	private $sources  = array();
+
+	/**
+	 * Registered sources.
+	 *
+	 * @var array<string, string>
+	 */
+	private $sources = array();
 
 	/**
 	 * Register version's callback.
@@ -45,6 +51,11 @@ class ActionScheduler_Versions {
 		return $this->versions;
 	}
 
+	/**
+	 * Get registered sources.
+	 *
+	 * @return array<string, string>
+	 */
 	public function get_sources() {
 		return $this->sources;
 	}
@@ -97,6 +108,11 @@ class ActionScheduler_Versions {
 		call_user_func( $self->latest_version_callback() );
 	}
 
+	/**
+	 * Get directory of active source.
+	 *
+	 * @return string
+	 */
 	public function active_source() {
 		return trailingslashit( dirname( __DIR__ ) );
 	}
