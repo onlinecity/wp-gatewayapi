@@ -36,11 +36,12 @@ class ActionScheduler_Versions {
 			return false;
 		}
 
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
 		$source    = $backtrace[0]['file'];
 
 		$this->versions[ $version_string ] = $initialization_callback;
-		$this->sources[ $source ] = $version_string;
+		$this->sources[ $source ]          = $version_string;
 		return true;
 	}
 
