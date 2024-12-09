@@ -115,6 +115,58 @@ class ActionScheduler_Versions {
 	 * @return string
 	 */
 	public function active_source() {
+		$file   = __FILE__;
+		$dir    = __DIR__;
+		$path   = $this->active_source_path();
+		$themes = (array) search_theme_directories();
+
+		foreach ( $themes as $slug => $data ) {
+			$needle = trailingslashit( $data['theme_root'] ) . $slug . '/';
+
+			if ( 0 !== strpos( $file, $needle ) ) {
+				continue;
+			}
+
+			$theme = wp_get_theme( $slug );
+
+			if ( ! is_object( $theme ) || ! is_a( $theme, \WP_Theme::class ) ) {
+				continue;
+			}
+
+			return array(
+				'type' => 'theme',
+				'name' => $theme->Name,
+			);
+		}
+
+		$plugins      = get_plugins();
+		$plugin_files = array_keys( $plugins );
+		$plugin_paths = array();
+
+		foreach ( $plugin_files as $plugin_file ) {
+			$plugin_path = trailingslashit( WP_PLUGIN_DIR ) . dirname( $plugin_file );
+			$plugin_file = trailingslashit( WP_PLUGIN_DIR ) . $plugin_file;
+
+			if ( 0 !== strpos( dirname( $dir ), $plugin_path ) ) {
+				continue;
+			}
+
+			$plugin_data = get_plugin_data( $plugin_file );
+
+			if ( ! is_array( $plugin_data ) || empty( $plugin_data['Name'] ) ) {
+				continue;
+			}
+
+			return array(
+				'type' => 'plugin',
+				'name' => $plugin_data['Name'],
+			);
+		}
+
+		return array();
+	}
+
+	public function active_source_path() {
 		return trailingslashit( dirname( __DIR__ ) );
 	}
 }
