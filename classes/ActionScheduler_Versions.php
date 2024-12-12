@@ -117,7 +117,6 @@ class ActionScheduler_Versions {
 	public function active_source() {
 		$file   = __FILE__;
 		$dir    = __DIR__;
-		$path   = $this->active_source_path();
 		$themes = (array) search_theme_directories();
 
 		foreach ( $themes as $slug => $data ) {
@@ -141,7 +140,6 @@ class ActionScheduler_Versions {
 
 		$plugins      = get_plugins();
 		$plugin_files = array_keys( $plugins );
-		$plugin_paths = array();
 
 		foreach ( $plugin_files as $plugin_file ) {
 			$plugin_path = trailingslashit( WP_PLUGIN_DIR ) . dirname( $plugin_file );
