@@ -115,29 +115,8 @@ class ActionScheduler_Versions {
 	 * @return string
 	 */
 	public function active_source() {
-		$file   = __FILE__;
-		$dir    = __DIR__;
-		$themes = (array) search_theme_directories();
-
-		foreach ( $themes as $slug => $data ) {
-			$needle = trailingslashit( $data['theme_root'] ) . $slug . '/';
-
-			if ( 0 !== strpos( $file, $needle ) ) {
-				continue;
-			}
-
-			$theme = wp_get_theme( $slug );
-
-			if ( ! is_object( $theme ) || ! is_a( $theme, \WP_Theme::class ) ) {
-				continue;
-			}
-
-			return array(
-				'type' => 'theme',
-				'name' => $theme->Name,
-			);
-		}
-
+		$file         = __FILE__;
+		$dir          = __DIR__;
 		$plugins      = get_plugins();
 		$plugin_files = array_keys( $plugins );
 
@@ -158,6 +137,27 @@ class ActionScheduler_Versions {
 			return array(
 				'type' => 'plugin',
 				'name' => $plugin_data['Name'],
+			);
+		}
+
+		$themes = (array) search_theme_directories();
+
+		foreach ( $themes as $slug => $data ) {
+			$needle = trailingslashit( $data['theme_root'] ) . $slug . '/';
+
+			if ( 0 !== strpos( $file, $needle ) ) {
+				continue;
+			}
+
+			$theme = wp_get_theme( $slug );
+
+			if ( ! is_object( $theme ) || ! is_a( $theme, \WP_Theme::class ) ) {
+				continue;
+			}
+
+			return array(
+				'type' => 'theme',
+				'name' => $theme->Name,
 			);
 		}
 
