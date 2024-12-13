@@ -250,8 +250,19 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 			return;
 		}
 
-		$as_version = ActionScheduler_Versions::instance()->latest_version();
-		$as_source  = ActionScheduler_Versions::instance()->active_source();
+		$as_version       = ActionScheduler_Versions::instance()->latest_version();
+		$as_source        = ActionScheduler_Versions::instance()->active_source();
+		$as_source_path   = ActionScheduler_Versions::instance()->active_source_path();
+		$as_source_markup = sprintf( '<code>%s</code>', esc_html( $as_source_path ) );
+
+		if ( ! empty( $as_source ) ) {
+			$as_source_markup = sprintf(
+				'%s: <abbr title="%s">%s</abbr>',
+				ucfirst( $as_source['type'] ),
+				esc_attr( $as_source_path ),
+				esc_html( $as_source['name'] )
+			);
+		}
 
 		$screen->add_help_tab(
 			array(
@@ -267,7 +278,7 @@ class ActionScheduler_AdminView extends ActionScheduler_AdminView_Deprecated {
 					'<p>' .
 						esc_html__( 'Action Scheduler is currently being loaded from the following location. This can be useful when debugging, or if requested by the support team.', 'action-scheduler' ) .
 					'</p>' .
-					'<p><code>' . esc_html( $as_source ) . '</code></p>' .
+					'<p>' . $as_source_markup . '</p>' .
 					'<h3>' . esc_html__( 'WP CLI', 'action-scheduler' ) . '</h3>' .
 					'<p>' .
 						sprintf(

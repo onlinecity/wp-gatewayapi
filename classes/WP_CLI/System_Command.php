@@ -148,7 +148,7 @@ class System_Command {
 		$all      = (bool) get_flag_value( $assoc_args, 'all' );
 		$fullpath = (bool) get_flag_value( $assoc_args, 'fullpath' );
 		$versions = \ActionScheduler_Versions::instance();
-		$source   = $versions->active_source();
+		$source   = $versions->active_source_path();
 		$path     = $source;
 
 		if ( ! $fullpath ) {
