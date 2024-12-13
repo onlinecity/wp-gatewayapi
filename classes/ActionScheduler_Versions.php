@@ -110,11 +110,21 @@ class ActionScheduler_Versions {
 	}
 
 	/**
-	 * Get directory of active source.
+	 * Returns information about the plugin or theme which contains the current active version
+	 * of Action Scheduler.
 	 *
-	 * @return string
+	 * If this cannot be determined, or if Action Scheduler is being loaded via some other
+	 * method, then it will return an empty array. Otherwise, if populated, the array will
+	 * look like the following:
+	 *
+	 *     [
+	 *         'type' => 'plugin', # or 'theme'
+	 *         'name' => 'Name',
+	 *     ]
+	 *
+	 * @return array
 	 */
-	public function active_source() {
+	public function active_source(): array {
 		$file         = __FILE__;
 		$dir          = __DIR__;
 		$plugins      = get_plugins();
@@ -157,6 +167,7 @@ class ActionScheduler_Versions {
 
 			return array(
 				'type' => 'theme',
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				'name' => $theme->Name,
 			);
 		}
@@ -164,7 +175,12 @@ class ActionScheduler_Versions {
 		return array();
 	}
 
-	public function active_source_path() {
+	/**
+	 * Returns the directory path for the currently active installation of Action Scheduler.
+	 *
+	 * @return string
+	 */
+	public function active_source_path(): string {
 		return trailingslashit( dirname( __DIR__ ) );
 	}
 }
