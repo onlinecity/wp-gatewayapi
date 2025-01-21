@@ -47,7 +47,7 @@ Collaboration is cool. We'd love to work with you to improve Action Scheduler. [
 
 == Changelog ==
 
-= 3.9.1 - 2025-01-21 =
+= 3.9.1 - 2025-x-x =
 * A number of new WP CLI commands have been added, making it easier to manage actions in the terminal and from scripts.
 * New wp action-scheduler source command to help determine how Action Scheduler is being loaded.
 * Additional information about the active instance of Action Scheduler is now available in the Help pull-down drawer.
