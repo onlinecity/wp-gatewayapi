@@ -6,7 +6,6 @@
 * Additional information about the active instance of Action Scheduler is now available in the Help pull-down drawer.
 * Make some other nullable parameters explicitly nullable.
 * Set option value to `no` rather than deleting.
-* Tweak - WP 6.5 compatibility.
 
 = 3.9.0 - 2024-11-14 =  
 * Minimum required version of PHP is now 7.1.  
