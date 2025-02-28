@@ -52,7 +52,8 @@ class GwapiSecurityTwoFactor
 
     if (!self::userNeedsTwoFactor($user)) return;
     if (self::userHasValidTwofactorCookie($user)) return;
-    self::replaceLoginCookieWithTempCookie($user);
+    $redirect_to = $_POST['redirect_to'] ?? null; // Capture the redirect_to parameter
+    self::replaceLoginCookieWithTempCookie($user, $redirect_to); // Pass it to the method
     self::renderTwoFactorSteps($user);
 
     die();
