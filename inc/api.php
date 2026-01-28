@@ -6,6 +6,244 @@
 
 
 /**
+ * Send a mobile message to a single recipient using the GatewayAPI Messaging API.
+ *
+ * @param string $message The message to be sent.
+ * @param string $recipient An MSISDN (string containing digits only, e.g., "4512345678").
+ * @param string $sender Sender text (3-18 characters).
+ * @param array $options Optional. An associative array with optional parameters:
+ *                       - 'priority' (string): Message priority. Default 'normal'.
+ *                       - 'reference' (string|null): Client-provided reference. Default NULL.
+ *                       - 'expiration' (int): Expires in number of seconds (1-432000). Default 432000.
+ *                       - 'label' (string|null): Label for the message. Default NULL.
+ * @return object|WP_Error On success, returns an object with msg_id, recipient, and reference.
+ *                         On failure, returns a WP_Error.
+ */
+function gatewayapi_send_mobile_message($message, $recipient, $sender, $options = [])
+{
+  // Validate required parameters
+  if (empty($message)) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Message cannot be empty.');
+  }
+  if (empty($recipient) || !preg_match('/^\d+$/', $recipient)) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Recipient must be a string containing digits only (MSISDN).');
+  }
+  if (empty($sender) || strlen($sender) < 3 || strlen($sender) > 18) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Sender must be between 3 and 18 characters.');
+  }
+
+  // Set default options
+  $defaults = [
+    'priority' => 'normal',
+    'reference' => null,
+    'expiration' => 432000,
+    'label' => null,
+  ];
+  $options = array_merge($defaults, $options);
+
+  // Validate expiration
+  if ($options['expiration'] < 1 || $options['expiration'] > 432000) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Expiration must be between 1 and 432000 seconds.');
+  }
+
+  // Build the request body
+  $req = [
+    'message' => $message,
+    'recipient' => $recipient,
+    'sender' => $sender,
+    'priority' => $options['priority'],
+    'expiration' => $options['expiration'],
+  ];
+
+  // Add optional fields if set
+  if ($options['reference'] !== null) {
+    $req['reference'] = $options['reference'];
+  }
+  if ($options['label'] !== null) {
+    $req['label'] = $options['label'];
+  }
+
+  // Apply filter for customization
+  $req = apply_filters('gwapi_send_mobile_message_request', $req);
+
+  // Determine API URL based on setup
+  $uriBySetup = [
+    'com' => 'https://messaging.gatewayapi.com',
+    'eu' => 'https://messaging.gatewayapi.eu',
+  ];
+  $uri = $uriBySetup[get_option('gwapi_setup') ?: 'com'];
+
+  // Get the API token
+  $token = get_option('gwapi_token');
+
+  // Send the request using wp_remote_post
+  $res = wp_remote_post($uri, [
+    'headers' => [
+      'Authorization' => 'Token ' . $token,
+      'Content-Type' => 'application/json',
+      'user-agent' => 'wp-gatewayapi/' . GATEWAYAPI_VERSION
+    ],
+    'body' => json_encode($req)
+  ]);
+
+  // Handle WP_Error from wp_remote_post
+  if (is_wp_error($res)) {
+    return new WP_Error('TECH_FAIL', $res->get_error_message());
+  }
+
+  // Check response code
+  $response_code = wp_remote_retrieve_response_code($res);
+  $response_body = wp_remote_retrieve_body($res);
+
+  // Success: 2xx response
+  if ($response_code >= 200 && $response_code < 300) {
+    return json_decode($response_body);
+  }
+
+  // Error: non-2xx response
+  $error = json_decode($response_body);
+  if ($error && isset($error->message)) {
+    $error_message = $error->message;
+    if (isset($error->code)) {
+      $error_message .= "\nCode " . $error->code;
+    }
+    if (isset($error->incident_uuid)) {
+      $error_message .= "\nUUID: " . $error->incident_uuid;
+    }
+    return new WP_Error('GWAPI_FAIL', $error_message);
+  }
+
+  return new WP_Error('GWAPI_FAIL', 'HTTP ' . $response_code . "\n" . $response_body);
+}
+
+
+/**
+ * Send multiple mobile messages using the GatewayAPI Messaging API.
+ *
+ * @param array $messages An array of up to 1000 messages. Each message is an associative array with:
+ *                        - 'message' (string): The message to be sent.
+ *                        - 'recipient' (string): An MSISDN (string containing digits only).
+ *                        - 'sender' (string): Sender text (3-18 characters).
+ *                        - 'priority' (string, optional): Message priority. Default 'normal'.
+ *                        - 'reference' (string|null, optional): Client-provided reference. Default NULL.
+ *                        - 'expiration' (int, optional): Expires in number of seconds (1-432000). Default 432000.
+ *                        - 'label' (string|null, optional): Label for the message. Default NULL.
+ * @return object|WP_Error On success, returns the JSON response object.
+ *                         On failure, returns a WP_Error.
+ */
+function gatewayapi_send_mobile_messages($messages)
+{
+  // Validate messages array
+  if (!is_array($messages) || empty($messages)) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Messages must be a non-empty array.');
+  }
+  if (count($messages) > 1000) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Maximum 1000 messages allowed per request.');
+  }
+
+  // Build the messages array for the request
+  $formatted_messages = [];
+  foreach ($messages as $index => $msg) {
+    // Validate required fields
+    if (empty($msg['message'])) {
+      return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: message cannot be empty.");
+    }
+    if (empty($msg['recipient']) || !preg_match('/^\d+$/', $msg['recipient'])) {
+      return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: recipient must be a string containing digits only (MSISDN).");
+    }
+    if (empty($msg['sender']) || strlen($msg['sender']) < 3 || strlen($msg['sender']) > 18) {
+      return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: sender must be between 3 and 18 characters.");
+    }
+
+    // Build the message object
+    $formatted_msg = [
+      'message' => $msg['message'],
+      'recipient' => $msg['recipient'],
+      'sender' => $msg['sender'],
+    ];
+
+    // Add optional fields with defaults
+    $formatted_msg['priority'] = isset($msg['priority']) ? $msg['priority'] : 'normal';
+    $formatted_msg['expiration'] = isset($msg['expiration']) ? $msg['expiration'] : 432000;
+
+    // Validate expiration
+    if ($formatted_msg['expiration'] < 1 || $formatted_msg['expiration'] > 432000) {
+      return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: expiration must be between 1 and 432000 seconds.");
+    }
+
+    // Add optional fields if set
+    if (isset($msg['reference']) && $msg['reference'] !== null) {
+      $formatted_msg['reference'] = $msg['reference'];
+    }
+    if (isset($msg['label']) && $msg['label'] !== null) {
+      $formatted_msg['label'] = $msg['label'];
+    }
+
+    $formatted_messages[] = $formatted_msg;
+  }
+
+  // Build the request body
+  $req = [
+    'messages' => $formatted_messages,
+  ];
+
+  // Apply filter for customization
+  $req = apply_filters('gwapi_send_mobile_messages_request', $req);
+
+  // Determine API URL based on setup
+  $uriBySetup = [
+    'com' => 'https://messaging.gatewayapi.com/mobile/multi',
+    'eu' => 'https://messaging.gatewayapi.eu/mobile/multi',
+  ];
+  $uri = $uriBySetup[get_option('gwapi_setup') ?: 'com'];
+
+  // Get the API token
+  $token = get_option('gwapi_token');
+
+  // Send the request using wp_remote_post
+  $res = wp_remote_post($uri, [
+    'headers' => [
+      'Authorization' => 'Token ' . $token,
+      'Content-Type' => 'application/json',
+      'user-agent' => 'wp-gatewayapi/' . GATEWAYAPI_VERSION
+    ],
+    'body' => json_encode($req)
+  ]);
+
+  // Handle WP_Error from wp_remote_post
+  if (is_wp_error($res)) {
+    return new WP_Error('TECH_FAIL', $res->get_error_message());
+  }
+
+  // Check response code
+  $response_code = wp_remote_retrieve_response_code($res);
+  $response_body = wp_remote_retrieve_body($res);
+
+  // Success: 2xx response
+  if ($response_code >= 200 && $response_code < 300) {
+    return json_decode($response_body);
+  }
+
+  // Error: non-2xx response
+  $error = json_decode($response_body);
+  if ($error && isset($error->message)) {
+    $error_message = $error->message;
+    if (isset($error->code)) {
+      $error_message .= "\nCode " . $error->code;
+    }
+    if (isset($error->incident_uuid)) {
+      $error_message .= "\nUUID: " . $error->incident_uuid;
+    }
+    return new WP_Error('GWAPI_FAIL', $error_message);
+  }
+
+  return new WP_Error('GWAPI_FAIL', 'HTTP ' . $response_code . "\n" . $response_body);
+}
+
+
+/**
+ * DEPRECATED! Please switch to gatewayapi_send_mobile_message instead for single recipient messages.
+ *
  * Send an SMS to one or multiple recipients.
  *
  * The recipients may be either:
@@ -24,6 +262,8 @@
  * @param array $encoding The $message must always be in UTF-8. Read more about the different encodings available here: https://gatewayapi.com/docs/appendix.html#term-ucs2
  * @param array $additional_options Additional options, such as "label", "priority" etc.. Can be used to override any other options set by this function.
  * @return int|WP_Error ID of message in gatewayapi.com on success
+ *
+ * @deprecated Use gatewayapi_send_mobile_message instead for single recipient messages.
  */
 function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'MOBILE', $encoding = 'UTF8', $additional_options = [])
 {
@@ -83,7 +323,7 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
 
   // possible URIs
   $uriBySetup = [
-      'com' => ['https://gatewayapi.com/rest/mtsms', 'https://badssl.gatewayapi.com/rest/mtsms', 'http://badssl.gatewayapi.com/rest/mtsms'],
+      'com' => ['https://gatewayapi.com/rest/mtsms'],
       'eu' => ['https://gatewayapi.eu/rest/mtsms']
   ];
 

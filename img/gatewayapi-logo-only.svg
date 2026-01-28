@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="20px" viewBox="0 0 22 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>gatewayapi-logo-only</title>
+    <g id="gatewayapi-logo-only" stroke="none" fill="none" fill-rule="evenodd" stroke-width="1">
+        <g id="Group_224" transform="translate(0, 0.3333)">
+            <path d="M0,12.9444444 C0,13.9444444 0.777777778,14.7777778 1.77777778,14.8333333 L16.0555556,14.8333333 L0,9.96116769e-16 L0,12.9444444 Z" id="Path_445" fill="#0025BF"></path>
+            <polygon id="Path_446" fill="#0B51FF" points="7.11111111 1.99223354e-15 0 1.99223354e-15 16.1111111 14.8888889 21.1111111 19.5 21.1111111 12.9444444"></polygon>
+            <polygon id="Path_447" fill="#067DFF" points="7.11111111 9.96116769e-16 21.1111111 12.9444444 21.1111111 6.38888889 14.2222222 9.96116769e-16"></polygon>
+            <path d="M19.3333333,9.96116769e-16 L14.2222222,9.96116769e-16 L21.1111111,6.38888889 L21.1111111,1.88888889 C21.1666667,0.888888889 20.4444444,0.0555555556 19.4444444,9.96116769e-16 C19.3888889,9.96116769e-16 19.3888889,9.96116769e-16 19.3333333,9.96116769e-16 Z" id="Path_448" fill="#03A5FF"></path>
+        </g>
+    </g>
+</svg>

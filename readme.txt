@@ -2,8 +2,8 @@
 Contributors: onlinecity
 Tags: sms, two factor, security, mobile, texting
 Requires at least: 4.6
-Tested up to: 6.1
-Stable tag: 1.8.0
+Tested up to: 6.3.1
+Stable tag: 1.8.3
 License: MIT
 License URI: https://opensource.org/licenses/MIT
 
@@ -127,6 +127,18 @@ Then find the options-table, by default wp_options. Search for the row where the
 4. Contact Form 7: Creating a "recipient groups" selection field.
 
 == Changelog ==
+
+= 1.8.3 =
+
+ * Compability up to WordPress 6.3.1.
+
+= 1.8.2 =
+
+* Bugfix: Built in shortcode defaulted to the posts title as the name of the new recipient. Now defaults to '', as expected.
+
+= 1.8.1 =
+
+* Bugfix: Built in shortcode for signup did not work properly, when allowing the user to select groups.
 
 = 1.8.0 =
 
@@ -372,3 +384,26 @@ Contact Form 7: GatewayAPI automatically adds extra controls for supporting sign
 
 Contact Form 7: Creating a "recipient groups" selection field.
 
+
+
+
+
+----
+
+
+
+
+recipient import
+recipients: own tables
+Campaigns: Post type
+Campaign Recipient: own tables
+Single SMS'es: own tables, reference to source (api, woocommerce), ref to source ID (nullable)
+
+REMOVE: two-factor login
+REMOVE: contact form 7 integration
+REMOVE: receive SMS
+REMOVE: User sync
+
+new: option: want callbacks or not?
+new: option: campaign send speed default
+new: integration of Action Scheduler
