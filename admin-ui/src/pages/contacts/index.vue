@@ -187,7 +187,7 @@ const exportContacts = async () => {
     <PageTitle icon="lucide:user">
       Contacts
       <template #actions>
-        <router-link to="/contacts/import" class="btn btn-outline me-3">
+        <router-link to="/contacts/import" class="btn btn-soft me-3">
           <Icon icon="lucide:upload" />
           Import
         </router-link>

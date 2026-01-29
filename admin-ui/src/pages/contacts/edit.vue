@@ -77,7 +77,7 @@ const fetchContact = async () => {
 
 const fetchRecipientTags = async () => {
   try {
-    const response = await parentIframe.ajaxGet('gatewayapi_get_tags') as any;
+    const response = await parentIframe.ajaxGet('gatewayapi_get_tags', {}) as any;
     if (response && response.success) {
       allRecipientTags.value = response.data;
     }
@@ -186,24 +186,20 @@ const addTag = () => {
   </div>
 
   <div v-else class="max-w-2xl mx-auto">
-    <div v-if="validationError" class="alert alert-warning mb-6 ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-      </svg>
-      <span>{{ validationError }}</span>
-    </div>
-    <div v-if="error" class="alert alert-error mb-6 ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span>{{ error }}</span>
-    </div>
-    <div v-if="success" class="alert alert-success mb-6 ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span>{{ success }}</span>
-    </div>
-
     <div class="card bg-base-100 ">
       <div class="card-body">
+        <div v-if="validationError" class="alert alert-warning mb-6 ">
+          <Icon icon="lucide:circle-alert" />
+          <span>{{ validationError }}</span>
+        </div>
+        <div v-if="error" class="alert alert-error mb-6 ">
+          <Icon icon="lucide:circle-alert" />
+          <span>{{ error }}</span>
+        </div>
+        <div v-if="success" class="alert alert-success mb-6 ">
+          <Icon icon="lucide:circle-check-big" />
+          <span>{{ success }}</span>
+        </div>
         <form @submit.prevent="saveContact">
           <fieldset class="fieldset mb-4">
             <legend class="fieldset-legend">Name</legend>

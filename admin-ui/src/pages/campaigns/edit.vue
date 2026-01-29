@@ -57,10 +57,6 @@ const decodeUcs2 = (str: string) => {
   return result;
 };
 
-const encodeUcs2 = (codes: number[]) => {
-  return String.fromCodePoint(...codes);
-};
-
 const failedGSM0338Chars = (message: string) => {
   const lookup = (GSM_CHARS_ONE + GSM_CHARS_TWO).split('');
   const chars = decodeUcs2(message);
@@ -128,7 +124,7 @@ const fetchCampaign = async () => {
 
 const fetchRecipientTags = async () => {
   try {
-    const response = await parentIframe.ajaxGet('gatewayapi_get_tags') as any;
+    const response = await parentIframe.ajaxGet('gatewayapi_get_tags', {}) as any;
     if (response && response.success) {
       allRecipientTags.value = response.data;
     }
@@ -139,7 +135,7 @@ const fetchRecipientTags = async () => {
 
 const fetchCampaignTags = async () => {
   try {
-    const response = await parentIframe.ajaxGet('gatewayapi_get_campaign_tags') as any;
+    const response = await parentIframe.ajaxGet('gatewayapi_get_campaign_tags', {}) as any;
     if (response && response.success) {
       allCampaignTags.value = response.data;
     }
@@ -150,7 +146,7 @@ const fetchCampaignTags = async () => {
 
 const fetchServerTime = async () => {
   try {
-    const response = await parentIframe.ajaxGet('gatewayapi_get_server_time') as any;
+    const response = await parentIframe.ajaxGet('gatewayapi_get_server_time', {}) as any;
     if (response && response.success) {
       serverTime.value = response.data.current_time;
       serverTimezone.value = response.data.timezone;
@@ -270,7 +266,7 @@ const saveCampaign = async (newStatus?: string) => {
   }
 };
 
-const addTag = (type: 'campaign') => {
+const addTag = () => {
   const name = window.prompt('Enter new campaign tag name:');
   if (name) {
     const tag = name.trim();
@@ -285,11 +281,6 @@ const addTag = (type: 'campaign') => {
   }
 };
 
-const removeTag = (type: 'recipient', tag: string) => {
-  if (type === 'recipient') {
-    campaign.value.recipient_tags = campaign.value.recipient_tags.filter(t => t !== tag);
-  }
-};
 
 const sendOrScheduleLabel = computed(() => {
   return campaign.value.start_time ? 'Schedule campaign' : 'Send campaign now';
@@ -382,18 +373,19 @@ const testSms = async () => {
   </div>
 
   <div v-else>
-    <div v-if="error" class="alert alert-error mb-6 ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span>{{ error }}</span>
-    </div>
-    <div v-if="success" class="alert alert-success mb-6 ">
-      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      <span>{{ success }}</span>
-    </div>
-
     <div class="card bg-base-100 mb-8">
       <div class="card-body">
         <h2 class="card-title text-sm uppercase opacity-50">Campaign title</h2>
+
+        <div v-if="error" class="alert alert-error mb-6 ">
+          <Icon icon="lucide:circle-alert" />
+          <span>{{ error }}</span>
+        </div>
+        <div v-if="success" class="alert alert-success mb-6 ">
+          <Icon icon="lucide:circle-check-big" />
+          <span>{{ success }}</span>
+        </div>
+
         <fieldset class="fieldset p-0" :disabled="isReadOnly">
           <input v-model="campaign.title" type="text" placeholder="Internal campaign title" class="input input-bordered w-full" required />
           <p class="fieldset-label text-xs">Note: This is used internally only.</p>
@@ -435,7 +427,7 @@ const testSms = async () => {
                     </li>
                   </ul>
                 </div>
-                <button v-if="!isReadOnly" type="button" @click="addTag('campaign')" class="btn btn-outline btn-primary tooltip" data-tip="Add new tag"><Icon icon="lucide:plus" /></button>
+                <button v-if="!isReadOnly" type="button" @click="addTag()" class="btn btn-outline btn-primary tooltip" data-tip="Add new tag"><Icon icon="lucide:plus" /></button>
               </div>
             </fieldset>
 
@@ -495,6 +487,8 @@ const testSms = async () => {
                 'alert-warning': campaign.status === 'sending',
                 'alert-success': campaign.status === 'sent'
               }">
+                <Icon v-if="campaign.status === 'sent'" icon="lucide:circle-check-big" />
+                <Icon v-else-if="campaign.status !== 'draft'" icon="lucide:circle-alert" />
                 <span class="capitalize">{{ campaign.status }}</span>
               </div>
             </fieldset>
@@ -530,15 +524,15 @@ const testSms = async () => {
                 </div>
 
                 <div v-if="smsStats.isUcs2" class="badge badge-warning gap-2 py-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                  <Icon icon="lucide:circle-alert" class="w-4 h-4" />
                   UCS2 detected:
                   <code v-for="(char, index) in smsStats.failedChars" :key="index" class="kbd tooltip"
-                        :data-tip="`U+${char.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}`">{{
+                        :data-tip="`U+${char.codePointAt(0)?.toString(16).toUpperCase().padStart(4, '0')}`">{{
                       char
                     }}</code>
                 </div>
                 <div v-else class="badge badge-success gap-2 py-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-4 h-4 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  <Icon icon="lucide:circle-check-big" class="w-4 h-4" />
                   GSM 03.38 compatible
                 </div>
               </div>
@@ -548,7 +542,7 @@ const testSms = async () => {
               </div>
 
               <div class="alert alert-info py-2 px-4 text-xs shadow-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <Icon icon="lucide:circle-alert" class="w-4 h-4" />
                 <span>Notice: This is a calculation and final amount may vary, for instance if replacement tags are used.</span>
               </div>
             </div>

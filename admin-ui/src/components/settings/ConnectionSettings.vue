@@ -87,9 +87,16 @@ const saveConnection = async () => {
 </script>
 
 <template>
-  <div class="card bg-base-200  border border-base-300">
+  <div class="card bg-base-100 shadow-sm">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">Connection</h2>
+
+      <!-- Connection Message -->
+      <div v-if="connectionMessage" class="alert mb-6" :class="connectionError ? 'alert-error' : 'alert-success'">
+        <Icon v-if="connectionError" icon="lucide:circle-alert" />
+        <Icon v-else icon="lucide:circle-check-big" />
+        <span>{{ connectionMessage }}</span>
+      </div>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">API Token</legend>
@@ -177,17 +184,6 @@ const saveConnection = async () => {
           </label>
         </div>
       </fieldset>
-
-      <!-- Connection Message -->
-      <div v-if="connectionMessage" class="alert mt-6" :class="connectionError ? 'alert-error' : 'alert-success'">
-        <span v-if="connectionError">
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </span>
-        <span v-else>
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </span>
-        <span>{{ connectionMessage }}</span>
-      </div>
 
       <div class="card-actions justify-end mt-6">
         <button

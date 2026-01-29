@@ -77,9 +77,16 @@ const saveDefaults = async () => {
 </script>
 
 <template>
-  <div class="card bg-base-200  border border-base-300">
+  <div class="card bg-base-100 shadow-sm">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">Defaults</h2>
+
+      <!-- Defaults Message -->
+      <div v-if="defaultsMessage" class="alert mb-6" :class="defaultsError ? 'alert-error' : 'alert-success'">
+        <Icon v-if="defaultsError" icon="lucide:circle-alert" />
+        <Icon v-else icon="lucide:circle-check-big" />
+        <span>{{ defaultsMessage }}</span>
+      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Default Country Code -->
@@ -128,21 +135,6 @@ const saveDefaults = async () => {
             Messages per minute (1-1000).
           </p>
         </fieldset>
-      </div>
-
-      <!-- Defaults Message -->
-      <div v-if="defaultsMessage" class="alert mt-6" :class="defaultsError ? 'alert-error' : 'alert-success'">
-        <span v-if="defaultsError">
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
-               viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                         d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </span>
-        <span v-else>
-          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
-               viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </span>
-        <span>{{ defaultsMessage }}</span>
       </div>
 
       <div class="card-actions justify-end mt-6">

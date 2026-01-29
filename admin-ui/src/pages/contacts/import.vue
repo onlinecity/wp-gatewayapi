@@ -42,14 +42,17 @@ const getCountryInfo = (msisdn: string) => {
 };
 
 const parseCSV = (text: string) => {
-  const lines = text.split(/\r?\n/);
+  const lines = text.split(/\r?\n/).filter(line => line.trim());
   if (lines.length === 0) return [];
 
-  const headers = lines[0].split(';').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+  const firstLine = lines[0];
+  if (!firstLine) return [];
+
+  const headers = firstLine.split(';').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
   const contacts: any[] = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const line = lines[i]?.trim();
     if (!line) continue;
 
     const values = line.split(';').map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
@@ -138,8 +141,12 @@ const startImport = async () => {
   </PageTitle>
 
   <div class="max-w-2xl mx-auto">
-    <div class="card bg-base-100 shadow-xl">
+    <div class="card bg-base-100 shadow-sm">
       <div class="card-body">
+        <div v-if="error" class="alert alert-error mb-4">
+          <Icon icon="lucide:circle-alert" />
+          <span>{{ error }}</span>
+        </div>
         <div v-if="!importing && !finished">
           <p class="mb-4">Upload a CSV file to import contacts. The CSV should use semicolon (;) as delimiter.</p>
           <div class="bg-base-200 p-4 rounded-lg mb-6">
@@ -183,7 +190,7 @@ const startImport = async () => {
 
         <div v-if="finished">
           <div class="alert alert-success mb-6">
-            <Icon icon="lucide:check-circle" class="w-6 h-6" />
+            <Icon icon="lucide:circle-check-big" />
             <span>Import finished!</span>
           </div>
           
@@ -208,10 +215,6 @@ const startImport = async () => {
           </div>
         </div>
 
-        <div v-if="error" class="alert alert-error mt-4">
-          <Icon icon="lucide:alert-circle" class="w-6 h-6" />
-          <span>{{ error }}</span>
-        </div>
       </div>
     </div>
   </div>
