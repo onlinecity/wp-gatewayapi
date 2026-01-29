@@ -1,0 +1,227 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!');
+
+/**
+ * Get campaigns list
+ */
+add_action('wp_ajax_gatewayapi_get_campaigns', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $page = isset($_GET['paged']) ? max(1, intval($_GET['paged'])) : 1;
+    $per_page = 20;
+    $search = isset($_GET['s']) ? sanitize_text_field($_GET['s']) : '';
+    $orderby = isset($_GET['orderby']) ? sanitize_text_field($_GET['orderby']) : 'date';
+    $order = isset($_GET['order']) ? sanitize_text_field($_GET['order']) : 'DESC';
+    $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : 'any';
+
+    $args = [
+        'post_type' => 'gwapi-campaign',
+        'posts_per_page' => $per_page,
+        'paged' => $page,
+        'post_status' => $status === 'trash' ? 'trash' : ['publish', 'private', 'draft', 'pending', 'future'],
+    ];
+
+    if ($search) {
+        $args['s'] = $search;
+    }
+
+    if (in_array($orderby, ['title', 'date'])) {
+        $args['orderby'] = $orderby;
+    } else {
+        $args['orderby'] = 'meta_value';
+        $args['meta_key'] = $orderby;
+    }
+    $args['order'] = $order;
+
+    if ($status && $status !== 'any' && $status !== 'trash') {
+        $args['meta_query'][] = [
+            'key' => 'status',
+            'value' => $status,
+            'compare' => '='
+        ];
+    }
+
+    $query = new WP_Query($args);
+    $campaigns = [];
+
+    foreach ($query->posts as $post) {
+        $campaigns[] = [
+            'id' => $post->ID,
+            'title' => $post->post_title,
+            'sender' => get_post_meta($post->ID, 'sender', true),
+            'recipients_count' => (int)get_post_meta($post->ID, 'recipients_count', true),
+            'campaign_tags' => get_post_meta($post->ID, 'campaign_tags', true) ?: [],
+            'recipient_tags' => get_post_meta($post->ID, 'recipient_tags', true) ?: [],
+            'start_time' => get_post_meta($post->ID, 'start_time', true),
+            'end_time' => get_post_meta($post->ID, 'end_time', true),
+            'status' => get_post_meta($post->ID, 'status', true) ?: 'draft',
+            'created' => $post->post_date,
+            'is_trash' => $post->post_status === 'trash'
+        ];
+    }
+
+    wp_send_json_success([
+        'campaigns' => $campaigns,
+        'pagination' => [
+            'total' => $query->found_posts,
+            'pages' => $query->max_num_pages,
+            'current' => $page
+        ]
+    ]);
+});
+
+/**
+ * Get a single campaign
+ */
+add_action('wp_ajax_gatewayapi_get_campaign', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    if (!$id) wp_send_json_error(['message' => 'Invalid ID']);
+
+    $post = get_post($id);
+    if (!$post || $post->post_type !== 'gwapi-campaign') {
+        wp_send_json_error(['message' => 'Campaign not found']);
+    }
+
+    wp_send_json_success([
+        'id' => $post->ID,
+        'title' => $post->post_title,
+        'sender' => get_post_meta($post->ID, 'sender', true),
+        'message' => $post->post_content,
+        'campaign_tags' => get_post_meta($post->ID, 'campaign_tags', true) ?: [],
+        'recipient_tags' => get_post_meta($post->ID, 'recipient_tags', true) ?: [],
+        'start_time' => get_post_meta($post->ID, 'start_time', true),
+        'status' => get_post_meta($post->ID, 'status', true) ?: 'draft',
+        'created' => $post->post_date
+    ]);
+});
+
+/**
+ * Save campaign (create/edit)
+ */
+add_action('wp_ajax_gatewayapi_save_campaign', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+    $title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
+    $sender = isset($_POST['sender']) ? sanitize_text_field($_POST['sender']) : '';
+    $message = isset($_POST['message']) ? wp_kses_post($_POST['message']) : '';
+    $campaign_tags = isset($_POST['campaign_tags']) ? (array)$_POST['campaign_tags'] : [];
+    $recipient_tags = isset($_POST['recipient_tags']) ? (array)$_POST['recipient_tags'] : [];
+    $start_time = isset($_POST['start_time']) ? sanitize_text_field($_POST['start_time']) : '';
+    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'draft';
+
+    if (empty($title)) {
+        wp_send_json_error(['message' => 'Title is required']);
+    }
+
+    $post_data = [
+        'post_title' => $title,
+        'post_content' => $message,
+        'post_type' => 'gwapi-campaign',
+        'post_status' => 'publish'
+    ];
+
+	if ( $id ) {
+		$existing_post = get_post( $id );
+		if ( ! $existing_post || $existing_post->post_type !== 'gwapi-campaign' ) {
+			wp_send_json_error( [ 'message' => 'Campaign not found' ] );
+		}
+		$post_data['ID'] = $id;
+        $result = wp_update_post($post_data);
+    } else {
+        $result = wp_insert_post($post_data);
+        $id = $result;
+    }
+
+    if (is_wp_error($result)) {
+        wp_send_json_error(['message' => $result->get_error_message()]);
+    }
+
+    update_post_meta($id, 'sender', $sender);
+    update_post_meta($id, 'campaign_tags', $campaign_tags);
+    update_post_meta($id, 'recipient_tags', $recipient_tags);
+    update_post_meta($id, 'start_time', $start_time);
+    update_post_meta($id, 'status', $status);
+
+    // Calculate recipients count (mock for now, or implement logic if tags are provided)
+    $recipients_count = 0;
+    if (!empty($recipient_tags)) {
+        $recipients_count = (new WP_Query([
+            'post_type' => 'gwapi-recipient',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'tax_query' => [[
+                'taxonomy' => 'gwapi-recipient-tag',
+                'field' => 'slug',
+                'terms' => $recipient_tags
+            ]]
+        ]))->found_posts;
+    }
+    update_post_meta($id, 'recipients_count', $recipients_count);
+
+    wp_send_json_success(['id' => $id, 'message' => 'Campaign saved successfully']);
+});
+
+/**
+ * Trash/Delete campaign
+ */
+add_action('wp_ajax_gatewayapi_delete_campaign', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+	$id    = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+	$force = isset( $_POST['force'] ) && $_POST['force'] === 'true';
+
+	if ( ! $id ) {
+		wp_send_json_error( [ 'message' => 'Invalid ID' ] );
+	}
+
+	$post = get_post( $id );
+	if ( ! $post || $post->post_type !== 'gwapi-campaign' ) {
+		wp_send_json_error( [ 'message' => 'Campaign not found' ] );
+	}
+
+	if (!$force) $result = wp_trash_post($id);
+	else wp_delete_post($id, true);
+
+    if (!$result) {
+        wp_send_json_error(['message' => 'Failed to delete campaign']);
+    }
+
+    wp_send_json_success(['message' => $force ? 'Campaign deleted permanently' : 'Campaign moved to trash']);
+});
+
+/**
+ * Restore campaign from trash
+ */
+add_action('wp_ajax_gatewayapi_restore_campaign', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+	    wp_send_json_error( [ 'message' => 'Unauthorized' ], 403 );
+    }
+
+	$id = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+	if ( ! $id ) {
+		wp_send_json_error( [ 'message' => 'Invalid ID' ] );
+	}
+
+	$post = get_post( $id );
+	if ( ! $post || $post->post_type !== 'gwapi-campaign' ) {
+		wp_send_json_error( [ 'message' => 'Campaign not found' ] );
+	}
+
+	$result = wp_untrash_post($id);
+
+    if (!$result) {
+        wp_send_json_error(['message' => 'Failed to restore campaign']);
+    }
+
+    wp_send_json_success(['message' => 'Campaign restored']);
+});

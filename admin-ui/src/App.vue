@@ -7,7 +7,7 @@ const state = useStateStore();
 </script>
 
 <template>
-  <div class="navbar bg-base-100 shadow-sm px-4 py-3 border-b border-base-200">
+  <div class="navbar bg-base-100  px-4 py-3 border-b border-base-200">
     <div class="navbar-start">
       <img src="@/assets/gatewayapi-logo-lightmode.svg" class="h-8 w-auto"/>
     </div>
@@ -30,8 +30,8 @@ const state = useStateStore();
     </div>
 
     <div class="navbar-end">
-      <a href="https://gatewayapi.com/docs/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Documentation</a>
-      <a href="https://gatewayapi.com/support/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Chat-support</a>
+      <a href="https://gatewayapi.com/docs/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Documentation</a>
+      <a href="https://gatewayapi.com/support/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Chat-support</a>
     </div>
   </div>
   <div class="container mx-auto p-6">

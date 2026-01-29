@@ -57,7 +57,7 @@ const saveDefaults = async () => {
 </script>
 
 <template>
-  <div class="card bg-base-200 shadow-sm border border-base-300">
+  <div class="card bg-base-200  border border-base-300">
     <div class="card-body">
       <h2 class="card-title text-xl mb-4">Defaults</h2>
 

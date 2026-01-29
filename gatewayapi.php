@@ -40,6 +40,10 @@ add_action('init', function () {
 
   require_once("$D/inc/options.php");
   require_once("$D/inc/admin-ajax.php");
+  require_once("$D/inc/contacts-post-type.php");
+  require_once("$D/inc/contacts-ajax.php");
+  require_once("$D/inc/campaigns-post-type.php");
+  require_once("$D/inc/campaigns-ajax.php");
   require_once("$D/inc/admin-menu.php");
 }, 9);
 

@@ -15,6 +15,24 @@ add_action('admin_menu', function () {
 
     add_submenu_page(
         'gatewayapi',
+        'Campaigns',
+        'Campaigns',
+        'gatewayapi_manage',
+        'gatewayapi-campaigns',
+        'gatewayapi_admin_page_callback'
+    );
+
+    add_submenu_page(
+        'gatewayapi',
+        'Contacts',
+        'Contacts',
+        'gatewayapi_manage',
+        'gatewayapi-contacts',
+        'gatewayapi_admin_page_callback'
+    );
+
+    add_submenu_page(
+        'gatewayapi',
         'Settings',
         'Settings',
         'gatewayapi_manage',
