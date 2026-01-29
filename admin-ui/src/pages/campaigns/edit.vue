@@ -24,12 +24,15 @@ const campaign = ref({
   message: '',
   campaign_tags: [] as string[],
   recipient_tags: [] as string[],
+  recipient_tags_logic: 'any',
   start_time: '',
-  status: 'draft'
+  status: 'draft',
+  recipients_count: 0
 });
 
 const campaignTagInput = ref('');
-const recipientTagInput = ref('');
+const allRecipientTags = ref<any[]>([]);
+const fetchingRecipientCount = ref(false);
 
 // SMS Calculation Logic ported from old-js.js
 const GSM_CHARS_ONE = ' !"#$%&\'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ£¥§¿_\n\rΔΦΓΛΩΠΨΣΘΞèéùìòÇØøÅåÆæßÉÄÖÑÜäöñüàäöñüà';
@@ -106,7 +109,10 @@ const fetchCampaign = async () => {
   try {
     const response = await parentIframe.ajaxGet('gatewayapi_get_campaign', { id: props.id }) as any;
     if (response && response.success) {
-      campaign.value = response.data;
+      campaign.value = {
+        ...campaign.value,
+        ...response.data
+      };
     } else {
       error.value = response?.data?.message || 'Failed to load campaign';
     }
@@ -118,8 +124,49 @@ const fetchCampaign = async () => {
   }
 };
 
+const fetchRecipientTags = async () => {
+  try {
+    const response = await parentIframe.ajaxGet('gatewayapi_get_tags') as any;
+    if (response && response.success) {
+      allRecipientTags.value = response.data;
+    }
+  } catch (err) {
+    console.error('Failed to fetch recipient tags:', err);
+  }
+};
+
+const updateRecipientCount = async () => {
+  if (campaign.value.recipient_tags.length === 0) {
+    campaign.value.recipients_count = 0;
+    return;
+  }
+  fetchingRecipientCount.value = true;
+  try {
+    const response = await parentIframe.ajaxGet('gatewayapi_count_recipients', {
+      recipient_tags: campaign.value.recipient_tags,
+      recipient_tags_logic: campaign.value.recipient_tags_logic
+    }) as any;
+    if (response && response.success) {
+      campaign.value.recipients_count = response.data.count;
+    }
+  } catch (err) {
+    console.error('Failed to fetch recipient count:', err);
+  } finally {
+    fetchingRecipientCount.value = false;
+  }
+};
+
+watch(() => [campaign.value.recipient_tags, campaign.value.recipient_tags_logic], () => {
+  if (campaign.value.recipient_tags.length > 0) {
+    updateRecipientCount();
+  } else {
+    campaign.value.recipients_count = 0;
+  }
+}, { deep: true });
+
 onMounted(() => {
   fetchCampaign();
+  fetchRecipientTags();
 });
 
 const saveCampaign = async (newStatus?: string) => {
@@ -154,9 +201,9 @@ const saveCampaign = async (newStatus?: string) => {
   }
 };
 
-const addTag = (type: 'campaign' | 'recipient') => {
-  const input = type === 'campaign' ? campaignTagInput : recipientTagInput;
-  const tags = type === 'campaign' ? campaign.value.campaign_tags : campaign.value.recipient_tags;
+const addTag = (type: 'campaign') => {
+  const input = campaignTagInput;
+  const tags = campaign.value.campaign_tags;
   const tag = input.value.trim();
   if (tag && !tags.includes(tag)) {
     tags.push(tag);
@@ -206,6 +253,16 @@ const handleMainAction = () => {
       <span>{{ success }}</span>
     </div>
 
+    <div class="card bg-base-100 mb-8">
+      <div class="card-body">
+        <h2 class="card-title text-sm uppercase opacity-50">Campaign title</h2>
+        <fieldset class="fieldset p-0">
+          <input v-model="campaign.title" type="text" placeholder="Internal campaign title" class="input input-bordered w-full" required />
+          <p class="fieldset-label text-xs">Note: This is used internally only.</p>
+        </fieldset>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column: Settings -->
       <div class="lg:col-span-1 space-y-6">
@@ -213,12 +270,6 @@ const handleMainAction = () => {
           <div class="card-body">
             <h2 class="card-title text-sm uppercase opacity-50">Campaign Settings</h2>
             
-            <fieldset class="fieldset">
-              <legend class="fieldset-legend">Title</legend>
-              <input v-model="campaign.title" type="text" placeholder="Internal campaign title" class="input input-bordered w-full" required />
-              <p class="fieldset-label text-xs">Note: This is used internally only.</p>
-            </fieldset>
-
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Sender</legend>
               <input v-model="campaign.sender" type="text" placeholder="e.g. MyCompany" class="input input-bordered w-full" />
@@ -233,22 +284,46 @@ const handleMainAction = () => {
               <div class="flex flex-wrap gap-1">
                 <div v-for="tag in campaign.campaign_tags" :key="tag" class="badge badge-primary gap-1">
                   {{ tag }}
-                  <button type="button" @click="removeTag('campaign', tag)" class="btn btn-ghost  btn-circle text-primary-content">✕</button>
+                  <button type="button" @click="removeTag('campaign', tag)" class="btn btn-ghost btn-xs btn-circle -me-2">✕</button>
                 </div>
               </div>
             </fieldset>
 
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Recipient Tags</legend>
-              <div class="flex gap-2 w-full mb-2">
-                <input v-model="recipientTagInput" type="text" placeholder="Add tag..." class="input input-bordered  flex-grow" @keydown.enter.prevent="addTag('recipient')" />
-                <button type="button" @click="addTag('recipient')" class="btn ">Add</button>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                <div v-for="tag in campaign.recipient_tags" :key="tag" class="badge badge-secondary gap-1">
-                  {{ tag }}
-                  <button type="button" @click="removeTag('recipient', tag)" class="btn btn-ghost  btn-circle text-secondary-content">✕</button>
+              <div class="dropdown w-full">
+                <div tabindex="0" role="button" class="select select-bordered w-full flex items-center justify-between">
+                  <span>
+                    {{ campaign.recipient_tags.length }} tags selected
+                  </span>
                 </div>
+                <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200">
+                  <li v-if="allRecipientTags.length === 0" class="p-4 text-center text-sm opacity-50">
+                    No contacts found or no contacts are associated with a tag.
+                  </li>
+                  <li v-for="tag in allRecipientTags" :key="tag.slug">
+                    <label class="label cursor-pointer justify-start gap-3 w-full py-2">
+                      <input type="checkbox" v-model="campaign.recipient_tags" :value="tag.slug" class="checkbox checkbox-sm" />
+                      <span class="label-text flex-grow">{{ tag.name }}</span>
+                      <span class="badge badge-sm badge-ghost opacity-50">{{ tag.count }}</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+              <div class="mt-4 space-y-2">
+                <label class="label cursor-pointer justify-start gap-2 p-0">
+                  <input type="radio" v-model="campaign.recipient_tags_logic" value="any" class="radio radio-sm radio-primary" />
+                  <span class="label-text text-xs">Recipients with ANY of selected tags</span>
+                </label>
+                <label class="label cursor-pointer justify-start gap-2 p-0">
+                  <input type="radio" v-model="campaign.recipient_tags_logic" value="all" class="radio radio-sm radio-primary" />
+                  <span class="label-text text-xs">Recipients with ALL of selected tags</span>
+                </label>
+              </div>
+              <div class="mt-2 text-xs font-semibold flex items-center gap-2">
+                <span>Estimated total recipients:</span>
+                <span v-if="fetchingRecipientCount" class="loading loading-spinner loading-xs"></span>
+                <span v-else class="text-primary">{{ campaign.recipients_count }}</span>
               </div>
             </fieldset>
 
@@ -321,7 +396,7 @@ const handleMainAction = () => {
               <button @click="saveCampaign('draft')" class="btn btn-ghost" :disabled="saving">
                 Save as draft
               </button>
-              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving">
+              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || campaign.recipient_tags.length === 0 || campaign.recipients_count === 0">
                 <span v-if="saving" class="loading loading-spinner"></span>
                 {{ sendOrScheduleLabel }}
               </button>

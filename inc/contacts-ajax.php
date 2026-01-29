@@ -161,9 +161,9 @@ add_action('wp_ajax_gatewayapi_save_contact', function () {
 
     update_post_meta($id, 'msisdn', $msisdn);
     update_post_meta($id, 'status', $status);
-    wp_set_post_terms($id, $tags, 'gwapi-recipient-tag');
+	wp_set_post_terms( $id, $tags, 'gwapi-recipient-tag' );
 
-    wp_send_json_success(['id' => $id, 'message' => 'Contact saved successfully']);
+	wp_send_json_success(['id' => $id, 'message' => 'Contact saved successfully']);
 });
 
 /**
@@ -206,10 +206,11 @@ add_action('wp_ajax_gatewayapi_restore_contact', function () {
     if (!$id) wp_send_json_error(['message' => 'Invalid ID']);
 
     $result = wp_untrash_post($id);
+	wp_publish_post($id);
 
-    if (!$result) {
-        wp_send_json_error(['message' => 'Failed to restore contact']);
-    }
+	if ( ! $result ) {
+		wp_send_json_error( [ 'message' => 'Failed to restore contact' ] );
+	}
 
     wp_send_json_success(['message' => 'Contact restored']);
 });
@@ -224,7 +225,9 @@ add_action('wp_ajax_gatewayapi_get_tags', function () {
 
     $terms = get_terms([
         'taxonomy' => 'gwapi-recipient-tag',
-        'hide_empty' => false,
+        'hide_empty' => true,
+        'orderby' => 'count',
+        'order' => 'DESC'
     ]);
 
     wp_send_json_success(array_map(function($term) {

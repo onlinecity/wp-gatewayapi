@@ -53,6 +53,7 @@ add_action('wp_ajax_gatewayapi_get_campaigns', function () {
             'recipients_count' => (int)get_post_meta($post->ID, 'recipients_count', true),
             'campaign_tags' => get_post_meta($post->ID, 'campaign_tags', true) ?: [],
             'recipient_tags' => get_post_meta($post->ID, 'recipient_tags', true) ?: [],
+            'recipient_tags_logic' => get_post_meta($post->ID, 'recipient_tags_logic', true) ?: 'any',
             'start_time' => get_post_meta($post->ID, 'start_time', true),
             'end_time' => get_post_meta($post->ID, 'end_time', true),
             'status' => get_post_meta($post->ID, 'status', true) ?: 'draft',
@@ -94,6 +95,7 @@ add_action('wp_ajax_gatewayapi_get_campaign', function () {
         'message' => $post->post_content,
         'campaign_tags' => get_post_meta($post->ID, 'campaign_tags', true) ?: [],
         'recipient_tags' => get_post_meta($post->ID, 'recipient_tags', true) ?: [],
+        'recipient_tags_logic' => get_post_meta($post->ID, 'recipient_tags_logic', true) ?: 'any',
         'start_time' => get_post_meta($post->ID, 'start_time', true),
         'status' => get_post_meta($post->ID, 'status', true) ?: 'draft',
         'created' => $post->post_date
@@ -147,10 +149,42 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
     update_post_meta($id, 'sender', $sender);
     update_post_meta($id, 'campaign_tags', $campaign_tags);
     update_post_meta($id, 'recipient_tags', $recipient_tags);
+    update_post_meta($id, 'recipient_tags_logic', isset($_POST['recipient_tags_logic']) ? sanitize_text_field($_POST['recipient_tags_logic']) : 'any');
     update_post_meta($id, 'start_time', $start_time);
     update_post_meta($id, 'status', $status);
 
-    // Calculate recipients count (mock for now, or implement logic if tags are provided)
+    // Calculate recipients count
+    $recipients_count = 0;
+    if (!empty($recipient_tags)) {
+        $logic = isset($_POST['recipient_tags_logic']) ? sanitize_text_field($_POST['recipient_tags_logic']) : 'any';
+        $recipients_count = (new WP_Query([
+            'post_type' => 'gwapi-recipient',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'tax_query' => [[
+                'taxonomy' => 'gwapi-recipient-tag',
+                'field' => 'slug',
+                'terms' => $recipient_tags,
+                'operator' => $logic === 'all' ? 'AND' : 'IN'
+            ]]
+        ]))->found_posts;
+    }
+    update_post_meta($id, 'recipients_count', $recipients_count);
+
+    wp_send_json_success(['id' => $id, 'message' => 'Campaign saved successfully']);
+});
+
+/**
+ * Count recipients for given tags and logic
+ */
+add_action('wp_ajax_gatewayapi_count_recipients', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $recipient_tags = isset($_GET['recipient_tags']) ? (array)$_GET['recipient_tags'] : [];
+    $logic = isset($_GET['recipient_tags_logic']) ? sanitize_text_field($_GET['recipient_tags_logic']) : 'any';
+
     $recipients_count = 0;
     if (!empty($recipient_tags)) {
         $recipients_count = (new WP_Query([
@@ -160,13 +194,13 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
             'tax_query' => [[
                 'taxonomy' => 'gwapi-recipient-tag',
                 'field' => 'slug',
-                'terms' => $recipient_tags
+                'terms' => $recipient_tags,
+                'operator' => $logic === 'all' ? 'AND' : 'IN'
             ]]
         ]))->found_posts;
     }
-    update_post_meta($id, 'recipients_count', $recipients_count);
 
-    wp_send_json_success(['id' => $id, 'message' => 'Campaign saved successfully']);
+    wp_send_json_success(['count' => $recipients_count]);
 });
 
 /**
