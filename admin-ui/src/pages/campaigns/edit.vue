@@ -35,6 +35,7 @@ const allRecipientTags = ref<any[]>([]);
 const fetchingRecipientCount = ref(false);
 const serverTime = ref('');
 const serverTimezone = ref('');
+const defaultSender = ref('');
 
 // SMS Calculation Logic ported from old-js.js
 const GSM_CHARS_ONE = ' !"#$%&\'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ£¥§¿_\n\rΔΦΓΛΩΠΨΣΘΞèéùìòÇØøÅåÆæßÉÄÖÑÜäöñüàäöñüà';
@@ -150,6 +151,7 @@ const fetchServerTime = async () => {
     if (response && response.success) {
       serverTime.value = response.data.current_time;
       serverTimezone.value = response.data.timezone;
+      defaultSender.value = response.data.default_sender;
     }
   } catch (err) {
     console.error('Failed to fetch server time:', err);
@@ -215,7 +217,7 @@ const saveCampaign = async (newStatus?: string) => {
   error.value = '';
   success.value = '';
 
-  const sender = campaign.value.sender;
+  const sender = campaign.value.sender || defaultSender.value;
   if (sender) {
     const isDigitsOnly = /^\d+$/.test(sender);
     if (isDigitsOnly) {
@@ -303,6 +305,16 @@ const showConfirmationDialog = (): boolean => {
 };
 
 const handleMainAction = () => {
+  if (!campaign.value.message || campaign.value.message.trim().length === 0) {
+    error.value = 'Please enter a message.';
+    return;
+  }
+
+  if (campaign.value.recipient_tags.length === 0) {
+    error.value = 'Please select at least one recipient tag.';
+    return;
+  }
+
   if (!showConfirmationDialog()) {
     return;
   }
@@ -312,6 +324,11 @@ const handleMainAction = () => {
 };
 
 const testSms = async () => {
+  if (!campaign.value.message || campaign.value.message.trim().length === 0) {
+    error.value = 'Please enter a message.';
+    return;
+  }
+
   const recipient = window.prompt('Enter phone number (MSISDN):');
   if (!recipient) return;
 
@@ -319,7 +336,7 @@ const testSms = async () => {
   error.value = '';
   success.value = '';
 
-  const sender = campaign.value.sender;
+  const sender = campaign.value.sender || defaultSender.value;
   if (sender) {
     const isDigitsOnly = /^\d+$/.test(sender);
     if (isDigitsOnly) {
@@ -341,7 +358,7 @@ const testSms = async () => {
     const response = await parentIframe.ajaxPost('gatewayapi_test_sms', {
       recipient,
       message: campaign.value.message,
-      sender: campaign.value.sender
+      sender: campaign.value.sender || defaultSender.value
     }) as any;
 
     if (response && response.success) {
@@ -402,7 +419,7 @@ const testSms = async () => {
 
             <fieldset class="fieldset tooltip tooltip-right" data-tip="The sender must be either up to 18 digits, or max 11 characters if it contains anything except digits. This works differently in various countries, so check the documentation for more information or contact our support." :disabled="isReadOnly">
               <legend class="fieldset-legend">Sender</legend>
-              <input v-model="campaign.sender" type="text" placeholder="e.g. MyCompany" class="input input-bordered w-full" />
+              <input v-model="campaign.sender" type="text" :placeholder="defaultSender || 'e.g. MyCompany'" class="input input-bordered w-full" />
             </fieldset>
 
             <fieldset class="fieldset" :disabled="isReadOnly">
@@ -556,7 +573,7 @@ const testSms = async () => {
                 <Icon icon="lucide:message-circle-question-mark" />
                 Test SMS
               </button>
-              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || isReadOnly || campaign.recipient_tags.length === 0 || campaign.recipients_count === 0">
+              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || isReadOnly">
                 <span v-if="saving" class="loading loading-spinner"></span>
                 <Icon v-else icon="lucide:send" />
                 {{ sendOrScheduleLabel }}

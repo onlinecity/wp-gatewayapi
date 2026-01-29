@@ -78,6 +78,10 @@ add_action('gatewayapi_send_campaign_batch', function ($campaign_id, $recipient_
     $message = $campaign->post_content;
     $sender = get_post_meta($campaign_id, 'sender', true);
 
+    if (empty($sender)) {
+        $sender = get_option('gwapi_default_sender') ?: 'SMS';
+    }
+
     $messages_to_send = [];
     foreach ($recipient_ids as $recipient_id) {
         $msisdn = get_post_meta($recipient_id, 'msisdn', true);

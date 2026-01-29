@@ -123,6 +123,10 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
         wp_send_json_error(['message' => 'Title is required']);
     }
 
+    if (empty($sender)) {
+        $sender = get_option('gwapi_default_sender') ?: '';
+    }
+
     if (!empty($sender)) {
         $is_digits_only = preg_match('/^\d+$/', $sender);
         if ($is_digits_only) {
@@ -341,7 +345,8 @@ add_action('wp_ajax_gatewayapi_get_server_time', function () {
 
     wp_send_json_success([
         'current_time' => wp_date('Y-m-d\TH:i'),
-        'timezone' => wp_timezone_string()
+        'timezone' => wp_timezone_string(),
+        'default_sender' => get_option('gwapi_default_sender') ?: ''
     ]);
 });
 
