@@ -13,6 +13,18 @@ add_action('init', function () {
         'hierarchical' => false,
     ]);
 
+    // Register Taxonomy for Contact Countries
+    register_taxonomy('gwapi-recipient-country', 'gwapi-recipient', [
+        'labels' => [
+            'name' => 'Contact Countries',
+            'singular_name' => 'Contact Country',
+        ],
+        'public' => false,
+        'show_ui' => false,
+        'show_in_rest' => false,
+        'hierarchical' => false,
+    ]);
+
     // Register Post Type for Contacts
     register_post_type('gwapi-recipient', [
         'labels' => [

@@ -34,6 +34,26 @@ const saveDefaults = async () => {
   defaultsMessage.value = '';
   defaultsError.value = false;
 
+  const sender = defaultSender.value;
+  if (sender) {
+    const isDigitsOnly = /^\d+$/.test(sender);
+    if (isDigitsOnly) {
+      if (sender.length > 18) {
+        defaultsError.value = true;
+        defaultsMessage.value = 'Default sender cannot be more than 18 digits';
+        defaultsLoading.value = false;
+        return;
+      }
+    } else {
+      if (sender.length > 11) {
+        defaultsError.value = true;
+        defaultsMessage.value = 'Default sender cannot be more than 11 characters when it contains non-digit characters';
+        defaultsLoading.value = false;
+        return;
+      }
+    }
+  }
+
   try {
     const response = await parentIframe.ajaxPost('gatewayapi_save_defaults', {
       gwapi_default_country_code: defaultCountryCode.value,
@@ -71,15 +91,14 @@ const saveDefaults = async () => {
               class="input input-bordered w-full"
               placeholder="45"
           />
-          <p class="label block">
+          <p class="block">
             The default country code for phone numbers. See
             <a href="https://gatewayapi.com/pricing/" target="_blank" rel="noopener noreferrer"
                class="link link-primary">supported countries</a>.
           </p>
         </fieldset>
 
-        <!-- Default Sender -->
-        <fieldset class="fieldset">
+        <fieldset class="fieldset tooltip tooltip-top" data-tip="The sender must be either up to 18 digits, or max 11 characters if it contains anything except digits.">
           <legend class="fieldset-legend">Default Sender</legend>
           <input
               type="text"
@@ -87,7 +106,7 @@ const saveDefaults = async () => {
               class="input input-bordered w-full"
               placeholder="Info"
           />
-          <p class="label block">
+          <p class="block">
             Default sender name or number. MSISDN for replies.
             <a href="https://gatewayapi.com/pricing/" target="_blank" rel="noopener noreferrer"
                class="link link-primary">Pricing info</a>.
@@ -105,7 +124,7 @@ const saveDefaults = async () => {
               max="1000"
               placeholder="60"
           />
-          <p class="label block">
+          <p class="block">
             Messages per minute (1-1000).
           </p>
         </fieldset>

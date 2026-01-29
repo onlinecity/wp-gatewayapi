@@ -123,6 +123,19 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
         wp_send_json_error(['message' => 'Title is required']);
     }
 
+    if (!empty($sender)) {
+        $is_digits_only = preg_match('/^\d+$/', $sender);
+        if ($is_digits_only) {
+            if (strlen($sender) > 18) {
+                wp_send_json_error(['message' => 'Sender cannot be more than 18 digits']);
+            }
+        } else {
+            if (strlen($sender) > 11) {
+                wp_send_json_error(['message' => 'Sender cannot be more than 11 characters when it contains non-digit characters']);
+            }
+        }
+    }
+
     $post_data = [
         'post_title' => $title,
         'post_content' => $message,
@@ -171,7 +184,65 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
     }
     update_post_meta($id, 'recipients_count', $recipients_count);
 
+    // Schedule campaign if status is scheduled or sending
+    if (in_array($status, ['scheduled', 'sending'])) {
+        // Clear any existing scheduled actions for this campaign to avoid duplicates if re-saved
+        as_unschedule_all_actions('gatewayapi_schedule_campaign', [$id], 'gatewayapi');
+
+        $schedule_time = time();
+        if ($status === 'scheduled' && !empty($start_time)) {
+            $schedule_time = strtotime($start_time);
+            if ($schedule_time < time()) {
+                $schedule_time = time();
+            }
+        }
+
+        as_schedule_single_action($schedule_time, 'gatewayapi_schedule_campaign', [$id], 'gatewayapi');
+    }
+
     wp_send_json_success(['id' => $id, 'message' => 'Campaign saved successfully']);
+});
+
+/**
+ * Get all existing campaign tags
+ */
+add_action('wp_ajax_gatewayapi_get_campaign_tags', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    global $wpdb;
+    $results = $wpdb->get_results("SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = 'campaign_tags'");
+
+    $tags_count = [];
+    foreach ($results as $row) {
+        $tags = maybe_unserialize($row->meta_value);
+        if (is_array($tags)) {
+            foreach ($tags as $tag) {
+                $tag = trim($tag);
+                if (empty($tag)) continue;
+                if (!isset($tags_count[$tag])) {
+                    $tags_count[$tag] = 0;
+                }
+                $tags_count[$tag]++;
+            }
+        }
+    }
+
+    $formatted_tags = [];
+    foreach ($tags_count as $name => $count) {
+        $formatted_tags[] = [
+            'name' => $name,
+            'count' => $count
+        ];
+    }
+
+    // Sort by count DESC
+    usort($formatted_tags, function ($a, $b) {
+        return $b['count'] - $a['count'];
+    });
+
+    wp_send_json_success($formatted_tags);
 });
 
 /**
@@ -258,4 +329,60 @@ add_action('wp_ajax_gatewayapi_restore_campaign', function () {
     }
 
     wp_send_json_success(['message' => 'Campaign restored']);
+});
+
+/**
+ * Get server time
+ */
+add_action('wp_ajax_gatewayapi_get_server_time', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    wp_send_json_success([
+        'current_time' => wp_date('Y-m-d\TH:i'),
+        'timezone' => wp_timezone_string()
+    ]);
+});
+
+/**
+ * Test SMS
+ */
+add_action('wp_ajax_gatewayapi_test_sms', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $recipient = isset($_POST['recipient']) ? sanitize_text_field($_POST['recipient']) : '';
+    $message = isset($_POST['message']) ? wp_kses_post($_POST['message']) : '';
+    $sender = isset($_POST['sender']) ? sanitize_text_field($_POST['sender']) : '';
+
+    if (empty($recipient)) {
+        wp_send_json_error(['message' => 'Recipient is required']);
+    }
+    if (empty($message)) {
+        wp_send_json_error(['message' => 'Message is required']);
+    }
+    if (empty($sender)) {
+        $sender = get_option('gwapi_default_sender') ?: 'SMS';
+    }
+
+    $is_digits_only = preg_match('/^\d+$/', $sender);
+    if ($is_digits_only) {
+        if (strlen($sender) > 18) {
+            wp_send_json_error(['message' => 'Sender cannot be more than 18 digits']);
+        }
+    } else {
+        if (strlen($sender) > 11) {
+            wp_send_json_error(['message' => 'Sender cannot be more than 11 characters when it contains non-digit characters']);
+        }
+    }
+
+    $result = gatewayapi_send_mobile_message($message, $recipient, $sender);
+
+    if (is_wp_error($result)) {
+        wp_send_json_error(['message' => $result->get_error_message()]);
+    }
+
+    wp_send_json_success(['message' => 'Test SMS sent successfully', 'data' => $result]);
 });

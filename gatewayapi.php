@@ -13,6 +13,8 @@ Domain Path: /languages
 */
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
+require_once( plugin_dir_path( __FILE__ ) . '/libraries/action-scheduler/action-scheduler.php' );
+
 const GATEWAYAPI_VERSION = '2.0.0';
 
 function gatewayapi__dir()
@@ -34,6 +36,7 @@ add_action('init', function () {
 
   // public
   require_once("$D/inc/api.php");
+  require_once("$D/inc/campaigns-scheduling.php");
 
   // admin: editor required
   if (!current_user_can('gatewayapi_manage')) return;

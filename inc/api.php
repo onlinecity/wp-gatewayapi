@@ -21,6 +21,19 @@
  */
 function gatewayapi_send_mobile_message($message, $recipient, $sender, $options = [])
 {
+  // If API version is set to 'sms', use the SMS API instead.
+  $api_version = get_option('gwapi_api_version', 'sms');
+  if ($api_version === 'sms') {
+    $res = gatewayapi_send_sms($message, [$recipient], $sender, 'MOBILE', 'UTF8', $options);
+    if (is_wp_error($res)) return $res;
+
+    // Return a mock response that matches the Messaging API format as closely as possible
+    return (object)[
+      'id' => $res,
+      'recipient' => $recipient
+    ];
+  }
+
   // Validate required parameters
   if (empty($message)) {
     return new WP_Error('GWAPI_INVALID_PARAM', 'Message cannot be empty.');
@@ -28,8 +41,19 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
   if (empty($recipient) || !preg_match('/^\d+$/', $recipient)) {
     return new WP_Error('GWAPI_INVALID_PARAM', 'Recipient must be a string containing digits only (MSISDN).');
   }
-  if (empty($sender) || strlen($sender) < 3 || strlen($sender) > 18) {
-    return new WP_Error('GWAPI_INVALID_PARAM', 'Sender must be between 3 and 18 characters.');
+  if (empty($sender)) {
+    return new WP_Error('GWAPI_INVALID_PARAM', 'Sender cannot be empty.');
+  }
+
+  $is_digits_only = preg_match('/^\d+$/', $sender);
+  if ($is_digits_only) {
+    if (strlen($sender) > 18) {
+      return new WP_Error('GWAPI_INVALID_PARAM', 'Sender cannot be more than 18 digits.');
+    }
+  } else {
+    if (strlen($sender) > 11) {
+      return new WP_Error('GWAPI_INVALID_PARAM', 'Sender cannot be more than 11 characters when it contains non-digit characters.');
+    }
   }
 
   // Set default options
@@ -68,8 +92,8 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
 
   // Determine API URL based on setup
   $uriBySetup = [
-    'com' => 'https://messaging.gatewayapi.com',
-    'eu' => 'https://messaging.gatewayapi.eu',
+    'com' => 'https://messaging.gatewayapi.com/mobile/single',
+    'eu' => 'https://messaging.gatewayapi.eu/mobile/single',
   ];
   $uri = $uriBySetup[get_option('gwapi_setup') ?: 'com'];
 
@@ -133,6 +157,24 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
  */
 function gatewayapi_send_mobile_messages($messages)
 {
+  // If API version is set to 'sms', use the SMS API instead.
+  $api_version = get_option('gwapi_api_version', 'sms');
+  if ($api_version === 'sms') {
+    $results = [];
+    foreach ($messages as $msg) {
+      $sender = isset($msg['sender']) ? $msg['sender'] : '';
+      $options = $msg;
+      unset($options['message'], $options['recipient'], $options['sender']);
+
+      $res = gatewayapi_send_mobile_message($msg['message'], $msg['recipient'], $sender, $options);
+      if (is_wp_error($res)) return $res;
+      $results[] = $res;
+    }
+    return (object)[
+      'ids' => array_column($results, 'id')
+    ];
+  }
+
   // Validate messages array
   if (!is_array($messages) || empty($messages)) {
     return new WP_Error('GWAPI_INVALID_PARAM', 'Messages must be a non-empty array.');
@@ -151,8 +193,15 @@ function gatewayapi_send_mobile_messages($messages)
     if (empty($msg['recipient']) || !preg_match('/^\d+$/', $msg['recipient'])) {
       return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: recipient must be a string containing digits only (MSISDN).");
     }
-    if (empty($msg['sender']) || strlen($msg['sender']) < 3 || strlen($msg['sender']) > 18) {
-      return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: sender must be between 3 and 18 characters.");
+    $is_digits_only = preg_match('/^\d+$/', $msg['sender']);
+    if ($is_digits_only) {
+      if (strlen($msg['sender']) > 18) {
+        return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: sender cannot be more than 18 digits.");
+      }
+    } else {
+      if (strlen($msg['sender']) > 11) {
+        return new WP_Error('GWAPI_INVALID_PARAM', "Message at index $index: sender cannot be more than 11 characters when it contains non-digit characters.");
+      }
     }
 
     // Build the message object
@@ -303,7 +352,7 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
 
   foreach ($recipients_formatted as $msisdn => $tags) {
     $rec = [
-      'msisdn' => filter_var($msisdn, FILTER_SANITIZE_NUMBER_INT),
+      'msisdn' => preg_replace('/\D/', '', $msisdn),
       'tagvalues' => []
     ];
     foreach ($allTags as $t) {
@@ -330,41 +379,47 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
   $ts = time() - 3;
   $uris = $uriBySetup[get_option('gwapi_setup') ? : 'com'];
 
+  $token = get_option('gwapi_token');
+
   foreach ($uris as $i => $uri) {
-    // Variables for OAuth 1.0a Signature
-    $consumer_key = rawurlencode(get_option('gwapi_key'));
-    $secret = rawurlencode(get_option('gwapi_secret'));
-    $nonce = rawurlencode(uniqid(false, true));
-    $ts = rawurlencode($ts + $i);
+    if ($token) {
+      $auth = 'Token ' . $token;
+    } else {
+      // Variables for OAuth 1.0a Signature
+      $consumer_key = rawurlencode(get_option('gwapi_key'));
+      $secret = rawurlencode(get_option('gwapi_secret'));
+      $nonce = rawurlencode(uniqid(false, true));
+      $ts = rawurlencode($ts + $i);
 
-    // OAuth 1.0a - Signature Base String
-    $oauth_params = array(
-      'oauth_consumer_key' => $consumer_key,
-      'oauth_nonce' => $nonce,
-      'oauth_signature_method' => 'HMAC-SHA1',
-      'oauth_timestamp' => $ts,
-      'oauth_version' => '1.0'
-    );
+      // OAuth 1.0a - Signature Base String
+      $oauth_params = array(
+        'oauth_consumer_key' => $consumer_key,
+        'oauth_nonce' => $nonce,
+        'oauth_signature_method' => 'HMAC-SHA1',
+        'oauth_timestamp' => $ts,
+        'oauth_version' => '1.0'
+      );
 
 
-    $sbs = 'POST&' . rawurlencode($uri) . '&';
-    $sbsA = [];
-    foreach ($oauth_params as $key => $val) {
-      $sbsA[] = $key . '%3D' . $val;
+      $sbs = 'POST&' . rawurlencode($uri) . '&';
+      $sbsA = [];
+      foreach ($oauth_params as $key => $val) {
+        $sbsA[] = $key . '%3D' . $val;
+      }
+      $sbs .= implode('%26', $sbsA);
+
+      // OAuth 1.0a - Sign SBS with secret
+      $sig = base64_encode(hash_hmac('sha1', $sbs, $secret . '&', true));
+      $oauth_params['oauth_signature'] = rawurlencode($sig);
+
+      // Construct Authorization header
+      $auth = 'OAuth ';
+      $authA = [];
+      foreach ($oauth_params as $key => $val) {
+        $authA[] = $key . '="' . $val . '"';
+      }
+      $auth .= implode(', ', $authA);
     }
-    $sbs .= implode('%26', $sbsA);
-
-    // OAuth 1.0a - Sign SBS with secret
-    $sig = base64_encode(hash_hmac('sha1', $sbs, $secret . '&', true));
-    $oauth_params['oauth_signature'] = rawurlencode($sig);
-
-    // Construct Authorization header
-    $auth = 'OAuth ';
-    $authA = [];
-    foreach ($oauth_params as $key => $val) {
-      $authA[] = $key . '="' . $val . '"';
-    }
-    $auth .= implode(', ', $authA);
 
     $res = wp_remote_request($uri, $q = [
       'method' => 'POST',

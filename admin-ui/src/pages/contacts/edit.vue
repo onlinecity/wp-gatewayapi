@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useParentIframeStore } from '@/stores/parentIframe.ts';
 import { useRouter } from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
+import { Icon } from '@iconify/vue';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import countryData from '@/assets/countries.json';
 
 const props = defineProps<{
   id?: string;
@@ -16,6 +19,7 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref('');
 const success = ref('');
+const validationError = ref('');
 
 const contact = ref({
   id: 0,
@@ -25,7 +29,33 @@ const contact = ref({
   tags: [] as string[]
 });
 
-const tagInput = ref('');
+const allRecipientTags = ref<any[]>([]);
+
+const country = computed(() => {
+  if (!contact.value.msisdn) return null;
+  
+  let msisdn = contact.value.msisdn.trim();
+  if (!msisdn.startsWith('+')) {
+    msisdn = '+' + msisdn;
+  }
+  
+  try {
+    const phoneNumber = parsePhoneNumberFromString(msisdn);
+    if (phoneNumber && phoneNumber.country) {
+      const isoCode = phoneNumber.country;
+      const countryInfo = (countryData.countries as any)[isoCode];
+      if (countryInfo) {
+        return {
+          code: isoCode.toLowerCase(),
+          name: countryInfo.name
+        };
+      }
+    }
+  } catch (e) {
+    // Ignore parsing errors
+  }
+  return null;
+});
 
 const fetchContact = async () => {
   if (!props.id) return;
@@ -45,18 +75,66 @@ const fetchContact = async () => {
   }
 };
 
+const fetchRecipientTags = async () => {
+  try {
+    const response = await parentIframe.ajaxGet('gatewayapi_get_tags') as any;
+    if (response && response.success) {
+      allRecipientTags.value = response.data;
+    }
+  } catch (err) {
+    console.error('Failed to fetch recipient tags:', err);
+  }
+};
+
 onMounted(() => {
   fetchContact();
+  fetchRecipientTags();
 });
 
+const validateContact = () => {
+  if (!contact.value.name || !contact.value.name.trim()) {
+    validationError.value = 'Name is required.';
+    return false;
+  }
+  if (!contact.value.msisdn || !contact.value.msisdn.trim()) {
+    validationError.value = 'MSISDN is required.';
+    return false;
+  }
+  const msisdnValue = contact.value.msisdn.trim();
+  if (!/^[\d\s+]+$/.test(msisdnValue)) {
+    validationError.value = 'MSISDN can only contain digits, + and spaces.';
+    return false;
+  }
+  const digitCount = (msisdnValue.match(/\d/g) || []).length;
+  if (digitCount < 5) {
+    validationError.value = 'MSISDN must contain at least 5 digits.';
+    return false;
+  }
+  if (!country.value) {
+    validationError.value = 'Country could not be detected from MSISDN. Please ensure the country code is correct.';
+    return false;
+  }
+  if (!contact.value.tags || contact.value.tags.length === 0) {
+    validationError.value = 'At least one tag is required.';
+    return false;
+  }
+  validationError.value = '';
+  return true;
+};
+
 const saveContact = async () => {
+  if (!validateContact()) {
+    return;
+  }
   saving.value = true;
   error.value = '';
   success.value = '';
   try {
     const response = await parentIframe.ajaxPost('gatewayapi_save_contact', {
       ...contact.value,
-      tags: contact.value.tags
+      tags: contact.value.tags,
+      country: country.value?.name || '',
+      country_code: country.value?.code || ''
     }) as any;
     if (response && response.success) {
       success.value = 'Contact saved successfully!';
@@ -76,32 +154,45 @@ const saveContact = async () => {
 };
 
 const addTag = () => {
-  const tag = tagInput.value.trim();
-  if (tag && !contact.value.tags.includes(tag)) {
-    contact.value.tags.push(tag);
+  const name = window.prompt('Enter new tag name:');
+  if (name) {
+    const tag = name.trim();
+    if (tag) {
+      if (!contact.value.tags.includes(tag)) {
+        contact.value.tags.push(tag);
+      }
+      if (!allRecipientTags.value.find(t => t.name === tag)) {
+        allRecipientTags.value.push({ name: tag, count: 0 });
+      }
+    }
   }
-  tagInput.value = '';
-};
-
-const removeTag = (tag: string) => {
-  contact.value.tags = contact.value.tags.filter(t => t !== tag);
 };
 </script>
 
 <template>
-  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-    <PageTitle class="mb-0">{{ props.id ? 'Edit Contact' : 'Add New Contact' }}</PageTitle>
-    <router-link to="/contacts" class="btn btn-ghost  gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-      Back to Contacts
-    </router-link>
-  </div>
+
+  <PageTitle icon="lucide:user-pen">
+    {{ props.id ? 'Edit Contact' : 'Add New Contact' }}
+    <template #actions>
+      <router-link to="/contacts" class="btn btn-ghost  gap-2">
+        <Icon icon="lucide:arrow-left" />
+        Back to Contacts
+      </router-link>
+    </template>
+  </PageTitle>
 
   <div v-if="loading" class="flex justify-center py-12">
     <Loading />
   </div>
 
   <div v-else class="max-w-2xl mx-auto">
+    <div v-if="validationError" class="alert alert-warning mb-6 ">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <span>{{ validationError }}</span>
+    </div>
     <div v-if="error" class="alert alert-error mb-6 ">
       <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
       <span>{{ error }}</span>
@@ -121,7 +212,18 @@ const removeTag = (tag: string) => {
 
           <fieldset class="fieldset mb-4">
             <legend class="fieldset-legend">MSISDN</legend>
-            <input v-model="contact.msisdn" type="text" placeholder="e.g. 4512345678" class="input input-bordered w-full" required />
+            <label class="input flex w-full">
+
+              <span class="label flex-1" v-if="country">
+                <Icon :icon="`circle-flags:${country.code}`" class="w-6 h-6" />
+                <span class="text-sm font-medium">{{ country.name }}</span>
+              </span>
+              <span class="label flex-1" v-else>
+                - No country detected -
+              </span>
+
+              <input v-model="contact.msisdn" type="text" placeholder="e.g. 4512345678" required class="flex-2" />
+            </label>
             <p class="fieldset-label">Include country code, e.g. 45 for Denmark.</p>
           </fieldset>
 
@@ -136,22 +238,34 @@ const removeTag = (tag: string) => {
 
           <fieldset class="fieldset mb-6">
             <legend class="fieldset-legend">Tags</legend>
-            <div class="flex gap-2 w-full mb-2">
-              <input v-model="tagInput" type="text" placeholder="Add tag..." class="input input-bordered flex-grow" @keydown.enter.prevent="addTag" />
-              <button type="button" @click="addTag" class="btn">Add</button>
-            </div>
-            <div class="flex flex-wrap gap-2 min-h-[2.5rem] items-center">
-              <div v-for="tag in contact.tags" :key="tag" class="badge badge-primary badge-lg gap-1">
-                {{ tag }}
-                <button type="button" @click="removeTag(tag)" class="btn btn-ghost  btn-circle text-primary-content hover:bg-black/20!">✕</button>
+            <div class="flex gap-3 relative">
+              <div class="dropdown w-full static">
+                <div tabindex="0" role="button" class="select select-bordered w-full flex items-center justify-between mb-1">
+                  <span>
+                    {{ contact.tags.length }} tags selected
+                  </span>
+                </div>
+                <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200">
+                  <li v-if="allRecipientTags.length === 0" class="p-4 text-center text-sm opacity-50">
+                    No contacts found or no contacts are associated with a tag.
+                  </li>
+                  <li v-for="tag in allRecipientTags" :key="tag.name">
+                    <label class="label cursor-pointer justify-start gap-3 w-full py-2">
+                      <input type="checkbox" v-model="contact.tags" :value="tag.name" class="checkbox checkbox-sm" />
+                      <span class="label-text flex-grow">{{ tag.name }}</span>
+                      <span class="badge badge-sm badge-ghost opacity-50">{{ tag.count }}</span>
+                    </label>
+                  </li>
+                </ul>
               </div>
-              <span v-if="contact.tags.length === 0" class="text-sm text-base-content/40 italic">No tags added.</span>
+              <button type="button" @click="addTag" class="btn btn-outline btn-primary tooltip" data-tip="Add new tag"><Icon icon="lucide:plus" /></button>
             </div>
           </fieldset>
 
           <div class="card-actions justify-end">
             <button type="submit" class="btn btn-primary" :disabled="saving">
               <span v-if="saving" class="loading loading-spinner"></span>
+              <Icon icon="lucide:check" class="me-2" />
               {{ contact.id ? 'Update Contact' : 'Create Contact' }}
             </button>
           </div>

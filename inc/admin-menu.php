@@ -52,6 +52,13 @@ function gatewayapi_admin_page_callback() {
 
     ?>
     <iframe src="<?= esc_attr($url); ?>" id="gatewayapi-admin-ui" style="width: 100%; height: 100px;" allowtransparency></iframe>
+    <?php if (defined('GATEWAYAPI_DEVSERVER')): ?>
+        <div style="margin-top: 20px; padding: 20px; border-top: 1px solid #ccc;">
+            <button type="button" class="button button-secondary" onclick="window.open('<?= esc_js($url) ?>', '_blank')">
+                Open in new window (DevServer)
+            </button>
+        </div>
+    <?php endif; ?>
     <style>
         #wpcontent {
             padding-left: 0;

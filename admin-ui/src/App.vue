@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import {onMounted} from "vue";
 import {useParentIframeStore} from "./stores/parentIframe.ts";
 import {useStateStore} from "./stores/state.ts";
 
 useParentIframeStore();
 const state = useStateStore();
+
+onMounted(() => {
+  if (window.opener) {
+    document.body.style.backgroundColor = '#eeeeef';
+  }
+});
 </script>
 
 <template>

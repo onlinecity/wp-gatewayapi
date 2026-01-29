@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^14.1.0",
+    "libphonenumber-js": "^1.12.35",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "punycode": "^2.3.1",

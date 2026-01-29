@@ -3,10 +3,15 @@ import {ref, watch} from "vue";
 import {useElementSize} from "@vueuse/core";
 
 export const useParentIframeStore = defineStore('parentIframe', () => {
+  const getParent = () => {
+    return window.opener || window.parent;
+  }
+
   const ajaxPost = (action: string, data: any) => {
     return new Promise((resolve, reject) => {
-      window.parent.jQuery.post(
-        window.parent.ajaxurl,
+      const parent = getParent();
+      parent.jQuery.post(
+        parent.ajaxurl,
         {action, ...data},
         (response: any) => resolve(response)
       ).fail((error: any) => reject(error));
@@ -15,8 +20,9 @@ export const useParentIframeStore = defineStore('parentIframe', () => {
 
   const ajaxGet = (action: string, data: any) => {
     return new Promise((resolve, reject) => {
-      window.parent.jQuery.get(
-        window.parent.ajaxurl,
+      const parent = getParent();
+      parent.jQuery.get(
+        parent.ajaxurl,
         {action, ...data},
         (response: any) => resolve(response)
       ).fail((error: any) => reject(error));
@@ -28,9 +34,12 @@ export const useParentIframeStore = defineStore('parentIframe', () => {
   const scrollHeight = ref(appElement?.scrollHeight || 0);
 
   const handlerNewHeight = (newHeight: number) => {
-    if (!window.parent || !window.parent.jQuery) return;
-    const parentElement = window.parent.jQuery('#gatewayapi-admin-ui');
-    parentElement.css('height', `${newHeight + 10}px`);
+    const parent = getParent();
+    if (!parent || !parent.jQuery) return;
+    const parentElement = parent.jQuery('#gatewayapi-admin-ui');
+    if (parentElement.length) {
+      parentElement.css('height', `${newHeight + 10}px`);
+    }
   }
   watch(height, handlerNewHeight, {immediate: true});
 

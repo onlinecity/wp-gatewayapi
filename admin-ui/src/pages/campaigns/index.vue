@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref, onMounted, watch} from 'vue';
 import {useParentIframeStore} from '@/stores/parentIframe.ts';
-import { defineStore } from 'pinia';
+import {defineStore} from 'pinia';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -97,20 +97,20 @@ const formatDate = (dateStr: string) => {
 };
 
 const columns = [
-  { key: 'title', label: 'Title', sortable: true },
-  { key: 'sender', label: 'Sender', sortable: true },
-  { key: 'recipients', label: 'Recipients', sortable: false },
-  { key: 'tags', label: 'Tags', sortable: false },
-  { key: 'start_time', label: 'Start time', sortable: true },
-  { key: 'end_time', label: 'Ended time', sortable: false },
-  { key: 'status', label: 'Status', sortable: true },
-  { key: 'created', label: 'Date created', sortable: true, sortKey: 'date' },
+  {key: 'title', label: 'Title', sortable: true},
+  {key: 'sender', label: 'Sender', sortable: true},
+  {key: 'recipients', label: 'Recipients', sortable: false},
+  {key: 'tags', label: 'Tags', sortable: false},
+  {key: 'start_time', label: 'Start time', sortable: true},
+  {key: 'end_time', label: 'Ended time', sortable: false},
+  {key: 'status', label: 'Status', sortable: true},
+  {key: 'created', label: 'Date created', sortable: true, sortKey: 'date'},
 ];
 </script>
 
 <template>
   <div class="flex justify-between items-center mb-4">
-    <PageTitle>
+    <PageTitle icon="lucide:message-circle-more">
       Campaigns
       <template #actions>
         <router-link to="/campaigns/new" class="btn btn-primary">
@@ -150,10 +150,11 @@ const columns = [
               {{ tableStore.visibleColumns.length }} out of {{ columns.length }} selected
             </div>
             <ul tabindex="0"
-                 class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 py-5 px-3 shadow-sm">
+                class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 py-5 px-3 shadow-sm">
               <li v-for="column in columns" :key="column.key">
                 <label class="label cursor-pointer justify-start gap-3 w-full py-2">
-                  <input type="checkbox" v-model="tableStore.visibleColumns" :value="column.key" class="checkbox checkbox-sm" />
+                  <input type="checkbox" v-model="tableStore.visibleColumns" :value="column.key"
+                         class="checkbox checkbox-sm"/>
                   <span class="label-text">{{ column.label }}</span>
                 </label>
               </li>
@@ -189,7 +190,9 @@ const columns = [
         </td>
       </tr>
       <tr v-else-if="campaigns.length === 0">
-        <td :colspan="tableStore.visibleColumns.length + 1" class="text-center p-12 text-base-content/50">No campaigns found.</td>
+        <td :colspan="tableStore.visibleColumns.length + 1" class="text-center p-12 text-base-content/50">No campaigns
+          found.
+        </td>
       </tr>
       <tr v-for="campaign in campaigns" :key="campaign.id" class="hover">
         <template v-for="column in columns" :key="column.key">
@@ -199,7 +202,12 @@ const columns = [
             <template v-else-if="column.key === 'recipients'">{{ campaign.recipients_count }}</template>
             <template v-else-if="column.key === 'tags'">
               <div class="flex flex-wrap gap-1">
-                <span v-for="tag in campaign.campaign_tags" :key="tag" class="badge badge-ghost ">{{ tag }}</span>
+                <span class="tooltip" v-for="tag in (campaign.campaign_tags || []).slice(0, 2)" :key="tag" :data-tip="tag">
+                <span class="badge badge-ghost truncate max-w-16 block">{{ tag }}</span>
+                  </span>
+                <span v-if="(campaign.campaign_tags || []).length > 2"
+                      class="badge badge-outline tooltip"
+                      data-tip="More tags available">+{{ campaign.campaign_tags.length - 2 }}</span>
               </div>
             </template>
             <template v-else-if="column.key === 'start_time'">{{ formatDate(campaign.start_time) }}</template>
@@ -219,7 +227,8 @@ const columns = [
         <td>
           <div class="flex justify-end gap-1">
             <template v-if="!campaign.is_trash">
-              <router-link :to="'/campaigns/' + campaign.id" class="btn btn-primary tooltip tooltip-left" data-tip="Edit the campaign">
+              <router-link :to="'/campaigns/' + campaign.id" class="btn btn-primary tooltip tooltip-left"
+                           data-tip="Edit the campaign">
                 <Icon icon="lucide:edit"/>
               </router-link>
               <button @click="deleteCampaign(campaign.id)" class="btn btn-error btn-outline tooltip tooltip-left"

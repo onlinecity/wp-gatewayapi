@@ -5,5 +5,6 @@ declare global {
     jQuery: any;
     ajaxurl: string;
     parent: Window;
+    opener: Window | null;
   }
 }

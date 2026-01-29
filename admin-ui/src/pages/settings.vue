@@ -11,6 +11,7 @@ const parentIframe = useParentIframeStore();
 const state = useStateStore();
 
 const gwapiSetup = ref('com');
+const gwapiApiVersion = ref('sms');
 const defaultCountryCode = ref('45');
 const defaultSender = ref('');
 const defaultSendSpeed = ref(60);
@@ -22,6 +23,7 @@ onMounted(async () => {
     if (response && response.success) {
       const data = response.data;
       gwapiSetup.value = data.gwapi_setup || 'com';
+      gwapiApiVersion.value = data.gwapi_api_version || 'sms';
       defaultCountryCode.value = data.gwapi_default_country_code || '45';
       defaultSender.value = data.gwapi_default_sender || '';
       defaultSendSpeed.value = parseInt(data.gwapi_default_send_speed) || 60;
@@ -34,12 +36,12 @@ onMounted(async () => {
 
 <template>
 
-  <PageTitle>Settings</PageTitle>
+  <PageTitle icon="lucide:cog">Settings</PageTitle>
 
   <Loading v-if="state.hasKey === null" />
 
   <div v-else class="flex flex-col gap-8">
-    <ConnectionSettings :initial-setup="gwapiSetup" />
+    <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion" />
     <DefaultSettings
       :initial-country-code="defaultCountryCode"
       :initial-sender="defaultSender"
