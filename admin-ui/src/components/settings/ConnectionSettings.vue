@@ -95,7 +95,7 @@ const saveConnection = async () => {
     <span>{{ connectionMessage }}</span>
   </div>
 
-  <fieldset class="fieldset">
+  <fieldset class="fieldset text-base">
     <legend class="fieldset-legend">API Token</legend>
     <span data-tip="Click to change token" class="tooltip w-full" v-if="tokenFieldDisabled">
           <input
@@ -125,10 +125,10 @@ const saveConnection = async () => {
     </p>
   </fieldset>
 
-  <fieldset class="fieldset mt-4">
+  <fieldset class="fieldset text-base mt-4">
     <legend class="fieldset-legend">API Region</legend>
     <div class="flex flex-wrap gap-4">
-      <label class="label cursor-pointer flex gap-2">
+      <label class="cursor-pointer flex gap-2">
         <input
             type="radio"
             name="gwapi_setup"
@@ -136,9 +136,9 @@ const saveConnection = async () => {
             value="com"
             v-model="gwapiSetup"
         />
-        <span>GatewayAPI.com (Global)</span>
+        <span>GatewayAPI.com</span>
       </label>
-      <label class="label cursor-pointer flex gap-2">
+      <label class="cursor-pointer flex gap-2">
         <input
             type="radio"
             name="gwapi_setup"
@@ -146,12 +146,12 @@ const saveConnection = async () => {
             value="eu"
             v-model="gwapiSetup"
         />
-        <span>GatewayAPI.eu (EU)</span>
+        <span>GatewayAPI.eu</span>
       </label>
     </div>
   </fieldset>
 
-  <fieldset class="fieldset mt-4">
+  <fieldset class="fieldset text-base mt-4">
     <legend class="fieldset-legend">API Version</legend>
     <div class="flex flex-col gap-4">
       <label class="cursor-pointer flex gap-2 items-start">

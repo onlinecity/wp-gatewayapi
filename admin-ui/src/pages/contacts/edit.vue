@@ -201,12 +201,12 @@ const addTag = () => {
           <span>{{ success }}</span>
         </div>
         <form @submit.prevent="saveContact">
-          <fieldset class="fieldset mb-4">
+          <fieldset class="fieldset text-base mb-4">
             <legend class="fieldset-legend">Name</legend>
             <input v-model="contact.name" type="text" placeholder="Contact Name" class="input input-bordered w-full" required />
           </fieldset>
 
-          <fieldset class="fieldset mb-4">
+          <fieldset class="fieldset text-base mb-4">
             <legend class="fieldset-legend">MSISDN</legend>
             <label class="input flex w-full">
 
@@ -223,7 +223,7 @@ const addTag = () => {
             <p class="fieldset-label">Include country code, e.g. 45 for Denmark.</p>
           </fieldset>
 
-          <fieldset class="fieldset mb-4">
+          <fieldset class="fieldset text-base mb-4">
             <legend class="fieldset-legend">Status</legend>
             <select v-model="contact.status" class="select select-bordered w-full">
               <option value="unconfirmed">Unconfirmed</option>
@@ -232,7 +232,7 @@ const addTag = () => {
             </select>
           </fieldset>
 
-          <fieldset class="fieldset mb-6">
+          <fieldset class="fieldset text-base mb-6">
             <legend class="fieldset-legend">Tags</legend>
             <div class="flex gap-3 relative">
               <div class="dropdown w-full static">

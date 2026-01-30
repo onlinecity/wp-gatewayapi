@@ -159,7 +159,7 @@ const startImport = async () => {
             </ul>
           </div>
 
-          <fieldset class="fieldset mb-6">
+          <fieldset class="fieldset text-base mb-6">
             <legend class="fieldset-legend">Select CSV File</legend>
             <input type="file" accept=".csv" class="file-input file-input-bordered w-full" @change="onFileChange" />
           </fieldset>

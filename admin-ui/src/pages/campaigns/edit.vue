@@ -404,9 +404,8 @@ const testSms = async () => {
           <span>{{ success }}</span>
         </div>
 
-        <fieldset class="fieldset p-0" :disabled="isReadOnly">
+        <fieldset class="fieldset text-base p-0 tooltip" :disabled="isReadOnly" data-tip="This is used internally only for your own organizational purposes.">
           <input v-model="campaign.title" type="text" placeholder="Internal campaign title" class="input input-bordered w-full" required />
-          <p class="fieldset-label text-xs">Note: This is used internally only.</p>
         </fieldset>
       </div>
     </div>
@@ -418,12 +417,12 @@ const testSms = async () => {
           <div class="card-body">
             <h2 class="card-title text-sm uppercase opacity-50">Campaign Settings</h2>
 
-            <fieldset class="fieldset tooltip tooltip-right" data-tip="The sender must be either up to 18 digits, or max 11 characters if it contains anything except digits. This works differently in various countries, so check the documentation for more information or contact our support." :disabled="isReadOnly">
+            <fieldset class="fieldset text-base tooltip tooltip-right" data-tip="The sender must be either up to 18 digits, or max 11 characters if it contains anything except digits. This works differently in various countries, so check the documentation for more information or contact our support." :disabled="isReadOnly">
               <legend class="fieldset-legend">Sender</legend>
               <input v-model="campaign.sender" type="text" :placeholder="defaultSender || 'e.g. MyCompany'" class="input input-bordered w-full" />
             </fieldset>
 
-            <fieldset class="fieldset" :disabled="isReadOnly">
+            <fieldset class="fieldset text-base" :disabled="isReadOnly">
               <legend class="fieldset-legend">Campaign Tags</legend>
               <div class="flex gap-3 relative  tooltip tooltip-right"  data-tip="Campaign tags are used for your own organizational purposes and does not affect the final message or sending.">
                 <div class="dropdown w-full static">
@@ -449,7 +448,7 @@ const testSms = async () => {
               </div>
             </fieldset>
 
-            <fieldset class="fieldset" :disabled="isReadOnly">
+            <fieldset class="fieldset text-base" :disabled="isReadOnly">
               <legend class="fieldset-legend">Recipient Tags</legend>
               <div class="dropdown w-full tooltip tooltip-right" data-tip="Recipient tags are used to select contacts. You send to every contact that has the selected tags.">
                 <div tabindex="0" role="button" class="select select-bordered w-full flex items-center justify-between" :class="{'pointer-events-none opacity-50': isReadOnly}">
@@ -473,31 +472,31 @@ const testSms = async () => {
               <div class="mt-4 space-y-2 tooltip tooltip-right" data-tip="Do you want to send to recipients which just has one of the tags, or do you want to only send to recipients who has ALL of the selected tags? You must select at least one tag.">
                 <label class="label cursor-pointer justify-start gap-2 p-0">
                   <input type="radio" v-model="campaign.recipient_tags_logic" value="any" class="radio radio-sm radio-primary" :disabled="isReadOnly" />
-                  <span class="label-text text-xs">Recipients with ANY of selected tags</span>
+                  <span class="label-text text-sm">Recipients with ANY of selected tags</span>
                 </label>
                 <label class="label cursor-pointer justify-start gap-2 p-0">
                   <input type="radio" v-model="campaign.recipient_tags_logic" value="all" class="radio radio-sm radio-primary" :disabled="isReadOnly" />
-                  <span class="label-text text-xs">Recipients with ALL of selected tags</span>
+                  <span class="label-text text-sm">Recipients with ALL of selected tags</span>
                 </label>
               </div>
-              <div class="mt-2 text-xs font-semibold flex items-center gap-2">
+              <div class="mt-2 text-sm font-semibold flex items-center gap-2">
                 <span>Estimated total recipients:</span>
                 <span v-if="fetchingRecipientCount" class="loading loading-spinner loading-xs"></span>
                 <span v-else class="text-primary">{{ campaign.recipients_count }}</span>
               </div>
             </fieldset>
 
-            <fieldset class="fieldset tooltip tooltip-right" data-tip="When should sending start? You should input the date/time in the timezone of the website." :disabled="isReadOnly">
+            <fieldset class="fieldset text-base tooltip tooltip-right" data-tip="When should sending start? You should input the date/time in the timezone of the website." :disabled="isReadOnly">
               <legend class="fieldset-legend">Start time</legend>
               <input v-model="campaign.start_time" type="datetime-local" :min="minDateTime"
                      class="input input-bordered w-full"/>
-              <p class="fieldset-label text-xs">
+              <p class="fieldset-label text-sm block">
                 Empty for immediate sending, or set a future date.
-                <span v-if="serverTimezone" class="block opacity-70">Server timezone: {{ serverTimezone }}</span>
+                <span v-if="serverTimezone" class="block">Server timezone: {{ serverTimezone }}</span>
               </p>
             </fieldset>
 
-            <fieldset class="fieldset">
+            <fieldset class="fieldset text-base">
               <legend class="fieldset-legend">Current status</legend>
               <div role="alert" class="alert w-full" :class="{
                 'alert-base': campaign.status === 'draft',
@@ -559,7 +558,7 @@ const testSms = async () => {
                 Be aware that special symbols cause UCS2 encoding, which allows fewer characters per message (70 instead of 160) before being split.
               </div>
 
-              <div class="alert alert-info py-2 px-4 text-xs shadow-none">
+              <div class="alert alert-info py-2 px-4 shadow-none">
                 <Icon icon="lucide:circle-alert" class="w-4 h-4" />
                 <span>Notice: This is a calculation and final amount may vary, for instance if replacement tags are used.</span>
               </div>

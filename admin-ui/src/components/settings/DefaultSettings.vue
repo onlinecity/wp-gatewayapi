@@ -80,7 +80,7 @@ const saveDefaults = async () => {
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-    <fieldset class="fieldset tooltip tooltip-top"
+    <fieldset class="fieldset text-base tooltip tooltip-top"
               data-tip="The sender must be either up to 18 digits, or max 11 characters if it contains anything except digits.">
       <legend class="fieldset-legend">Default Sender</legend>
       <input
@@ -97,7 +97,7 @@ const saveDefaults = async () => {
     </fieldset>
 
     <!-- Default Send Speed -->
-    <fieldset class="fieldset tooltip" data-tip="For most webhosts, under 100 should be fine. Setting to eg. 1000 will use significant memory when sending and should not be attempted on a host with a memory limit below 512 MB.">
+    <fieldset class="fieldset text-base tooltip" data-tip="For most webhosts, under 100 should be fine. Setting to eg. 1000 will use significant memory when sending and should not be attempted on a host with a memory limit below 512 MB.">
       <legend class="fieldset-legend">Campaign Send Speed</legend>
       <input
           type="number"

@@ -203,7 +203,7 @@ const exportContacts = async () => {
   <div class="card bg-base-100 border-base-300 border-2 mb-8">
     <div class="card-body p-4">
       <div class="flex flex-wrap gap-4">
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Search</legend>
           <div class="join">
             <select v-model="filters.search_by" class="select select-bordered  join-item">
@@ -214,7 +214,7 @@ const exportContacts = async () => {
           </div>
         </fieldset>
         
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Status</legend>
           <select v-model="filters.status" class="select select-bordered ">
             <option value="any">Any Status</option>
@@ -225,7 +225,7 @@ const exportContacts = async () => {
           </select>
         </fieldset>
 
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Tag</legend>
           <select v-model="filters.tag" class="select select-bordered ">
             <option value="">All Tags</option>
@@ -233,7 +233,7 @@ const exportContacts = async () => {
           </select>
         </fieldset>
 
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Country</legend>
           <div class="dropdown">
             <div tabindex="0" role="button" class="select pe-10 flex items-center gap-2 min-w-48">
@@ -264,7 +264,7 @@ const exportContacts = async () => {
           </div>
         </fieldset>
 
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Columns</legend>
           <div class="dropdown">
             <div tabindex="0" role="button" class="select pe-10">

@@ -126,12 +126,12 @@ const columns = [
   <div class="card bg-base-100 border-base-300 border-2 mb-8">
     <div class="card-body p-4">
       <div class="flex flex-wrap gap-4">
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Search</legend>
           <input v-model.lazy="filters.s" type="text" placeholder="Search title..." class="input input-bordered "/>
         </fieldset>
 
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Status</legend>
           <select v-model="filters.status" class="select pe-10">
             <option value="any">Any Status</option>
@@ -143,7 +143,7 @@ const columns = [
           </select>
         </fieldset>
 
-        <fieldset class="fieldset">
+        <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Columns</legend>
           <div class="dropdown">
             <div tabindex="0" role="button" class="select pe-10">
@@ -213,7 +213,7 @@ const columns = [
             <template v-else-if="column.key === 'start_time'">{{ formatDate(campaign.start_time) }}</template>
             <template v-else-if="column.key === 'end_time'">{{ formatDate(campaign.end_time) }}</template>
             <template v-else-if="column.key === 'status'">
-              <span class="badge " :class="{
+              <span class="badge capitalize" :class="{
                 'badge-neutral': campaign.status === 'draft',
                 'badge-info': campaign.status === 'scheduled',
                 'badge-warning': campaign.status === 'sending',
