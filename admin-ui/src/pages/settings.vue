@@ -4,6 +4,7 @@ import { useParentIframeStore } from '@/stores/parentIframe.ts';
 import { useStateStore } from '@/stores/state.ts';
 import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
 import DefaultSettings from '@/components/settings/DefaultSettings.vue';
+import ContactFieldsSettings from '@/components/settings/ContactFieldsSettings.vue';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -50,6 +51,11 @@ onMounted(async () => {
         :initial-sender="defaultSender"
         :initial-send-speed="defaultSendSpeed"
       />
+    </div>
+
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Contact Fields" />
+    <div class="tab-content bg-base-100 border-base-300 p-6">
+      <ContactFieldsSettings />
     </div>
   </div>
 </template>

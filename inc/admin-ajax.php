@@ -200,3 +200,57 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
         'gwapi_default_send_speed' => $sendSpeed,
     ]);
 });
+
+/**
+ * Get the contact fields
+ */
+add_action('wp_ajax_gatewayapi_get_contact_fields', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $fields = get_option('gwapi_contact_fields', []);
+    if (!is_array($fields)) {
+        $fields = json_decode($fields, true) ?: [];
+    }
+
+    wp_send_json_success($fields);
+});
+
+/**
+ * Save the contact fields
+ */
+add_action('wp_ajax_gatewayapi_save_contact_fields', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $fields = isset($_POST['fields']) ? $_POST['fields'] : [];
+    if (!is_array($fields)) {
+        $fields = json_decode(stripslashes($fields), true) ?: [];
+    }
+
+    // Validation
+    $titles = [];
+    $existing_columns = ['name', 'msisdn', 'status', 'tags', 'country_name', 'country_code'];
+    
+    foreach ($fields as $field) {
+        $title = trim($field['title']);
+        if (empty($title)) {
+            wp_send_json_error(['message' => 'Title cannot be empty']);
+        }
+        if (in_array($title, $titles)) {
+            wp_send_json_error(['message' => "Title '$title' must be unique"]);
+        }
+        if (in_array(strtolower($title), $existing_columns)) {
+            wp_send_json_error(['message' => "Title '$title' is a reserved column name"]);
+        }
+        $titles[] = $title;
+    }
+
+    update_option('gwapi_contact_fields', $fields);
+
+    wp_send_json_success([
+        'message' => 'Contact fields saved successfully',
+    ]);
+});

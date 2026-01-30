@@ -43,15 +43,12 @@ export const useParentIframeStore = defineStore('parentIframe', () => {
   }
   watch(height, handlerNewHeight, {immediate: true});
 
-  let resizeObserver: ResizeObserver | null = null;
-  resizeObserver = new ResizeObserver(() => {
+  const resizeBasedOnScrollHeight = () => {
     if (appElement && appElement?.scrollHeight !== scrollHeight.value) {
-      scrollHeight.value = appElement.scrollHeight;
+      handlerNewHeight(appElement.scrollHeight);
     }
-  });
-  if (appElement) resizeObserver.observe(appElement);
-
-  watch(scrollHeight, handlerNewHeight, {immediate: true});
+  };
+  setInterval(resizeBasedOnScrollHeight, 100)
 
 
   return {

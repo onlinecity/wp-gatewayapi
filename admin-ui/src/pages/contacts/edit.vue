@@ -26,10 +26,12 @@ const contact = ref({
   name: '',
   msisdn: '',
   status: 'active',
-  tags: [] as string[]
+  tags: [] as string[],
+  meta: {} as Record<string, string>
 });
 
 const allRecipientTags = ref<any[]>([]);
+const metaFields = ref<any[]>([]);
 
 const country = computed(() => {
   if (!contact.value.msisdn) return null;
@@ -86,9 +88,27 @@ const fetchRecipientTags = async () => {
   }
 };
 
+const fetchMetaFields = async () => {
+  try {
+    const response = await parentIframe.ajaxGet('gatewayapi_get_contact_fields', {}) as any;
+    if (response && response.success) {
+      metaFields.value = response.data;
+      // Initialize meta object if not already set (for new contacts)
+      metaFields.value.forEach(field => {
+        if (contact.value.meta[field.meta_key] === undefined) {
+          contact.value.meta[field.meta_key] = '';
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Failed to fetch meta fields:', err);
+  }
+};
+
 onMounted(() => {
   fetchContact();
   fetchRecipientTags();
+  fetchMetaFields();
 });
 
 const validateContact = () => {
@@ -133,6 +153,7 @@ const saveContact = async () => {
     const response = await parentIframe.ajaxPost('gatewayapi_save_contact', {
       ...contact.value,
       tags: contact.value.tags,
+      meta: contact.value.meta,
       country: country.value?.name || '',
       country_code: country.value?.code || ''
     }) as any;
@@ -256,6 +277,14 @@ const addTag = () => {
               </div>
               <button type="button" @click="addTag" class="btn btn-outline btn-primary tooltip" data-tip="Add new tag"><Icon icon="lucide:plus" /></button>
             </div>
+          </fieldset>
+
+          <div v-if="metaFields.length > 0" class="divider">Custom Fields</div>
+
+          <fieldset v-for="field in metaFields" :key="field.meta_key" class="fieldset text-base mb-4">
+            <legend class="fieldset-legend">{{ field.title }}</legend>
+            <input v-model="contact.meta[field.meta_key]" type="text" :placeholder="field.title" class="input input-bordered w-full" />
+            <p v-if="field.description" class="fieldset-label">{{ field.description }}</p>
           </fieldset>
 
           <div class="card-actions justify-end">

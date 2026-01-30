@@ -92,6 +92,16 @@ add_action('wp_ajax_gatewayapi_get_contacts', function () {
             ];
         }
 
+        $meta_fields = get_option('gwapi_contact_fields', []);
+        if (!is_array($meta_fields)) {
+            $meta_fields = json_decode($meta_fields, true) ?: [];
+        }
+        
+        $meta = [];
+        foreach ($meta_fields as $field) {
+            $meta[$field['meta_key']] = get_post_meta($post->ID, $field['meta_key'], true);
+        }
+
         $contacts[] = [
             'id' => $post->ID,
             'name' => $post->post_title,
@@ -99,6 +109,7 @@ add_action('wp_ajax_gatewayapi_get_contacts', function () {
             'status' => get_post_meta($post->ID, 'status', true) ?: 'active',
             'tags' => $tags,
             'country' => $country,
+            'meta' => $meta,
             'created' => $post->post_date,
             'is_trash' => $post->post_status === 'trash'
         ];
@@ -131,6 +142,15 @@ add_action('wp_ajax_gatewayapi_get_contact', function () {
     }
 
     $tags = wp_get_post_terms($post->ID, 'gwapi-recipient-tag', ['fields' => 'names']);
+    $meta_fields = get_option('gwapi_contact_fields', []);
+    if (!is_array($meta_fields)) {
+        $meta_fields = json_decode($meta_fields, true) ?: [];
+    }
+    
+    $meta = [];
+    foreach ($meta_fields as $field) {
+        $meta[$field['meta_key']] = get_post_meta($post->ID, $field['meta_key'], true);
+    }
 
     wp_send_json_success([
         'id' => $post->ID,
@@ -138,6 +158,7 @@ add_action('wp_ajax_gatewayapi_get_contact', function () {
         'msisdn' => get_post_meta($post->ID, 'msisdn', true),
         'status' => get_post_meta($post->ID, 'status', true) ?: 'active',
         'tags' => $tags,
+        'meta' => $meta,
         'created' => $post->post_date
     ]);
 });
@@ -158,6 +179,7 @@ add_action('wp_ajax_gatewayapi_save_contact', function () {
     $country = isset($_POST['country']) ? sanitize_text_field($_POST['country']) : '';
     $country_code = isset($_POST['country_code']) ? sanitize_text_field($_POST['country_code']) : '';
     $tags = isset($_POST['tags']) ? (array)$_POST['tags'] : [];
+    $meta = isset($_POST['meta']) ? (array)$_POST['meta'] : [];
 
     if (empty($name) || empty($msisdn)) {
         wp_send_json_error(['message' => 'Name and msisdn are required']);
@@ -202,6 +224,18 @@ add_action('wp_ajax_gatewayapi_save_contact', function () {
     update_post_meta($id, 'msisdn', $msisdn);
     update_post_meta($id, 'status', $status);
 	wp_set_post_terms( $id, $tags, 'gwapi-recipient-tag' );
+
+    // Save meta fields
+    $meta_fields = get_option('gwapi_contact_fields', []);
+    if (!is_array($meta_fields)) {
+        $meta_fields = json_decode($meta_fields, true) ?: [];
+    }
+    foreach ($meta_fields as $field) {
+        $key = $field['meta_key'];
+        if (isset($meta[$key])) {
+            update_post_meta($id, $key, sanitize_text_field($meta[$key]));
+        }
+    }
 
 	if ($country) {
         $term = get_term_by('slug', $country_code, 'gwapi-recipient-country');
@@ -344,12 +378,19 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
     }
 
     $contacts = isset($_POST['contacts']) ? (array)$_POST['contacts'] : [];
+    $replace_existing = isset($_POST['replace_existing']) && $_POST['replace_existing'] === 'true';
+
     if (empty($contacts)) {
         wp_send_json_error(['message' => 'No contacts provided']);
     }
 
     if (count($contacts) > 100) {
         wp_send_json_error(['message' => 'Maximum 100 contacts allowed per call']);
+    }
+
+    $meta_fields_config = get_option('gwapi_contact_fields', []);
+    if (!is_array($meta_fields_config)) {
+        $meta_fields_config = json_decode($meta_fields_config, true) ?: [];
     }
 
     $results = [];
@@ -376,9 +417,13 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
             'posts_per_page' => 1
         ]);
 
+        $id = 0;
         if ($existing_contact) {
-            $results[] = ['success' => false, 'message' => 'A contact with this MSISDN already exists', 'msisdn' => $msisdn];
-            continue;
+            if (!$replace_existing) {
+                $results[] = ['success' => false, 'message' => 'A contact with this MSISDN already exists', 'msisdn' => $msisdn];
+                continue;
+            }
+            $id = $existing_contact[0];
         }
 
         $post_data = [
@@ -388,10 +433,16 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
             'post_status' => 'publish'
         ];
 
-        $id = wp_insert_post($post_data);
+        if ($id) {
+            $post_data['ID'] = $id;
+            $result = wp_update_post($post_data);
+        } else {
+            $result = wp_insert_post($post_data);
+            $id = $result;
+        }
 
-        if (is_wp_error($id)) {
-            $results[] = ['success' => false, 'message' => $id->get_error_message(), 'msisdn' => $msisdn];
+        if (is_wp_error($result)) {
+            $results[] = ['success' => false, 'message' => $result->get_error_message(), 'msisdn' => $msisdn];
             continue;
         }
 
@@ -399,6 +450,15 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
         update_post_meta($id, 'status', $status);
         if (!empty($tags)) {
             wp_set_post_terms($id, $tags, 'gwapi-recipient-tag');
+        }
+
+        // Handle meta fields from import
+        foreach ($meta_fields_config as $field) {
+            $title = $field['title'];
+            $meta_key = $field['meta_key'];
+            if (isset($contact_data[strtolower($title)])) {
+                update_post_meta($id, $meta_key, sanitize_text_field($contact_data[strtolower($title)]));
+            }
         }
 
         if ($country) {
@@ -495,6 +555,11 @@ add_action('wp_ajax_gatewayapi_get_contacts_export', function () {
     $query = new WP_Query($args);
     $contacts = [];
 
+    $meta_fields = get_option('gwapi_contact_fields', []);
+    if (!is_array($meta_fields)) {
+        $meta_fields = json_decode($meta_fields, true) ?: [];
+    }
+
     foreach ($query->posts as $post) {
         $tags = wp_get_post_terms($post->ID, 'gwapi-recipient-tag', ['fields' => 'names']);
         $country_terms = wp_get_post_terms($post->ID, 'gwapi-recipient-country');
@@ -505,7 +570,7 @@ add_action('wp_ajax_gatewayapi_get_contacts_export', function () {
             $country_code = $country_terms[0]->slug;
         }
 
-        $contacts[] = [
+        $contact = [
             'name' => $post->post_title,
             'msisdn' => get_post_meta($post->ID, 'msisdn', true),
             'status' => get_post_meta($post->ID, 'status', true) ?: 'active',
@@ -513,6 +578,12 @@ add_action('wp_ajax_gatewayapi_get_contacts_export', function () {
             'country_name' => $country_name,
             'country_code' => $country_code
         ];
+
+        foreach ($meta_fields as $field) {
+            $contact[$field['title']] = get_post_meta($post->ID, $field['meta_key'], true);
+        }
+
+        $contacts[] = $contact;
     }
 
     wp_send_json_success(['contacts' => $contacts]);

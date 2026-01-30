@@ -194,7 +194,7 @@ const saveConnection = async () => {
             v-model="gwapiApiVersion"
         />
         <div class="flex flex-col text-sm">
-          <span class="font-bold">SMS API <span class="badge badge-primary ms-2 badge-sm">RECOMMENDED</span></span>
+          <span class="font-bold">SMS API<span class="badge badge-primary ms-2 badge-sm">RECOMMENDED</span></span>
           <div class="text-sm">We recommend this to most clients. It works for any account type.</div>
         </div>
       </label>
@@ -207,7 +207,7 @@ const saveConnection = async () => {
             v-model="gwapiApiVersion"
         />
         <div class="flex flex-col">
-          <span class="font-bold text-sm">Messaging API <span
+          <span class="font-bold text-sm">Mobile Message API <span
               class="badge badge-warning ms-2  badge-sm">NEW</span></span>
           <div class="text-sm">This API automatically uses the best protocol available for each recipient. It always
             falls back to SMS, but also supports RCS and more protocols are coming. <em>Currently you need to get in

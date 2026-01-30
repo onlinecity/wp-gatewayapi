@@ -10,6 +10,7 @@ const parentIframe = useParentIframeStore();
 
 const file = ref<File | null>(null);
 const importing = ref(false);
+const replaceExisting = ref(false);
 const progress = ref(0);
 const results = ref<{ success: number; failed: number }>({ success: 0, failed: 0 });
 const error = ref('');
@@ -64,6 +65,10 @@ const parseCSV = (text: string) => {
       else if (header === 'msisdn') contact.msisdn = (value || '');
       else if (header === 'tags') contact.tags = value ? value.split(',').map((t: string) => t.trim()) : [];
       else if (header === 'status') contact.status = value || 'active';
+      else {
+        // Assume it's a custom field
+        contact[header] = value || '';
+      }
     });
 
     if (contact.msisdn) {
@@ -106,7 +111,10 @@ const startImport = async () => {
     const batchSize = 100;
     for (let i = 0; i < contacts.length; i += batchSize) {
       const batch = contacts.slice(i, i + batchSize);
-      const response = await parentIframe.ajaxPost('gatewayapi_bulk_save_contacts', { contacts: batch }) as any;
+      const response = await parentIframe.ajaxPost('gatewayapi_bulk_save_contacts', { 
+        contacts: batch,
+        replace_existing: replaceExisting.value
+      }) as any;
       
       if (response && response.success) {
         response.data.results.forEach((res: any) => {
@@ -162,6 +170,13 @@ const startImport = async () => {
           <fieldset class="fieldset text-base mb-6">
             <legend class="fieldset-legend">Select CSV File</legend>
             <input type="file" accept=".csv" class="file-input file-input-bordered w-full" @change="onFileChange" />
+          </fieldset>
+
+          <fieldset class="fieldset text-base mb-6">
+            <label class="label cursor-pointer justify-start gap-3">
+              <input type="checkbox" v-model="replaceExisting" class="checkbox" />
+              <span class="label-text">Replace existing contacts (overwrite if MSISDN already exists)</span>
+            </label>
           </fieldset>
 
           <div class="card-actions justify-end">

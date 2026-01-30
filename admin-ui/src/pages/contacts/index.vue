@@ -32,9 +32,10 @@ const filters = ref({
 
 const tags = ref<any[]>([]);
 const countries = ref<any[]>([]);
+const metaFields = ref<any[]>([]);
 const exporting = ref(false);
 
-const columns = [
+const columns = ref([
   { id: 'name', label: 'Name', sortable: 'name' },
   { id: 'flag', label: 'Flag' },
   { id: 'msisdn', label: 'MSISDN', sortable: 'msisdn' },
@@ -43,7 +44,7 @@ const columns = [
   { id: 'tags', label: 'Tags' },
   { id: 'status', label: 'Status', sortable: 'status' },
   { id: 'created', label: 'Created', sortable: 'date' }
-];
+]);
 
 const fetchContacts = async () => {
   loading.value = true;
@@ -85,10 +86,31 @@ const fetchCountries = async () => {
   }
 };
 
+const fetchMetaFields = async () => {
+  try {
+    const response = await parentIframe.ajaxGet('gatewayapi_get_contact_fields', {}) as any;
+    if (response && response.success) {
+      metaFields.value = response.data;
+      // Add meta fields to columns if they don't exist
+      metaFields.value.forEach(field => {
+        if (!columns.value.find(c => c.id === field.meta_key)) {
+          columns.value.push({
+            id: field.meta_key,
+            label: field.title
+          });
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch meta fields:', error);
+  }
+};
+
 onMounted(() => {
   fetchContacts();
   fetchTags();
   fetchCountries();
+  fetchMetaFields();
 });
 
 watch(() => filters.value, () => {
@@ -151,17 +173,27 @@ const exportContacts = async () => {
 
     if (response && response.success) {
       const contactsToExport = response.data.contacts;
-      const headers = ['Name', 'MSISDN', 'Country Name', 'Country Code', 'Tags', 'Status'];
+      const metaHeaders = metaFields.value.map(f => f.title);
+      const headers = ['Name', 'MSISDN', 'Country Name', 'Country Code', 'Tags', 'Status', ...metaHeaders];
+      
       const csvContent = [
         headers.join(';'),
-        ...contactsToExport.map((c: any) => [
-          `"${(c.name || '').replace(/"/g, '""')}"`,
-          `"${(c.msisdn || '').replace(/"/g, '""')}"`,
-          `"${(c.country_name || '').replace(/"/g, '""')}"`,
-          `"${(c.country_code || '').replace(/"/g, '""')}"`,
-          `"${(c.tags || '').replace(/"/g, '""')}"`,
-          `"${(c.status || '').replace(/"/g, '""')}"`
-        ].join(';'))
+        ...contactsToExport.map((c: any) => {
+          const row = [
+            `"${(c.name || '').replace(/"/g, '""')}"`,
+            `"${(c.msisdn || '').replace(/"/g, '""')}"`,
+            `"${(c.country_name || '').replace(/"/g, '""')}"`,
+            `"${(c.country_code || '').replace(/"/g, '""')}"`,
+            `"${(c.tags || '').replace(/"/g, '""')}"`,
+            `"${(c.status || '').replace(/"/g, '""')}"`
+          ];
+          
+          metaFields.value.forEach(field => {
+            row.push(`"${(c[field.title] || '').toString().replace(/"/g, '""')}"`);
+          });
+          
+          return row.join(';');
+        })
       ].join('\n');
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -283,7 +315,7 @@ const exportContacts = async () => {
           </div>
         </fieldset>
 
-        <div class="flex items-end flex-1 justify-end">
+        <div class="items-end flex justify-end">
           <button 
             @click="exportContacts" 
             class="btn btn-outline tooltip tooltip-left mb-1"
@@ -347,6 +379,11 @@ const exportContacts = async () => {
               }">{{ contact.status }}</span>
             </td>
             <td v-if="tableStore.visibleColumns.includes('created')">{{ formatDate(contact.created) }}</td>
+            <template v-for="field in metaFields" :key="field.meta_key">
+              <td v-if="tableStore.visibleColumns.includes(field.meta_key)">
+                {{ contact.meta?.[field.meta_key] || '' }}
+              </td>
+            </template>
             <td>
               <div class="flex justify-end gap-1">
                 <template v-if="!contact.is_trash">
