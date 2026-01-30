@@ -4,7 +4,6 @@
 add_action('admin_init', function () {
     register_setting('gatewayapi', 'gwapi_token'); // NEW
     register_setting('gatewayapi', 'gwapi_setup'); // eu or com
-    register_setting('gatewayapi', 'gwapi_default_country_code'); // 45
     register_setting('gatewayapi', 'gwapi_default_sender'); // Info
     register_setting('gatewayapi', 'gwapi_default_send_speed'); // Messages per minute (1-1000)
 });

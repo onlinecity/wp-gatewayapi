@@ -174,7 +174,7 @@ const addTag = () => {
   <PageTitle icon="lucide:user-pen">
     {{ props.id ? 'Edit Contact' : 'Add New Contact' }}
     <template #actions>
-      <router-link to="/contacts" class="btn btn-ghost  gap-2">
+      <router-link to="/contacts" class="btn btn-soft gap-2">
         <Icon icon="lucide:arrow-left" />
         Back to Contacts
       </router-link>
@@ -186,7 +186,7 @@ const addTag = () => {
   </div>
 
   <div v-else class="max-w-2xl mx-auto">
-    <div class="card bg-base-100 ">
+    <div class="card bg-base-100 border-base-300 border-2">
       <div class="card-body">
         <div v-if="validationError" class="alert alert-warning mb-6 ">
           <Icon icon="lucide:circle-alert" />

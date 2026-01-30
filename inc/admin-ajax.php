@@ -133,7 +133,6 @@ add_action('wp_ajax_gatewayapi_save_defaults', function () {
         wp_send_json_error(['message' => 'Unauthorized'], 403);
     }
 
-    $countryCode = isset($_POST['gwapi_default_country_code']) ? sanitize_text_field($_POST['gwapi_default_country_code']) : '45';
     $sender = isset($_POST['gwapi_default_sender']) ? sanitize_text_field($_POST['gwapi_default_sender']) : '';
     $sendSpeed = isset($_POST['gwapi_default_send_speed']) ? intval($_POST['gwapi_default_send_speed']) : 60;
 
@@ -151,17 +150,11 @@ add_action('wp_ajax_gatewayapi_save_defaults', function () {
         }
     }
 
-    // Validate country code (should be numeric)
-    if (!is_numeric($countryCode) || intval($countryCode) < 1) {
-        wp_send_json_error(['message' => 'Invalid country code']);
-    }
-
     // Validate send speed (1-1000)
     if ($sendSpeed < 1 || $sendSpeed > 1000) {
         wp_send_json_error(['message' => 'Send speed must be between 1 and 1000']);
     }
 
-    update_option('gwapi_default_country_code', $countryCode);
     update_option('gwapi_default_sender', $sender);
     update_option('gwapi_default_send_speed', $sendSpeed);
 
@@ -181,7 +174,6 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
     $token = get_option('gwapi_token');
     $setup = get_option('gwapi_setup', 'com');
     $apiVersion = get_option('gwapi_api_version', 'sms');
-    $countryCode = get_option('gwapi_default_country_code', '45');
     $sender = get_option('gwapi_default_sender', '');
     $sendSpeed = get_option('gwapi_default_send_speed', '60');
 
@@ -189,7 +181,6 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
         'hasKey' => !empty($token),
         'gwapi_setup' => $setup,
         'gwapi_api_version' => $apiVersion,
-        'gwapi_default_country_code' => $countryCode,
         'gwapi_default_sender' => $sender,
         'gwapi_default_send_speed' => $sendSpeed,
     ]);

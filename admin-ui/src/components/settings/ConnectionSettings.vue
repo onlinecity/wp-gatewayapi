@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, watch } from 'vue';
-import { useParentIframeStore } from '../../stores/parentIframe.ts';
-import { useStateStore } from '../../stores/state.ts';
+import {ref, computed, nextTick, watch} from 'vue';
+import {useParentIframeStore} from '../../stores/parentIframe.ts';
+import {useStateStore} from '../../stores/state.ts';
 
 const props = defineProps<{
   initialSetup?: string;
@@ -87,114 +87,113 @@ const saveConnection = async () => {
 </script>
 
 <template>
-  <div class="card bg-base-100 shadow-sm">
-    <div class="card-body">
-      <h2 class="card-title text-xl mb-4">Connection</h2>
 
-      <!-- Connection Message -->
-      <div v-if="connectionMessage" class="alert mb-6" :class="connectionError ? 'alert-error' : 'alert-success'">
-        <Icon v-if="connectionError" icon="lucide:circle-alert" />
-        <Icon v-else icon="lucide:circle-check-big" />
-        <span>{{ connectionMessage }}</span>
-      </div>
+  <!-- Connection Message -->
+  <div v-if="connectionMessage" class="alert mb-6" :class="connectionError ? 'alert-error' : 'alert-success'">
+    <Icon v-if="connectionError" icon="lucide:circle-alert"/>
+    <Icon v-else icon="lucide:circle-check-big"/>
+    <span>{{ connectionMessage }}</span>
+  </div>
 
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">API Token</legend>
-        <span data-tip="Click to change token" class="tooltip w-full" v-if="tokenFieldDisabled">
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">API Token</legend>
+    <span data-tip="Click to change token" class="tooltip w-full" v-if="tokenFieldDisabled">
           <input
-            type="password"
-            class="input input-bordered w-full cursor-pointer"
-            value="••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••"
-            readonly
-            @click="handleTokenFieldClick"
-            placeholder="Click to change token"
+              type="password"
+              class="input input-bordered w-full cursor-pointer"
+              value="••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••"
+              readonly
+              @click="handleTokenFieldClick"
+              placeholder="Click to change token"
           />
         </span>
+    <input
+        v-else
+        type="text"
+        v-model="gwapiToken"
+        class="input input-bordered w-full"
+        placeholder="Enter your GatewayAPI token"
+        @blur="handleTokenFieldBlur"
+        ref="tokenInput"
+    />
+    <p class="label block">
+      Get your token from
+      <a href="https://gatewayapi.com" target="_blank" rel="noopener noreferrer" class="link link-primary">GatewayAPI.com</a>
+      or
+      <a href="https://gatewayapi.eu" target="_blank" rel="noopener noreferrer"
+         class="link link-primary">GatewayAPI.eu</a>
+    </p>
+  </fieldset>
+
+  <fieldset class="fieldset mt-4">
+    <legend class="fieldset-legend">API Region</legend>
+    <div class="flex flex-wrap gap-4">
+      <label class="label cursor-pointer flex gap-2">
         <input
-          v-else
-          type="text"
-          v-model="gwapiToken"
-          class="input input-bordered w-full"
-          placeholder="Enter your GatewayAPI token"
-          @blur="handleTokenFieldBlur"
-          ref="tokenInput"
+            type="radio"
+            name="gwapi_setup"
+            class="radio radio-primary"
+            value="com"
+            v-model="gwapiSetup"
         />
-        <p class="label block">
-          Get your token from
-          <a href="https://gatewayapi.com" target="_blank" rel="noopener noreferrer" class="link link-primary">GatewayAPI.com</a>
-          or
-          <a href="https://gatewayapi.eu" target="_blank" rel="noopener noreferrer" class="link link-primary">GatewayAPI.eu</a>
-        </p>
-      </fieldset>
-
-      <fieldset class="fieldset mt-4">
-        <legend class="fieldset-legend">API Region</legend>
-        <div class="flex flex-wrap gap-4">
-          <label class="label cursor-pointer flex gap-2">
-            <input
-              type="radio"
-              name="gwapi_setup"
-              class="radio radio-primary"
-              value="com"
-              v-model="gwapiSetup"
-            />
-            <span>GatewayAPI.com (Global)</span>
-          </label>
-          <label class="label cursor-pointer flex gap-2">
-            <input
-              type="radio"
-              name="gwapi_setup"
-              class="radio radio-primary"
-              value="eu"
-              v-model="gwapiSetup"
-            />
-            <span>GatewayAPI.eu (EU)</span>
-          </label>
-        </div>
-      </fieldset>
-
-      <fieldset class="fieldset mt-4">
-        <legend class="fieldset-legend">API Version</legend>
-        <div class="flex flex-col gap-4">
-          <label class="cursor-pointer flex gap-2 items-start">
-            <input
-              type="radio"
-              name="gwapi_api_version"
-              class="radio radio-primary mt-1"
-              value="sms"
-              v-model="gwapiApiVersion"
-            />
-            <div class="flex flex-col text-sm">
-              <span class="font-bold">SMS API <span class="badge badge-primary ms-2 badge-sm">RECOMMENDED</span></span>
-              <div class="text-sm">We recommend this to most clients. It works for any account type.</div>
-            </div>
-          </label>
-          <label class="cursor-pointer flex gap-2 items-start">
-            <input
-              type="radio"
-              name="gwapi_api_version"
-              class="radio radio-primary mt-1"
-              value="messaging"
-              v-model="gwapiApiVersion"
-            />
-            <div class="flex flex-col">
-              <span class="font-bold text-sm">Messaging API <span class="badge badge-warning ms-2  badge-sm">NEW</span></span>
-              <div class="text-sm">This API automatically uses the best protocol available for each recipient. It always falls back to SMS, but also supports RCS and more protocols are coming. <em>Currently you need to get in touch with our support prior to enabling this feature.</em></div>
-            </div>
-          </label>
-        </div>
-      </fieldset>
-
-      <div class="card-actions justify-end mt-6">
-        <button
-          class="btn btn-primary"
-          :disabled="connectionLoading || (!gwapiToken && !tokenFieldDisabled)"
-          @click="saveConnection"
-        >
-          <span v-if="connectionLoading" class="loading loading-spinner"></span>
-          Save Connection
-        </button>
-      </div>
+        <span>GatewayAPI.com (Global)</span>
+      </label>
+      <label class="label cursor-pointer flex gap-2">
+        <input
+            type="radio"
+            name="gwapi_setup"
+            class="radio radio-primary"
+            value="eu"
+            v-model="gwapiSetup"
+        />
+        <span>GatewayAPI.eu (EU)</span>
+      </label>
     </div>
+  </fieldset>
+
+  <fieldset class="fieldset mt-4">
+    <legend class="fieldset-legend">API Version</legend>
+    <div class="flex flex-col gap-4">
+      <label class="cursor-pointer flex gap-2 items-start">
+        <input
+            type="radio"
+            name="gwapi_api_version"
+            class="radio radio-primary mt-1"
+            value="sms"
+            v-model="gwapiApiVersion"
+        />
+        <div class="flex flex-col text-sm">
+          <span class="font-bold">SMS API <span class="badge badge-primary ms-2 badge-sm">RECOMMENDED</span></span>
+          <div class="text-sm">We recommend this to most clients. It works for any account type.</div>
+        </div>
+      </label>
+      <label class="cursor-pointer flex gap-2 items-start">
+        <input
+            type="radio"
+            name="gwapi_api_version"
+            class="radio radio-primary mt-1"
+            value="messaging"
+            v-model="gwapiApiVersion"
+        />
+        <div class="flex flex-col">
+          <span class="font-bold text-sm">Messaging API <span
+              class="badge badge-warning ms-2  badge-sm">NEW</span></span>
+          <div class="text-sm">This API automatically uses the best protocol available for each recipient. It always
+            falls back to SMS, but also supports RCS and more protocols are coming. <em>Currently you need to get in
+              touch with our support prior to enabling this feature.</em></div>
+        </div>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="card-actions justify-end mt-6">
+    <button
+        class="btn btn-primary"
+        :disabled="connectionLoading || (!gwapiToken && !tokenFieldDisabled)"
+        @click="saveConnection"
+    >
+      <span v-if="connectionLoading" class="loading loading-spinner"></span>
+      Save Connection
+    </button>
   </div>
 </template>

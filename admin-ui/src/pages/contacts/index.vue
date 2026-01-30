@@ -200,7 +200,7 @@ const exportContacts = async () => {
   </div>
 
   <!-- FILTERS -->
-  <div class="card bg-base-100  mb-8">
+  <div class="card bg-base-100 border-base-300 border-2 mb-8">
     <div class="card-body p-4">
       <div class="flex flex-wrap gap-4">
         <fieldset class="fieldset">
@@ -300,7 +300,7 @@ const exportContacts = async () => {
     </div>
   </div>
 
-  <div class="card bg-base-100 ">
+  <div class="card bg-base-100  border-base-300 border-2">
     <div class="overflow-x-auto">
       <table class="table  md:table-md">
         <thead>

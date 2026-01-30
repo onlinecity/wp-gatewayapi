@@ -12,7 +12,6 @@ const state = useStateStore();
 
 const gwapiSetup = ref('com');
 const gwapiApiVersion = ref('sms');
-const defaultCountryCode = ref('45');
 const defaultSender = ref('');
 const defaultSendSpeed = ref(60);
 
@@ -24,7 +23,6 @@ onMounted(async () => {
       const data = response.data;
       gwapiSetup.value = data.gwapi_setup || 'com';
       gwapiApiVersion.value = data.gwapi_api_version || 'sms';
-      defaultCountryCode.value = data.gwapi_default_country_code || '45';
       defaultSender.value = data.gwapi_default_sender || '';
       defaultSendSpeed.value = parseInt(data.gwapi_default_send_speed) || 60;
     }
@@ -40,12 +38,18 @@ onMounted(async () => {
 
   <Loading v-if="state.hasKey === null" />
 
-  <div v-else class="flex flex-col gap-8">
-    <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion" />
-    <DefaultSettings
-      :initial-country-code="defaultCountryCode"
-      :initial-sender="defaultSender"
-      :initial-send-speed="defaultSendSpeed"
-    />
+  <div v-else class="tabs tabs-lift">
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" checked="checked" />
+    <div class="tab-content bg-base-100 border-base-300 p-6">
+      <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion" />
+    </div>
+
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Defaults" />
+    <div class="tab-content bg-base-100 border-base-300 p-6">
+      <DefaultSettings
+        :initial-sender="defaultSender"
+        :initial-send-speed="defaultSendSpeed"
+      />
+    </div>
   </div>
 </template>

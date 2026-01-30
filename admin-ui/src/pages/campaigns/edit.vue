@@ -4,6 +4,7 @@ import { useParentIframeStore } from '@/stores/parentIframe.ts';
 import { useRouter } from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
+import {Icon} from "@iconify/vue";
 
 const props = defineProps<{
   id?: string;
@@ -379,8 +380,8 @@ const testSms = async () => {
 <template>
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <PageTitle class="mb-0" icon="lucide:message-circle-more">{{ props.id ? 'Edit Campaign' : 'Create Campaign' }}</PageTitle>
-    <router-link to="/campaigns" class="btn btn-ghost  gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+    <router-link to="/campaigns" class="btn btn-soft gap-2">
+      <Icon icon="lucide:arrow-left" />
       Back to Campaigns
     </router-link>
   </div>
@@ -390,7 +391,7 @@ const testSms = async () => {
   </div>
 
   <div v-else>
-    <div class="card bg-base-100 mb-8">
+    <div class="card bg-base-100 border-base-300 border-2 mb-8">
       <div class="card-body">
         <h2 class="card-title text-sm uppercase opacity-50">Campaign title</h2>
 
@@ -413,7 +414,7 @@ const testSms = async () => {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Left Column: Settings -->
       <div class="lg:col-span-1 space-y-6">
-        <div class="card bg-base-100 ">
+        <div class="card bg-base-100 border-base-300 border-2">
           <div class="card-body">
             <h2 class="card-title text-sm uppercase opacity-50">Campaign Settings</h2>
 
@@ -515,7 +516,7 @@ const testSms = async () => {
 
       <!-- Right Column: Message & Calculations -->
       <div class="lg:col-span-2 space-y-6">
-        <div class="card bg-base-100  h-full">
+        <div class="card bg-base-100 border-base-300 border-2 h-full">
           <div class="card-body">
             <h2 class="card-title text-sm uppercase opacity-50">Message</h2>
 
