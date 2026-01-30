@@ -37,6 +37,7 @@ add_action('init', function () {
   // public
   require_once("$D/inc/api.php");
   require_once("$D/inc/campaigns-scheduling.php");
+  require_once("$D/inc/woocommerce-scheduling.php");
 
   // admin: editor required
   if (!current_user_can('gatewayapi_manage')) return;
@@ -47,6 +48,8 @@ add_action('init', function () {
   require_once("$D/inc/contacts-ajax.php");
   require_once("$D/inc/campaigns-post-type.php");
   require_once("$D/inc/campaigns-ajax.php");
+  require_once("$D/inc/woocommerce-post-type.php");
+  require_once("$D/inc/woocommerce-ajax.php");
   require_once("$D/inc/admin-menu.php");
 }, 9);
 

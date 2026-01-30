@@ -6,6 +6,8 @@ import ContactsEdit from "./pages/contacts/edit.vue";
 import ContactsImport from "./pages/contacts/import.vue";
 import CampaignsIndex from "./pages/campaigns/index.vue";
 import CampaignsEdit from "./pages/campaigns/edit.vue";
+import WooCommerceIndex from "./pages/woocommerce/index.vue";
+import WooCommerceEdit from "./pages/woocommerce/edit.vue";
 
 const routes = [
   { path: '/', component: Index },
@@ -17,6 +19,9 @@ const routes = [
   { path: '/campaigns', component: CampaignsIndex },
   { path: '/campaigns/:id', component: CampaignsEdit, props: true },
   { path: '/campaigns/new', component: CampaignsEdit },
+  { path: '/woocommerce', component: WooCommerceIndex },
+  { path: '/woocommerce/:id', component: WooCommerceEdit, props: true },
+  { path: '/woocommerce/new', component: WooCommerceEdit },
 ]
 
 export const router = createRouter({

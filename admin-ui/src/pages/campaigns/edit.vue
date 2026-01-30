@@ -5,6 +5,7 @@ import { useStateStore } from '@/stores/state.ts';
 import { useRouter } from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
+import SmsEditor from "@/components/SmsEditor.vue";
 import {Icon} from "@iconify/vue";
 
 const props = defineProps<{
@@ -48,73 +49,23 @@ const fetchingRecipientCount = ref(false);
 const serverTime = ref('');
 const serverTimezone = ref('');
 const defaultSender = ref('');
-const contactFields = ref<any[]>([]);
+const smsTags = computed(() => {
+  const tags = [
+    { tag: '%NAME%', label: 'Name', category: 'Standard Fields' },
+    { tag: '%MSISDN%', label: 'MSISDN', category: 'Standard Fields' },
+  ];
 
-const messageTextarea = ref<HTMLTextAreaElement | null>(null);
-
-// SMS Calculation Logic ported from old-js.js
-const GSM_CHARS_ONE = ' !"#$%&\'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ£¥§¿_\n\rΔΦΓΛΩΠΨΣΘΞèéùìòÇØøÅåÆæßÉÄÖÑÜäöñüàäöñüà';
-const GSM_CHARS_TWO = '^{}[]~|€';
-
-const decodeUcs2 = (str: string) => {
-  const result = [];
-  for (let i = 0; i < str.length; i++) {
-    const value = str.charCodeAt(i);
-    if (value >= 0xD800 && value <= 0xDBFF && i + 1 < str.length) {
-      const extra = str.charCodeAt(i + 1);
-      if ((extra & 0xFC00) === 0xDC00) {
-        result.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-        i++;
-        continue;
-      }
-    }
-    result.push(value);
+  if (contactFields.value && contactFields.value.length > 0) {
+    contactFields.value.forEach(field => {
+      tags.push({
+        tag: '%' + field.title + '%',
+        label: field.title,
+        category: 'Custom Fields'
+      });
+    });
   }
-  return result;
-};
 
-const failedGSM0338Chars = (message: string) => {
-  const lookup = (GSM_CHARS_ONE + GSM_CHARS_TWO).split('');
-  const chars = decodeUcs2(message);
-  const failed = [];
-  for (const code of chars) {
-    const char = String.fromCodePoint(code);
-    if (!lookup.includes(char)) {
-      failed.push(char);
-    }
-  }
-  return [...new Set(failed)];
-};
-
-const smsStats = computed(() => {
-  const message = campaign.value.message;
-  const failed = failedGSM0338Chars(message);
-  const isUcs2 = failed.length > 0;
-  const chars = decodeUcs2(message);
-
-  if (isUcs2) {
-    const len = chars.length;
-    return {
-      isUcs2: true,
-      characters: len,
-      messages: len > 70 ? Math.ceil(len / 67) : 1,
-      failedChars: failed
-    };
-  } else {
-    const lookup2 = GSM_CHARS_TWO.split('');
-    let count = 0;
-    for (const code of chars) {
-      const char = String.fromCodePoint(code);
-      count++;
-      if (lookup2.includes(char)) count++;
-    }
-    return {
-      isUcs2: false,
-      characters: count,
-      messages: count > 160 ? Math.ceil(count / 153) : 1,
-      failedChars: []
-    };
-  }
+  return tags;
 });
 
 const fetchCampaign = async () => {
@@ -195,25 +146,6 @@ const fetchContactFields = async () => {
   } catch (err) {
     console.error('Failed to fetch contact fields:', err);
   }
-};
-
-const insertTag = (tag: string) => {
-  if (!messageTextarea.value) return;
-
-  const textarea = messageTextarea.value;
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const text = campaign.value.message;
-  const before = text.substring(0, start);
-  const after = text.substring(end);
-
-  campaign.value.message = before + tag + after;
-
-  // Set focus and cursor position after insertion
-  setTimeout(() => {
-    textarea.focus();
-    textarea.selectionStart = textarea.selectionEnd = start + tag.length;
-  }, 0);
 };
 
 const updateRecipientCount = async () => {
@@ -594,93 +526,27 @@ const testSms = async () => {
 
       <!-- Right Column: Message & Calculations -->
       <div class="lg:col-span-2 space-y-6">
-        <div class="card bg-base-100 border-base-300 border-2 h-full">
-          <div class="card-body">
-            <div class="flex justify-between items-center mb-2">
-              <h2 class="card-title text-sm uppercase opacity-50">Message</h2>
-
-              <div v-if="!isReadOnly" class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="select gap-1">
-                  <Icon icon="lucide:tag" class="w-3 h-3" />
-                  Insert tag
-                </div>
-                <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[1] border border-base-200">
-                  <li class="menu-title">Standard Fields</li>
-                  <li><a @click.prevent="insertTag('%NAME%')">Name</a></li>
-                  <li><a @click.prevent="insertTag('%MSISDN%')">MSISDN</a></li>
-                  <template v-if="contactFields.length > 0">
-                    <li class="menu-title">Custom Fields</li>
-                    <li v-for="field in contactFields" :key="field.title">
-                      <a @click.prevent="insertTag('%' + field.title + '%')">{{ field.title }}</a>
-                    </li>
-                  </template>
-                </ul>
-              </div>
-            </div>
-
-            <textarea
-              ref="messageTextarea"
-              v-model="campaign.message"
-              class="textarea textarea-bordered h-64 w-full font-mono"
-              placeholder="Type your message here..."
-              :disabled="isReadOnly"
-            ></textarea>
-
-            <div class="mt-4 space-y-4">
-              <!-- Calculations -->
-              <div class="flex flex-wrap gap-4 items-center">
-                <div class="stats  bg-base-200">
-                  <div class="stat py-2 px-4">
-                    <div class="stat-title text-xs">Characters</div>
-                    <div class="stat-value text-lg">{{ smsStats.characters }}</div>
-                  </div>
-                  <div class="stat py-2 px-4">
-                    <div class="stat-title text-xs">Messages</div>
-                    <div class="stat-value text-lg">{{ smsStats.messages }}</div>
-                  </div>
-                </div>
-
-                <div v-if="smsStats.isUcs2" class="badge badge-warning gap-2 py-4">
-                  <Icon icon="lucide:circle-alert" class="w-4 h-4" />
-                  UCS2 detected:
-                  <code v-for="(char, index) in smsStats.failedChars" :key="index" class="kbd tooltip"
-                        :data-tip="`U+${char.codePointAt(0)?.toString(16).toUpperCase().padStart(4, '0')}`">{{
-                      char
-                    }}</code>
-                </div>
-                <div v-else class="badge badge-success gap-2 py-4">
-                  <Icon icon="lucide:circle-check-big" class="w-4 h-4" />
-                  GSM 03.38 compatible
-                </div>
-              </div>
-
-              <div v-if="smsStats.isUcs2" class="text-xs text-warning">
-                Be aware that special symbols cause UCS2 encoding, which allows fewer characters per message (70 instead of 160) before being split.
-              </div>
-
-              <div class="alert alert-info py-2 px-4 shadow-none">
-                <Icon icon="lucide:circle-alert" class="w-4 h-4" />
-                <span>Notice: This is a calculation and final amount may vary, for instance if replacement tags are used.</span>
-              </div>
-            </div>
-
-            <div class="card-actions justify-end mt-8 gap-4">
-              <button @click="saveCampaign('draft')" class="btn btn-base" :disabled="saving || isReadOnly || isSendingDisabled">
-                <Icon icon="lucide:message-circle-dashed" />
-                Save as draft
-              </button>
-              <button @click="testSms" class="btn btn-base tooltip" data-tip="Enter a phone number to immediately send this message as a test. SMS status will be shown at the top of the page." :disabled="isSendingDisabled">
-                <Icon icon="lucide:message-circle-question-mark" />
-                Test SMS
-              </button>
-              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || isReadOnly || isSendingDisabled">
-                <span v-if="saving" class="loading loading-spinner"></span>
-                <Icon v-else icon="lucide:send" />
-                {{ sendOrScheduleLabel }}
-              </button>
-            </div>
-          </div>
-        </div>
+        <SmsEditor
+          v-model="campaign.message"
+          :disabled="isReadOnly"
+          :tags="smsTags"
+        >
+          <template #actions>
+            <button @click="saveCampaign('draft')" class="btn btn-base" :disabled="saving || isReadOnly || isSendingDisabled">
+              <Icon icon="lucide:message-circle-dashed" />
+              Save as draft
+            </button>
+            <button @click="testSms" class="btn btn-base tooltip" data-tip="Enter a phone number to immediately send this message as a test. SMS status will be shown at the top of the page." :disabled="isSendingDisabled">
+              <Icon icon="lucide:message-circle-question-mark" />
+              Test SMS
+            </button>
+            <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || isReadOnly || isSendingDisabled">
+              <span v-if="saving" class="loading loading-spinner"></span>
+              <Icon v-else icon="lucide:send" />
+              {{ sendOrScheduleLabel }}
+            </button>
+          </template>
+        </SmsEditor>
       </div>
     </div>
   </div>

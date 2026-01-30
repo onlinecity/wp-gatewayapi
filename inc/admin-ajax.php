@@ -191,6 +191,8 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
     $apiVersion = get_option('gwapi_api_version', 'sms');
     $sender = get_option('gwapi_default_sender', '');
     $sendSpeed = get_option('gwapi_default_send_speed', '60');
+    $wooEnabled = get_option('gwapi_woocommerce_enabled', '0');
+    $wooAllowedCountries = get_option('gwapi_woocommerce_allowed_countries', []);
 
     wp_send_json_success([
         'hasKey' => !empty($token),
@@ -198,6 +200,27 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
         'gwapi_api_version' => $apiVersion,
         'gwapi_default_sender' => $sender,
         'gwapi_default_send_speed' => $sendSpeed,
+        'gwapi_woocommerce_enabled' => $wooEnabled,
+        'gwapi_woocommerce_allowed_countries' => $wooAllowedCountries,
+    ]);
+});
+
+/**
+ * Save the WooCommerce settings for GatewayAPI
+ */
+add_action('wp_ajax_gatewayapi_save_woocommerce_settings', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $enabled = isset($_POST['gwapi_woocommerce_enabled']) ? sanitize_text_field($_POST['gwapi_woocommerce_enabled']) : '0';
+    $allowedCountries = isset($_POST['gwapi_woocommerce_allowed_countries']) ? (array)$_POST['gwapi_woocommerce_allowed_countries'] : [];
+
+    update_option('gwapi_woocommerce_enabled', $enabled);
+    update_option('gwapi_woocommerce_allowed_countries', $allowedCountries);
+
+    wp_send_json_success([
+        'message' => 'WooCommerce settings saved successfully',
     ]);
 });
 
