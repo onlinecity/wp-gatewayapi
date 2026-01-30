@@ -82,6 +82,14 @@ add_action('gatewayapi_send_campaign_batch', function ($campaign_id, $recipient_
         $sender = get_option('gwapi_default_sender') ?: 'SMS';
     }
 
+    // Extract tags from message
+    preg_match_all('/%([^%]+)%/', $message, $matches);
+    $tags_in_message = array_unique($matches[1]);
+    $meta_fields = get_option('gwapi_contact_fields', []);
+    if (!is_array($meta_fields)) {
+        $meta_fields = json_decode($meta_fields, true) ?: [];
+    }
+
     $messages_to_send = [];
     foreach ($recipient_ids as $recipient_id) {
         $msisdn = get_post_meta($recipient_id, 'msisdn', true);
@@ -91,10 +99,30 @@ add_action('gatewayapi_send_campaign_batch', function ($campaign_id, $recipient_
         $msisdn = preg_replace('/\D/', '', $msisdn);
         if (!$msisdn) continue;
 
+        $tag_values = [];
+        foreach ($tags_in_message as $tag) {
+            $value = '';
+            if (strcasecmp($tag, 'NAME') === 0) {
+                $value = get_the_title($recipient_id);
+            } elseif (strcasecmp($tag, 'MSISDN') === 0) {
+                $value = get_post_meta($recipient_id, 'msisdn', true);
+            } else {
+                // Check custom fields
+                foreach ($meta_fields as $field) {
+                    if (strcasecmp($field['title'], $tag) === 0) {
+                        $value = get_post_meta($recipient_id, $field['meta_key'], true);
+                        break;
+                    }
+                }
+            }
+            $tag_values['%' . $tag . '%'] = $value;
+        }
+
         $messages_to_send[] = [
             'message' => $message,
             'recipient' => $msisdn,
-            'sender' => $sender
+            'sender' => $sender,
+            'tags' => $tag_values
         ];
     }
 

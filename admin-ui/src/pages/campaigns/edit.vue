@@ -48,6 +48,9 @@ const fetchingRecipientCount = ref(false);
 const serverTime = ref('');
 const serverTimezone = ref('');
 const defaultSender = ref('');
+const contactFields = ref<any[]>([]);
+
+const messageTextarea = ref<HTMLTextAreaElement | null>(null);
 
 // SMS Calculation Logic ported from old-js.js
 const GSM_CHARS_ONE = ' !"#$%&\'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ£¥§¿_\n\rΔΦΓΛΩΠΨΣΘΞèéùìòÇØøÅåÆæßÉÄÖÑÜäöñüàäöñüà';
@@ -170,6 +173,36 @@ const fetchServerTime = async () => {
   }
 };
 
+const fetchContactFields = async () => {
+  try {
+    const response = await parentIframe.ajaxGet('gatewayapi_get_contact_fields', {}) as any;
+    if (response && response.success) {
+      contactFields.value = response.data;
+    }
+  } catch (err) {
+    console.error('Failed to fetch contact fields:', err);
+  }
+};
+
+const insertTag = (tag: string) => {
+  if (!messageTextarea.value) return;
+
+  const textarea = messageTextarea.value;
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = campaign.value.message;
+  const before = text.substring(0, start);
+  const after = text.substring(end);
+
+  campaign.value.message = before + tag + after;
+
+  // Set focus and cursor position after insertion
+  setTimeout(() => {
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+  }, 0);
+};
+
 const updateRecipientCount = async () => {
   if (campaign.value.recipient_tags.length === 0) {
     campaign.value.recipients_count = 0;
@@ -204,6 +237,7 @@ onMounted(() => {
   fetchRecipientTags();
   fetchCampaignTags();
   fetchServerTime();
+  fetchContactFields();
 });
 
 const formatScheduledMessage = (startTime: string) => {
@@ -539,9 +573,30 @@ const testSms = async () => {
       <div class="lg:col-span-2 space-y-6">
         <div class="card bg-base-100 border-base-300 border-2 h-full">
           <div class="card-body">
-            <h2 class="card-title text-sm uppercase opacity-50">Message</h2>
+            <div class="flex justify-between items-center mb-2">
+              <h2 class="card-title text-sm uppercase opacity-50">Message</h2>
+
+              <div v-if="!isReadOnly" class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="select gap-1">
+                  <Icon icon="lucide:tag" class="w-3 h-3" />
+                  Insert tag
+                </div>
+                <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[1] border border-base-200">
+                  <li class="menu-title">Standard Fields</li>
+                  <li><a @click.prevent="insertTag('%NAME%')">Name</a></li>
+                  <li><a @click.prevent="insertTag('%MSISDN%')">MSISDN</a></li>
+                  <template v-if="contactFields.length > 0">
+                    <li class="menu-title">Custom Fields</li>
+                    <li v-for="field in contactFields" :key="field.title">
+                      <a @click.prevent="insertTag('%' + field.title + '%')">{{ field.title }}</a>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
 
             <textarea
+              ref="messageTextarea"
               v-model="campaign.message"
               class="textarea textarea-bordered h-64 w-full font-mono"
               placeholder="Type your message here..."

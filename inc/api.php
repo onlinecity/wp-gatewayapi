@@ -70,6 +70,13 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
     return new WP_Error('GWAPI_INVALID_PARAM', 'Expiration must be between 1 and 432000 seconds.');
   }
 
+  // Handle tag replacement if tags are provided
+  if (isset($options['tags']) && is_array($options['tags'])) {
+    foreach ($options['tags'] as $tag => $value) {
+      $message = str_replace($tag, $value, $message);
+    }
+  }
+
   // Build the request body
   $req = [
     'message' => $message,
@@ -160,18 +167,25 @@ function gatewayapi_send_mobile_messages($messages)
   // If API version is set to 'sms', use the SMS API instead.
   $api_version = get_option('gwapi_api_version', 'sms');
   if ($api_version === 'sms') {
-    $results = [];
-    foreach ($messages as $msg) {
-      $sender = isset($msg['sender']) ? $msg['sender'] : '';
-      $options = $msg;
-      unset($options['message'], $options['recipient'], $options['sender']);
+    // Collect all tags and prepare recipients for a single call
+    $recipients_with_tags = [];
+    $message = '';
+    $sender = '';
 
-      $res = gatewayapi_send_mobile_message($msg['message'], $msg['recipient'], $sender, $options);
-      if (is_wp_error($res)) return $res;
-      $results[] = $res;
+    foreach ($messages as $msg) {
+      if (empty($message)) $message = $msg['message'];
+      if (empty($sender)) $sender = isset($msg['sender']) ? $msg['sender'] : '';
+
+      $msisdn = $msg['recipient'];
+      $tags = isset($msg['tags']) ? $msg['tags'] : [];
+      $recipients_with_tags[$msisdn] = $tags;
     }
+
+    $res = gatewayapi_send_sms($message, $recipients_with_tags, $sender, 'MOBILE', 'UTF8', []);
+    if (is_wp_error($res)) return $res;
+
     return (object)[
-      'ids' => array_column($results, 'id')
+      'ids' => [$res]
     ];
   }
 
@@ -205,8 +219,15 @@ function gatewayapi_send_mobile_messages($messages)
     }
 
     // Build the message object
+    $msg_text = $msg['message'];
+    if (isset($msg['tags']) && is_array($msg['tags'])) {
+      foreach ($msg['tags'] as $tag => $value) {
+        $msg_text = str_replace($tag, $value, $msg_text);
+      }
+    }
+
     $formatted_msg = [
-      'message' => $msg['message'],
+      'message' => $msg_text,
       'recipient' => $msg['recipient'],
       'sender' => $msg['sender'],
     ];
