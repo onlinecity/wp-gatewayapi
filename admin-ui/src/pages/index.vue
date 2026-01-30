@@ -76,7 +76,7 @@ const navigateTo = (link: string) => {
   <div v-else class="max-w-2xl mx-auto mt-10">
     <ul class="timeline timeline-vertical">
       <li v-for="(step, index) in steps" :key="index">
-        <hr v-if="index !== 0" :class="{ 'bg-success': steps[index-1].done && step.done }" />
+        <hr v-if="index !== 0" :class="{ 'bg-success': (steps[index-1]?.done ?? false) && step.done }" />
         <a href="#" @click.prevent="navigateTo(step.link)" :class="[index % 2 === 0 ? 'timeline-start' : 'timeline-end', 'timeline-box hover:bg-base-200 transition-colors', step.done ? 'line-through text-success border-success' : '']">
           <div class="font-bold">{{ step.title }}</div>
           <div class="text-sm opacity-80">{{ step.description }}</div>
@@ -95,7 +95,7 @@ const navigateTo = (link: string) => {
             />
           </svg>
         </div>
-        <hr v-if="index !== steps.length - 1" :class="{ 'bg-success': step.done && steps[index+1].done }" />
+        <hr v-if="index !== steps.length - 1" :class="{ 'bg-success': step.done && (steps[index+1]?.done ?? false) }" />
       </li>
     </ul>
   </div>

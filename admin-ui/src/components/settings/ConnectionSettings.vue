@@ -19,6 +19,7 @@ const gwapiSetup = ref(props.initialSetup || 'com');
 const gwapiApiVersion = ref(props.initialApiVersion || 'sms');
 const tokenFieldCleared = ref(false);
 const connectionLoading = ref(false);
+const disconnectLoading = ref(false);
 const connectionMessage = ref('');
 const connectionError = ref(false);
 
@@ -52,6 +53,36 @@ const handleTokenFieldBlur = () => {
   }
 };
 
+// Disconnect connection
+const disconnectConnection = async () => {
+  if (!window.confirm('Are you sure you want to disconnect your GatewayAPI account? This will remove the API key from this site, but the key will still be valid and available in your GatewayAPI-account.')) {
+    return;
+  }
+
+  disconnectLoading.value = true;
+  connectionMessage.value = '';
+  connectionError.value = false;
+
+  try {
+    const response = await parentIframe.ajaxPost('gatewayapi_disconnect', {}) as any;
+
+    if (response && response.success) {
+      connectionMessage.value = response.data.message;
+      tokenFieldCleared.value = false;
+      gwapiToken.value = '';
+      await stateStore.reloadKeyStatus(true);
+    } else {
+      connectionError.value = true;
+      connectionMessage.value = response?.data?.message || 'Failed to disconnect';
+    }
+  } catch (error: any) {
+    connectionError.value = true;
+    connectionMessage.value = error?.message || 'Failed to disconnect';
+  } finally {
+    disconnectLoading.value = false;
+  }
+};
+
 // Save connection settings
 const saveConnection = async () => {
   connectionLoading.value = true;
@@ -72,7 +103,7 @@ const saveConnection = async () => {
       }
       tokenFieldCleared.value = false;
       gwapiToken.value = '';
-      await stateStore.reloadKeyStatus();
+      await stateStore.reloadKeyStatus(true);
     } else {
       connectionError.value = true;
       connectionMessage.value = response?.data?.message || 'Failed to save connection settings';
@@ -188,11 +219,21 @@ const saveConnection = async () => {
 
   <div class="card-actions justify-end mt-6">
     <button
+        class="btn btn-error btn-outline"
+        :disabled="disconnectLoading || connectionLoading || !stateStore.hasKey"
+        @click="disconnectConnection"
+    >
+      <span v-if="disconnectLoading" class="loading loading-spinner"></span>
+      <Icon v-else icon="lucide:unplug"></Icon>
+      Disconnect
+    </button>
+    <button
         class="btn btn-primary"
-        :disabled="connectionLoading || (!gwapiToken && !tokenFieldDisabled)"
+        :disabled="connectionLoading || disconnectLoading || (!gwapiToken && !tokenFieldDisabled)"
         @click="saveConnection"
     >
       <span v-if="connectionLoading" class="loading loading-spinner"></span>
+      <Icon v-else icon="lucide:check"></Icon>
       Save Connection
     </button>
   </div>

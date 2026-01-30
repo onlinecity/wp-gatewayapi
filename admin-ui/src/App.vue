@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {onMounted} from "vue";
 import {useParentIframeStore} from "./stores/parentIframe.ts";
-import {useStateStore} from "./stores/state.ts";
+import ApiStatus from "./components/ApiStatus.vue";
 
 useParentIframeStore();
-const state = useStateStore();
 
 onMounted(() => {
   if (window.opener) {
@@ -20,20 +19,7 @@ onMounted(() => {
     </div>
 
     <div class="navbar-center">
-      <div v-if="state.hasKey === false" class="tooltip tooltip-bottom" data-tip="Go to Settings to add your API key to get started.">
-        <div class="badge badge-warning gap-2">
-          No API key
-        </div>
-      </div>
-      <div v-else-if="state.hasKey === true && state.keyIsValid === true" class="badge badge-success gap-2 h-auto inline-block text-center tooltip tooltip-bottom" data-tip="Success! There is an API key and it is valid. You can see how much credit is available in the account.">
-        <strong>Connected</strong><br />
-        <small>{{ state.currency }} {{ state.credit?.toFixed(2) }}</small>
-      </div>
-      <div v-else-if="state.hasKey === true && state.keyIsValid === false" class="tooltip tooltip-bottom" data-tip="Your API key is invalid. Please check your settings.">
-        <div class="badge badge-error gap-2">
-          Invalid API key
-        </div>
-      </div>
+      <ApiStatus />
     </div>
 
     <div class="navbar-end">
@@ -41,6 +27,7 @@ onMounted(() => {
       <a href="https://gatewayapi.com/support/" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Chat-support</a>
     </div>
   </div>
+
   <div class="container mx-auto p-6">
     <router-view />
   </div>

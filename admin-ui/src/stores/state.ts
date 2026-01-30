@@ -7,8 +7,12 @@ export const useStateStore = defineStore('mainState', () => {
   const keyIsValid = ref(null) as Ref<null | boolean>;
   const credit = ref(null) as Ref<null | number>;
   const currency = ref(null) as Ref<null | string>;
+  const lastUpdated = ref(null) as Ref<null | number>;
 
-  const reloadKeyStatus = async () => {
+  const reloadKeyStatus = async (force: boolean = false) => {
+    if (!force && hasKey.value !== null && lastUpdated.value && (Date.now() - lastUpdated.value) < 60000) {
+      return;
+    }
     const parentIframe = useParentIframeStore();
     try {
       const response = await parentIframe.ajaxPost('gatewayapi_get_key_status', {}) as any;
@@ -17,6 +21,7 @@ export const useStateStore = defineStore('mainState', () => {
         keyIsValid.value = response.data.keyIsValid;
         credit.value = Number(response.data.credit);
         currency.value = response.data.currency;
+        lastUpdated.value = Date.now();
       }
     } catch (error) {
       console.error('Failed to load key status:', error);
@@ -25,7 +30,7 @@ export const useStateStore = defineStore('mainState', () => {
   reloadKeyStatus();
 
   return {
-    hasKey, keyIsValid, credit, currency,
+    hasKey, keyIsValid, credit, currency, lastUpdated,
     reloadKeyStatus
   }
-});
+}, { persist: true });

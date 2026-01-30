@@ -39,7 +39,7 @@ onMounted(async () => {
   <Loading v-if="state.hasKey === null" />
 
   <div v-else class="tabs tabs-lift">
-    <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" checked="checked" />
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" :checked="true" />
     <div class="tab-content bg-base-100 border-base-300 p-6">
       <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion" />
     </div>

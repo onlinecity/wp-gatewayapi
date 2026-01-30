@@ -126,6 +126,21 @@ add_action('wp_ajax_gatewayapi_save_connection', function () {
 });
 
 /**
+ * Disconnect the GatewayAPI account
+ */
+add_action('wp_ajax_gatewayapi_disconnect', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    delete_option('gwapi_token');
+
+    wp_send_json_success([
+        'message' => 'Disconnected successfully',
+    ]);
+});
+
+/**
  * Save the default settings for GatewayAPI
  */
 add_action('wp_ajax_gatewayapi_save_defaults', function () {

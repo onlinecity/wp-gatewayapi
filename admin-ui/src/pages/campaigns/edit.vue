@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue';
 import { useParentIframeStore } from '@/stores/parentIframe.ts';
+import { useStateStore } from '@/stores/state.ts';
 import { useRouter } from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
@@ -11,7 +12,17 @@ const props = defineProps<{
 }>();
 
 const parentIframe = useParentIframeStore();
+const state = useStateStore();
 const router = useRouter();
+
+const navigateToSettings = () => {
+  const link = 'admin.php?page=gatewayapi-settings#/settings';
+  if (window.parent) {
+    window.parent.location.href = link;
+  } else {
+    window.location.href = link;
+  }
+};
 
 const loading = ref(false);
 const saving = ref(false);
@@ -297,6 +308,10 @@ const isReadOnly = computed(() => {
   return ['scheduled', 'sending', 'sent'].includes(campaign.value.status);
 });
 
+const isSendingDisabled = computed(() => {
+  return state.hasKey === false || state.keyIsValid === false;
+});
+
 const showConfirmationDialog = (): boolean => {
   const action = campaign.value.start_time ? 'schedule' : 'send';
   const timing = formatScheduledMessage(campaign.value.start_time);
@@ -391,6 +406,13 @@ const testSms = async () => {
   </div>
 
   <div v-else>
+    <div v-if="isSendingDisabled" class="mb-8">
+      <div role="alert" class="alert alert-error shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span>No valid API key detected. No sending is possible until an API key has been entered under <a href="#" @click.prevent="navigateToSettings" class="link font-bold">Settings</a>.</span>
+      </div>
+    </div>
+
     <div class="card bg-base-100 border-base-300 border-2 mb-8">
       <div class="card-body">
         <h2 class="card-title text-sm uppercase opacity-50">Campaign title</h2>
@@ -565,15 +587,15 @@ const testSms = async () => {
             </div>
 
             <div class="card-actions justify-end mt-8 gap-4">
-              <button @click="saveCampaign('draft')" class="btn btn-base" :disabled="saving || isReadOnly">
+              <button @click="saveCampaign('draft')" class="btn btn-base" :disabled="saving || isReadOnly || isSendingDisabled">
                 <Icon icon="lucide:message-circle-dashed" />
                 Save as draft
               </button>
-              <button @click="testSms" class="btn btn-base tooltip" data-tip="Enter a phone number to immediately send this message as a test. SMS status will be shown at the top of the page.">
+              <button @click="testSms" class="btn btn-base tooltip" data-tip="Enter a phone number to immediately send this message as a test. SMS status will be shown at the top of the page." :disabled="isSendingDisabled">
                 <Icon icon="lucide:message-circle-question-mark" />
                 Test SMS
               </button>
-              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || isReadOnly">
+              <button @click="handleMainAction" class="btn btn-primary" :disabled="saving || isReadOnly || isSendingDisabled">
                 <span v-if="saving" class="loading loading-spinner"></span>
                 <Icon v-else icon="lucide:send" />
                 {{ sendOrScheduleLabel }}
