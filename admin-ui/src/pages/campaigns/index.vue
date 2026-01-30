@@ -79,6 +79,17 @@ const editCampaign = async (campaign: any) => {
   router.push('/campaigns/' + campaign.id);
 };
 
+const cloneCampaign = async (id: number) => {
+  try {
+    const response = await parentIframe.ajaxPost('gatewayapi_clone_campaign', {id}) as any;
+    if (response && response.success) {
+      router.push('/campaigns/' + response.data.id);
+    }
+  } catch (error) {
+    console.error('Failed to clone campaign:', error);
+  }
+};
+
 const toggleSort = (column: string) => {
   if (filters.value.orderby === column) {
     filters.value.order = filters.value.order === 'ASC' ? 'DESC' : 'ASC';
@@ -89,7 +100,15 @@ const toggleSort = (column: string) => {
 };
 
 const deleteCampaign = async (id: number, force = false) => {
-  if (!confirm(force ? 'Are you sure you want to delete this campaign permanently?' : 'Are you sure you want to move this campaign to trash?')) return;
+  const campaign = campaigns.value.find(c => c.id === id);
+  const isSending = campaign?.status === 'sending';
+
+  let message = force ? 'Are you sure you want to delete this campaign permanently?' : 'Are you sure you want to move this campaign to trash?';
+  if (isSending) {
+    message += ' This will also force the system to stop sending.';
+  }
+
+  if (!confirm(message)) return;
 
   try {
     const response = await parentIframe.ajaxPost('gatewayapi_delete_campaign', {id, force}) as any;
@@ -248,9 +267,13 @@ const columns = [
         <td>
           <div class="flex justify-end gap-1">
             <template v-if="!campaign.is_trash">
-              <button @click="editCampaign(campaign)" class="btn btn-primary tooltip tooltip-left"
+              <button v-if="campaign.status !== 'sending' && campaign.status !== 'sent'" @click="editCampaign(campaign)" class="btn btn-primary tooltip tooltip-left"
                            data-tip="Edit the campaign">
                 <Icon icon="lucide:edit"/>
+              </button>
+              <button v-else @click="cloneCampaign(campaign.id)" class="btn btn-warning tooltip tooltip-left"
+                      data-tip="Clone the campaign">
+                <Icon icon="lucide:copy"/>
               </button>
               <button @click="deleteCampaign(campaign.id)" class="btn btn-error btn-outline tooltip tooltip-left"
                       data-tip="Move the campaign to trash">

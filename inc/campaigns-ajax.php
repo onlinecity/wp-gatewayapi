@@ -195,10 +195,11 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
 
         $schedule_time = time();
         if ($status === 'scheduled' && !empty($start_time)) {
-            $schedule_time = strtotime($start_time);
-            if ($schedule_time < time()) {
-                $schedule_time = time();
-            }
+	        $datetime      = new DateTime( $start_time, wp_timezone() );
+	        $schedule_time = $datetime->getTimestamp();
+	        if ( $schedule_time < time() ) {
+		        $schedule_time = time();
+	        }
         }
 
         as_schedule_single_action($schedule_time, 'gatewayapi_schedule_campaign', [$id], 'gatewayapi');
@@ -368,6 +369,59 @@ add_action('wp_ajax_gatewayapi_revert_campaign_to_draft', function () {
 	as_unschedule_all_actions('gatewayapi_send_campaign_batch', [$id], 'gatewayapi');
 
 	wp_send_json_success(['message' => 'Campaign reverted to draft']);
+});
+
+/**
+ * Clone campaign
+ */
+add_action('wp_ajax_gatewayapi_clone_campaign', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+    if (!$id) {
+        wp_send_json_error(['message' => 'Invalid ID']);
+    }
+
+    $post = get_post($id);
+    if (!$post || $post->post_type !== 'gwapi-campaign') {
+        wp_send_json_error(['message' => 'Campaign not found']);
+    }
+
+    // Prepare new post data
+    $post_data = [
+        'post_title' => $post->post_title,
+        'post_content' => $post->post_content,
+        'post_type' => 'gwapi-campaign',
+        'post_status' => 'publish'
+    ];
+
+    $new_id = wp_insert_post($post_data);
+
+    if (is_wp_error($new_id)) {
+        wp_send_json_error(['message' => $new_id->get_error_message()]);
+    }
+
+    // Clone meta data
+    $metas = [
+        'sender',
+        'campaign_tags',
+        'recipient_tags',
+        'recipient_tags_logic',
+        'recipients_count'
+    ];
+
+    foreach ($metas as $meta_key) {
+        $value = get_post_meta($id, $meta_key, true);
+        update_post_meta($new_id, $meta_key, $value);
+    }
+
+    // Set status to draft and clear start_time
+    update_post_meta($new_id, 'status', 'draft');
+    update_post_meta($new_id, 'start_time', '');
+
+    wp_send_json_success(['id' => $new_id, 'message' => 'Campaign cloned successfully']);
 });
 
 /**
