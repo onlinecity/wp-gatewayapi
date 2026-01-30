@@ -79,7 +79,7 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
 
   // Build the request body
   $req = [
-    'message' => $message,
+    'message' => htmlspecialchars_decode(stripslashes($message)),
     'recipient' => $recipient,
     'sender' => $sender,
     'priority' => $options['priority'],
@@ -219,7 +219,7 @@ function gatewayapi_send_mobile_messages($messages)
     }
 
     // Build the message object
-    $msg_text = $msg['message'];
+    $msg_text = htmlspecialchars_decode(stripslashes($msg['message']));
     if (isset($msg['tags']) && is_array($msg['tags'])) {
       foreach ($msg['tags'] as $tag => $value) {
         $msg_text = str_replace($tag, $value, $msg_text);
@@ -360,7 +360,7 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
   // build the request
   $req = [
     'recipients' => [],
-    'message' => $message,
+    'message' => htmlspecialchars_decode(stripslashes($message)),
     'destaddr' => $destaddr,
     'tags' => array_values($allTags),
     'encoding' => $encoding,
