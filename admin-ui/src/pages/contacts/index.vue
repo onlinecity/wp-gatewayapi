@@ -5,6 +5,7 @@ import { defineStore } from 'pinia';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
 import Pagination from "@/components/Pagination.vue";
+import SearchableCountryDropdown from "@/components/SearchableCountryDropdown.vue";
 import { Icon } from '@iconify/vue';
 
 const useContactsTableStore = defineStore('contacts-table', {
@@ -268,33 +269,14 @@ const exportContacts = async () => {
 
         <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Country</legend>
-          <div class="dropdown">
-            <div tabindex="0" role="button" class="select pe-10 flex items-center gap-2 min-w-48">
-              <template v-if="filters.country">
-                <Icon :icon="`circle-flags:${filters.country}`" class="w-5 h-5" />
-                <span>{{ countries.find(c => c.slug === filters.country)?.name }}</span>
-              </template>
-              <template v-else>
-                All countries
-              </template>
-            </div>
-            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 w-64 p-2 shadow-sm border border-base-200 block max-h-80 overflow-y-auto mt-1">
-              <li>
-                <a @click="filters.country = ''" :class="{ 'active': filters.country === '' }" class="flex justify-between items-center">
-                  <span>- All countries -</span>
-                </a>
-              </li>
-              <li v-for="country in countries" :key="country.slug">
-                <a @click="filters.country = country.slug" :class="{ 'active': filters.country === country.slug }" class="flex justify-between items-center gap-2">
-                  <div class="flex items-center gap-2">
-                    <Icon :icon="`circle-flags:${country.slug}`" class="w-5 h-5" />
-                    <span>{{ country.name }}</span>
-                  </div>
-                  <span class="text-xs opacity-50">{{ country.count }}</span>
-                </a>
-              </li>
-            </ul>
-          </div>
+          <SearchableCountryDropdown
+            v-model="filters.country"
+            :countries="countries"
+            :multiple="false"
+            :show-count="true"
+            placeholder="Search countries..."
+            all-label="All countries"
+          />
         </fieldset>
 
         <fieldset class="fieldset text-base">

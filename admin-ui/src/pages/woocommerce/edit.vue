@@ -4,6 +4,7 @@ import {useParentIframeStore} from '@/stores/parentIframe.ts';
 import {useRouter} from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";
 import SmsEditor from "@/components/SmsEditor.vue";
+import SearchableCountryDropdown from "@/components/SearchableCountryDropdown.vue";
 import {Icon} from "@iconify/vue";
 
 const props = defineProps<{
@@ -207,26 +208,13 @@ const smsTags = computed(() => [
 
             <fieldset v-if="sms.phone_field !== 'fixed'" class="fieldset text-base">
               <legend class="fieldset-legend">Limit to Countries</legend>
-              <div class="dropdown w-full">
-                <div tabindex="0" role="button" class="select pe-10 flex items-center gap-2 w-full overflow-hidden">
-                  <template v-if="sms.countries.length > 0">
-                    <span class="truncate">{{ sms.countries.length }} selected</span>
-                  </template>
-                  <template v-else>
-                    All countries
-                  </template>
-                </div>
-                <ul tabindex="0"
-                    class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-sm border border-base-200 block max-h-80 overflow-y-auto mt-1">
-                  <li v-for="country in allCountries" :key="country.slug">
-                    <label class="label cursor-pointer justify-start gap-3 w-full py-2">
-                      <input type="checkbox" v-model="sms.countries" :value="country.slug" class="checkbox checkbox-sm"/>
-                      <Icon :icon="`circle-flags:${country.slug.toLowerCase()}`" class="w-5 h-5"/>
-                      <span class="label-text">{{ country.name }}</span>
-                    </label>
-                  </li>
-                </ul>
-              </div>
+              <SearchableCountryDropdown
+                v-model:values="sms.countries"
+                :countries="allCountries"
+                :multiple="true"
+                placeholder="Search countries..."
+                all-label="All countries"
+              />
               <p class="text-sm fieldset-label">If none selected, all countries will receive SMS.</p>
             </fieldset>
           </div>
