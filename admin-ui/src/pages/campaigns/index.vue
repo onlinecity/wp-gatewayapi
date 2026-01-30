@@ -5,6 +5,7 @@ import {useRouter} from 'vue-router';
 import {defineStore} from 'pinia';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
+import Pagination from "@/components/Pagination.vue";
 
 const useCampaignsTableStore = defineStore('campaigns-table', {
   state: () => ({
@@ -296,18 +297,10 @@ const columns = [
       </tbody>
     </table>
 
-    <div v-if="pagination.pages > 1" class="flex justify-center p-4">
-      <div class="join">
-        <button
-            v-for="p in pagination.pages"
-            :key="p"
-            class="join-item btn "
-            :class="{ 'btn-active': p === pagination.current }"
-            @click="setPage(p)"
-        >
-          {{ p }}
-        </button>
-      </div>
-    </div>
+    <Pagination 
+      :current="pagination.current" 
+      :pages="pagination.pages" 
+      @update:page="setPage" 
+    />
   </div>
 </template>
