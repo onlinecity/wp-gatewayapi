@@ -18,11 +18,7 @@ const router = useRouter();
 
 const navigateToSettings = () => {
   const link = 'admin.php?page=gatewayapi-settings#/settings';
-  if (window.parent) {
-    window.parent.location.href = link;
-  } else {
-    window.location.href = link;
-  }
+  parentIframe.navigateTo(link);
 };
 
 const loading = ref(false);
@@ -45,6 +41,7 @@ const campaign = ref({
 
 const allCampaignTags = ref<any[]>([]);
 const allRecipientTags = ref<any[]>([]);
+const contactFields = ref<any[]>([]);
 const fetchingRecipientCount = ref(false);
 const serverTime = ref('');
 const serverTimezone = ref('');
@@ -56,7 +53,7 @@ const smsTags = computed(() => {
   ];
 
   if (contactFields.value && contactFields.value.length > 0) {
-    contactFields.value.forEach(field => {
+    contactFields.value.forEach((field: any) => {
       tags.push({
         tag: '%' + field.title + '%',
         label: field.title,

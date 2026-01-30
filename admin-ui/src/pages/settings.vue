@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useParentIframeStore } from '@/stores/parentIframe.ts';
-import { useStateStore } from '@/stores/state.ts';
+import {ref, onMounted} from 'vue';
+import {useParentIframeStore} from '@/stores/parentIframe.ts';
+import {useStateStore} from '@/stores/state.ts';
 import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
 import DefaultSettings from '@/components/settings/DefaultSettings.vue';
 import ContactFieldsSettings from '@/components/settings/ContactFieldsSettings.vue';
@@ -29,7 +29,7 @@ onMounted(async () => {
       gwapiApiVersion.value = data.gwapi_api_version || 'sms';
       defaultSender.value = data.gwapi_default_sender || '';
       defaultSendSpeed.value = parseInt(data.gwapi_default_send_speed) || 60;
-      wooEnabled.value = data.gwapi_woocommerce_enabled || '0';
+      wooEnabled.value = data.is_woocommerce_active;
       wooAllowedCountries.value = data.gwapi_woocommerce_allowed_countries || [];
     }
   } catch (error) {
@@ -42,33 +42,35 @@ onMounted(async () => {
 
   <PageTitle icon="lucide:cog">Settings</PageTitle>
 
-  <Loading v-if="state.hasKey === null" />
+  <Loading v-if="state.hasKey === null"/>
 
   <div v-else class="tabs tabs-lift">
-    <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" :checked="true" />
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" :checked="true"/>
     <div class="tab-content bg-base-100 border-base-300 p-6">
-      <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion" />
+      <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion"/>
     </div>
 
-    <input type="radio" name="settings_tabs" class="tab" aria-label="Defaults" />
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Defaults"/>
     <div class="tab-content bg-base-100 border-base-300 p-6">
       <DefaultSettings
-        :initial-sender="defaultSender"
-        :initial-send-speed="defaultSendSpeed"
+          :initial-sender="defaultSender"
+          :initial-send-speed="defaultSendSpeed"
       />
     </div>
 
-    <input type="radio" name="settings_tabs" class="tab" aria-label="Contact Fields" />
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Contact Fields"/>
     <div class="tab-content bg-base-100 border-base-300 p-6">
-      <ContactFieldsSettings />
+      <ContactFieldsSettings/>
     </div>
 
-    <input type="radio" name="settings_tabs" class="tab" aria-label="WooCommerce" />
-    <div class="tab-content bg-base-100 border-base-300 p-6">
-      <WooCommerceSettings
-          :initial-enabled="wooEnabled"
-          :initial-allowed-countries="wooAllowedCountries"
-      />
-    </div>
+
+    <template v-if="wooEnabled">
+      <input type="radio" name="settings_tabs" class="tab" aria-label="WooCommerce"/>
+      <div class="tab-content bg-base-100 border-base-300 p-6">
+        <WooCommerceSettings
+            :initial-allowed-countries="wooAllowedCountries"
+        />
+      </div>
+    </template>
   </div>
 </template>

@@ -4,22 +4,17 @@ import {useParentIframeStore} from '../../stores/parentIframe.ts';
 import {Icon} from "@iconify/vue";
 
 const props = defineProps<{
-  initialEnabled?: string;
   initialAllowedCountries?: string[];
 }>();
 
 const parentIframe = useParentIframeStore();
 
-const enabled = ref(props.initialEnabled === '1');
 const allowedCountries = ref<string[]>(props.initialAllowedCountries || []);
 const allCountries = ref<any[]>([]);
 const loading = ref(false);
 const message = ref('');
 const isError = ref(false);
 
-watch(() => props.initialEnabled, (newVal) => {
-  if (newVal !== undefined) enabled.value = newVal === '1';
-});
 watch(() => props.initialAllowedCountries, (newVal) => {
   if (newVal !== undefined) allowedCountries.value = newVal;
 });
@@ -42,7 +37,6 @@ const saveSettings = async () => {
 
   try {
     const response = await parentIframe.ajaxPost('gatewayapi_save_woocommerce_settings', {
-      gwapi_woocommerce_enabled: enabled.value ? '1' : '0',
       gwapi_woocommerce_allowed_countries: allowedCountries.value,
     }) as any;
 
@@ -74,17 +68,6 @@ const saveSettings = async () => {
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <fieldset class="fieldset text-base">
-      <legend class="fieldset-legend">Enable WooCommerce Integration</legend>
-      <label class="label cursor-pointer justify-start gap-4">
-        <input type="checkbox" v-model="enabled" class="toggle toggle-primary" />
-        <span class="label-text">Enable GatewayAPI for WooCommerce</span>
-      </label>
-      <p class="mt-2 text-sm opacity-70">
-        When enabled, you can send automated SMS notifications based on WooCommerce order status changes.
-      </p>
-    </fieldset>
-
-    <fieldset class="fieldset text-base" v-if="enabled">
       <legend class="fieldset-legend">Allowed Countries</legend>
       <div class="dropdown w-full">
         <div tabindex="0" role="button" class="select pe-10 flex items-center gap-2 w-full overflow-hidden">
@@ -122,7 +105,7 @@ const saveSettings = async () => {
     </fieldset>
   </div>
 
-  <div class="card-actions justify-end mt-6">
+  <div class="card-actions justify-end mt-6" >
     <button
         class="btn btn-primary"
         :disabled="loading"

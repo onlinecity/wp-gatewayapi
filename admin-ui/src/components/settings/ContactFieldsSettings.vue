@@ -74,9 +74,6 @@ const anyDirty = computed(() => {
   return fields.value.some(isDirty) || fields.value.some(f => !f.originalTitle);
 });
 
-const canSaveField = (field: any) => {
-  return field.title.trim() !== '' && isDirty(field);
-};
 
 const hasErrors = () => {
   const titles = new Set();

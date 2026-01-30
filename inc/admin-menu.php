@@ -31,7 +31,7 @@ add_action('admin_menu', function () {
         'gatewayapi_admin_page_callback'
     );
 
-    if (get_option('gwapi_woocommerce_enabled') === '1') {
+    if (class_exists('WooCommerce')) {
         add_submenu_page(
                 'gatewayapi',
                 'WooCommerce',

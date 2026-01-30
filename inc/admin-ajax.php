@@ -14,6 +14,7 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
     if (empty($token) || empty($setup)) {
         wp_send_json_success([
             'hasKey' => false,
+            'isWooCommerceActive' => class_exists('WooCommerce'),
         ]);
     }
 
@@ -32,7 +33,8 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
         wp_send_json_success([
             'hasKey' => true,
             'keyIsValid' => false,
-            'message' => $response->get_error_message()
+            'message' => $response->get_error_message(),
+            'isWooCommerceActive' => class_exists('WooCommerce'),
         ]);
     }
 
@@ -43,6 +45,7 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
         wp_send_json_success([
             'hasKey' => true,
             'keyIsValid' => false,
+            'isWooCommerceActive' => class_exists('WooCommerce'),
         ]);
     }
 
@@ -51,6 +54,7 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
         'keyIsValid' => true,
         'credit' => isset($body['credit']) ? $body['credit'] : null,
         'currency' => isset($body['currency']) ? $body['currency'] : null,
+        'isWooCommerceActive' => class_exists('WooCommerce'),
     ]);
 });
 
@@ -191,7 +195,7 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
     $apiVersion = get_option('gwapi_api_version', 'sms');
     $sender = get_option('gwapi_default_sender', '');
     $sendSpeed = get_option('gwapi_default_send_speed', '60');
-    $wooEnabled = get_option('gwapi_woocommerce_enabled', '0');
+    $wooEnabled = class_exists('WooCommerce') ? '1' : '0';
     $wooAllowedCountries = get_option('gwapi_woocommerce_allowed_countries', []);
 
     wp_send_json_success([
@@ -200,7 +204,7 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
         'gwapi_api_version' => $apiVersion,
         'gwapi_default_sender' => $sender,
         'gwapi_default_send_speed' => $sendSpeed,
-        'gwapi_woocommerce_enabled' => $wooEnabled,
+        'is_woocommerce_active' => class_exists('WooCommerce'),
         'gwapi_woocommerce_allowed_countries' => $wooAllowedCountries,
     ]);
 });
@@ -213,10 +217,10 @@ add_action('wp_ajax_gatewayapi_save_woocommerce_settings', function () {
         wp_send_json_error(['message' => 'Unauthorized'], 403);
     }
 
-    $enabled = isset($_POST['gwapi_woocommerce_enabled']) ? sanitize_text_field($_POST['gwapi_woocommerce_enabled']) : '0';
+    //$enabled = isset($_POST['gwapi_woocommerce_enabled']) ? sanitize_text_field($_POST['gwapi_woocommerce_enabled']) : '0';
     $allowedCountries = isset($_POST['gwapi_woocommerce_allowed_countries']) ? (array)$_POST['gwapi_woocommerce_allowed_countries'] : [];
 
-    update_option('gwapi_woocommerce_enabled', $enabled);
+    //update_option('gwapi_woocommerce_enabled', $enabled);
     update_option('gwapi_woocommerce_allowed_countries', $allowedCountries);
 
     wp_send_json_success([

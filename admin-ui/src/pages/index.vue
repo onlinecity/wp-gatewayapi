@@ -56,15 +56,17 @@ const steps = computed(() => [
     description: "Don't let the name trick you - campaigns lets you send messages to groups of people of any size.",
     done: (campaignCount.value ?? 0) > 0,
     link: 'admin.php?page=gatewayapi-campaigns#/campaigns/new'
-  }
+  },
+  {
+    title: 'Install and integrate with WooCommerce',
+    description: 'If you install WooCommerce, this enables us to send text messages internally and to customers on new orders and more.',
+    done: !!state.isWooCommerceActive,
+    link: state.isWooCommerceActive ? 'admin.php?page=gatewayapi-woocommerce' : 'plugin-install.php?tab=search&s=woocommerce'
+  },
 ]);
 
 const navigateTo = (link: string) => {
-  if (window.parent) {
-    window.parent.location.href = link;
-  } else {
-    window.location.href = link;
-  }
+  parentIframe.navigateTo(link);
 };
 </script>
 

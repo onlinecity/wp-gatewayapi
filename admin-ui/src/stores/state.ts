@@ -7,6 +7,7 @@ export const useStateStore = defineStore('mainState', () => {
   const keyIsValid = ref(null) as Ref<null | boolean>;
   const credit = ref(null) as Ref<null | number>;
   const currency = ref(null) as Ref<null | string>;
+  const isWooCommerceActive = ref(null) as Ref<null | boolean>;
   const lastUpdated = ref(null) as Ref<null | number>;
 
   const reloadKeyStatus = async (force: boolean = false) => {
@@ -21,6 +22,7 @@ export const useStateStore = defineStore('mainState', () => {
         keyIsValid.value = response.data.keyIsValid;
         credit.value = Number(response.data.credit);
         currency.value = response.data.currency;
+        isWooCommerceActive.value = response.data.isWooCommerceActive;
         lastUpdated.value = Date.now();
       }
     } catch (error) {
@@ -31,6 +33,6 @@ export const useStateStore = defineStore('mainState', () => {
 
   return {
     hasKey, keyIsValid, credit, currency, lastUpdated,
-    reloadKeyStatus
+    reloadKeyStatus, isWooCommerceActive
   }
 }, { persist: true });

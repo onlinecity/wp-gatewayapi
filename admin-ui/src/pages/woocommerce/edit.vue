@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, computed, watch} from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import {useParentIframeStore} from '@/stores/parentIframe.ts';
 import {useRouter} from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";

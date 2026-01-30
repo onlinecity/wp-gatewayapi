@@ -51,9 +51,30 @@ export const useParentIframeStore = defineStore('parentIframe', () => {
   setInterval(resizeBasedOnScrollHeight, 100)
 
 
+  const navigateTo = (link: string) => {
+    const parent = getParent();
+    if (!parent) {
+      window.location.href = link;
+      return;
+    }
+
+    // If it's already an absolute URL, just use it
+    if (link.startsWith('https:') || link.startsWith('http:') || link.startsWith('//')) {
+      parent.location.href = link;
+      return;
+    }
+
+    // Ensure it's relative to the parent's base path
+    // We can use the parent's location to construct the full URL
+    const baseUrl = parent.location.origin + parent.location.pathname;
+    const directory = baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
+    parent.location.href = directory + link;
+  }
+
   return {
     ajaxPost,
     ajaxGet,
+    navigateTo,
     appElement
   }
 });

@@ -140,7 +140,7 @@ const getExcerpt = (text: string) => {
           </td>
           <td>
             <div class="flex items-center gap-1">
-              <template v-for="(country, index) in sms.countries.slice(0, 3)" :key="country">
+              <template v-for="country in sms.countries.slice(0, 3)" :key="country">
                 <div class="tooltip" :data-tip="country">
                   <Icon :icon="`circle-flags:${country.toLowerCase()}`" class="w-6 h-6"/>
                 </div>

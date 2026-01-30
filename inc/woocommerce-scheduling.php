@@ -4,7 +4,7 @@
  * WooCommerce Order Status Change Hook
  */
 add_action('woocommerce_order_status_changed', function ($order_id, $old_status, $new_status) {
-    if (get_option('gwapi_woocommerce_enabled') !== '1') return;
+    if (!class_exists('WooCommerce')) return;
 
     $order = wc_get_order($order_id);
     if (!$order) return;
