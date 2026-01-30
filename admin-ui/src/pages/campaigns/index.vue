@@ -125,7 +125,7 @@ const columns = [
   <!-- FILTERS -->
   <div class="card bg-base-100 border-base-300 border-2 mb-8">
     <div class="card-body p-4">
-      <div class="flex flex-wrap gap-4">
+      <div class="flex flex-wrap gap-4  -mt-2">
         <fieldset class="fieldset text-base">
           <legend class="fieldset-legend">Search</legend>
           <input v-model.lazy="filters.s" type="text" placeholder="Search title..." class="input input-bordered "/>
