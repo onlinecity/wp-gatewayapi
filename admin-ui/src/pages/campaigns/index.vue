@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref, onMounted, watch} from 'vue';
 import {useParentIframeStore} from '@/stores/parentIframe.ts';
+import {useRouter} from 'vue-router';
 import {defineStore} from 'pinia';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
@@ -15,6 +16,7 @@ const useCampaignsTableStore = defineStore('campaigns-table', {
 const tableStore = useCampaignsTableStore();
 
 const parentIframe = useParentIframeStore();
+const router = useRouter();
 
 const campaigns = ref<any[]>([]);
 const loading = ref(true);
@@ -56,6 +58,25 @@ watch(() => filters.value, () => {
 const setPage = (page: number) => {
   pagination.value.current = page;
   fetchCampaigns();
+};
+
+const editCampaign = async (campaign: any) => {
+  if (campaign.status === 'scheduled') {
+    if (!confirm('This campaign is scheduled. Editing it will cancel the scheduling and revert it to a draft. Are you sure?')) {
+      return;
+    }
+    try {
+      const response = await parentIframe.ajaxPost('gatewayapi_revert_campaign_to_draft', {id: campaign.id}) as any;
+      if (!response || !response.success) {
+        console.error('Failed to revert campaign to draft:', response);
+        return;
+      }
+    } catch (error) {
+      console.error('Failed to revert campaign to draft:', error);
+      return;
+    }
+  }
+  router.push('/campaigns/' + campaign.id);
 };
 
 const toggleSort = (column: string) => {
@@ -227,10 +248,10 @@ const columns = [
         <td>
           <div class="flex justify-end gap-1">
             <template v-if="!campaign.is_trash">
-              <router-link :to="'/campaigns/' + campaign.id" class="btn btn-primary tooltip tooltip-left"
+              <button @click="editCampaign(campaign)" class="btn btn-primary tooltip tooltip-left"
                            data-tip="Edit the campaign">
                 <Icon icon="lucide:edit"/>
-              </router-link>
+              </button>
               <button @click="deleteCampaign(campaign.id)" class="btn btn-error btn-outline tooltip tooltip-left"
                       data-tip="Move the campaign to trash">
                 <Icon icon="lucide:trash"/>

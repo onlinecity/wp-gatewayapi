@@ -127,6 +127,19 @@ const fetchCampaign = async () => {
         ...campaign.value,
         ...response.data
       };
+
+      if (campaign.value.status === 'scheduled') {
+        if (confirm('This campaign is scheduled. Editing it will cancel the scheduling and revert it to a draft. Are you sure?')) {
+          try {
+            await parentIframe.ajaxPost('gatewayapi_revert_campaign_to_draft', {id: campaign.value.id});
+            campaign.value.status = 'draft';
+          } catch (err) {
+            console.error('Failed to revert campaign to draft:', err);
+          }
+        } else {
+          router.push('/campaigns');
+        }
+      }
     } else {
       error.value = response?.data?.message || 'Failed to load campaign';
     }
@@ -428,11 +441,15 @@ const testSms = async () => {
 
 <template>
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-    <PageTitle class="mb-0" icon="lucide:message-circle-more">{{ props.id ? 'Edit Campaign' : 'Create Campaign' }}</PageTitle>
-    <router-link to="/campaigns" class="btn btn-soft gap-2">
-      <Icon icon="lucide:arrow-left" />
-      Back to Campaigns
-    </router-link>
+    <PageTitle class="mb-0" icon="lucide:message-circle-more">
+      {{ props.id ? 'Edit Campaign' : 'Create Campaign' }}
+    <template #actions>
+      <router-link to="/campaigns" class="btn btn-soft gap-2">
+        <Icon icon="lucide:arrow-left" />
+        Back to Campaigns
+      </router-link>
+    </template>
+    </PageTitle>
   </div>
 
   <div v-if="loading" class="flex justify-center py-12">
@@ -494,7 +511,10 @@ const testSms = async () => {
                     <li v-for="tag in allCampaignTags" :key="tag.name">
                       <label class="label cursor-pointer justify-start gap-3 w-full py-2">
                         <input type="checkbox" v-model="campaign.campaign_tags" :value="tag.name" class="checkbox checkbox-sm" />
-                        <span class="label-text flex-grow">{{ tag.name }}</span>
+                        <span class="label-text flex-grow relative">
+                          <span class="absolute w-full h-full truncate">{{ tag.name }}</span>
+                          &nbsp;
+                        </span>
                         <span class="badge badge-sm badge-ghost opacity-50">{{ tag.count }}</span>
                       </label>
                     </li>
@@ -519,7 +539,10 @@ const testSms = async () => {
                   <li v-for="tag in allRecipientTags" :key="tag.slug">
                     <label class="label cursor-pointer justify-start gap-3 w-full py-2">
                       <input type="checkbox" v-model="campaign.recipient_tags" :value="tag.slug" class="checkbox checkbox-sm" />
-                      <span class="label-text flex-grow">{{ tag.name }}</span>
+                      <span class="label-text flex-grow relative">
+                        <span class="absolute w-full h-full truncate">{{ tag.name }}</span>
+                        &nbsp;
+                      </span>
                       <span class="badge badge-sm badge-ghost opacity-50">{{ tag.count }}</span>
                     </label>
                   </li>

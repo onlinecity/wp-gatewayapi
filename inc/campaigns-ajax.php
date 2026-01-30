@@ -298,12 +298,19 @@ add_action('wp_ajax_gatewayapi_delete_campaign', function () {
 		wp_send_json_error( [ 'message' => 'Campaign not found' ] );
 	}
 
+	// Revert to draft before deleting/trashing
+	update_post_meta($id, 'status', 'draft');
+
 	if (!$force) $result = wp_trash_post($id);
-	else wp_delete_post($id, true);
+	else $result = wp_delete_post($id, true);
 
     if (!$result) {
         wp_send_json_error(['message' => 'Failed to delete campaign']);
     }
+
+	// Unschedule actions
+	as_unschedule_all_actions('gatewayapi_schedule_campaign', [$id], 'gatewayapi');
+	as_unschedule_all_actions('gatewayapi_send_campaign_batch', [$id], 'gatewayapi');
 
     wp_send_json_success(['message' => $force ? 'Campaign deleted permanently' : 'Campaign moved to trash']);
 });
@@ -333,6 +340,34 @@ add_action('wp_ajax_gatewayapi_restore_campaign', function () {
     }
 
     wp_send_json_success(['message' => 'Campaign restored']);
+});
+
+/**
+ * Revert scheduled campaign to draft
+ */
+add_action('wp_ajax_gatewayapi_revert_campaign_to_draft', function () {
+	if (!current_user_can('gatewayapi_manage')) {
+		wp_send_json_error(['message' => 'Unauthorized'], 403);
+	}
+
+	$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+	if (!$id) {
+		wp_send_json_error(['message' => 'Invalid ID']);
+	}
+
+	$post = get_post($id);
+	if (!$post || $post->post_type !== 'gwapi-campaign') {
+		wp_send_json_error(['message' => 'Campaign not found']);
+	}
+
+	// Update status to draft
+	update_post_meta($id, 'status', 'draft');
+
+	// Unschedule actions
+	as_unschedule_all_actions('gatewayapi_schedule_campaign', [$id], 'gatewayapi');
+	as_unschedule_all_actions('gatewayapi_send_campaign_batch', [$id], 'gatewayapi');
+
+	wp_send_json_success(['message' => 'Campaign reverted to draft']);
 });
 
 /**
