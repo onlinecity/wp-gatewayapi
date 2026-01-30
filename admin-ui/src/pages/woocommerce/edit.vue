@@ -174,7 +174,7 @@ const smsTags = computed(() => [
           <div class="card-body">
             <h3 class="card-title text-sm uppercase opacity-50 mb-4">Trigger Configuration</h3>
 
-            <fieldset class="fieldset">
+            <fieldset class="fieldset text-base">
               <legend class="fieldset-legend">Enable Template</legend>
               <label class="label cursor-pointer justify-start gap-4">
                 <input type="checkbox" v-model="sms.enabled" class="toggle toggle-primary"/>
@@ -182,23 +182,23 @@ const smsTags = computed(() => [
               </label>
             </fieldset>
 
-            <fieldset class="fieldset mt-4">
+            <fieldset class="fieldset text-base">
               <legend class="fieldset-legend">Sender</legend>
               <input v-model="sms.sender" type="text" placeholder="e.g. MyCompany" class="input input-bordered w-full" />
-              <p class="mt-1">Leave empty to use the default sender from settings. Max 11 characters or 18 digits.</p>
+              <p class="text-sm fieldset-label">Leave empty to use the default sender from settings. Max 11 characters or 18 digits.</p>
             </fieldset>
 
-            <fieldset class="fieldset mt-4">
+            <fieldset class="fieldset text-base">
               <legend class="fieldset-legend">Target Order State</legend>
               <select v-model="sms.order_state" class="select select-bordered w-full">
                 <option v-for="status in statuses" :key="status.key" :value="status.key">
                   {{ status.label }}
                 </option>
               </select>
-              <p class="mt-1">When the order reaches this state, send the SMS.</p>
+              <p class="text-sm fieldset-label">When the order reaches this state, send the SMS.</p>
             </fieldset>
 
-            <fieldset class="fieldset mt-4">
+            <fieldset class="fieldset text-base">
               <legend class="fieldset-legend">Recipient Phone Source</legend>
               <div class="flex flex-col gap-2">
                 <label class="label cursor-pointer justify-start gap-2">
@@ -216,13 +216,13 @@ const smsTags = computed(() => [
               </div>
             </fieldset>
 
-            <fieldset v-if="sms.phone_field === 'fixed'" class="fieldset mt-4">
+            <fieldset v-if="sms.phone_field === 'fixed'" class="fieldset text-base">
               <legend class="fieldset-legend">Phone numbers</legend>
               <textarea v-model="sms.fixed_phone_numbers" class="textarea textarea-bordered w-full h-24 text-sm" placeholder="One per line, e.g. +4512345678"></textarea>
-              <p class="mt-1">Enter phone numbers separated by newline. Must start with country code prefix (e.g. +45).</p>
+              <p class="text-sm">Enter phone numbers separated by newline. Must start with country code prefix (e.g. +45).</p>
             </fieldset>
 
-            <fieldset v-if="sms.phone_field !== 'fixed'" class="fieldset mt-4">
+            <fieldset v-if="sms.phone_field !== 'fixed'" class="fieldset text-base">
               <legend class="fieldset-legend">Limit to Countries</legend>
               <div class="dropdown w-full">
                 <div tabindex="0" role="button" class="select pe-10 flex items-center gap-2 w-full overflow-hidden">
@@ -244,7 +244,7 @@ const smsTags = computed(() => [
                   </li>
                 </ul>
               </div>
-              <p class="mt-1">If none selected, all countries will receive SMS.</p>
+              <p class="text-sm fieldset-label">If none selected, all countries will receive SMS.</p>
             </fieldset>
           </div>
         </div>
