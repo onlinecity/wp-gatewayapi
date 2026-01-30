@@ -7,5 +7,4 @@ add_action('admin_init', function () {
     register_setting('gatewayapi', 'gwapi_default_sender'); // Info
     register_setting('gatewayapi', 'gwapi_default_send_speed'); // Messages per minute (1-1000)
     register_setting('gatewayapi', 'gwapi_contact_fields');
-    register_setting('gatewayapi', 'gwapi_woocommerce_allowed_countries');
 });

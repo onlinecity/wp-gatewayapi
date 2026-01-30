@@ -5,7 +5,6 @@ import {useStateStore} from '@/stores/state.ts';
 import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
 import DefaultSettings from '@/components/settings/DefaultSettings.vue';
 import ContactFieldsSettings from '@/components/settings/ContactFieldsSettings.vue';
-import WooCommerceSettings from '@/components/settings/WooCommerceSettings.vue';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -16,8 +15,6 @@ const gwapiSetup = ref('com');
 const gwapiApiVersion = ref('sms');
 const defaultSender = ref('');
 const defaultSendSpeed = ref(60);
-const wooEnabled = ref('0');
-const wooAllowedCountries = ref<string[]>([]);
 
 // Load settings on mount
 onMounted(async () => {
@@ -29,8 +26,6 @@ onMounted(async () => {
       gwapiApiVersion.value = data.gwapi_api_version || 'sms';
       defaultSender.value = data.gwapi_default_sender || '';
       defaultSendSpeed.value = parseInt(data.gwapi_default_send_speed) || 60;
-      wooEnabled.value = data.is_woocommerce_active;
-      wooAllowedCountries.value = data.gwapi_woocommerce_allowed_countries || [];
     }
   } catch (error) {
     console.error('Failed to load settings:', error);
@@ -62,15 +57,5 @@ onMounted(async () => {
     <div class="tab-content bg-base-100 border-base-300 p-6">
       <ContactFieldsSettings/>
     </div>
-
-
-    <template v-if="wooEnabled">
-      <input type="radio" name="settings_tabs" class="tab" aria-label="WooCommerce"/>
-      <div class="tab-content bg-base-100 border-base-300 p-6">
-        <WooCommerceSettings
-            :initial-allowed-countries="wooAllowedCountries"
-        />
-      </div>
-    </template>
   </div>
 </template>

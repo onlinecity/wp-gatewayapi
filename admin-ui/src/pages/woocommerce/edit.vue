@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, computed} from 'vue';
+import {computed, ref, watch} from 'vue';
 import {useParentIframeStore} from '@/stores/parentIframe.ts';
 import {useRouter} from 'vue-router';
 import PageTitle from "@/components/PageTitle.vue";
@@ -32,12 +32,6 @@ const sms = ref({
 
 const statuses = ref<any[]>([]);
 const allCountries = ref<any[]>([]);
-const allowedCountries = ref<string[]>([]);
-
-const filteredCountries = computed(() => {
-  if (allowedCountries.value.length === 0) return allCountries.value;
-  return allCountries.value.filter(c => allowedCountries.value.includes(c.slug));
-});
 
 const fetchStatuses = async () => {
   try {
@@ -61,20 +55,9 @@ const fetchCountries = async () => {
   }
 };
 
-const fetchSettings = async () => {
-  try {
-    const response = await parentIframe.ajaxPost('gatewayapi_get_settings', {}) as any;
-    if (response && response.success) {
-      allowedCountries.value = response.data.gwapi_woocommerce_allowed_countries || [];
-    }
-  } catch (err) {
-    console.error('Failed to fetch settings:', err);
-  }
-};
-
-onMounted(async () => {
+watch(() => props.id, async () => {
   loading.value = true;
-  await Promise.all([fetchStatuses(), fetchCountries(), fetchSettings()]);
+  await Promise.all([fetchStatuses(), fetchCountries()]);
 
   if (props.id) {
     try {
@@ -90,7 +73,7 @@ onMounted(async () => {
     }
   }
   loading.value = false;
-});
+}, { immediate: true });
 
 const saveSms = async () => {
   saving.value = true;
@@ -235,7 +218,7 @@ const smsTags = computed(() => [
                 </div>
                 <ul tabindex="0"
                     class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-sm border border-base-200 block max-h-80 overflow-y-auto mt-1">
-                  <li v-for="country in filteredCountries" :key="country.slug">
+                  <li v-for="country in allCountries" :key="country.slug">
                     <label class="label cursor-pointer justify-start gap-3 w-full py-2">
                       <input type="checkbox" v-model="sms.countries" :value="country.slug" class="checkbox checkbox-sm"/>
                       <Icon :icon="`circle-flags:${country.slug.toLowerCase()}`" class="w-5 h-5"/>

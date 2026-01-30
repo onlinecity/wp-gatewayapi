@@ -76,38 +76,10 @@ add_action('woocommerce_order_status_changed', function ($order_id, $old_status,
             $sender = get_option('gwapi_default_sender', 'Info');
         }
 
-        // Filter phones to send to
         $phones_to_send = [];
-        $allowed_countries = get_option('gwapi_woocommerce_allowed_countries', []);
-
         foreach ($recipient_phones as $recipient_phone) {
-            if ($phone_field === 'fixed') {
-                // Fixed numbers must start with +
-                if (strpos($recipient_phone, '+') === 0) {
-                    $phones_to_send[] = $recipient_phone;
-                }
-                continue;
-            }
-
-            // Check if phone matches allowed countries prefixes (only for non-fixed)
-            $matched = false;
-            if (class_exists('WooCommerce') && !empty($allowed_countries)) {
-                $wc_countries = new WC_Countries();
-                foreach ($allowed_countries as $code) {
-                    $prefix = '';
-                    if (method_exists($wc_countries, 'get_country_calling_code')) {
-                        $prefix = $wc_countries->get_country_calling_code($code);
-                    }
-                    if ($prefix) {
-                        $prefix = (strpos($prefix, '+') === 0 ? $prefix : '+' . $prefix);
-                        if (strpos($recipient_phone, $prefix) === 0) {
-                            $matched = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if ($matched) {
+            // Numbers must start with +
+            if (strpos($recipient_phone, '+') === 0) {
                 $phones_to_send[] = $recipient_phone;
             }
         }
