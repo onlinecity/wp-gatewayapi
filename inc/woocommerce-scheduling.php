@@ -76,6 +76,8 @@ add_action('woocommerce_order_status_changed', function ($order_id, $old_status,
             $sender = get_option('gwapi_default_sender', 'Info');
         }
 
+        $encoding = get_post_meta($post->ID, 'encoding', true);
+
         $phones_to_send = [];
         foreach ($recipient_phones as $recipient_phone) {
             // Numbers must start with +
@@ -87,7 +89,7 @@ add_action('woocommerce_order_status_changed', function ($order_id, $old_status,
         if (empty($phones_to_send)) continue;
 
         // Send the SMS
-        gatewayapi_send_sms($message, $phones_to_send, $sender);
+        gatewayapi_send_sms($message, $phones_to_send, $sender, 'MOBILE', $encoding);
 
         // Add order note
         $target_name = __('billing phone', 'gatewayapi');

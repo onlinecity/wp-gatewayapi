@@ -77,6 +77,7 @@ add_action('gatewayapi_send_campaign_batch', function ($campaign_id, $recipient_
 
     $message = $campaign->post_content;
     $sender = get_post_meta($campaign_id, 'sender', true);
+    $encoding = get_post_meta($campaign_id, 'encoding', true) ?: (gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8');
 
     if (empty($sender)) {
         $sender = get_option('gwapi_default_sender') ?: 'SMS';
@@ -122,7 +123,8 @@ add_action('gatewayapi_send_campaign_batch', function ($campaign_id, $recipient_
             'message' => $message,
             'recipient' => $msisdn,
             'sender' => $sender,
-            'tags' => $tag_values
+            'tags' => $tag_values,
+            'encoding' => $encoding
         ];
     }
 

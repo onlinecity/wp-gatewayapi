@@ -5,6 +5,25 @@
  */
 
 
+function gatewayapi_is_ucs2($message)
+{
+    $gsm0338 = " !\"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ£¥§¿_\n\rΔΦΓΛΩΠΨΣΘΞèéùìòÇØøÅåÆæßÉÄÖÑÜäöñüàäöñüà^{}[]~|€";
+    
+    // Convert to UTF-8 if not already, to ensure we can iterate over characters correctly
+    if (!mb_check_encoding($message, 'UTF-8')) {
+        $message = mb_convert_encoding($message, 'UTF-8');
+    }
+
+    $len = mb_strlen($message, 'UTF-8');
+    for ($i = 0; $i < $len; $i++) {
+        $char = mb_substr($message, $i, 1, 'UTF-8');
+        if (strpos($gsm0338, $char) === false) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * Send a mobile message to a single recipient using the GatewayAPI Messaging API.
  *
@@ -16,6 +35,7 @@
  *                       - 'reference' (string|null): Client-provided reference. Default NULL.
  *                       - 'expiration' (int): Expires in number of seconds (1-432000). Default 432000.
  *                       - 'label' (string|null): Label for the message. Default NULL.
+ *                       - 'encoding' (string): Encoding of the message. 'UTF8' or 'UCS2'. Default 'UTF8'.
  * @return object|WP_Error On success, returns an object with msg_id, recipient, and reference.
  *                         On failure, returns a WP_Error.
  */
@@ -24,7 +44,8 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
   // If API version is set to 'sms', use the SMS API instead.
   $api_version = get_option('gwapi_api_version', 'sms');
   if ($api_version === 'sms') {
-    $res = gatewayapi_send_sms($message, [$recipient], $sender, 'MOBILE', 'UTF8', $options);
+    $encoding = isset($options['encoding']) ? $options['encoding'] : (gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8');
+    $res = gatewayapi_send_sms($message, [$recipient], $sender, 'MOBILE', $encoding, $options);
     if (is_wp_error($res)) return $res;
 
     // Return a mock response that matches the Messaging API format as closely as possible
@@ -62,6 +83,7 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
     'reference' => null,
     'expiration' => 432000,
     'label' => null,
+    'encoding' => gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8',
   ];
   $options = array_merge($defaults, $options);
 
@@ -79,11 +101,12 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
 
   // Build the request body
   $req = [
-    'message' => htmlspecialchars_decode(stripslashes($message)),
+    'message' => $message,
     'recipient' => $recipient,
     'sender' => $sender,
     'priority' => $options['priority'],
     'expiration' => $options['expiration'],
+    'encoding' => $options['encoding'],
   ];
 
   // Add optional fields if set
@@ -181,7 +204,8 @@ function gatewayapi_send_mobile_messages($messages)
       $recipients_with_tags[$msisdn] = $tags;
     }
 
-    $res = gatewayapi_send_sms($message, $recipients_with_tags, $sender, 'MOBILE', 'UTF8', []);
+    $encoding = gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8';
+    $res = gatewayapi_send_sms($message, $recipients_with_tags, $sender, 'MOBILE', $encoding, []);
     if (is_wp_error($res)) return $res;
 
     return (object)[
@@ -230,6 +254,7 @@ function gatewayapi_send_mobile_messages($messages)
       'message' => $msg_text,
       'recipient' => $msg['recipient'],
       'sender' => $msg['sender'],
+      'encoding' => gatewayapi_is_ucs2($msg_text) ? 'UCS2' : 'UTF8',
     ];
 
     // Add optional fields with defaults
@@ -329,14 +354,18 @@ function gatewayapi_send_mobile_messages($messages)
  * @param array|string $recipients A single recipient or a list of recipients.
  * @param string $sender Sender text (11 chars or 15 digits)
  * @param string $destaddr Type of SMS - Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored - also called a Flash SMS)
- * @param array $encoding The $message must always be in UTF-8. Read more about the different encodings available here: https://gatewayapi.com/docs/appendix.html#term-ucs2
+ * @param array $encoding The $message must always be in UTF-8. Read more about the different encodings available here: https://gatewayapi.com/docs/appendix.html#term-ucs2. If not specified, it will be automatically detected.
  * @param array $additional_options Additional options, such as "label", "priority" etc.. Can be used to override any other options set by this function.
  * @return int|WP_Error ID of message in gatewayapi.com on success
  *
  * @deprecated Use gatewayapi_send_mobile_message instead for single recipient messages.
  */
-function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'MOBILE', $encoding = 'UTF8', $additional_options = [])
+function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'MOBILE', $encoding = null, $additional_options = [])
 {
+  if (!$encoding) {
+      $encoding = gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8';
+  }
+
   // PREPARE THE RECIPIENTS
   // ======================
 
@@ -360,7 +389,7 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
   // build the request
   $req = [
     'recipients' => [],
-    'message' => htmlspecialchars_decode(stripslashes($message)),
+    'message' => $message,
     'destaddr' => $destaddr,
     'tags' => array_values($allTags),
     'encoding' => $encoding,

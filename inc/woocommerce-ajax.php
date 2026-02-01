@@ -89,7 +89,7 @@ add_action('wp_ajax_gatewayapi_save_woo_sms', function () {
 
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
     $title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
-    $message = isset($_POST['message']) ? wp_kses_post($_POST['message']) : '';
+    $message = isset($_POST['message']) ? stripslashes($_POST['message']) : '';
     $enabled = isset($_POST['enabled']) && $_POST['enabled'] === 'true' ? '1' : '0';
     $sender = isset($_POST['sender']) ? sanitize_text_field($_POST['sender']) : '';
     $order_state = isset($_POST['order_state']) ? sanitize_text_field($_POST['order_state']) : '';
@@ -125,6 +125,7 @@ add_action('wp_ajax_gatewayapi_save_woo_sms', function () {
     update_post_meta($post_id, 'phone_field', $phone_field);
     update_post_meta($post_id, 'fixed_phone_numbers', $fixed_phone_numbers);
     update_post_meta($post_id, 'countries', $countries);
+    update_post_meta($post_id, 'encoding', gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8');
 
     wp_send_json_success(['id' => $post_id]);
 });

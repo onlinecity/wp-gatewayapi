@@ -113,7 +113,7 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
     $title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
     $sender = isset($_POST['sender']) ? sanitize_text_field($_POST['sender']) : '';
-    $message = isset($_POST['message']) ? wp_kses_post($_POST['message']) : '';
+    $message = isset($_POST['message']) ? stripslashes($_POST['message']) : '';
     $campaign_tags = isset($_POST['campaign_tags']) ? (array)$_POST['campaign_tags'] : [];
     $recipient_tags = isset($_POST['recipient_tags']) ? (array)$_POST['recipient_tags'] : [];
     $start_time = isset($_POST['start_time']) ? sanitize_text_field($_POST['start_time']) : '';
@@ -169,6 +169,7 @@ add_action('wp_ajax_gatewayapi_save_campaign', function () {
     update_post_meta($id, 'recipient_tags_logic', isset($_POST['recipient_tags_logic']) ? sanitize_text_field($_POST['recipient_tags_logic']) : 'any');
     update_post_meta($id, 'start_time', $start_time);
     update_post_meta($id, 'status', $status);
+    update_post_meta($id, 'encoding', gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8');
 
     // Calculate recipients count
     $recipients_count = 0;
@@ -448,7 +449,7 @@ add_action('wp_ajax_gatewayapi_test_sms', function () {
     }
 
     $recipient = isset($_POST['recipient']) ? sanitize_text_field($_POST['recipient']) : '';
-    $message = isset($_POST['message']) ? wp_kses_post($_POST['message']) : '';
+    $message = isset($_POST['message']) ? stripslashes($_POST['message']) : '';
     $sender = isset($_POST['sender']) ? sanitize_text_field($_POST['sender']) : '';
 
     if (empty($recipient)) {
@@ -472,7 +473,9 @@ add_action('wp_ajax_gatewayapi_test_sms', function () {
         }
     }
 
-    $result = gatewayapi_send_mobile_message($message, $recipient, $sender);
+    $result = gatewayapi_send_mobile_message($message, $recipient, $sender, [
+        'encoding' => gatewayapi_is_ucs2($message) ? 'UCS2' : 'UTF8'
+    ]);
 
     if (is_wp_error($result)) {
         wp_send_json_error(['message' => $result->get_error_message()]);
