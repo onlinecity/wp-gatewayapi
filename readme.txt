@@ -1,132 +1,133 @@
 === GatewayAPI ===
 Contributors: onlinecity
-Tags: sms, two factor, security, mobile, texting
-Requires at least: 4.6
-Tested up to: 6.3.1
-Stable tag: 1.8.3
-License: MIT
-License URI: https://opensource.org/licenses/MIT
-
-Send SMS'es and enable SMS-based two-factor security.
+Tags: sms, woocommerce, campaigns, notifications, transactional sms, marketing
+Requires at least: 5.8
+Tested up to: 6.9
+Stable tag: 2.0.0
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-This plugin enables you to send SMS messages straight from the WordPress backend or via the programmer’s API.
+GatewayAPI for WordPress is a powerful SMS plugin that combines WooCommerce transactional SMS notifications with a high-performance campaign and contact management system.
 
-Also included is a free SMS two-factor authentication module, which hardens the security of your site considerably.
+The plugin allows you to automatically send SMS messages when WooCommerce orders change status, as well as create and send personalized SMS campaigns to large contact lists.
 
-All you need is the plugin and a free [GatewayAPI.com](https://gatewayapi.com/) account.
+This version is a complete rewrite of the plugin, with a strong focus on performance, reliability, and modern WordPress standards.
 
+All SMS messages are delivered via GatewayAPI.com, one of Europe’s leading SMS gateways.
 
-Main features:
+== Main Features ==
 
-* **📱 Send SMS messages / texts**
-  *   Add custom data to recipients to perform mail merge.
-  *   Import recipient lists from CSV/Excel.
-  *   Manage target groups.
-  *   Manage broadcasts.
-  *   Easy-to-use programmer’s API.
-  *   Short codes for signup/unsubscribe/edit profile forms.
-  *   Automatic integration with Contact Form 7.
+= WooCommerce SMS Notifications =
 
-* **🔐 Two-factor authentication**
-  *   Easy-to-use: No apps needed!
-  *   Easy for admins: Just tick a box and it works!
-  *   High level of security!
-  *   Pick roles to enable mandatory two-factor authentication.
-  *   Re-authorise at each login or remember devices for up to 30 days.
+* Send automatic SMS messages based on WooCommerce order status changes
+* Separate message templates for customer and internal recipients
+* Fully configurable per order status
+* Supports all standard WooCommerce order statuses
 
-* **✊ Receive SMS messages**
-  *   Use your own keyword(s) or phone numbers to receive SMS messages.
-  *   View incoming messages.
-  *   Auto-reply to incoming SMS messages.
+= SMS Campaigns & Broadcasts =
 
-* 🔔 Notification module for admins **(BETA)**
-  * Receive an SMS message when important changes occur.
-  * Choose from a long list of triggers.
-  * Receive an SMS when a new user is created, when certain pages are edited or when new pages are published.
-  * Configure which users will receive SMS messages. Can be role-based or user-based.
-  * **BETA**: Please write to us and let us know what you like, and what you feel is missing (or broken), so we can improve upon this new feature.
+* Send SMS campaigns to large contact lists
+* High throughput and stable delivery using Action Scheduler
+* Designed to work reliably even on shared web hosting
+* Background processing
 
+= Contact & List Management =
 
-**Easy to get started:**
+* Manage contacts directly in WordPress
+* Import and export contacts using CSV files
+* Store custom fields per contact
+* Reusable contact lists for campaigns
+* Use contact fields for mail-merged SMS content
 
-*   Complete step-by-step user guide with several screenshots
-*   The plugin has help texts included.
-*   Live chat support and mail support from GatewayAPI.com.
+= Personalized Message Templates =
 
-**SMS messages provided by one of the leading SMS Gateways in Europe**
+* Mail-merge support for campaigns and WooCommerce messages
+* Use dynamic placeholders such as customer data, order data, and custom fields
+* Supports both GSM and Unicode SMS
+* Configurable sender ID per message
 
-*   GatewayAPI.com sends hundreds of millions of SMS messages each year on behalf of tens of thousands of customers all over the globe.
-*   Offices in Copenhagen, Odense and Aalborg, Denmark.
-*   Company founded in 1999.
-*   Free support, no subscription, AND unbeatable prices.
-*   Most SMS messages are delivered within 0.3 seconds.
+= Built for Reliability & Scale =
 
-If you prefer to disable the UI-features and manage broadcasts from code instead, then that is also possible. For this purpose, you can use the method gwapi_send_sms. The method supports specification of content, broadcast to multiple recipients, specification of sender ID and specification of type of SMS.
+* Uses Action Scheduler (the same job system used by WooCommerce)
+* Non-blocking background processing
+* Suitable for very large campaigns (100,000+ recipients)
+* No PHP timeouts or long-running requests
 
+== Old users? Some features are gone ==
 
-= Getting Started =
+The following features are not part of this plugin anymore:
 
-We have created a number of tutorials, demonstrating how to get started and how to use the various features. Watch the following video on how to set everything up and send your first SMS message:
+* SMS two-factor authentication
+* Receiving or processing incoming SMS messages
+* Contact Form 7-integration
 
-[Click here for more videos](https://wordpress.org/plugins/gatewayapi/installation/).
+These features had very low usage and were removed to simplify the plugin. If you need this, consider the legacy version of the plugin (any version before 2.0).
+
+== About GatewayAPI.com ==
+
+* Founded in 1999
+* One of Europe’s leading SMS providers
+* Offices in Copenhagen, Odense, and Aalborg, Denmark
+* Hundreds of millions of SMS messages delivered yearly
+* No subscriptions – pay only for what you send
+* Fast and reliable SMS delivery worldwide
 
 == Installation ==
 
-This section describes how to install and use the plugin
+1. Create a free account at https://gatewayapi.com/
+2. Install and activate the plugin
+3. Go to GatewayAPI → Settings
+4. Add your API Token from your GatewayAPI.com account
+5. Play around! Send a test campaign or setup a WooCommerce Order hook
 
-1. If you haven’t already, then go to [GatewayAPI.com](https://gatewayapi.com/) and create a free account.
-1. Install and activate the plugin.
-1. Go to “Settings » GatewayAPI Settings” and add an OAuth key and associated secret from your GatewayAPI.com account.
-1. (Optional) Enable the sending UI and then go to “SMS messages » Create SMS” and try to send an SMS to yourself, verifying that all has been set up correctly.
+== Getting Started ==
 
-We’ve also produced a number of videos to help you get started:
+= WooCommerce Notifications =
 
-= GETTING STARTED =
+After installation, you can enable SMS notifications per WooCommerce order status.
+Each status can send messages to customers, internal recipients, or both.
 
-This quick tutorial shows you how to get the GatewayAPI Plugin for WordPress installed and configured and how to send an SMS.
+Place a test order to confirm everything is working as expected.
 
-https://vimeo.com/179720894
+= Campaign Messaging =
 
-= RECIPIENTS, GROUPS AND EXTRA FIELDS =
+You can create SMS campaigns without WooCommerce:
 
-This quick tutorial shows you how to create groups, add recipients to the groups, as well as how to add custom fields to the individual recipients, which allows any extra data to be stored and used in SMS messages.
-
-https://vimeo.com/179720962
-
-= BUILT-IN FORMS FOR SIGN UP, UPDATE AND UNSUBSCRIBE =
-
-This tutorial shows you how to create forms for the public, using the built-in UI for creating “shortcodes” (tiny pieces of code which can be pasted into any WordPress-page).
-
-https://vimeo.com/179721068
-
-= IMPORTING RECIPIENTS FROM SPREADSHEETS =
-
-This tutorial shows you how to import recipients from any spreadsheet and into the recipients database in GatewayAPI. It even shows how to overwrite and update the database, import extra fields from spreadsheets and how to add the recipients into groups. It works with any spreadsheet app (Excel, Numbers, LibreOffice, Google Docs – you name it!).
-
-
-https://vimeo.com/179721183
-
+* Import contacts via CSV or add them manually
+* Organize contacts into lists
+* Create a personalized SMS campaign
 
 == Frequently Asked Questions ==
 
-= How well does this plugin handle 10,000+ recipients =
+= Can this plugin handle very large SMS campaigns? =
 
-It works really well. We split large SMS broadcasts into multiple smaller requests, to ease the burden on your WordPress setup. You will see a progress bar, when you are sending to more than 500 recipients at a time.
+Yes. Campaigns are processed using Action Scheduler, ensuring stable delivery, high throughput, and retries — even on shared hosting environments.
 
-= HELP! I’m administrator and I’m locked out of the two-factor system! =
+= Does this plugin support personalized SMS messages? =
 
-If you don’t have a backup of the “Emergency bypass URL” from the setup-screen, then you need to dig into the database to disable the two-factor system. Your host probably has a phpMyAdmin that you can use to access it.
-Then find the options-table, by default wp_options. Search for the row where the option_name is gwapi_security_enable. Simply delete the row.
+Yes. You can use dynamic placeholders from contacts and WooCommerce orders to send fully personalized, mail-merged SMS messages.
+
+= Is WooCommerce required? =
+
+WooCommerce is only required for order-based SMS notifications.
+Campaign messaging and contact management work without WooCommerce.
 
 == Screenshots ==
-1. Set up your OAuth key and secret here. This settings page is available for administrators only.
-2. If the SMS Sending UI is enabled, this is how you can send a SMS from the backend.
-3. Contact Form 7: GatewayAPI automatically adds extra controls for supporting signup/update/unsubscribe in the Contact Form 7 form builder.
-4. Contact Form 7: Creating a "recipient groups" selection field.
+
+1. GatewayAPI authentication and general settings
+2. SMS template editor with available placeholders
+3. WooCommerce order status SMS configuration
+4. Campaign creation and progress overview
+5. Contact management and CSV import
+
 
 == Changelog ==
+
+= 2.0.0 =
+
+ * Complete rewrite of the plugin!
 
 = 1.8.3 =
 
@@ -340,70 +341,3 @@ Bugfixes:
 
 = 1.0 =
 * Inital version.
-
-== How to use ==
-
-= Most users: User Guide =
-
-Most topics are shown in a step-by-step style with numerous screenshots in our User Guide – even quite advanced topics.
-
-[Open the User Guide](https://github.com/onlinecity/wp-gatewayapi/wiki/User-Guide)
-
-
-= Advanced: Programmers API =
-
-Send an SMS message to one or multiple recipients by calling `gwapi_send_sms `with the following arguments
-
-*   $message (string) A string containing the message to be sent.
-*   $recipients (array|string) A single recipient or a list of recipients.
-*   $sender (string, optional) Sender text (11 chars or 15 digits)
-*   $destaddr (string, optional) Type of SMS – Can be MOBILE (regular SMS) or DISPLAY (shown immediately on phone and usually not stored, also knows as a Flash SMS)
-
-Returns the GatewayAPI.com message-ID on success and a WP_Error on failure.
-
-The recipients-argument may consist of either:
-
-*   An integer or string, containing an MSISDN (CC + number, digits only).
-Example number: Country code 45. Phone number: 12 34 56 78.
-Resulting MSISDN: “4512345678”.
-*   An array containing MSISDN (see above).
-*   An array in which MSISDN’s are keys and their values are arrays of tags.
-Example in JSON:
-{ “4512345678”: { “%NAME%”: “John Doe”, “%GENDER%”: “Male” } }
-
-Note: SMS messages sent via `gwapi_send_sms` are NOT saved in WordPress. They are however still accessible via the traffic log on GatewayAPI.com
-
-
-## **Screenshots**
-
-Set up your OAuth key and secret here. This settings page is available for administrators only.
-
-If the SMS Sending UI is enabled, this is how you can send an SMS from the backend.
-
-Contact Form 7: GatewayAPI automatically adds extra controls for supporting signup/update/unsubscribe in the Contact Form 7 form builder.
-
-Contact Form 7: Creating a "recipient groups" selection field.
-
-
-
-
-
-----
-
-
-
-
-recipient import
-recipients: own tables
-Campaigns: Post type
-Campaign Recipient: own tables
-Single SMS'es: own tables, reference to source (api, woocommerce), ref to source ID (nullable)
-
-REMOVE: two-factor login
-REMOVE: contact form 7 integration
-REMOVE: receive SMS
-REMOVE: User sync
-
-new: option: want callbacks or not?
-new: option: campaign send speed default
-new: integration of Action Scheduler
