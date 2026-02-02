@@ -28,6 +28,7 @@ cd ..
 TEMP_DIR="temp_package"
 PACKAGE_NAME="gatewayapi"
 ZIP_FILE="gatewayapi-$VERSION.zip"
+BUILD_DIR="build"
 
 rm -rf "$TEMP_DIR"
 mkdir -p "$TEMP_DIR/$PACKAGE_NAME"
@@ -56,8 +57,14 @@ cd "$TEMP_DIR"
 zip -r "../$ZIP_FILE" .
 cd ..
 
-# 6. Cleanup
+# 6. Also prepare persistent build directory for CI/SVN deploy (contents only, not the zip)
+echo "Preparing persistent build directory..."
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR/$PACKAGE_NAME"
+rsync -a "$TEMP_DIR/$PACKAGE_NAME/" "$BUILD_DIR/$PACKAGE_NAME/"
+
+# 7. Cleanup temp directory
 echo "Cleaning up..."
 rm -rf "$TEMP_DIR"
 
-echo "Done! Package created: $ZIP_FILE"
+echo "Done! Package created: $ZIP_FILE and build prepared in $BUILD_DIR/$PACKAGE_NAME"

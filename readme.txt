@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, woocommerce, campaigns, notifications, transactional sms, marketing
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -137,6 +137,14 @@ https://gatewayapi.com/security-and-compliance/
 
 
 == Changelog ==
+
+= 2.0.2-2.0.3 =
+
+ * No changes. These versions exist because we have been working on automating release processes.
+
+= 2.0.1 =
+
+ * Minor modifications to ensure best-practices as per WordPress guidelines.
 
 = 2.0.0 =
 
