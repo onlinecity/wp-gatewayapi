@@ -92,14 +92,14 @@ add_action('woocommerce_order_status_changed', function ($order_id, $old_status,
         gatewayapi_send_sms($message, $phones_to_send, $sender, 'MOBILE', $encoding);
 
         // Add order note
-        $target_name = __('billing phone', 'gatewayapi');
+        $target_name = 'billing phone';
         if ($phone_field === 'shipping_phone') {
-            $target_name = __('shipping phone', 'gatewayapi');
+            $target_name = 'shipping phone';
         } elseif ($phone_field === 'fixed') {
-            $target_name = __('fixed numbers', 'gatewayapi');
+            $target_name = 'fixed numbers';
         }
 
-        $note = sprintf(__("SMS sent to %s:\n---\n%s", 'gatewayapi'), $target_name, $message);
+        $note = sprintf("SMS sent to %s:\n---\n%s", $target_name, $message);
         $order->add_order_note($note);
     }
 }, 10, 3);

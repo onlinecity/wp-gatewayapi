@@ -3,19 +3,17 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Manage SMS broadcasts via WordPress
-Version:     2.0.0
+Version:     2.0.1
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
-License:     MIT
-License URI: https://opensource.org/licenses/MIT
-Text Domain: gatewayapi
-Domain Path: /languages
+License:     GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 */
 if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
 require_once( plugin_dir_path( __FILE__ ) . '/libraries/action-scheduler/action-scheduler.php' );
 
-const GATEWAYAPI_VERSION = '2.0.0';
+const GATEWAYAPI_VERSION = '2.0.1';
 
 function gatewayapi__dir()
 {
@@ -42,7 +40,6 @@ add_action('init', function () {
   // admin: editor required
   if (!current_user_can('gatewayapi_manage')) return;
 
-  require_once("$D/inc/options.php");
   require_once("$D/inc/admin-ajax.php");
   require_once("$D/inc/contacts-post-type.php");
   require_once("$D/inc/contacts-ajax.php");

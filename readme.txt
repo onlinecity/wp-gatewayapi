@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, woocommerce, campaigns, notifications, transactional sms, marketing
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -114,13 +114,26 @@ Yes. You can use dynamic placeholders from contacts and WooCommerce orders to se
 WooCommerce is only required for order-based SMS notifications.
 Campaign messaging and contact management work without WooCommerce.
 
+
+== External services ==
+
+This plugin connects to the GatewayAPI.com service to send SMS messages. This external service is required for the plugin’s primary functionality, which is delivering transactional and campaign SMS messages.
+
+When sending an SMS, the plugin transmits the recipient phone number, message content, and related metadata (such as sender ID) to GatewayAPI.com. For WooCommerce notifications, order-related data may be used to generate the message content before it is sent.
+
+No data is sent to GatewayAPI.com unless an SMS is actively being sent by the site administrator or triggered by configured WooCommerce events.
+
+This service is provided by GatewayAPI ApS.
+
+Privacy policy, terms and conditions, data processing agreement, and security certifications (including ISAE 3000 and ISAE 3402) are available at:
+https://gatewayapi.com/security-and-compliance/
+
 == Screenshots ==
 
 1. GatewayAPI authentication and general settings
 2. SMS template editor with available placeholders
 3. WooCommerce order status SMS configuration
-4. Campaign creation and progress overview
-5. Contact management and CSV import
+4. Contact management and CSV import
 
 
 == Changelog ==

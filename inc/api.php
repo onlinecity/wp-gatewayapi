@@ -137,7 +137,7 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
       'Content-Type' => 'application/json',
       'user-agent' => 'wp-gatewayapi/' . GATEWAYAPI_VERSION
     ],
-    'body' => json_encode($req)
+    'body' => wp_json_encode($req)
   ]);
 
   // Handle WP_Error from wp_remote_post
@@ -302,7 +302,7 @@ function gatewayapi_send_mobile_messages($messages)
       'Content-Type' => 'application/json',
       'user-agent' => 'wp-gatewayapi/' . GATEWAYAPI_VERSION
     ],
-    'body' => json_encode($req)
+    'body' => wp_json_encode($req)
   ]);
 
   // Handle WP_Error from wp_remote_post
@@ -478,7 +478,7 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
         'Content-Type' => 'application/json',
         'user-agent' => 'wp-gatewayapi'
       ],
-      'body' => json_encode($req)
+      'body' => wp_json_encode($req)
     ]);
 
     // not an error - hurray!
@@ -492,7 +492,7 @@ function gatewayapi_send_sms($message, $recipients, $sender = '', $destaddr = 'M
     }
 
     // error: BUT no reason to try another URL as this is not communications related
-    if (is_wp_error($res) && !isset($res->errors['http_request_failed'])) return new WP_Error('TECH_FAIL', json_encode($res['body']));
+    if (is_wp_error($res) && !isset($res->errors['http_request_failed'])) return new WP_Error('TECH_FAIL', wp_json_encode($res['body']));
   }
 
   return new WP_Error('TECH_FAIL', 'No valid transports.');
