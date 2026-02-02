@@ -6,7 +6,8 @@ Tested up to: 6.9
 Stable tag: 2.0.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-Short Description: Send SMS notifications for WooCommerce orders, create SMS campaigns, manage contacts, and add two-factor authentication - all powered by GatewayAPI.com.
+
+Send SMS notifications for WooCommerce orders, create SMS campaigns, manage contacts, and add two-factor authentication - powered by GatewayAPI.com.
 
 == 📝 Description ==
 
