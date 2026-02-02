@@ -42,6 +42,11 @@ function gatewayapi_ensure_capabilities() {
 		return;
 	}
 
+	// If the current version is less than 2.0.0, we are upgrading from v1
+	if ( $current_version && version_compare( $current_version, '2.0.0', '<' ) ) {
+		update_option( 'gatewayapi_show_v2_notice', true );
+	}
+
 	$wp_roles = wp_roles();
 	foreach ( $wp_roles->roles as $role_name => $role_info ) {
 		if ( isset( $role_info['capabilities']['edit_posts'] ) && $role_info['capabilities']['edit_posts'] ) {

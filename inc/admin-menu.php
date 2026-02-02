@@ -86,3 +86,43 @@ function gatewayapi_admin_page_callback() {
     </script>
     <?php
 }
+
+add_action('admin_notices', function () {
+    if (!get_option('gatewayapi_show_v2_notice')) {
+        return;
+    }
+
+    if (!current_user_can('gatewayapi_manage')) {
+        return;
+    }
+
+    if ( ! function_exists( 'is_plugin_active' ) ) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+
+    $is_cf7_active = is_plugin_active('contact-form-7/wp-contact-form-7.php');
+    ?>
+    <div class="notice notice-warning is-dismissible gatewayapi-v2-upgrade-notice">
+        <p><strong>GatewayAPI-plugin upgraded to v2</strong></p>
+        <p>The new version of GatewayAPI has breaking changes:</p>
+        <ul style="list-style: disc; margin-left: 2em;">
+            <li>You must re-add credentials, as the plugin now needs a REST API token.</li>
+            <li>Campaigns and contacts have not been migrated.</li>
+            <li>Two-factor authentication must be reconfigured.</li>
+            <?php if ( $is_cf7_active ): ?>
+                <li>Contact Form 7-integration has been removed.</li>
+            <?php endif; ?>
+        </ul>
+        <p>We are sorry for the inconvenience.</p>
+        <p>If you want to go back, you can <a href="https://downloads.wordpress.org/plugin/gatewayapi.1.8.3.zip">download the last 1.x version
+                here</a>.</p>
+    </div>
+    <script>
+        jQuery(document).on('click', '.gatewayapi-v2-upgrade-notice .notice-dismiss', function () {
+            jQuery.post(ajaxurl, {
+                action: 'gatewayapi_dismiss_v2_notice'
+            });
+        });
+    </script>
+    <?php
+} );

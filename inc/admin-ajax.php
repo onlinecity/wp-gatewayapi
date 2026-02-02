@@ -255,8 +255,19 @@ add_action('wp_ajax_gatewayapi_save_contact_fields', function () {
     }
 
     update_option('gwapi_contact_fields', $fields);
-
     wp_send_json_success([
         'message' => 'Contact fields saved successfully',
     ]);
+});
+
+/**
+ * Dismiss the v2 upgrade notice
+ */
+add_action('wp_ajax_gatewayapi_dismiss_v2_notice', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    update_option('gatewayapi_show_v2_notice', false);
+    wp_send_json_success();
 });
