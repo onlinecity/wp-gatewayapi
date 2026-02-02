@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, woocommerce, campaigns, notifications, transactional sms, marketing
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
