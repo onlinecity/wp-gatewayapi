@@ -175,7 +175,7 @@ The admin interface is built with Vue.js and needs a development server running 
 
 1.  Navigate to the admin-ui directory:
     ```bash
-    cd admin-ui
+    cd wp-content/plugins/gatewayapi/admin-ui
     ```
 2.  Install dependencies:
     ```bash
