@@ -81,5 +81,4 @@ jobs:
           VER="${{ steps.ver.outputs.version }}"
           cd svn-wp
           svn rm trunk --force || true
-          svn cp "^/tags/$VER" trunk
-          svn ci --username "$SVN_USERNAME" --password "$SVN_PASSWORD" -m "Release $VER: update trunk from tag" --non-interactive --no-auth-cache
+          svn cp --username "$SVN_USERNAME" --password "$SVN_PASSWORD" "https://plugins.svn.wordpress.org/gatewayapi/tags/$VER" "https://plugins.svn.wordpress.org/gatewayapi/trunk" -m "Release $VER: copy tag to trunk"
