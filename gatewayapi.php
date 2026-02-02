@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Manage SMS broadcasts via WordPress
-Version:     2.0.4
+Version:     2.0.5
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     GPLv3
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) die('Cannot be accessed directly!');
 
 require_once( plugin_dir_path( __FILE__ ) . '/libraries/action-scheduler/action-scheduler.php' );
 
-const GATEWAYAPI_VERSION = '2.0.2';
+const GATEWAYAPI_VERSION = '2.0.5';
 
 function gatewayapi__dir()
 {
@@ -31,6 +31,20 @@ function gatewayapi__url()
 
 add_action('init', function () {
   $D = gatewayapi__dir();
+
+  // Ensure gatewayapi_manage capability is added to roles with edit_posts capability
+  if (is_admin()) {
+    $current_version = get_option('gatewayapi_version');
+    if (!$current_version || version_compare($current_version, '2.0.0', '<')) {
+      $wp_roles = wp_roles();
+      foreach ($wp_roles->roles as $role_name => $role_info) {
+        if (isset($role_info['capabilities']['edit_posts']) && $role_info['capabilities']['edit_posts']) {
+          $wp_roles->add_cap($role_name, 'gatewayapi_manage');
+        }
+      }
+      update_option('gatewayapi_version', GATEWAYAPI_VERSION);
+    }
+  }
 
   // public
   require_once("$D/inc/api.php");
@@ -65,4 +79,5 @@ register_activation_hook(__FILE__, function () {
       $wp_roles->add_cap($role_name, 'gatewayapi_manage');
     }
   }
+  update_option('gatewayapi_version', GATEWAYAPI_VERSION);
 });
