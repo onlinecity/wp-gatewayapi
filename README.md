@@ -1,5 +1,8 @@
 # GatewayAPI
 
+> [!TIP]
+> If you just want to use the plugin, you can search for **GatewayAPI** from within the WordPress plugin directory or download it from the [official repository here](https://wordpress.org/plugins/gatewayapi/).
+
 ![GatewayAPI Banner](https://ps.w.org/gatewayapi/assets/banner-1544x500.png)
 
 Send SMS notifications for WooCommerce orders, create SMS campaigns, manage contacts, and add two-factor authentication - powered by GatewayAPI.com.
