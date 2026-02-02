@@ -167,7 +167,7 @@ watch(isOpen, (newValue) => {
           :class="{ 'active': !multiple && !modelValue }"
           class="flex justify-between items-center"
         >
-          <span>{{ multiple ? '- Clear selection -' : `- ${allLabel} -` }}</span>
+          <span>{{ multiple ? '- Clear selection -' : (modelValue ? `- ${allLabel} -` : allLabel) }}</span>
         </a>
       </li>
 
@@ -185,7 +185,7 @@ watch(isOpen, (newValue) => {
               class="checkbox checkbox-sm"
             />
             <Icon :icon="`circle-flags:${country.slug.toLowerCase()}`" class="w-5 h-5 flex-shrink-0" />
-            <span class="label-text flex-grow">{{ country.name }}</span>
+            <span class="label-text flex-grow truncate w-full">{{ country.name }}</span>
             <span v-if="showCount && country.count !== undefined" class="text-xs opacity-50">{{ country.count }}</span>
           </label>
         </template>

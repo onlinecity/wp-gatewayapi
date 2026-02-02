@@ -3,6 +3,7 @@ import {ref, onMounted} from 'vue';
 import {useParentIframeStore} from '@/stores/parentIframe.ts';
 import {useStateStore} from '@/stores/state.ts';
 import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
+import TwoFactorSettings from '@/components/settings/TwoFactorSettings.vue';
 import DefaultSettings from '@/components/settings/DefaultSettings.vue';
 import ContactFieldsSettings from '@/components/settings/ContactFieldsSettings.vue';
 import PageTitle from "@/components/PageTitle.vue";
@@ -43,6 +44,11 @@ onMounted(async () => {
     <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" :checked="true"/>
     <div class="tab-content bg-base-100 border-base-300 p-6">
       <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion"/>
+    </div>
+
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Two-Factor"/>
+    <div class="tab-content bg-base-100 border-base-300 p-6">
+      <TwoFactorSettings/>
     </div>
 
     <input type="radio" name="settings_tabs" class="tab" aria-label="Defaults"/>

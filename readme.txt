@@ -1,39 +1,50 @@
 === GatewayAPI ===
 Contributors: onlinecity
-Tags: sms, woocommerce, campaigns, notifications, transactional sms, marketing
+Tags: sms, woocommerce, campaigns, notifications, transactional sms
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Short Description: Send SMS notifications for WooCommerce orders, create SMS campaigns, manage contacts, and add two-factor authentication - all powered by GatewayAPI.com.
 
-== Description ==
+== 📝 Description ==
 
 GatewayAPI for WordPress is a powerful SMS plugin that combines WooCommerce transactional SMS notifications with a high-performance campaign and contact management system.
 
 The plugin allows you to automatically send SMS messages when WooCommerce orders change status, as well as create and send personalized SMS campaigns to large contact lists.
 
-This version is a complete rewrite of the plugin, with a strong focus on performance, reliability, and modern WordPress standards.
+You can also add an extra layer of security to your WordPress site with SMS-based two-factor authentication, helping protect your login process with verification codes sent directly to your mobile device.
+
+Version 2 is a complete rewrite of the plugin, with a strong focus on performance, reliability, and modern WordPress standards.
 
 All SMS messages are delivered via GatewayAPI.com, one of Europe’s leading SMS gateways.
 
-== Main Features ==
+== ⭐ Main Features ==
 
-= WooCommerce SMS Notifications =
+= 🛒 WooCommerce SMS Notifications =
 
 * Send automatic SMS messages based on WooCommerce order status changes
 * Separate message templates for customer and internal recipients
 * Fully configurable per order status
 * Supports all standard WooCommerce order statuses
 
-= SMS Campaigns & Broadcasts =
+= 🔐 Two-Factor Authentication =
+
+* Add an extra layer of security to your WordPress login
+* SMS-based verification codes sent automatically during login
+* Can be limited to specific roles and phone countries
+* Works with standard WordPress authentication
+* Uses GatewayAPI's reliable SMS delivery
+
+= 📢 SMS Campaigns & Broadcasts =
 
 * Send SMS campaigns to large contact lists
 * High throughput and stable delivery using Action Scheduler
 * Designed to work reliably even on shared web hosting
 * Background processing
 
-= Contact & List Management =
+= 📇 Contact & List Management =
 
 * Manage contacts directly in WordPress
 * Import and export contacts using CSV files
@@ -41,31 +52,30 @@ All SMS messages are delivered via GatewayAPI.com, one of Europe’s leading SMS
 * Reusable contact lists for campaigns
 * Use contact fields for mail-merged SMS content
 
-= Personalized Message Templates =
+= ✉️ Personalized Message Templates =
 
 * Mail-merge support for campaigns and WooCommerce messages
 * Use dynamic placeholders such as customer data, order data, and custom fields
 * Supports both GSM and Unicode SMS
 * Configurable sender ID per message
 
-= Built for Reliability & Scale =
+= 🚀 Built for Reliability & Scale =
 
 * Uses Action Scheduler (the same job system used by WooCommerce)
 * Non-blocking background processing
 * Suitable for very large campaigns (100,000+ recipients)
 * No PHP timeouts or long-running requests
 
-== Old users? Some features are gone ==
+== ⚠️ Coming from v1.x? Some features are gone ==
 
 The following features are not part of this plugin anymore:
 
-* SMS two-factor authentication
 * Receiving or processing incoming SMS messages
 * Contact Form 7-integration
 
 These features had very low usage and were removed to simplify the plugin. If you need this, consider the legacy version of the plugin (any version before 2.0).
 
-== About GatewayAPI.com ==
+== 🌍 About GatewayAPI.com ==
 
 * Founded in 1999
 * One of Europe’s leading SMS providers
@@ -74,7 +84,7 @@ These features had very low usage and were removed to simplify the plugin. If yo
 * No subscriptions – pay only for what you send
 * Fast and reliable SMS delivery worldwide
 
-== Installation ==
+== 🔧 Installation ==
 
 1. Create a free account at https://gatewayapi.com/
 2. Install and activate the plugin
@@ -82,16 +92,16 @@ These features had very low usage and were removed to simplify the plugin. If yo
 4. Add your API Token from your GatewayAPI.com account
 5. Play around! Send a test campaign or setup a WooCommerce Order hook
 
-== Getting Started ==
+== 🚀 Getting Started ==
 
-= WooCommerce Notifications =
+= 🛍️ WooCommerce Notifications =
 
 After installation, you can enable SMS notifications per WooCommerce order status.
 Each status can send messages to customers, internal recipients, or both.
 
 Place a test order to confirm everything is working as expected.
 
-= Campaign Messaging =
+= 📨 Campaign Messaging =
 
 You can create SMS campaigns without WooCommerce:
 
@@ -99,7 +109,17 @@ You can create SMS campaigns without WooCommerce:
 * Organize contacts into lists
 * Create a personalized SMS campaign
 
-== Frequently Asked Questions ==
+= 🔐 Two-Factor Authentication =
+
+To add SMS-based two-factor authentication to your WordPress site:
+
+* Go to GatewayAPI → Settings → Two-Factor
+* Enable two-factor authentication
+* Configure which user roles should use two-factor authentication
+* Optionally limit to specific phone countries for security
+* Set a grace period if needed
+
+== ❓ Frequently Asked Questions ==
 
 = Can this plugin handle very large SMS campaigns? =
 
@@ -115,7 +135,7 @@ WooCommerce is only required for order-based SMS notifications.
 Campaign messaging and contact management work without WooCommerce.
 
 
-== External services ==
+== 🔗 External services ==
 
 This plugin connects to the GatewayAPI.com service to send SMS messages. This external service is required for the plugin’s primary functionality, which is delivering transactional and campaign SMS messages.
 
@@ -136,7 +156,11 @@ https://gatewayapi.com/security-and-compliance/
 4. Contact management and CSV import
 
 
-== Changelog ==
+== 📋 Changelog ==
+
+= 2.0.4 =
+
+ * Two-factor authentication has been re-added to the plugin.
 
 = 2.0.2-2.0.3 =
 
