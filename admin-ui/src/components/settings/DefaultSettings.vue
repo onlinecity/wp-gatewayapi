@@ -1,0 +1,126 @@
+<script setup lang="ts">
+import {ref, watch} from 'vue';
+import {useParentIframeStore} from '../../stores/parentIframe.ts';
+
+const props = defineProps<{
+  initialSender?: string;
+  initialSendSpeed?: number;
+}>();
+
+const parentIframe = useParentIframeStore();
+
+// Defaults settings
+const defaultSender = ref(props.initialSender || '');
+const defaultSendSpeed = ref(props.initialSendSpeed || 60);
+const defaultsLoading = ref(false);
+const defaultsMessage = ref('');
+const defaultsError = ref(false);
+
+watch(() => props.initialSender, (newVal) => {
+  if (newVal !== undefined) defaultSender.value = newVal;
+});
+watch(() => props.initialSendSpeed, (newVal) => {
+  if (newVal !== undefined) defaultSendSpeed.value = newVal;
+});
+
+// Save defaults settings
+const saveDefaults = async () => {
+  defaultsLoading.value = true;
+  defaultsMessage.value = '';
+  defaultsError.value = false;
+
+  const sender = defaultSender.value;
+  if (sender) {
+    const isDigitsOnly = /^\d+$/.test(sender);
+    if (isDigitsOnly) {
+      if (sender.length > 18) {
+        defaultsError.value = true;
+        defaultsMessage.value = 'Default sender cannot be more than 18 digits';
+        defaultsLoading.value = false;
+        return;
+      }
+    } else {
+      if (sender.length > 11) {
+        defaultsError.value = true;
+        defaultsMessage.value = 'Default sender cannot be more than 11 characters when it contains non-digit characters';
+        defaultsLoading.value = false;
+        return;
+      }
+    }
+  }
+
+  try {
+    const response = await parentIframe.ajaxPost('gatewayapi_save_defaults', {
+      gwapi_default_sender: defaultSender.value,
+      gwapi_default_send_speed: defaultSendSpeed.value,
+    }) as any;
+
+    if (response && response.success) {
+      defaultsMessage.value = response.data.message;
+    } else {
+      defaultsError.value = true;
+      defaultsMessage.value = response?.data?.message || 'Failed to save default settings';
+    }
+  } catch (error: any) {
+    defaultsError.value = true;
+    defaultsMessage.value = error?.message || 'Failed to save default settings';
+  } finally {
+    defaultsLoading.value = false;
+  }
+};
+</script>
+
+<template>
+
+  <!-- Defaults Message -->
+  <div v-if="defaultsMessage" class="alert mb-6" :class="defaultsError ? 'alert-error' : 'alert-success'">
+    <Icon v-if="defaultsError" icon="lucide:circle-alert"/>
+    <Icon v-else icon="lucide:circle-check-big"/>
+    <span>{{ defaultsMessage }}</span>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+    <fieldset class="fieldset text-base tooltip tooltip-top"
+              data-tip="The sender must be either up to 18 digits, or max 11 characters if it contains anything except digits.">
+      <legend class="fieldset-legend">Default Sender</legend>
+      <input
+          type="text"
+          v-model="defaultSender"
+          class="input input-bordered w-full"
+          placeholder="Info"
+      />
+      <p class="block">
+        Default sender name or number. MSISDN for replies.
+        <a href="https://gatewayapi.com/pricing/" target="_blank" rel="noopener noreferrer"
+           class="link link-primary">Pricing info</a>.
+      </p>
+    </fieldset>
+
+    <!-- Default Send Speed -->
+    <fieldset class="fieldset text-base tooltip" data-tip="For most webhosts, under 100 should be fine. Setting to eg. 1000 will use significant memory when sending and should not be attempted on a host with a memory limit below 512 MB.">
+      <legend class="fieldset-legend">Campaign Send Speed</legend>
+      <input
+          type="number"
+          v-model.number="defaultSendSpeed"
+          class="input input-bordered w-full"
+          min="1"
+          max="1000"
+          placeholder="60"
+      />
+      <p class="block">
+        Messages per minute (1-1000).
+      </p>
+    </fieldset>
+  </div>
+
+  <div class="card-actions justify-end mt-6">
+    <button
+        class="btn btn-primary"
+        :disabled="defaultsLoading"
+        @click="saveDefaults"
+    >
+      <span v-if="defaultsLoading" class="loading loading-spinner"></span>
+      Save Defaults
+    </button>
+  </div>
+</template>

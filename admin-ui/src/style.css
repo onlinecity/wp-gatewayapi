@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* styles from daisy*/
+@plugin "daisyui/theme" {
+    name: "gatewayapi";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(100% 0 0);
+    --color-base-200: oklch(98.462% 0.001 247.838);
+    --color-base-300: oklch(92.462% 0.001 247.838);
+    --color-base-content: oklch(20% 0 0);
+    --color-primary: #53a8f3;
+    --color-primary-content: oklch(98% 0.003 247.858);
+    --color-secondary: oklch(89% 0.058 10.001);
+    --color-secondary-content: oklch(51% 0.222 16.935);
+    --color-accent: oklch(90% 0.093 164.15);
+    --color-accent-content: oklch(50% 0.118 165.612);
+    --color-neutral: #53a8f3;
+    --color-neutral-content: oklch(98% 0.003 247.858);
+    --color-info: oklch(86% 0.127 207.078);
+    --color-info-content: oklch(52% 0.105 223.128);
+    --color-success: #90dba7;
+    --color-success-content: oklch(52% 0.154 150.069);
+    --color-warning: #f3c475;
+    --color-warning-content: oklch(55% 0.195 38.402);
+    --color-error: oklch(80% 0.114 19.571);
+    --color-error-content: oklch(50% 0.213 27.518);
+    --radius-selector: 0.25rem;
+    --radius-field: 0.25rem;
+    --radius-box: 1rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 2px;
+    --depth: 0;
+    --noise: 0;
+}
+
+@theme {
+    --font-sans: "Nunito Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html, body {
+    background: transparent;
+}
+

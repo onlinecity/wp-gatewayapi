@@ -1,0 +1,262 @@
+<?php if (!defined('ABSPATH')) die('Cannot be accessed directly!');
+
+/**
+ * Get the key status for GatewayAPI
+ */
+add_action('wp_ajax_gatewayapi_get_key_status', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $token = get_option('gwapi_token');
+    $setup = get_option('gwapi_setup');
+
+    if (empty($token) || empty($setup)) {
+        wp_send_json_success([
+            'hasKey' => false,
+            'isWooCommerceActive' => class_exists('WooCommerce'),
+        ]);
+    }
+
+    // Determine the API base URL based on setup
+    $baseUrl = $setup === 'eu' ? 'https://gatewayapi.eu' : 'https://gatewayapi.com';
+
+    // Test the token by calling the /rest/me endpoint
+    $response = wp_remote_get($baseUrl . '/rest/me', [
+        'headers' => [
+            'Authorization' => 'Token ' . $token,
+        ],
+        'timeout' => 15,
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_send_json_success([
+            'hasKey' => true,
+            'keyIsValid' => false,
+            'message' => $response->get_error_message(),
+            'isWooCommerceActive' => class_exists('WooCommerce'),
+        ]);
+    }
+
+    $statusCode = wp_remote_retrieve_response_code($response);
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+
+    if ($statusCode < 200 || $statusCode >= 300) {
+        wp_send_json_success([
+            'hasKey' => true,
+            'keyIsValid' => false,
+            'isWooCommerceActive' => class_exists('WooCommerce'),
+        ]);
+    }
+
+    wp_send_json_success([
+        'hasKey' => true,
+        'keyIsValid' => true,
+        'credit' => isset($body['credit']) ? $body['credit'] : null,
+        'currency' => isset($body['currency']) ? $body['currency'] : null,
+        'isWooCommerceActive' => class_exists('WooCommerce'),
+    ]);
+});
+
+/**
+ * Save the connection settings for GatewayAPI
+ */
+add_action('wp_ajax_gatewayapi_save_connection', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $token = isset($_POST['gwapi_token']) ? sanitize_text_field($_POST['gwapi_token']) : '';
+    $setup = isset($_POST['gwapi_setup']) ? sanitize_text_field($_POST['gwapi_setup']) : 'com';
+    $apiVersion = isset($_POST['gwapi_api_version']) ? sanitize_text_field($_POST['gwapi_api_version']) : 'sms';
+
+    $token_changed = true;
+    // If token is just dots, it means the user hasn't changed it (backwards compatibility)
+    // Or if token is empty string/null, it means the user hasn't changed it
+    if (empty($token)) {
+        $token = get_option('gwapi_token');
+        $token_changed = false;
+    }
+
+    if (empty($token)) {
+        wp_send_json_error(['message' => 'Token is required']);
+    }
+
+    if (!in_array($setup, ['com', 'eu'])) {
+        wp_send_json_error(['message' => 'Invalid setup value']);
+    }
+
+    if (!in_array($apiVersion, ['sms', 'messaging'])) {
+        wp_send_json_error(['message' => 'Invalid API version']);
+    }
+
+    $body = null;
+    if ($token_changed) {
+        // Determine the API base URL based on setup
+        $baseUrl = $setup === 'eu' ? 'https://gatewayapi.eu' : 'https://gatewayapi.com';
+
+        // Test the token by calling the /rest/me endpoint
+        $response = wp_remote_get($baseUrl . '/rest/me', [
+            'headers' => [
+                'Authorization' => 'Token ' . $token,
+            ],
+            'timeout' => 15,
+        ]);
+
+        if (is_wp_error($response)) {
+            wp_send_json_error(['message' => 'Failed to connect to GatewayAPI: ' . $response->get_error_message()]);
+        }
+
+        $statusCode = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if ($statusCode < 200 || $statusCode >= 300) {
+            $errorMessage = isset($body['message']) ? $body['message'] : 'Invalid token';
+            wp_send_json_error(['message' => $errorMessage]);
+        }
+
+        // Token is valid, save the settings
+        update_option('gwapi_token', $token);
+    }
+
+    update_option('gwapi_setup', $setup);
+    update_option('gwapi_api_version', $apiVersion);
+
+    wp_send_json_success([
+        'message' => 'Connection settings saved successfully',
+        'credit' => isset($body['credit']) ? $body['credit'] : null,
+        'currency' => isset($body['currency']) ? $body['currency'] : null,
+    ]);
+});
+
+/**
+ * Disconnect the GatewayAPI account
+ */
+add_action('wp_ajax_gatewayapi_disconnect', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    delete_option('gwapi_token');
+
+    wp_send_json_success([
+        'message' => 'Disconnected successfully',
+    ]);
+});
+
+/**
+ * Save the default settings for GatewayAPI
+ */
+add_action('wp_ajax_gatewayapi_save_defaults', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $sender = isset($_POST['gwapi_default_sender']) ? sanitize_text_field($_POST['gwapi_default_sender']) : '';
+    $sendSpeed = isset($_POST['gwapi_default_send_speed']) ? intval($_POST['gwapi_default_send_speed']) : 60;
+
+    // Validate sender
+    if (!empty($sender)) {
+        $is_digits_only = preg_match('/^\d+$/', $sender);
+        if ($is_digits_only) {
+            if (strlen($sender) > 18) {
+                wp_send_json_error(['message' => 'Default sender cannot be more than 18 digits']);
+            }
+        } else {
+            if (strlen($sender) > 11) {
+                wp_send_json_error(['message' => 'Default sender cannot be more than 11 characters when it contains non-digit characters']);
+            }
+        }
+    }
+
+    // Validate send speed (1-1000)
+    if ($sendSpeed < 1 || $sendSpeed > 1000) {
+        wp_send_json_error(['message' => 'Send speed must be between 1 and 1000']);
+    }
+
+    update_option('gwapi_default_sender', $sender);
+    update_option('gwapi_default_send_speed', $sendSpeed);
+
+    wp_send_json_success([
+        'message' => 'Default settings saved successfully',
+    ]);
+});
+
+/**
+ * Get the current settings for GatewayAPI
+ */
+add_action('wp_ajax_gatewayapi_get_settings', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $token = get_option('gwapi_token');
+    $setup = get_option('gwapi_setup', 'com');
+    $apiVersion = get_option('gwapi_api_version', 'sms');
+    $sender = get_option('gwapi_default_sender', '');
+    $sendSpeed = get_option('gwapi_default_send_speed', '60');
+    $wooEnabled = class_exists('WooCommerce') ? '1' : '0';
+
+    wp_send_json_success([
+        'hasKey' => !empty($token),
+        'gwapi_setup' => $setup,
+        'gwapi_api_version' => $apiVersion,
+        'gwapi_default_sender' => $sender,
+        'gwapi_default_send_speed' => $sendSpeed,
+        'is_woocommerce_active' => class_exists('WooCommerce'),
+    ]);
+});
+
+/**
+ * Get the contact fields
+ */
+add_action('wp_ajax_gatewayapi_get_contact_fields', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $fields = get_option('gwapi_contact_fields', []);
+    if (!is_array($fields)) {
+        $fields = json_decode($fields, true) ?: [];
+    }
+
+    wp_send_json_success($fields);
+});
+
+/**
+ * Save the contact fields
+ */
+add_action('wp_ajax_gatewayapi_save_contact_fields', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $fields = isset($_POST['fields']) ? $_POST['fields'] : [];
+    if (!is_array($fields)) {
+        $fields = json_decode(stripslashes($fields), true) ?: [];
+    }
+
+    // Validation
+    $titles = [];
+    $existing_columns = ['name', 'msisdn', 'status', 'tags', 'country_name', 'country_code'];
+    
+    foreach ($fields as $field) {
+        $title = trim($field['title']);
+        if (empty($title)) {
+            wp_send_json_error(['message' => 'Title cannot be empty']);
+        }
+        if (in_array($title, $titles)) {
+            wp_send_json_error(['message' => "Title '$title' must be unique"]);
+        }
+        if (in_array(strtolower($title), $existing_columns)) {
+            wp_send_json_error(['message' => "Title '$title' is a reserved column name"]);
+        }
+        $titles[] = $title;
+    }
+
+    update_option('gwapi_contact_fields', $fields);
+
+    wp_send_json_success([
+        'message' => 'Contact fields saved successfully',
+    ]);
+});
