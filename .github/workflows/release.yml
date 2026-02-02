@@ -1,0 +1,80 @@
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - 'release-*'
+
+jobs:
+  release:
+    name: Build and deploy on release tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build package
+        run: |
+          bash ./package.sh
+
+      - name: Read plugin version
+        id: ver
+        run: |
+          VERSION=$(grep -m 1 "Version:" gatewayapi.php | awk '{print $NF}' | tr -d '\r')
+          if [ -z "$VERSION" ]; then
+            echo "Could not read version from gatewayapi.php" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Show artifacts
+        run: |
+          ls -la .
+          ls -la build || true
+
+      - name: Check out WordPress.org SVN
+        run: |
+          svn --version
+          svn co https://plugins.svn.wordpress.org/gatewayapi svn-wp
+
+      - name: Prepare SVN tag directory
+        run: |
+          set -e
+          VER="${{ steps.ver.outputs.version }}"
+          cd svn-wp
+          if [ -d "tags/$VER" ]; then
+            echo "Tag tags/$VER already exists in SVN. Aborting to be safe." >&2
+            exit 1
+          fi
+          mkdir -p "tags/$VER"
+          rsync -a --delete "$GITHUB_WORKSPACE/build/gatewayapi/" "tags/$VER/"
+
+      - name: Commit tag to SVN
+        env:
+          SVN_USERNAME: ${{ secrets.WP_ORG_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.WP_ORG_PASSWORD }}
+        run: |
+          set -e
+          cd svn-wp
+          svn add --force "tags/${{ steps.ver.outputs.version }}"
+          svn ci --username "$SVN_USERNAME" --password "$SVN_PASSWORD" -m "Release ${{ steps.ver.outputs.version }}: add tag" --non-interactive --no-auth-cache
+
+      - name: Replace trunk with svn cp of the tag
+        env:
+          SVN_USERNAME: ${{ secrets.WP_ORG_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.WP_ORG_PASSWORD }}
+        run: |
+          set -e
+          VER="${{ steps.ver.outputs.version }}"
+          cd svn-wp
+          svn rm trunk --force || true
+          svn cp "^/tags/$VER" trunk
+          svn ci --username "$SVN_USERNAME" --password "$SVN_PASSWORD" -m "Release $VER: update trunk from tag" --non-interactive --no-auth-cache
