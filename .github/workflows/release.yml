@@ -80,5 +80,5 @@ jobs:
           set -e
           VER="${{ steps.ver.outputs.version }}"
           cd svn-wp
-          svn rm trunk --force || true
-          svn cp --username "$SVN_USERNAME" --password "$SVN_PASSWORD" "https://plugins.svn.wordpress.org/gatewayapi/tags/$VER/" "https://plugins.svn.wordpress.org/gatewayapi/trunk/" -m "Release $VER: copy tag to trunk"
+          svn rm https://plugins.svn.wordpress.org/gatewayapi/trunk -m "remove trunk to prepare for new version" --force -m "prepare for new version"
+          svn cp "https://plugins.svn.wordpress.org/gatewayapi/tags/$VER/" "https://plugins.svn.wordpress.org/gatewayapi/trunk/" -m "Release $VER: copy tag to trunk"
