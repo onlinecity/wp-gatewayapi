@@ -143,23 +143,6 @@ This service is provided by GatewayAPI ApS.
 Privacy policy, terms and conditions, data processing agreement, and security certifications (including ISAE 3000 and ISAE 3402) are available at:
 [https://gatewayapi.com/security-and-compliance/](https://gatewayapi.com/security-and-compliance/)
 
-## 📋 Changelog
-
-### 2.0.5
-* Bugfix: For users upgrading from 1.x, a missing capability upgrade made the plugin unavailable until deactivate + reactivate.
-
-### 2.0.4
-* Two-factor authentication has been re-added to the plugin.
-
-### 2.0.2-2.0.3
-* No changes. These versions exist because we have been working on automating release processes.
-
-### 2.0.1
-* Minor modifications to ensure best-practices as per WordPress guidelines.
-
-### 2.0.0
-* Complete rewrite of the plugin!
-
 ## 🛠️ Development
 
 To develop for this plugin, you'll need a local environment.
