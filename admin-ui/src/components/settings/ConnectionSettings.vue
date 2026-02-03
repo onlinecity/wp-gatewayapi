@@ -6,7 +6,10 @@ import {useStateStore} from '../../stores/state.ts';
 const props = defineProps<{
   initialSetup?: string;
   initialApiVersion?: string;
+  isOauthOnly?: boolean;
 }>();
+
+const emit = defineEmits(['update:isOauthOnly']);
 
 const parentIframe = useParentIframeStore();
 const stateStore = useStateStore();
@@ -16,7 +19,7 @@ const tokenInput = ref<HTMLInputElement | null>(null);
 // Connection settings
 const gwapiToken = ref('');
 const gwapiSetup = ref(props.initialSetup || 'com');
-const gwapiApiVersion = ref(props.initialApiVersion || 'sms');
+const gwapiApiVersion = ref(props.initialApiVersion || (stateStore.hasKey === false ? 'messaging' : 'sms'));
 const tokenFieldCleared = ref(false);
 const connectionLoading = ref(false);
 const disconnectLoading = ref(false);
@@ -103,6 +106,7 @@ const saveConnection = async () => {
       }
       tokenFieldCleared.value = false;
       gwapiToken.value = '';
+      emit('update:isOauthOnly', false);
       await stateStore.reloadKeyStatus(true);
     } else {
       connectionError.value = true;
@@ -184,7 +188,33 @@ const saveConnection = async () => {
 
   <fieldset class="fieldset text-base mt-4">
     <legend class="fieldset-legend">API Version</legend>
+
+    <div v-if="props.isOauthOnly" class="alert alert-warning mb-4">
+      <Icon icon="lucide:triangle-alert" />
+      <span class="text-sm">You are using a legacy OAuth-token, which will continue to work, but is limited to the legacy SMS API.</span>
+    </div>
+
     <div class="flex flex-col gap-4">
+      <label class="cursor-pointer flex gap-2 items-start" :class="{'opacity-50 cursor-not-allowed': props.isOauthOnly}">
+        <input
+            type="radio"
+            name="gwapi_api_version"
+            class="radio radio-primary mt-1"
+            value="messaging"
+            v-model="gwapiApiVersion"
+            :disabled="props.isOauthOnly"
+        />
+        <div class="flex flex-col">
+          <span class="font-bold text-sm">Mobile Message API <span
+              class="badge badge-primary ms-2 badge-sm">Recommended</span></span>
+          <div class="text-sm">This API automatically uses the best protocol available for each recipient. It always
+            falls back to SMS, but also supports RCS and more protocols are coming.<br />
+            <small><strong>Note:</strong> RCS requires
+            pre-registration - please contact GatewayAPI Support.</small>
+          </div>
+        </div>
+      </label>
+
       <label class="cursor-pointer flex gap-2 items-start">
         <input
             type="radio"
@@ -194,24 +224,8 @@ const saveConnection = async () => {
             v-model="gwapiApiVersion"
         />
         <div class="flex flex-col text-sm">
-          <span class="font-bold">SMS API<span class="badge badge-primary ms-2 badge-sm">RECOMMENDED</span></span>
-          <div class="text-sm">We recommend this to most clients. It works for any account type.</div>
-        </div>
-      </label>
-      <label class="cursor-pointer flex gap-2 items-start">
-        <input
-            type="radio"
-            name="gwapi_api_version"
-            class="radio radio-primary mt-1"
-            value="messaging"
-            v-model="gwapiApiVersion"
-        />
-        <div class="flex flex-col">
-          <span class="font-bold text-sm">Mobile Message API <span
-              class="badge badge-warning ms-2  badge-sm">NEW</span></span>
-          <div class="text-sm">This API automatically uses the best protocol available for each recipient. It always
-            falls back to SMS, but also supports RCS and more protocols are coming. <em>Currently you need to get in
-              touch with our support prior to enabling this feature.</em></div>
+          <span class="font-bold">SMS API<span class="badge badge-warning ms-2 badge-sm">Legacy</span></span>
+          <div class="text-sm">Our legacy API. It will keep working, but we recommend the Mobile Message API which is more future proof.</div>
         </div>
       </label>
     </div>
@@ -229,7 +243,7 @@ const saveConnection = async () => {
     </button>
     <button
         class="btn btn-primary"
-        :disabled="connectionLoading || disconnectLoading || (!gwapiToken && !tokenFieldDisabled)"
+        :disabled="connectionLoading || disconnectLoading || (!gwapiToken && !isOauthOnly && !tokenFieldDisabled)"
         @click="saveConnection"
     >
       <span v-if="connectionLoading" class="loading loading-spinner"></span>

@@ -82,6 +82,37 @@ function gatewayapi_admin_page_callback() {
             if (iframe.length && wpBodyContent.length) {
                 iframe.css('min-height', wpBodyContent.outerHeight() + 'px');
             }
+
+            // Lock API version field if using old OAuth credentials
+            <?php
+            $key = get_option('gwapi_key');
+            $secret = get_option('gwapi_secret');
+            $token = get_option('gwapi_token');
+            if (!empty($key) && !empty($secret) && empty($token)): ?>
+            window.addEventListener('message', function(event) {
+                // We don't know the exact origin, but we can check if it's our iframe
+                const iframeWin = iframe[0].contentWindow;
+                if (event.source !== iframeWin) return;
+
+                // When the iframe is ready or settings are loaded, we try to disable the field
+                // Since we can't easily know when it's ready, we can try periodically or on certain messages
+                const lockField = () => {
+                    const doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                    if (doc) {
+                        const field = doc.querySelector('select[name="gwapi_api_version"], input[name="gwapi_api_version"]');
+                        if (field) {
+                            field.disabled = true;
+                            // Also disable the other radio option if it's a radio group
+                            doc.querySelectorAll('input[name="gwapi_api_version"]').forEach(el => {
+                                el.disabled = true;
+                            });
+                        }
+                    }
+                };
+
+                setInterval(lockField, 1000);
+            });
+            <?php endif; ?>
         });
     </script>
     <?php
@@ -106,15 +137,17 @@ add_action('admin_notices', function () {
         <p><strong>GatewayAPI-plugin upgraded to v2</strong></p>
         <p>The new version of GatewayAPI has breaking changes:</p>
         <ul style="list-style: disc; margin-left: 2em;">
-            <li>You must re-add credentials, as the plugin now needs a REST API token.</li>
-            <li>Campaigns and contacts have not been migrated.</li>
+            <li>Campaigns have not been migrated.</li>
+            <li>Contacts have not been migrated, but this is done with our migration tool.
+            </li>
             <li>Two-factor authentication must be reconfigured.</li>
             <?php if ( $is_cf7_active ): ?>
                 <li>Contact Form 7-integration has been removed.</li>
             <?php endif; ?>
         </ul>
-        <p>We are sorry for the inconvenience.</p>
-        <p>If you want to go back, you can <a href="https://downloads.wordpress.org/plugin/gatewayapi.1.8.3.zip">download the last 1.x version
+        <p>Please go to our automated migration tool to migrate contacts, contact fields and contact groups.</p>
+        <a class="button button-primary" href="<?php echo esc_url( admin_url( 'admin.php?page=gatewayapi-migration' ) ); ?>">Migrate data now</a>
+        <p>If you need to go back, you can <a href="https://downloads.wordpress.org/plugin/gatewayapi.1.8.3.zip">download the last 1.x version
                 here</a>.</p>
     </div>
     <script>

@@ -63,6 +63,12 @@ const steps = computed(() => [
     done: !!state.isWooCommerceActive,
     link: state.isWooCommerceActive ? 'admin.php?page=gatewayapi-woocommerce' : 'plugin-install.php?tab=search&s=woocommerce'
   },
+  {
+    title: 'Enable two-factor authentication',
+    description: 'Add an extra layer of security to your WordPress site with SMS-based two-factor authentication.',
+    done: !!state.is2FAEnabled,
+    link: 'admin.php?page=gatewayapi-settings#/settings'
+  },
 ]);
 
 const navigateTo = (link: string) => {

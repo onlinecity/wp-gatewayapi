@@ -13,7 +13,8 @@ const parentIframe = useParentIframeStore();
 const state = useStateStore();
 
 const gwapiSetup = ref('com');
-const gwapiApiVersion = ref('sms');
+const gwapiApiVersion = ref('messaging');
+const isOAuthOnly = ref(false);
 const defaultSender = ref('');
 const defaultSendSpeed = ref(60);
 
@@ -24,7 +25,8 @@ onMounted(async () => {
     if (response && response.success) {
       const data = response.data;
       gwapiSetup.value = data.gwapi_setup || 'com';
-      gwapiApiVersion.value = data.gwapi_api_version || 'sms';
+      gwapiApiVersion.value = data.gwapi_api_version || 'messaging';
+      isOAuthOnly.value = data.is_oauth_only || false;
       defaultSender.value = data.gwapi_default_sender || '';
       defaultSendSpeed.value = parseInt(data.gwapi_default_send_speed) || 60;
     }
@@ -43,7 +45,7 @@ onMounted(async () => {
   <div v-else class="tabs tabs-lift">
     <input type="radio" name="settings_tabs" class="tab" aria-label="Connection" :checked="true"/>
     <div class="tab-content bg-base-100 border-base-300 p-6">
-      <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion"/>
+      <ConnectionSettings :initial-setup="gwapiSetup" :initial-api-version="gwapiApiVersion" v-model:is-oauth-only="isOAuthOnly"/>
     </div>
 
     <input type="radio" name="settings_tabs" class="tab" aria-label="Two-Factor"/>

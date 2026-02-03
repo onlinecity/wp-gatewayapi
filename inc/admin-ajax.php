@@ -11,10 +11,26 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
     $token = get_option('gwapi_token');
     $setup = get_option('gwapi_setup');
 
-    if (empty($token) || empty($setup)) {
+    $key = get_option('gwapi_key');
+    $secret = get_option('gwapi_secret');
+    $isOAuthOnly = !empty($key) && !empty($secret) && empty($token);
+
+    if (empty($token) && !$isOAuthOnly) {
         wp_send_json_success([
             'hasKey' => false,
             'isWooCommerceActive' => class_exists('WooCommerce'),
+            'isOAuthOnly' => false,
+            'is2FAEnabled' => !!get_option('gwapi_2fa_enabled'),
+        ]);
+    }
+
+    if ($isOAuthOnly) {
+        wp_send_json_success([
+            'hasKey' => true,
+            'keyIsValid' => true,
+            'isOAuthOnly' => true,
+            'isWooCommerceActive' => class_exists('WooCommerce'),
+            'is2FAEnabled' => !!get_option('gwapi_2fa_enabled'),
         ]);
     }
 
@@ -35,6 +51,8 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
             'keyIsValid' => false,
             'message' => $response->get_error_message(),
             'isWooCommerceActive' => class_exists('WooCommerce'),
+            'isOAuthOnly' => false,
+            'is2FAEnabled' => !!get_option('gwapi_2fa_enabled'),
         ]);
     }
 
@@ -46,6 +64,8 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
             'hasKey' => true,
             'keyIsValid' => false,
             'isWooCommerceActive' => class_exists('WooCommerce'),
+            'isOAuthOnly' => false,
+            'is2FAEnabled' => !!get_option('gwapi_2fa_enabled'),
         ]);
     }
 
@@ -55,6 +75,8 @@ add_action('wp_ajax_gatewayapi_get_key_status', function () {
         'credit' => isset($body['credit']) ? $body['credit'] : null,
         'currency' => isset($body['currency']) ? $body['currency'] : null,
         'isWooCommerceActive' => class_exists('WooCommerce'),
+        'isOAuthOnly' => false,
+        'is2FAEnabled' => !!get_option('gwapi_2fa_enabled'),
     ]);
 });
 
@@ -70,6 +92,12 @@ add_action('wp_ajax_gatewayapi_save_connection', function () {
     $setup = isset($_POST['gwapi_setup']) ? sanitize_text_field($_POST['gwapi_setup']) : 'com';
     $apiVersion = isset($_POST['gwapi_api_version']) ? sanitize_text_field($_POST['gwapi_api_version']) : 'sms';
 
+    $key = get_option('gwapi_key');
+    $secret = get_option('gwapi_secret');
+    if (!empty($key) && !empty($secret) && empty($token) && empty(get_option('gwapi_token'))) {
+        $apiVersion = 'sms';
+    }
+
     $token_changed = true;
     // If token is just dots, it means the user hasn't changed it (backwards compatibility)
     // Or if token is empty string/null, it means the user hasn't changed it
@@ -78,7 +106,7 @@ add_action('wp_ajax_gatewayapi_save_connection', function () {
         $token_changed = false;
     }
 
-    if (empty($token)) {
+    if (empty($token) && empty($key)) {
         wp_send_json_error(['message' => 'Token is required']);
     }
 
@@ -138,6 +166,8 @@ add_action('wp_ajax_gatewayapi_disconnect', function () {
     }
 
     delete_option('gwapi_token');
+    delete_option('gwapi_secret');
+    delete_option('gwapi_key');
 
     wp_send_json_success([
         'message' => 'Disconnected successfully',
@@ -192,18 +222,25 @@ add_action('wp_ajax_gatewayapi_get_settings', function () {
 
     $token = get_option('gwapi_token');
     $setup = get_option('gwapi_setup', 'com');
-    $apiVersion = get_option('gwapi_api_version', 'sms');
+    $apiVersion = get_option('gwapi_api_version', 'messaging');
     $sender = get_option('gwapi_default_sender', '');
     $sendSpeed = get_option('gwapi_default_send_speed', '60');
-    $wooEnabled = class_exists('WooCommerce') ? '1' : '0';
+    $wooEnabled = class_exists('WooCommerce');
+
+    $key = get_option('gwapi_key');
+    $secret = get_option('gwapi_secret');
+    $isOAuthOnly = !empty($key) && !empty($secret) && empty($token);
+
+	if ($isOAuthOnly) $apiVersion = 'sms';
 
     wp_send_json_success([
-        'hasKey' => !empty($token),
+        'hasKey' => !empty($token) || !empty($key),
         'gwapi_setup' => $setup,
         'gwapi_api_version' => $apiVersion,
         'gwapi_default_sender' => $sender,
         'gwapi_default_send_speed' => $sendSpeed,
-        'is_woocommerce_active' => class_exists('WooCommerce'),
+        'is_woocommerce_active' => $wooEnabled,
+        'is_oauth_only' => $isOAuthOnly
     ]);
 });
 
