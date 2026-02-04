@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, woocommerce, campaigns, notifications, transactional sms
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.0.7
+Stable tag: 2.0.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -158,6 +158,10 @@ https://gatewayapi.com/security-and-compliance/
 
 
 == 📋 Changelog ==
+
+= 2.0.8 =
+
+ * The migration tool should now be available to all users of the 1.x-versions, as some were missing it.
 
 = 2.0.7 =
 
