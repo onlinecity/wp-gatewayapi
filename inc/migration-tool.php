@@ -50,6 +50,8 @@ function gatewayapi_migration_page_callback()
                 <li>⚠️ &nbsp; <strong>NOT migrate campaigns</strong> - If you need data from old campaigns, you must
                     copy it manually using the old plugin.
                 </li>
+                <li>⚠️ &nbsp; <strong>NOT migrate shortcodes</strong> - You will need to recreate these.
+                </li>
             </ul>
             <p>If you want to go back, you can <a href="https://downloads.wordpress.org/plugin/gatewayapi.1.8.3.zip">download the last 1.x version</a>.</p>
         </div>

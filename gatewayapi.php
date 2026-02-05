@@ -3,7 +3,7 @@
 Plugin Name: GatewayAPI
 Plugin URI:  https://wordpress.org/plugins/gatewayapi/
 Description: Manage SMS broadcasts via WordPress
-Version:     2.0.8
+Version:     2.1.0
 Author:      OnlineCity ApS
 Author URI:  http://onlinecity.dk
 License:     GPLv3
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once( plugin_dir_path( __FILE__ ) . '/libraries/action-scheduler/action-scheduler.php' );
 
-const GATEWAYAPI_VERSION = '2.0.8';
+const GATEWAYAPI_VERSION = '2.1.0';
 
 function gatewayapi__dir() {
 	return __DIR__;
@@ -62,10 +62,13 @@ add_action( 'init', function () {
 	gatewayapi_ensure_capabilities();
 
 	// public
+	require_once( "$D/inc/helpers.php" );
 	require_once( "$D/inc/api.php" );
 	require_once( "$D/inc/two-fa.php" );
 	require_once( "$D/inc/campaigns-scheduling.php" );
 	require_once( "$D/inc/woocommerce-scheduling.php" );
+	require_once( "$D/inc/contacts-post-type.php" );
+	require_once( "$D/inc/shortcodes.php" );
 
 	// admin: editor required
 	if ( ! current_user_can( 'gatewayapi_manage' ) ) {
@@ -73,7 +76,6 @@ add_action( 'init', function () {
 	}
 
 	require_once( "$D/inc/admin-ajax.php" );
-	require_once( "$D/inc/contacts-post-type.php" );
 	require_once( "$D/inc/contacts-ajax.php" );
 	require_once( "$D/inc/campaigns-post-type.php" );
 	require_once( "$D/inc/campaigns-ajax.php" );
@@ -81,9 +83,9 @@ add_action( 'init', function () {
 	require_once( "$D/inc/woocommerce-ajax.php" );
 	require_once( "$D/inc/admin-menu.php" );
 
-	if ( get_option( 'gatewayapi_show_v2_notice' ) !== false || get_option('gwapi_enable_ui')) {
-		require_once( "$D/inc/migration-tool.php" );
-	}
+//	if ( get_option( 'gatewayapi_show_v2_notice' ) !== false || get_option('gwapi_enable_ui')) {
+	require_once( "$D/inc/migration-tool.php" );
+//	}
 }, 9 );
 
 if ( defined( 'GATEWAYAPI_DEVSERVER' ) ) {

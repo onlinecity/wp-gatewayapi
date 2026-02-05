@@ -263,7 +263,7 @@ const exportContacts = async () => {
           <legend class="fieldset-legend">Tag</legend>
           <select v-model="filters.tag" class="select select-bordered ">
             <option value="">All Tags</option>
-            <option v-for="tag in tags" :key="tag.slug" :value="tag.slug">{{ tag.name }}</option>
+            <option v-for="tag in tags" :key="tag.name" :value="tag.name">{{ tag.name }}</option>
           </select>
         </fieldset>
 

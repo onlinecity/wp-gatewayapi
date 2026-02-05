@@ -237,17 +237,17 @@ add_action('wp_ajax_gatewayapi_save_contact', function () {
         }
     }
 
-	if ($country) {
+    if ($country) {
         $term = get_term_by('slug', $country_code, 'gwapi-recipient-country');
         if (!$term) {
             $term_info = wp_insert_term($country, 'gwapi-recipient-country', [
                 'slug' => $country_code
             ]);
         }
-		wp_set_post_terms($id, $country_code, 'gwapi-recipient-country');
-	}
+        wp_set_post_terms($id, $country_code, 'gwapi-recipient-country');
+    }
 
-	wp_send_json_success(['id' => $id, 'message' => 'Contact saved successfully']);
+    wp_send_json_success(['id' => $id, 'message' => 'Contact saved successfully']);
 });
 
 /**

@@ -8,10 +8,12 @@ import CampaignsIndex from "./pages/campaigns/index.vue";
 import CampaignsEdit from "./pages/campaigns/edit.vue";
 import WooCommerceIndex from "./pages/woocommerce/index.vue";
 import WooCommerceEdit from "./pages/woocommerce/edit.vue";
+import ShortcodesWizard from "./pages/shortcodes.vue";
 
 const routes = [
   { path: '/', component: Index },
   { path: '/settings', component: Settings },
+  { path: '/shortcodes', component: ShortcodesWizard },
   { path: '/contacts', component: ContactsIndex },
   { path: '/contacts/import', component: ContactsImport },
   { path: '/contacts/:id', component: ContactsEdit, props: true },

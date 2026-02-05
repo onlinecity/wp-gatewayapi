@@ -308,3 +308,101 @@ add_action('wp_ajax_gatewayapi_dismiss_v2_notice', function () {
     update_option('gatewayapi_show_v2_notice', false);
     wp_send_json_success();
 });
+
+/**
+ * Get frontend settings (reCAPTCHA)
+ */
+add_action('wp_ajax_gatewayapi_get_frontend_settings', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    wp_send_json_success([
+        'recaptcha_site_key' => get_option('gwapi_recaptcha_site_key', ''),
+        'recaptcha_secret_key' => get_option('gwapi_recaptcha_secret_key', ''),
+    ]);
+});
+
+/**
+ * Save frontend settings
+ */
+add_action('wp_ajax_gatewayapi_save_frontend_settings', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $site_key = isset($_POST['recaptcha_site_key']) ? sanitize_text_field($_POST['recaptcha_site_key']) : '';
+    $secret_key = isset($_POST['recaptcha_secret_key']) ? sanitize_text_field($_POST['recaptcha_secret_key']) : '';
+
+    update_option('gwapi_recaptcha_site_key', $site_key);
+    update_option('gwapi_recaptcha_secret_key', $secret_key);
+
+    wp_send_json_success([
+        'message' => 'Frontend settings saved successfully',
+    ]);
+});
+
+/**
+ * Get tags for shortcode wizard
+ */
+add_action('wp_ajax_gatewayapi_get_tags', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $terms = get_terms([
+        'taxonomy' => 'gwapi-recipient-tag',
+        'hide_empty' => false,
+    ]);
+
+    if (is_wp_error($terms)) {
+        wp_send_json_error(['message' => $terms->get_error_message()]);
+    }
+
+    $data = array_map(function ($term) {
+        return [
+            'term_id' => $term->term_id,
+            'name' => $term->name,
+            'count' => $term->count
+        ];
+    }, $terms);
+
+    wp_send_json_success($data);
+});
+
+/**
+ * Get countries for shortcode wizard
+ */
+add_action('wp_ajax_gatewayapi_get_countries', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $json_file = plugin_dir_path(__FILE__) . '../countries.json';
+    if (!file_exists($json_file)) {
+        wp_send_json_error(['message' => 'countries.json not found']);
+    }
+
+    $json_data = file_get_contents($json_file);
+    $data = json_decode($json_data, true);
+
+    if (!$data || !isset($data['countries'])) {
+        wp_send_json_error(['message' => 'Invalid countries.json']);
+    }
+
+    $countries = [];
+    foreach ($data['countries'] as $code => $country) {
+        $countries[] = [
+            'slug' => $code,
+            'name' => $country['name'],
+            'phone' => $country['phone']
+        ];
+    }
+
+    // Sort by name
+    usort($countries, function ($a, $b) {
+        return strcmp($a['name'], $b['name']);
+    });
+
+    wp_send_json_success($countries);
+});

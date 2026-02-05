@@ -31,6 +31,15 @@ add_action('admin_menu', function () {
         'gatewayapi_admin_page_callback'
     );
 
+    add_submenu_page(
+        'gatewayapi',
+        'Shortcodes',
+        'Shortcodes',
+        'gatewayapi_manage',
+        'gatewayapi-shortcodes',
+        'gatewayapi_admin_page_callback'
+    );
+
     if (class_exists('WooCommerce')) {
         add_submenu_page(
                 'gatewayapi',

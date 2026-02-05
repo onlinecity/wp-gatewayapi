@@ -58,6 +58,13 @@ All SMS messages are delivered via GatewayAPI.com, one of Europe’s leading SMS
 * Supports both GSM and Unicode SMS
 * Configurable sender ID per message
 
+### 🧩 Frontend Shortcodes
+
+* **Signup:** Allow users to subscribe to your SMS lists directly from your website.
+* **Update Profile:** Enable users to update their contact details and group subscriptions.
+* **Unsubscribe:** Provide a simple way for users to opt-out of SMS communications.
+* **Send SMS:** Enable SMS sending from the frontend (e.g. for internal tools).
+
 ### 🚀 Built for Reliability & Scale
 
 * Uses Action Scheduler (the same job system used by WooCommerce)
@@ -117,6 +124,38 @@ To add SMS-based two-factor authentication to your WordPress site:
 * Configure which user roles should use two-factor authentication
 * Optionally limit to specific phone countries for security
 * Set a grace period if needed
+
+## 🧩 Shortcodes
+
+The plugin provides shortcodes to integrate SMS features into your frontend.
+
+### 📝 Common Attributes
+
+* `action`: (required) One of `signup`, `update`, `unsubscribe`, `send_sms`.
+* `recaptcha`: Set to `1` to enable Google reCAPTCHA (must be configured in settings).
+* `embed_css`: Set to `1` to embed basic styling for the form.
+* `groups`: Comma-separated list of group/tag IDs to target.
+* `allowed_countries`: Comma-separated list of country codes (e.g., `45,44`).
+
+### ➕ Signup Form
+`[gatewayapi action="signup" groups="1,2,3"]`
+
+### 🔄 Update Profile
+`[gatewayapi action="update"]`
+
+### ❌ Unsubscribe
+`[gatewayapi action="unsubscribe"]`
+
+### ✉️ Send SMS
+`[gatewayapi action="send_sms" groups="1"]`
+
+> [!CAUTION]
+> **Security Warning:** The `send_sms` action allows sending SMS messages from your frontend. This can be dangerous if left open to the public as it could be abused to send spam or drain your GatewayAPI credits.
+>
+> We strongly recommend combining this with a security system, such as:
+> * Placing the shortcode on a password-protected page.
+> * Restricting access to specific user roles using a membership plugin.
+> * Always enabling `recaptcha="1"` to prevent automated abuse.
 
 ## ❓ Frequently Asked Questions
 

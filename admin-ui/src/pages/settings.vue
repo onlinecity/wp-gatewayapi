@@ -6,6 +6,7 @@ import ConnectionSettings from '@/components/settings/ConnectionSettings.vue';
 import TwoFactorSettings from '@/components/settings/TwoFactorSettings.vue';
 import DefaultSettings from '@/components/settings/DefaultSettings.vue';
 import ContactFieldsSettings from '@/components/settings/ContactFieldsSettings.vue';
+import FrontendFormsSettings from '@/components/settings/FrontendFormsSettings.vue';
 import PageTitle from "@/components/PageTitle.vue";
 import Loading from "@/components/Loading.vue";
 
@@ -64,6 +65,11 @@ onMounted(async () => {
     <input type="radio" name="settings_tabs" class="tab" aria-label="Contact Fields"/>
     <div class="tab-content bg-base-100 border-base-300 p-6">
       <ContactFieldsSettings/>
+    </div>
+
+    <input type="radio" name="settings_tabs" class="tab" aria-label="Shortcode Defaults"/>
+    <div class="tab-content bg-base-100 border-base-300 p-6">
+      <FrontendFormsSettings/>
     </div>
   </div>
 </template>
