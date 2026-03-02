@@ -363,7 +363,8 @@ add_action('wp_ajax_gatewayapi_get_tags', function () {
         return [
             'term_id' => $term->term_id,
             'name' => $term->name,
-            'count' => $term->count
+            'count' => $term->count,
+            'slug' => $term->slug
         ];
     }, $terms);
 

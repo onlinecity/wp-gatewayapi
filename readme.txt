@@ -197,6 +197,10 @@ https://gatewayapi.com/security-and-compliance/
 
 == 📋 Changelog ==
 
+= 2.1.1 =
+
+ * Bugfix: The recipient tags were not properly sent to the campaign creation UI.
+
 = 2.1.0 =
 
  * New feature: Shortcodes for signup, updating contact details, and unsubscription.

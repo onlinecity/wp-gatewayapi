@@ -135,7 +135,7 @@ function gatewayapi_send_mobile_message($message, $recipient, $sender, $options 
     'headers' => [
       'Authorization' => 'Token ' . $token,
       'Content-Type' => 'application/json',
-      'user-agent' => 'wp-gatewayapi/' . GATEWAYAPI_VERSION
+      'user-agent' => 'wp-gatewayapi wp-gatewayapi/' . GATEWAYAPI_VERSION
     ],
     'body' => wp_json_encode($req)
   ]);
