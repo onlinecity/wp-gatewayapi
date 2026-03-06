@@ -393,10 +393,105 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
         $meta_fields_config = json_decode($meta_fields_config, true) ?: [];
     }
 
+    $reserved_import_keys = [
+        'name',
+        'msisdn',
+        'status',
+        'tags',
+        'country',
+        'country_code',
+        'mobile country code',
+        'mobile number',
+        'mobile_country_code',
+        'mobile_number',
+        'meta',
+        'meta_titles'
+    ];
+
+    $meta_fields_by_key = [];
+    $meta_fields_by_title = [];
+    foreach ($meta_fields_config as $index => $field) {
+        if (!is_array($field)) {
+            continue;
+        }
+
+        $raw_meta_key = isset($field['meta_key']) ? $field['meta_key'] : '';
+        $raw_title = isset($field['title']) ? $field['title'] : '';
+        $meta_key = sanitize_title($raw_meta_key ?: $raw_title);
+        $title = sanitize_text_field($raw_title);
+
+        if (empty($meta_key)) {
+            continue;
+        }
+        if (empty($title)) {
+            $title = ucwords(str_replace('-', ' ', $meta_key));
+        }
+
+        $meta_fields_config[$index]['meta_key'] = $meta_key;
+        $meta_fields_config[$index]['title'] = $title;
+        $meta_fields_by_key[$meta_key] = $meta_fields_config[$index];
+        $meta_fields_by_title[strtolower(trim($title))] = $meta_key;
+    }
+
+    $meta_fields_changed = false;
+    $ensure_meta_field = function ($title, $preferred_key = '') use (&$meta_fields_config, &$meta_fields_by_key, &$meta_fields_by_title, &$meta_fields_changed, $reserved_import_keys) {
+        $title = sanitize_text_field((string)$title);
+        if (empty($title)) {
+            return '';
+        }
+
+        $title_lookup = strtolower(trim($title));
+        if (isset($meta_fields_by_title[$title_lookup])) {
+            return $meta_fields_by_title[$title_lookup];
+        }
+
+        $base_meta_key = sanitize_title($preferred_key ?: $title);
+        if (empty($base_meta_key)) {
+            $base_meta_key = 'field';
+        }
+
+        $meta_key = $base_meta_key;
+        $counter = 1;
+        while (isset($meta_fields_by_key[$meta_key]) || in_array($meta_key, $reserved_import_keys, true)) {
+            $meta_key = $base_meta_key . '-' . $counter;
+            $counter++;
+        }
+
+        $new_field = [
+            'title' => $title,
+            'description' => '',
+            'meta_key' => $meta_key
+        ];
+
+        $meta_fields_config[] = $new_field;
+        $meta_fields_by_key[$meta_key] = $new_field;
+        $meta_fields_by_title[$title_lookup] = $meta_key;
+        $meta_fields_changed = true;
+
+        return $meta_key;
+    };
+
     $results = [];
     foreach ($contacts as $contact_data) {
         $name = isset($contact_data['name']) ? sanitize_text_field($contact_data['name']) : '-';
         $msisdn = isset($contact_data['msisdn']) ? sanitize_text_field($contact_data['msisdn']) : '';
+        if (empty($msisdn)) {
+            $mobile_country_code = '';
+            if (isset($contact_data['mobile_country_code'])) {
+                $mobile_country_code = sanitize_text_field($contact_data['mobile_country_code']);
+            } else if (isset($contact_data['mobile country code'])) {
+                $mobile_country_code = sanitize_text_field($contact_data['mobile country code']);
+            }
+
+            $mobile_number = '';
+            if (isset($contact_data['mobile_number'])) {
+                $mobile_number = sanitize_text_field($contact_data['mobile_number']);
+            } else if (isset($contact_data['mobile number'])) {
+                $mobile_number = sanitize_text_field($contact_data['mobile number']);
+            }
+
+            $msisdn = $mobile_country_code . $mobile_number;
+        }
         $msisdn = preg_replace('/\D/', '', $msisdn);
         $status = isset($contact_data['status']) ? sanitize_text_field($contact_data['status']) : 'active';
         $country = isset($contact_data['country']) ? sanitize_text_field($contact_data['country']) : '';
@@ -452,13 +547,62 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
             wp_set_post_terms($id, $tags, 'gwapi-recipient-tag');
         }
 
-        // Handle meta fields from import
+        $meta_values_to_save = [];
+
+        // Legacy import format: field value stored directly as lower-cased header.
         foreach ($meta_fields_config as $field) {
-            $title = $field['title'];
-            $meta_key = $field['meta_key'];
-            if (isset($contact_data[strtolower($title)])) {
-                update_post_meta($id, $meta_key, sanitize_text_field($contact_data[strtolower($title)]));
+            if (!isset($field['title']) || !isset($field['meta_key'])) {
+                continue;
             }
+
+            $title_key = strtolower(trim($field['title']));
+            if (isset($contact_data[$title_key])) {
+                $meta_values_to_save[$field['meta_key']] = sanitize_text_field($contact_data[$title_key]);
+            }
+        }
+
+        // New import format: explicit meta/meta_titles payload.
+        $import_meta = isset($contact_data['meta']) && is_array($contact_data['meta']) ? $contact_data['meta'] : [];
+        $import_meta_titles = isset($contact_data['meta_titles']) && is_array($contact_data['meta_titles']) ? $contact_data['meta_titles'] : [];
+        foreach ($import_meta as $raw_key => $raw_value) {
+            if (is_array($raw_value)) {
+                continue;
+            }
+
+            $raw_key = (string)$raw_key;
+            $title = isset($import_meta_titles[$raw_key]) ? $import_meta_titles[$raw_key] : str_replace('-', ' ', sanitize_title($raw_key));
+            $meta_key = $ensure_meta_field($title, $raw_key);
+            if (empty($meta_key)) {
+                continue;
+            }
+            $meta_values_to_save[$meta_key] = sanitize_text_field((string)$raw_value);
+        }
+
+        // Any unmatched top-level columns become contact meta fields automatically.
+        foreach ($contact_data as $raw_key => $raw_value) {
+            $raw_key = (string)$raw_key;
+            $raw_key_lower = strtolower($raw_key);
+            if (in_array($raw_key_lower, $reserved_import_keys, true)) {
+                continue;
+            }
+            if (is_array($raw_value)) {
+                continue;
+            }
+
+            $value = sanitize_text_field((string)$raw_value);
+            if ($value === '') {
+                continue;
+            }
+
+            $meta_key = $ensure_meta_field($raw_key);
+            if (empty($meta_key)) {
+                continue;
+            }
+            $meta_values_to_save[$meta_key] = $value;
+        }
+
+        foreach ($meta_values_to_save as $meta_key => $value) {
+            update_post_meta($id, $meta_key, $value);
         }
 
         if ($country) {
@@ -472,6 +616,10 @@ add_action('wp_ajax_gatewayapi_bulk_save_contacts', function () {
         }
 
         $results[] = ['success' => true, 'id' => $id, 'msisdn' => $msisdn];
+    }
+
+    if ($meta_fields_changed) {
+        update_option('gwapi_contact_fields', $meta_fields_config);
     }
 
     wp_send_json_success(['results' => $results]);

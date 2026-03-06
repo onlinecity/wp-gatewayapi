@@ -197,6 +197,11 @@ https://gatewayapi.com/security-and-compliance/
 
 == 📋 Changelog ==
 
+= 2.1.2 =
+
+ * Improved contact import: Papa Parse CSV parser with auto-delimiter detection and auto-created meta fields from unknown columns.
+ * Fallback support: Support for our previous (<v2.0) CSV format support.
+
 = 2.1.1 =
 
  * Bugfix: The recipient tags were not properly sent to the campaign creation UI.
