@@ -36,6 +36,10 @@ const tags = ref<any[]>([]);
 const countries = ref<any[]>([]);
 const metaFields = ref<any[]>([]);
 const exporting = ref(false);
+const bulkActionInProgress = ref(false);
+const showTagBulkModal = ref(false);
+const tagBulkMode = ref<'add_tag' | 'remove_tag'>('add_tag');
+const bulkTagValue = ref('');
 
 const columns = ref([
   { id: 'name', label: 'Name', sortable: 'name' },
@@ -214,6 +218,73 @@ const exportContacts = async () => {
     exporting.value = false;
   }
 };
+
+type BulkAction = 'delete' | 'deactivate' | 'activate' | 'add_tag' | 'remove_tag';
+
+const executeBulkAction = async (bulkAction: BulkAction, actionTag = '') => {
+  if (bulkActionInProgress.value) {
+    return;
+  }
+
+  bulkActionInProgress.value = true;
+  try {
+    const response = await parentIframe.ajaxPost('gatewayapi_bulk_update_contacts', {
+      bulk_action: bulkAction,
+      action_tag: actionTag,
+      ...filters.value
+    }) as any;
+
+    if (response && response.success) {
+      await Promise.all([fetchContacts(), fetchTags()]);
+    }
+  } catch (error) {
+    console.error('Failed to run bulk action:', error);
+  } finally {
+    bulkActionInProgress.value = false;
+  }
+};
+
+const openTagBulkModal = (mode: 'add_tag' | 'remove_tag') => {
+  if (bulkActionInProgress.value) {
+    return;
+  }
+
+  tagBulkMode.value = mode;
+  bulkTagValue.value = '';
+  showTagBulkModal.value = true;
+};
+
+const closeTagBulkModal = () => {
+  showTagBulkModal.value = false;
+  bulkTagValue.value = '';
+};
+
+const applyTagBulkAction = async () => {
+  const selectedTag = bulkTagValue.value.trim();
+  if (!selectedTag) {
+    return;
+  }
+
+  await executeBulkAction(tagBulkMode.value, selectedTag);
+  closeTagBulkModal();
+};
+
+const confirmAndRunBulkAction = async (bulkAction: 'delete' | 'deactivate' | 'activate') => {
+  let message = '';
+  if (bulkAction === 'delete') {
+    message = 'Are you sure? This will delete all contacts matching the current search criteria.';
+  } else if (bulkAction === 'deactivate') {
+    message = 'Are you sure? This will deactivate all contacts matching the current search criteria.';
+  } else {
+    message = 'Are you sure? This will activate all contacts matching the current search criteria.';
+  }
+
+  if (!window.confirm(message)) {
+    return;
+  }
+
+  await executeBulkAction(bulkAction);
+};
 </script>
 
 <template>
@@ -221,14 +292,26 @@ const exportContacts = async () => {
     <PageTitle icon="lucide:user">
       Contacts
       <template #actions>
-        <router-link to="/contacts/import" class="btn btn-soft me-3">
-          <Icon icon="lucide:upload" />
-          Import
-        </router-link>
-        <router-link to="/contacts/new" class="btn btn-primary">
-          <Icon icon="lucide:plus" />
-          Add New Contact
-        </router-link>
+        <div class="flex items-center gap-3">
+          <div class="join">
+            <router-link to="/contacts/import" class="btn btn-soft join-item tooltip tooltip-bottom" data-tip="Import">
+              <Icon icon="lucide:upload" />
+            </router-link>
+            <button
+              @click="exportContacts"
+              class="btn btn-soft join-item tooltip tooltip-bottom"
+              :disabled="exporting"
+              data-tip="Export current list"
+            >
+              <Icon v-if="!exporting" icon="lucide:download" />
+              <span v-else class="loading loading-spinner loading-sm"></span>
+            </button>
+          </div>
+          <router-link to="/contacts/new" class="btn btn-primary">
+            <Icon icon="lucide:plus" />
+            Add New Contact
+          </router-link>
+        </div>
       </template>
     </PageTitle>
   </div>
@@ -299,17 +382,23 @@ const exportContacts = async () => {
         </fieldset>
 
         <div class="items-end flex justify-end">
-          <button 
-            @click="exportContacts" 
-            class="btn btn-outline tooltip tooltip-left mb-1"
-            :class="exporting ? 'btn-success' : 'btn-primary'"
-            :data-tip="'All contacts matching the current filters will be exported.'"
-            :disabled="exporting"
-          >
-            <Icon v-if="!exporting" icon="lucide:download" />
-            <span v-if="exporting" class="loading loading-spinner"></span>
-            Export current list
-          </button>
+          <div class="dropdown dropdown-end mb-1">
+            <button tabindex="0" role="button" class="btn btn-outline btn-primary" :disabled="bulkActionInProgress">
+              <span v-if="!bulkActionInProgress">Bulk actions</span>
+              <span v-else class="loading loading-spinner loading-sm"></span>
+              <Icon v-if="!bulkActionInProgress" icon="lucide:chevron-down" />
+            </button>
+            <ul
+              tabindex="0"
+              class="menu dropdown-content bg-base-100 rounded-box z-50 mt-2 w-56 p-2 shadow-sm border border-base-200"
+            >
+              <li><button type="button" @click="confirmAndRunBulkAction('delete')">Delete contacts</button></li>
+              <li><button type="button" @click="confirmAndRunBulkAction('deactivate')">Deactivate contacts</button></li>
+              <li><button type="button" @click="confirmAndRunBulkAction('activate')">Activate contacts</button></li>
+              <li><button type="button" @click="openTagBulkModal('remove_tag')">Remove tag</button></li>
+              <li><button type="button" @click="openTagBulkModal('add_tag')">Add tag</button></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -397,5 +486,42 @@ const exportContacts = async () => {
       :pages="pagination.pages" 
       @update:page="setPage" 
     />
+  </div>
+
+  <div v-if="showTagBulkModal" class="fixed right-6 top-24 z-[60] w-[calc(100%-3rem)] max-w-md">
+    <div class="card bg-base-100 border border-base-300 shadow-xl">
+      <div class="card-body p-4">
+        <h3 class="font-semibold">
+          {{ tagBulkMode === 'add_tag' ? 'Add tag to matching contacts' : 'Remove tag from matching contacts' }}
+        </h3>
+        <p class="text-sm text-base-content/70">
+          This will apply to all contacts matching the current search criteria.
+        </p>
+        <label class="fieldset mt-2">
+          <legend class="fieldset-legend">Tag</legend>
+          <input
+            v-model="bulkTagValue"
+            type="text"
+            list="bulk-contact-tag-options"
+            class="input input-bordered w-full"
+            placeholder="Select or type a tag"
+          />
+          <datalist id="bulk-contact-tag-options">
+            <option v-for="tag in tags" :key="tag.name" :value="tag.name"></option>
+          </datalist>
+        </label>
+        <div class="card-actions justify-end mt-3">
+          <button type="button" class="btn btn-soft" @click="closeTagBulkModal" :disabled="bulkActionInProgress">Cancel</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            :disabled="bulkActionInProgress || !bulkTagValue.trim()"
+            @click="applyTagBulkAction"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

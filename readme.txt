@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, woocommerce, campaigns, notifications, transactional sms
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -196,6 +196,11 @@ https://gatewayapi.com/security-and-compliance/
 
 
 == 📋 Changelog ==
+
+= 2.1.3 =
+
+ * New bulk actions for all contacts matching current filters: Delete/deactivate/activate contact + add/remove tag.
+ * Contacts list UI update, more sleek import/export buttons.
 
 = 2.1.2 =
 

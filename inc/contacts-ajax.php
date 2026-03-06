@@ -736,3 +736,177 @@ add_action('wp_ajax_gatewayapi_get_contacts_export', function () {
 
     wp_send_json_success(['contacts' => $contacts]);
 });
+
+/**
+ * Bulk update contacts matching the current filters
+ */
+add_action('wp_ajax_gatewayapi_bulk_update_contacts', function () {
+    if (!current_user_can('gatewayapi_manage')) {
+        wp_send_json_error(['message' => 'Unauthorized'], 403);
+    }
+
+    $bulk_action = isset($_POST['bulk_action']) ? sanitize_text_field(wp_unslash($_POST['bulk_action'])) : '';
+    $action_tag = isset($_POST['action_tag']) ? sanitize_text_field(wp_unslash($_POST['action_tag'])) : '';
+    $allowed_actions = ['delete', 'deactivate', 'activate', 'add_tag', 'remove_tag'];
+
+    if (!in_array($bulk_action, $allowed_actions, true)) {
+        wp_send_json_error(['message' => 'Invalid bulk action']);
+    }
+
+    if (in_array($bulk_action, ['add_tag', 'remove_tag'], true) && empty($action_tag)) {
+        wp_send_json_error(['message' => 'Tag is required for this action']);
+    }
+
+    $search = isset($_POST['s']) ? sanitize_text_field(wp_unslash($_POST['s'])) : '';
+    $search_by = isset($_POST['search_by']) ? sanitize_text_field(wp_unslash($_POST['search_by'])) : 'name';
+    $orderby = isset($_POST['orderby']) ? sanitize_text_field(wp_unslash($_POST['orderby'])) : 'date';
+    $order = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : 'DESC';
+    $status = isset($_POST['status']) ? sanitize_text_field(wp_unslash($_POST['status'])) : 'any';
+    $selected_tag = isset($_POST['tag']) ? sanitize_text_field(wp_unslash($_POST['tag'])) : '';
+    $country = isset($_POST['country']) ? sanitize_text_field(wp_unslash($_POST['country'])) : '';
+
+    $args = [
+        'post_type' => 'gwapi-recipient',
+        'posts_per_page' => -1,
+        'post_status' => $status === 'trash' ? 'trash' : ['publish', 'private', 'draft', 'pending', 'future'],
+        'fields' => 'ids',
+        'no_found_rows' => true,
+    ];
+
+    if ($search) {
+        if ($search_by === 'msisdn') {
+            $args['meta_query'][] = [
+                'key' => 'msisdn',
+                'value' => $search,
+                'compare' => 'LIKE'
+            ];
+        } else {
+            $args['s'] = $search;
+        }
+    }
+
+    if ($orderby === 'msisdn') {
+        $args['meta_key'] = 'msisdn';
+        $args['orderby'] = 'meta_value';
+    } else if ($orderby === 'status') {
+        $args['meta_key'] = 'status';
+        $args['orderby'] = 'meta_value';
+    } else if (in_array($orderby, ['name', 'title'], true)) {
+        $args['orderby'] = 'title';
+    } else {
+        $args['orderby'] = 'date';
+    }
+    $args['order'] = $order;
+
+    if ($status && $status !== 'any' && $status !== 'trash') {
+        $args['meta_query'][] = [
+            'key' => 'status',
+            'value' => $status,
+            'compare' => '='
+        ];
+    }
+
+    if ($selected_tag) {
+        $args['tax_query'][] = [
+            'taxonomy' => 'gwapi-recipient-tag',
+            'field' => 'slug',
+            'terms' => $selected_tag
+        ];
+    }
+
+    if ($country) {
+        $args['tax_query'][] = [
+            'taxonomy' => 'gwapi-recipient-country',
+            'field' => 'slug',
+            'terms' => $country
+        ];
+    }
+
+    if (isset($args['tax_query']) && count($args['tax_query']) > 1) {
+        $args['tax_query']['relation'] = 'AND';
+    }
+
+    $query = new WP_Query($args);
+    $contact_ids = array_map('intval', $query->posts);
+    if (empty($contact_ids)) {
+        wp_send_json_success([
+            'matched' => 0,
+            'updated' => 0
+        ]);
+    }
+
+    $updated = 0;
+
+    if ($bulk_action === 'delete') {
+        foreach ($contact_ids as $contact_id) {
+            $post = get_post($contact_id);
+            if (!$post || $post->post_type !== 'gwapi-recipient') {
+                continue;
+            }
+
+            $result = $post->post_status === 'trash'
+                ? wp_delete_post($contact_id, true)
+                : wp_trash_post($contact_id);
+
+            if ($result) {
+                $updated++;
+            }
+        }
+    } else if ($bulk_action === 'deactivate' || $bulk_action === 'activate') {
+        $target_status = $bulk_action === 'activate' ? 'active' : 'blocked';
+        foreach ($contact_ids as $contact_id) {
+            update_post_meta($contact_id, 'status', $target_status);
+            $updated++;
+        }
+    } else if ($bulk_action === 'add_tag') {
+        $term = term_exists($action_tag, 'gwapi-recipient-tag');
+        $term_id = 0;
+
+        if (!$term) {
+            $created_term = wp_insert_term($action_tag, 'gwapi-recipient-tag');
+            if (is_wp_error($created_term)) {
+                wp_send_json_error(['message' => $created_term->get_error_message()]);
+            }
+            $term_id = intval($created_term['term_id']);
+        } else if (is_array($term)) {
+            $term_id = intval($term['term_id']);
+        } else {
+            $term_id = intval($term);
+        }
+
+        if (!$term_id) {
+            wp_send_json_error(['message' => 'Unable to resolve tag']);
+        }
+
+        foreach ($contact_ids as $contact_id) {
+            $result = wp_set_object_terms($contact_id, [$term_id], 'gwapi-recipient-tag', true);
+            if (!is_wp_error($result)) {
+                $updated++;
+            }
+        }
+    } else if ($bulk_action === 'remove_tag') {
+        $term = get_term_by('name', $action_tag, 'gwapi-recipient-tag');
+        if (!$term) {
+            $term = get_term_by('slug', sanitize_title($action_tag), 'gwapi-recipient-tag');
+        }
+
+        if (!$term) {
+            wp_send_json_success([
+                'matched' => count($contact_ids),
+                'updated' => 0
+            ]);
+        }
+
+        foreach ($contact_ids as $contact_id) {
+            $result = wp_remove_object_terms($contact_id, [intval($term->term_id)], 'gwapi-recipient-tag');
+            if (!is_wp_error($result)) {
+                $updated++;
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'matched' => count($contact_ids),
+        'updated' => $updated
+    ]);
+});
