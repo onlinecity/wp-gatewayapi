@@ -427,13 +427,13 @@ const testSms = async () => {
             <fieldset class="fieldset text-base" :disabled="isReadOnly">
               <legend class="fieldset-legend">Campaign Tags</legend>
               <div class="flex gap-3 relative  tooltip tooltip-right"  data-tip="Campaign tags are used for your own organizational purposes and does not affect the final message or sending.">
-                <div class="dropdown w-full static">
-                  <div tabindex="0" role="button" class="select select-bordered w-full flex items-center justify-between mb-1" :class="{'pointer-events-none opacity-50': isReadOnly}">
+                <div class="w-full">
+                  <button type="button" popovertarget="campaign-tags-popover" class="select select-bordered w-full flex items-center justify-between mb-1" style="anchor-name:--campaign-tags-anchor" :class="{'pointer-events-none opacity-50': isReadOnly}">
                     <span>
                       {{ campaign.campaign_tags.length }} tags selected
                     </span>
-                  </div>
-                  <ul v-if="!isReadOnly" tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200">
+                  </button>
+                  <ul v-if="!isReadOnly" popover id="campaign-tags-popover" class="dropdown menu bg-base-100 rounded-box z-50 w-64 max-w-full p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200 flex-nowrap" style="position-anchor:--campaign-tags-anchor">
                     <li v-if="allCampaignTags.length === 0" class="p-4 text-center text-sm opacity-50">
                       No campaign tags found.
                     </li>
@@ -455,27 +455,29 @@ const testSms = async () => {
 
             <fieldset class="fieldset text-base" :disabled="isReadOnly">
               <legend class="fieldset-legend">Recipient Tags</legend>
-              <div class="dropdown w-full tooltip tooltip-right" data-tip="Recipient tags are used to select contacts. You send to every contact that has the selected tags.">
-                <div tabindex="0" role="button" class="select select-bordered w-full flex items-center justify-between" :class="{'pointer-events-none opacity-50': isReadOnly}">
-                  <span>
-                    {{ campaign.recipient_tags.length }} tags selected
-                  </span>
+              <div class="tooltip tooltip-right w-full" data-tip="Recipient tags are used to select contacts. You send to every contact that has the selected tags.">
+                <div class="w-full">
+                  <button type="button" popovertarget="recipient-tags-popover" class="select select-bordered w-full flex items-center justify-between" style="anchor-name:--recipient-tags-anchor" :class="{'pointer-events-none opacity-50': isReadOnly}">
+                    <span>
+                      {{ campaign.recipient_tags.length }} tags selected
+                    </span>
+                  </button>
+                  <ul v-if="!isReadOnly" popover id="recipient-tags-popover" class="dropdown menu bg-base-100 rounded-box z-50 w-64 max-w-full  p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200  flex-nowrap" style="position-anchor:--recipient-tags-anchor">
+                    <li v-if="allRecipientTags.length === 0" class="p-4 text-center text-sm opacity-50">
+                      No contacts found or no contacts are associated with a tag.
+                    </li>
+                    <li v-for="tag in allRecipientTags" :key="tag.slug">
+                      <label class="label cursor-pointer justify-start gap-3 w-full py-2">
+                        <input type="checkbox" v-model="campaign.recipient_tags" :value="tag.slug" class="checkbox checkbox-sm" />
+                        <span class="label-text flex-grow relative">
+                          <span class="absolute w-full h-full truncate">{{ tag.name }}</span>
+                          &nbsp;
+                        </span>
+                        <span class="badge badge-sm badge-ghost opacity-50">{{ tag.count }}</span>
+                      </label>
+                    </li>
+                  </ul>
                 </div>
-                <ul v-if="!isReadOnly" tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200">
-                  <li v-if="allRecipientTags.length === 0" class="p-4 text-center text-sm opacity-50">
-                    No contacts found or no contacts are associated with a tag.
-                  </li>
-                  <li v-for="tag in allRecipientTags" :key="tag.slug">
-                    <label class="label cursor-pointer justify-start gap-3 w-full py-2">
-                      <input type="checkbox" v-model="campaign.recipient_tags" :value="tag.slug" class="checkbox checkbox-sm" />
-                      <span class="label-text flex-grow relative">
-                        <span class="absolute w-full h-full truncate">{{ tag.name }}</span>
-                        &nbsp;
-                      </span>
-                      <span class="badge badge-sm badge-ghost opacity-50">{{ tag.count }}</span>
-                    </label>
-                  </li>
-                </ul>
               </div>
               <div class="mt-4 space-y-2 tooltip tooltip-right" data-tip="Do you want to send to recipients which just has one of the tags, or do you want to only send to recipients who has ALL of the selected tags? You must select at least one tag.">
                 <label class="label cursor-pointer justify-start gap-2 p-0">

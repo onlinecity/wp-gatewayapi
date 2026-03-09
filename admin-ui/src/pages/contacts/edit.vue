@@ -256,13 +256,13 @@ const addTag = () => {
           <fieldset class="fieldset text-base mb-6">
             <legend class="fieldset-legend">Tags</legend>
             <div class="flex gap-3 relative">
-              <div class="dropdown w-full static">
-                <div tabindex="0" role="button" class="select select-bordered w-full flex items-center justify-between mb-1">
+              <div class="w-full">
+                <button type="button" popovertarget="contact-tags-popover" class="select select-bordered w-full flex items-center justify-between mb-1" style="anchor-name:--contact-tags-anchor">
                   <span>
                     {{ contact.tags.length }} tags selected
                   </span>
-                </div>
-                <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 w-full p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200">
+                </button>
+                <ul popover id="contact-tags-popover" class="dropdown menu bg-base-100 rounded-box z-50 p-2 shadow-lg max-h-64 overflow-y-auto border border-base-200 flex-nowrap" style="position-anchor:--contact-tags-anchor">
                   <li v-if="allRecipientTags.length === 0" class="p-4 text-center text-sm opacity-50">
                     No contacts found or no contacts are associated with a tag.
                   </li>

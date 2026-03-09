@@ -3,7 +3,7 @@ Contributors: onlinecity
 Tags: sms, woocommerce, campaigns, notifications, transactional sms
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 2.1.3
+Stable tag: 2.1.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -196,6 +196,10 @@ https://gatewayapi.com/security-and-compliance/
 
 
 == 📋 Changelog ==
+
+= 2.1.4 =
+
+ * Improved UI for tag dropdowns when there are many items.
 
 = 2.1.3 =
 
